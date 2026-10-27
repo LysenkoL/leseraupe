@@ -1,0 +1,161 @@
+import { describe, expect, it } from 'vitest';
+import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, type GenParams } from '../src/core/generator';
+import { DEFAULT_BLOCKS, type SheetData, type BlockId } from '../src/core/types';
+import { checkText, countUnit, UNIT_IDS } from '../src/core/letters';
+import { mulberry32, shuffle } from '../src/core/random';
+
+const START = ['t', 'o', 'm', 'l', 'a', 'i', 's'];
+const ALL_BLOCKS = { ...DEFAULT_BLOCKS, aehnlich: true };
+
+function params(letters: string[], over: Partial<GenParams> = {}): GenParams {
+  return {
+    letters,
+    newLetter: letters[letters.length - 1],
+    minutes: 5,
+    theme: 'wiese',
+    childName: 'Mia',
+    blocks: ALL_BLOCKS,
+    aehnlichPair: ['l', 'I'],
+    history: emptyHistory(),
+    seed: 1,
+    ...over,
+  };
+}
+
+function letterSets(): string[][] {
+  const rng = mulberry32(42);
+  const sets: string[][] = [START];
+  // Fibel-Reihenfolge, wachsend
+  for (let n = 4; n <= 43; n += 3) sets.push(UNIT_IDS.slice(0, n));
+  // T O M L A I S + zufällige weitere
+  for (let i = 0; i < 25; i++) {
+    const extra = shuffle(UNIT_IDS.filter((u) => !START.includes(u)), rng).slice(0, Math.floor(rng() * 20));
+    sets.push([...START, ...extra]);
+  }
+  // ganz zufällige, auch sehr kleine Mengen
+  for (let i = 0; i < 15; i++) sets.push(shuffle(UNIT_IDS, rng).slice(0, 2 + Math.floor(rng() * 25)));
+  return sets;
+}
+
+function assertOnlyKnown(sheet: SheetData, letters: string[]) {
+  const known = new Set(letters);
+  for (const t of readingTexts(sheet)) {
+    const r = checkText(t, known);
+    expect(r.ok, `"${t}" enthält ${r.missing.join(', ')} – gelernt: ${letters.join(' ')}`).toBe(true);
+  }
+}
+
+describe('Generator: kein ungelernter Buchstabe', () => {
+  const sets = letterSets();
+  for (const [i, letters] of sets.entries()) {
+    for (const minutes of [5, 10] as const) {
+      it(`Menge ${i} (${letters.length} Einheiten), ${minutes} Min`, () => {
+        for (const seed of [1, 2, 3]) {
+          const { sheet } = generateSheet(params(letters, { minutes, seed }));
+          assertOnlyKnown(sheet, letters);
+        }
+      });
+    }
+  }
+});
+
+describe('Generator: Umfang', () => {
+  for (const minutes of [5, 10] as const) {
+    it(`T O M L A I S, ${minutes} Min: volle Blöcke`, () => {
+      const c = COUNTS[minutes];
+      const { sheet } = generateSheet(params(START, { minutes }));
+      expect(sheet.silben).toHaveLength(c.silben);
+      expect(sheet.woerter).toHaveLength(c.woerter);
+      expect(sheet.kleine).toHaveLength(c.kleine);
+      expect(sheet.saetze).toHaveLength(c.saetze);
+      expect(sheet.geschichte!.saetze.length).toBe(c.geschichte);
+      expect(sheet.fragen.length).toBeGreaterThanOrEqual(c.fragen[0]);
+      expect(sheet.fragen.length).toBeLessThanOrEqual(c.fragen[1]);
+      expect(sheet.quest).not.toBeNull();
+      expect(sheet.aehnlich).not.toBeNull();
+    });
+  }
+
+  it('wenige Buchstaben: Blöcke kürzer statt erfunden', () => {
+    const { sheet } = generateSheet(params(['m', 'a']));
+    expect(sheet.woerter.length).toBeLessThan(20);
+    assertOnlyKnown(sheet, ['m', 'a']);
+  });
+
+  it('keine Silbentrennstriche', () => {
+    for (const letters of letterSets().slice(0, 20)) {
+      const { sheet } = generateSheet(params(letters, { minutes: 10 }));
+      for (const t of readingTexts(sheet)) expect(t).not.toMatch(/\p{L}-\p{L}/u);
+    }
+  });
+
+  it('Wörter: zuerst kurze', () => {
+    const { sheet } = generateSheet(params(START));
+    const lens = sheet.woerter.map((w) => [...w].length);
+    expect([...lens].sort((a, b) => a - b)).toEqual(lens);
+  });
+
+  it('keine doppelten Wörter innerhalb eines Blatts', () => {
+    const { sheet } = generateSheet(params(UNIT_IDS.slice(0, 30), { minutes: 10 }));
+    const all = [...sheet.woerter, ...sheet.kleine];
+    expect(new Set(all).size).toBe(all.length);
+    expect(new Set(sheet.saetze).size).toBe(sheet.saetze.length);
+    for (const s of sheet.saetze) expect(sheet.geschichte!.saetze).not.toContain(s);
+  });
+});
+
+describe('Generator: neuer Buchstabe häufiger', () => {
+  it('mindestens die Hälfte der Wörter enthält den neuen Buchstaben', () => {
+    const letters = [...START, 'e', 'n'];
+    const { sheet } = generateSheet(params(letters, { newLetter: 'n' }));
+    const withN = sheet.woerter.filter((w) => countUnit(w, 'n') > 0).length;
+    expect(withN / sheet.woerter.length).toBeGreaterThanOrEqual(0.5);
+    const withNSilben = sheet.silben.filter((s) => s.includes('n')).length;
+    expect(withNSilben / sheet.silben.length).toBeGreaterThanOrEqual(0.4);
+  });
+});
+
+describe('Generator: keine Wiederholung mit den letzten zwei Blättern', () => {
+  it('zwei Blätter hintereinander haben keine gemeinsamen Wörter', () => {
+    const letters = [...START, 'e', 'n', 'r'];
+    const stored: { seq: number; data: SheetData }[] = [];
+    for (let seq = 1; seq <= 4; seq++) {
+      const h = historyFrom(stored, seq);
+      const { sheet } = generateSheet(params(letters, { history: h, seed: seq * 11 }));
+      for (const prev of stored.slice(-2)) {
+        const overlap = sheet.woerter.filter((w) => prev.data.woerter.includes(w));
+        expect(overlap, `Blatt ${seq} vs ${prev.seq}`).toEqual([]);
+        expect(sheet.saetze.filter((s) => prev.data.saetze.includes(s))).toEqual([]);
+      }
+      stored.push({ seq, data: sheet });
+    }
+  });
+
+  it('wenn Wörter knapp sind, kommen die am längsten unbenutzten', () => {
+    const letters = ['m', 'a', 'l', 'o'];
+    const stored: { seq: number; data: SheetData }[] = [];
+    for (let seq = 1; seq <= 3; seq++) {
+      const { sheet } = generateSheet(params(letters, { history: historyFrom(stored, seq), seed: seq }));
+      assertOnlyKnown(sheet, letters);
+      stored.push({ seq, data: sheet });
+    }
+    expect(stored[2].data.woerter.length).toBeGreaterThan(0);
+  });
+});
+
+describe('↻ einzelner Block', () => {
+  const blocks: BlockId[] = ['silben', 'woerter', 'kleine', 'aehnlich', 'saetze', 'geschichte', 'quest'];
+  for (const b of blocks) {
+    it(b, () => {
+      const p = params([...START, 'e', 'n', 'r', 'u', 'h', 'd']);
+      const { sheet } = generateSheet(p);
+      const s2 = rerollBlock(sheet, b, { ...p, seed: 99 });
+      assertOnlyKnown(s2, p.letters);
+      const other = blocks.filter((x) => x !== b && !(b === 'geschichte' && x === 'quest'));
+      for (const o of other) {
+        if (o === 'geschichte') expect(s2.geschichte).toEqual(sheet.geschichte);
+        else if (o !== 'quest') expect((s2 as unknown as Record<string, unknown>)[o]).toEqual((sheet as unknown as Record<string, unknown>)[o]);
+      }
+    });
+  }
+});

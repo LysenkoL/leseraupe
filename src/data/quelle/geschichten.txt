@@ -1,0 +1,358 @@
+# Mini-Geschichten: "# Titel", dann Sätze, "? Frage" für Eltern. Leerzeile trennt.
+# Kurze Geschichten (5 Min) haben 6–8 Sätze, lange (10 Min) 10–13.
+
+# Im Tal
+Tim ist im Tal.
+Mia ist im Tal.
+Tim isst Toast.
+Mia isst Mais.
+Oma malt Tim.
+Oma malt Mia.
+Toll, Oma!
+? Wo ist Tim?
+? Was isst Tim? Was isst Mia?
+? Wen malt Oma?
+
+# Lolli
+Mila ist im Saal.
+Tilo ist im Saal.
+Mila isst Salami.
+Tilo isst Lolli.
+Lolli ist lila.
+Tilo malt Mila.
+Toll, Tilo!
+? Wo ist Mila?
+? Was isst Tilo?
+? Welche Farbe hat der Lolli?
+? Wen malt Tilo?
+
+# Lotta und Olli
+Lotta ist im Tal.
+Im Tal ist Olli.
+Olli isst Mais.
+Lotta isst Toast.
+Lotta malt Olli.
+Olli malt Lotta.
+Toll, toll!
+? Wo ist Lotta?
+? Was isst Olli?
+? Was isst Lotta?
+? Wer malt wen?
+
+# Das Lama
+Das Lama ist im Tal.
+Das Lama ist alt.
+Tom mag das Lama.
+Tom malt das Lama.
+Das Lama isst Mais.
+Das Lama ist satt.
+Toll, Lama!
+? Wo ist das Lama?
+? Was macht Tom?
+? Was isst das Lama?
+
+# Im Saal
+Mama ist im Saal.
+Oma ist im Saal.
+Mama malt Oma.
+Oma malt Mama.
+Lisa ist mit Tom im Saal.
+Lisa isst Toast.
+Tom isst Salat.
+Alle malen.
+Mama malt so toll!
+Oma malt so toll!
+Lisa malt Lamas.
+Toll, Lisa!
+? Wer ist im Saal?
+? Was isst Lisa? Was isst Tom?
+? Was malt Lisa?
+? Wer malt Oma?
+
+# Die Raupe
+Die Raupe ist klein.
+Die Raupe hat Hunger.
+Sie frisst ein Blatt.
+Sie frisst eine Birne.
+Sie frisst einen Apfel.
+Jetzt ist die Raupe dick.
+Sie schläft lange.
+? Was frisst die Raupe?
+? Warum ist die Raupe jetzt dick?
+? Was macht die Raupe am Ende?
+
+# Ein Eis für Oma
+Oma ist im Garten.
+Lena hat ein Eis.
+Das Eis ist kalt.
+Lena gibt Oma das Eis.
+Oma lacht.
+Das Eis ist lecker!
+Danke, Lena!
+? Wo ist Oma?
+? Was hat Lena?
+? Was macht Lena mit dem Eis?
+
+# Der Ball
+Ben hat einen Ball.
+Der Ball ist rot.
+Ben kickt den Ball.
+Der Ball rollt in den Teich.
+Der Hund holt den Ball.
+Der Hund ist nass.
+Danke, Hund!
+? Welche Farbe hat der Ball?
+? Wo rollt der Ball hin?
+? Wer holt den Ball?
+
+# Im Zoo
+Anna und Tim sind im Zoo.
+Der Elefant ist groß.
+Die Maus ist klein.
+Der Affe klettert.
+Der Löwe brüllt.
+Anna lacht.
+Tim winkt dem Affen.
+? Wo sind Anna und Tim?
+? Welches Tier ist groß?
+? Was macht der Affe?
+
+# Der Schneemann
+Es schneit.
+Nina und Leo sind im Garten.
+Sie bauen einen Schneemann.
+Der Schneemann hat eine Nase.
+Die Nase ist eine Möhre.
+Leo holt einen Hut.
+Der Schneemann ist toll!
+? Was bauen Nina und Leo?
+? Was ist die Nase?
+? Was holt Leo?
+
+# Am Meer
+Mia ist am Meer.
+Die Sonne scheint.
+Mia baut eine Burg aus Sand.
+Eine Welle kommt.
+Die Burg ist weg!
+Mia lacht.
+Sie baut eine neue Burg.
+? Wo ist Mia?
+? Was baut Mia?
+? Was macht die Welle?
+
+# Die Rakete
+Paul hat eine Rakete.
+Die Rakete ist weiß.
+Paul fliegt zum Mond.
+Im All ist es dunkel.
+Die Sterne leuchten.
+Paul winkt der Erde.
+Dann fliegt er nach Hause.
+? Wohin fliegt Paul?
+? Wie ist es im All?
+? Wem winkt Paul?
+
+# Im Zirkus
+Lea ist im Zirkus.
+Der Clown hat eine rote Nase.
+Er stolpert und lacht.
+Das Pony tanzt.
+Der Elefant macht Musik.
+Lea klatscht.
+Der Zirkus ist toll!
+? Wo ist Lea?
+? Was hat der Clown?
+? Was macht das Pony?
+
+# Der Zauberwald
+Im Wald wohnt eine Fee.
+Die Fee hat einen Zauberstab.
+Ein Igel ist traurig.
+Er hat kein Haus.
+Die Fee zaubert.
+Jetzt hat der Igel ein Haus aus Laub.
+Der Igel ist froh.
+? Wer wohnt im Wald?
+? Warum ist der Igel traurig?
+? Was zaubert die Fee?
+
+# Die Katze Mimi
+Mimi ist eine Katze.
+Mimi ist grau.
+Am Morgen schläft sie.
+Am Mittag frisst sie Fisch.
+Am Abend jagt sie eine Maus.
+Die Maus rennt in ein Loch.
+Mimi wartet.
+Aber die Maus kommt nicht.
+Mimi geht nach Hause.
+Sie trinkt Milch.
+Dann schläft sie wieder.
+Gute Nacht, Mimi!
+? Welche Farbe hat Mimi?
+? Was frisst Mimi am Mittag?
+? Wohin rennt die Maus?
+? Was macht Mimi am Ende?
+
+# Der Kuchen
+Oma backt einen Kuchen.
+Emma hilft Oma.
+Emma holt Mehl und Zucker.
+Oma holt Eier und Butter.
+Emma rührt den Teig.
+Der Kuchen ist im Ofen.
+Es riecht so gut!
+Opa kommt nach Hause.
+Opa fragt: Was riecht so gut?
+Emma lacht.
+Alle essen Kuchen.
+Der Kuchen ist lecker!
+? Was backt Oma?
+? Was holt Emma?
+? Wer kommt nach Hause?
+? Wie schmeckt der Kuchen?
+
+# Der Hund Bello
+Bello ist ein Hund.
+Bello ist braun.
+Er wohnt bei Max.
+Max und Bello gehen in den Park.
+Im Park ist eine Ente.
+Bello bellt.
+Die Ente fliegt weg.
+Bello rennt und rennt.
+Dann ist Bello müde.
+Max gibt Bello Wasser.
+Bello trinkt.
+Max streichelt Bello.
+? Welche Farbe hat Bello?
+? Wo sind Max und Bello?
+? Was macht die Ente?
+? Was gibt Max dem Hund?
+
+# Der Regenbogen
+Es regnet.
+Lina sitzt am Fenster.
+Lina ist traurig.
+Sie will in den Garten.
+Dann scheint die Sonne.
+Am Himmel ist ein Regenbogen.
+Er ist so bunt!
+Lina rennt in den Garten.
+Sie springt in eine Pfütze.
+Die Hose ist nass.
+Lina lacht.
+Mama lacht auch.
+? Warum ist Lina traurig?
+? Was ist am Himmel?
+? Wohin springt Lina?
+? Wer lacht am Ende?
+
+# Ein Tag am See
+Papa und Ole fahren an den See.
+Der See ist groß und blau.
+Ole hat eine Angel.
+Papa hat ein Boot.
+Sie rudern auf den See.
+Ole angelt.
+Er fängt einen Fisch.
+Der Fisch ist klein.
+Ole lässt den Fisch frei.
+Der Fisch schwimmt weg.
+Tschüss, Fisch!
+Papa lobt Ole.
+? Wohin fahren Papa und Ole?
+? Was fängt Ole?
+? Was macht Ole mit dem Fisch?
+? Warum lobt Papa Ole?
+
+# Der Drache
+Finn hat einen Drachen.
+Der Drachen ist rot und gelb.
+Es ist Herbst.
+Der Wind ist stark.
+Finn rennt über die Wiese.
+Der Drachen fliegt hoch.
+Höher und höher!
+Dann ist der Wind weg.
+Der Drachen fällt in einen Baum.
+Opa holt eine Leiter.
+Er holt den Drachen.
+Danke, Opa!
+? Welche Farben hat der Drachen?
+? Warum fliegt der Drachen hoch?
+? Wohin fällt der Drachen?
+? Wer holt den Drachen?
+
+# Im Schnee
+Es ist Winter.
+Der Schnee ist weiß und kalt.
+Jule hat eine Mütze und einen Schal.
+Sie hat einen Schlitten.
+Jule rodelt den Berg hinunter.
+Der Schlitten ist so schnell!
+Unten liegt ein Schneeball.
+Jule wirft den Schneeball.
+Er trifft Papa.
+Papa lacht.
+Dann trinken sie Kakao.
+Der Kakao ist heiß.
+? Was hat Jule an?
+? Was macht Jule auf dem Berg?
+? Wen trifft der Schneeball?
+? Was trinken sie am Ende?
+
+# Die Schatzkiste
+Ein Pirat hat ein Schiff.
+Das Schiff ist alt.
+Der Pirat sucht einen Schatz.
+Er fährt zu einer Insel.
+Auf der Insel ist Sand.
+Er gräbt und gräbt.
+Da ist eine Kiste!
+In der Kiste sind Perlen.
+Der Pirat ist froh.
+Er nimmt die Kiste mit.
+Er fährt nach Hause.
+Was für ein Tag!
+? Was sucht der Pirat?
+? Wo gräbt er?
+? Was ist in der Kiste?
+? Wie fühlt sich der Pirat?
+
+# Der Igel
+Ein Igel wohnt im Garten.
+Er hat viele Stacheln.
+Am Tag schläft er.
+In der Nacht sucht er Futter.
+Er frisst Würmer und Käfer.
+Im Herbst sammelt er Laub.
+Er baut ein Nest.
+Im Winter schläft er lange.
+Im Frühling wacht er auf.
+Er hat Hunger.
+Er sucht wieder Futter.
+Hallo, Igel!
+? Wann schläft der Igel?
+? Was frisst der Igel?
+? Was macht der Igel im Winter?
+? Was macht er im Frühling?
+
+# Die Fee im Wald
+Klara geht in den Wald.
+Da sitzt eine Fee auf einem Pilz.
+Die Fee ist klein.
+Sie hat eine Krone.
+Die Fee sagt: Hallo, Klara!
+Klara staunt.
+Die Fee zaubert eine Blume.
+Die Blume ist lila.
+Klara nimmt die Blume.
+Danke, Fee!
+Klara geht nach Hause.
+Sie erzählt Mama alles.
+? Wo sitzt die Fee?
+? Was hat die Fee auf dem Kopf?
+? Was zaubert die Fee?
+? Wem erzählt Klara alles?

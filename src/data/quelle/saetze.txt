@@ -1,0 +1,251 @@
+# Fertige kurze Sätze (werden nach Buchstaben gefiltert)
+Mama malt.
+Oma ist alt.
+Tom ist toll.
+Ist Tom im Tal?
+Im Saal ist Lilo.
+Lolli ist lila.
+Mia malt lila.
+Oma isst Salat.
+Tim isst Toast.
+Mila isst Salami.
+Tilo malt Lamas.
+Das Lama ist alt.
+Das Lama ist da.
+Da ist Oma.
+Da ist Mama.
+Ist Mama da?
+Wo ist Mama?
+Wo ist Oma?
+Wo ist das Lama?
+Oma malt das Lama.
+Ole ist mit Lea im Tal.
+Mama malt Oma.
+Lisa ist so toll.
+Tom isst Mais.
+Das Eis ist kalt.
+Das Eis ist so lecker.
+Mila isst Eis.
+Leo isst ein Eis.
+Mama hat ein Auto.
+Das Auto ist rot.
+Der Ball ist rund.
+Der Ball ist rot.
+Tim hat einen Ball.
+Der Hund bellt.
+Der Hund rennt.
+Der Hund ist nass.
+Die Katze schläft.
+Die Katze miaut.
+Die Maus ist klein.
+Die Maus ist grau.
+Der Elefant ist groß.
+Das Pferd rennt.
+Die Kuh muht.
+Die Ente quakt.
+Der Frosch quakt.
+Der Frosch hüpft.
+Die Biene summt.
+Der Bär brummt.
+Der Hase hüpft.
+Die Eule ruft.
+Die Sonne scheint.
+Die Sonne ist heiß.
+Der Mond ist rund.
+Der Mond leuchtet.
+Die Sterne leuchten.
+Es regnet.
+Es schneit.
+Der Schnee ist weiß.
+Der Schnee ist kalt.
+Im Winter ist es kalt.
+Im Sommer ist es warm.
+Der Baum ist groß.
+Die Blume ist rot.
+Die Blume ist schön.
+Das Gras ist grün.
+Der Himmel ist blau.
+Das Meer ist blau.
+Das Meer ist tief.
+Der Fisch schwimmt.
+Der Fisch ist bunt.
+Das Boot ist im Wasser.
+Die Rakete fliegt.
+Die Rakete ist schnell.
+Der Clown lacht.
+Der Clown ist lustig.
+Der Löwe brüllt.
+Der Affe klettert.
+Der Zauberer zaubert.
+Die Fee ist klein.
+Die Hexe hat einen Besen.
+Der König hat eine Krone.
+Die Krone ist aus Gold.
+Ich lese.
+Ich lese ein Buch.
+Ich male ein Bild.
+Ich bin da.
+Ich bin müde.
+Ich bin satt.
+Ich bin groß.
+Ich bin sieben.
+Ich bin sechs.
+Ich mag Eis.
+Ich mag Mama.
+Ich mag dich.
+Du bist toll.
+Du bist lieb.
+Wir lesen.
+Wir spielen.
+Wir malen.
+Wir singen.
+Wir lachen.
+Wir tanzen.
+Wir sind im Park.
+Wir sind im Zoo.
+Wir gehen in die Schule.
+Wir gehen nach Hause.
+Wir bauen eine Burg.
+Wir bauen einen Schneemann.
+Er lacht.
+Sie lacht.
+Er rennt.
+Sie rennt.
+Er ist da.
+Sie ist da.
+Es ist so toll.
+Es ist kalt.
+Es ist warm.
+Es ist Nacht.
+Es ist Tag.
+Mama kocht Suppe.
+Papa backt Kuchen.
+Oma backt Kekse.
+Opa liest die Zeitung.
+Opa liest ein Buch.
+Papa ist im Garten.
+Mama ist im Haus.
+Oma ist am See.
+Opa ist am Meer.
+Der Bus ist da.
+Der Zug ist lang.
+Das Haus ist alt.
+Das Haus hat ein Dach.
+Die Tür ist offen.
+Das Licht ist an.
+Die Lampe ist hell.
+Die Uhr tickt.
+Das Baby schläft.
+Das Baby lacht.
+Das Kind spielt.
+Die Kinder spielen.
+Die Kinder lachen.
+Die Kinder singen.
+Lena malt eine Sonne.
+Ben malt einen Hund.
+Nina hat eine Katze.
+Paul hat einen Hund.
+Anna isst eine Banane.
+Emil isst einen Apfel.
+Lea trinkt Saft.
+Max trinkt Milch.
+Oma trinkt Tee.
+Leo liest ein Buch.
+Ella singt ein Lied.
+Finn spielt Ball.
+Ida tanzt.
+Nele turnt.
+Udo ist im Bett.
+Ute ist im Bett.
+Uli ist im Zoo.
+Rosa ist rot.
+Rita rennt.
+Rudi ruft Rosa.
+Romy ist mutig.
+Hanna hilft Mama.
+Hugo hat Hunger.
+Hans hat einen Hut.
+Der Hut ist rot.
+Der Hut ist zu groß.
+Die Mütze ist warm.
+Der Schal ist lang.
+Die Jacke ist nass.
+Die Schuhe sind nass.
+Wo ist der Ball?
+Wo ist die Katze?
+Wo ist der Hund?
+Wo bist du?
+Wer ist da?
+Wer malt?
+Was ist das?
+Das ist ein Hund.
+Das ist eine Katze.
+Das ist mein Buch.
+Das ist mein Ball.
+Das ist toll!
+Das ist lustig!
+Das ist so lecker!
+Hallo, Mama!
+Hallo, Oma!
+Hallo, Opa!
+Hallo, Tom!
+Tschüss, Mama!
+Danke, Oma!
+Bitte, Papa!
+Toll, Tom!
+Toll, Mia!
+Super, Lisa!
+Komm mit!
+Lauf, Leo, lauf!
+Sieh mal!
+Hör mal!
+Halt!
+Ein Igel ist im Garten.
+Ein Vogel sitzt auf dem Ast.
+Der Vogel singt.
+Die Raupe frisst ein Blatt.
+Die Raupe ist grün.
+Die Raupe ist satt.
+Die Schnecke ist langsam.
+Der Käfer krabbelt.
+Die Ameise ist fleißig.
+Die Spinne baut ein Netz.
+Der Pilz ist rot.
+Der Wald ist dunkel.
+Im Wald ist es still.
+Der Fuchs ist schlau.
+Das Reh ist im Wald.
+Der Wal ist groß.
+Die Qualle ist weich.
+Die Muschel ist im Sand.
+Der Sand ist warm.
+Die Welle ist hoch.
+Der Pinguin friert nicht.
+Der Eisbär ist weiß.
+Der Schneemann hat eine Nase.
+Die Nase ist eine Möhre.
+Wir fahren Schlitten.
+Der Schlitten ist schnell.
+Der Stern funkelt.
+Die Rakete fliegt zum Mond.
+Der Astronaut hat einen Helm.
+Im All ist es dunkel.
+Im Zirkus ist es laut.
+Der Clown hat eine rote Nase.
+Das Pony tanzt.
+Der Elefant macht Musik.
+Die Artistin fliegt.
+Tom isst so viel Salat.
+Mia malt Mama.
+Lisa malt Oma.
+Tim malt Tom.
+Sam ist so alt.
+Ist Oma im Saal?
+Ist Mia im Tal?
+Lola isst Toast.
+Mimi malt Momo.
+Momo isst Mais.
+Oma malt mal.
+Mama isst mal Salat.
+Ali malt Salami.
+Das Atoll ist im Meer.
