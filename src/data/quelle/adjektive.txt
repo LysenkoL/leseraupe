@@ -1,0 +1,89 @@
+# Wort | Tags (p = Personen/Tiere, d = Dinge)
+alt | p d
+toll | p d
+lila | d
+klein | p d
+groß | p d
+nett | p
+lieb | p
+müde | p
+satt | p
+nass | p d
+froh | p
+wach | p
+stark | p
+flink | p
+schnell | p d
+langsam | p
+laut | p d
+leise | p d
+krank | p
+gesund | p
+lustig | p
+traurig | p
+mutig | p
+schlau | p
+fleißig | p
+frech | p
+still | p
+neu | d
+schön | p d
+rund | d
+dick | p d
+dünn | p d
+lang | d
+kurz | d
+warm | d
+kalt | d
+heiß | d
+weich | d
+hart | d
+süß | p d
+sauer | p d
+salzig | d
+lecker | d
+frisch | d
+leer | d
+voll | d
+hell | d
+dunkel | d
+rot | d
+blau | d
+gelb | d
+grün | d
+weiß | d
+schwarz | d
+braun | d
+rosa | d
+bunt | d
+nah | d
+weit | d
+oft |
+fit | p
+super | p d
+prima | p d
+grau | d p
+hoch | d
+tief | d
+offen | d
+böse | p
+ruhig | p d
+wild | p
+zahm | p
+glatt | d
+eckig | d
+spitz | d
+scharf | d
+sauber | p d
+schmutzig | p d
+jung | p
+fröhlich | p
+freundlich | p
+hungrig | p
+durstig | p
+wütend | p
+schick | p d
+hübsch | p d
+golden | d
+leicht | d
+schwer | d

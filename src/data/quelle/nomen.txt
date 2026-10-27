@@ -1,0 +1,880 @@
+# Artikel Wort | Tags   (r = der, e = die, s = das, pl = die/Plural)
+# --- Essen ---
+r Mais | essen
+r Salat | essen
+r Toast | essen
+e Salami | essen
+s Obst | essen
+s Brot | essen
+s Brötchen | essen
+r Reis | essen
+r Käse | essen
+r Honig | essen
+r Kuchen | essen
+e Suppe | essen
+pl Nudeln | essen
+e Pizza | essen
+e Wurst | essen
+s Müsli | essen
+r Quark | essen
+pl Pommes | essen
+e Melone | essen
+pl Kekse | essen
+r Keks | essen
+e Torte | essen
+s Ei | essen
+pl Eier | essen
+s Eis | essen winter
+r Apfel | essen wiese
+pl Äpfel | essen
+e Birne | essen
+e Banane | essen
+pl Bananen | essen
+e Tomate | essen
+pl Tomaten | essen
+e Gurke | essen
+e Möhre | essen
+pl Möhren | essen
+e Kartoffel | essen
+pl Kartoffeln | essen
+e Erdbeere | essen wiese
+pl Erdbeeren | essen
+e Kirsche | essen
+pl Kirschen | essen
+e Pflaume | essen
+e Zitrone | essen
+e Orange | essen
+e Nuss | essen zauberwald
+pl Nüsse | essen
+r Pudding | essen
+r Joghurt | essen
+e Butter | essen
+s Mehl | ding
+r Zucker | essen
+s Salz | ding
+e Soße | essen
+r Spinat | essen
+e Paprika | essen
+r Kohl | essen
+e Erbse | essen
+pl Erbsen | essen
+e Bohne | essen
+pl Bohnen | essen
+r Fisch | essen tier meer
+e Brezel | essen
+s Popcorn | essen zirkus
+pl Waffeln | essen
+e Waffel | essen
+s Omelett | essen
+r Lolli | essen zirkus
+pl Lollis | essen
+r Tee | trinken
+e Milch | trinken
+r Saft | trinken
+r Kakao | trinken winter
+s Wasser | trinken meer
+e Limo | trinken
+r Sprudel | trinken
+# --- Tiere ---
+s Lama | tier
+pl Lamas | tier
+r Hund | tier
+e Katze | tier
+e Maus | tier
+pl Mäuse | tier
+e Kuh | tier wiese
+s Pferd | tier
+s Pony | tier zirkus
+s Schaf | tier wiese
+e Ziege | tier
+s Schwein | tier
+s Huhn | tier
+r Hahn | tier
+e Ente | tier
+e Gans | tier
+r Esel | tier
+r Hase | tier wiese
+e Robbe | tier meer
+r Igel | tier zauberwald
+r Fuchs | tier zauberwald
+r Bär | tier
+r Wolf | tier
+e Eule | tier zauberwald
+r Rabe | tier
+e Taube | tier
+e Meise | tier
+r Spatz | tier
+r Vogel | tier
+pl Vögel | tier
+e Biene | tier wiese
+e Hummel | tier wiese
+e Ameise | tier wiese
+r Käfer | tier wiese
+e Raupe | tier wiese
+r Wurm | tier
+e Schnecke | tier wiese
+r Frosch | tier wiese
+e Kröte | tier
+e Spinne | tier
+e Fliege | tier
+e Mücke | tier
+r Falter | tier wiese
+r Schmetterling | tier wiese
+r Löwe | tier zirkus
+r Tiger | tier zirkus
+r Affe | tier zirkus
+r Elefant | tier zirkus
+e Giraffe | tier
+s Zebra | tier
+s Krokodil | tier
+e Schlange | tier
+r Papagei | tier
+r Pinguin | tier winter
+r Eisbär | tier winter
+e Robbe | tier winter
+r Wal | tier meer
+r Hai | tier meer
+r Delfin | tier meer
+e Qualle | tier meer
+r Krebs | tier meer
+r Seestern | tier meer
+e Muschel | ding meer
+s Seepferdchen | tier meer
+e Möwe | tier meer
+r Otter | tier
+r Biber | tier
+s Reh | tier zauberwald
+r Hirsch | tier zauberwald
+s Eichhörnchen | tier zauberwald
+r Specht | tier zauberwald
+r Dachs | tier
+r Maulwurf | tier
+r Uhu | tier zauberwald
+r Hamster | tier
+s Kaninchen | tier
+s Küken | tier
+s Kalb | tier
+s Fohlen | tier
+r Kater | tier
+r Dino | tier
+r Drache | tier zauberwald
+s Einhorn | tier zauberwald
+r Molch | tier
+r Lurch | tier
+e Lerche | tier
+e Amsel | tier
+r Storch | tier
+r Strauß | tier
+s Kamel | tier
+r Panda | tier
+r Koala | tier
+s Nashorn | tier
+s Walross | tier winter
+r Elch | tier winter
+# --- Orte (im / am) ---
+s Tal | im
+r Saal | im
+s Atoll | meer
+e Alm | wiese
+r Wald | im zauberwald
+s Haus | im
+s Bett | im
+r Garten | im wiese
+r Park | im
+r Zoo | im
+r Stall | im
+s Zelt | im zirkus
+s Boot | im meer
+r Bus | im
+s Auto | im
+r Zug | im
+s Meer | im am meer
+r See | am
+r Strand | am meer
+r Teich | am wiese
+r Bach | am
+r Fluss | am
+r Tisch | am
+s Fenster | am
+s Tor | am
+r Turm | im
+r Keller | im
+r Hof | im
+s Nest | ding
+r Sand | im meer
+r Schnee | im winter
+s Gras | im wiese
+s Moos | im zauberwald
+r Korb | ding
+r Kindergarten | im
+r Laden | im
+r Zirkus | im zirkus
+s Kino | im
+s Bad | im
+s Zimmer | im
+r Flur | im
+r Raum | im
+s Iglu | im winter
+r Schlitten | ding winter
+s Schloss | im zauberwald
+s Dorf | im
+s Feld | ding wiese
+e Wiese | ding wiese
+r Berg | ding
+r Hügel | ding
+e Insel | ding meer
+e Stadt | ding
+e Schule | ding
+e Straße | ding
+e Höhle | ding zauberwald
+r Weltraum | im weltraum
+s All | im weltraum
+e Rakete | ding weltraum
+r Planet | ding weltraum
+r Mond | ding weltraum
+e Sonne | ding wiese
+r Stern | ding weltraum
+pl Sterne | ding weltraum
+r Komet | ding weltraum
+r Astronaut | person weltraum
+e Astronautin | person weltraum
+s Ufo | ding weltraum
+# --- Personen ---
+s Kind | person
+pl Kinder | person
+s Baby | person
+r Mann | person
+e Frau | person
+r Junge | person
+s Mädchen | person
+e Tante | person
+r Onkel | person
+e Lehrerin | person
+r Lehrer | person
+r Freund | person
+e Freundin | person
+r Clown | person zirkus
+r Zauberer | person zauberwald
+e Hexe | person zauberwald
+e Fee | person zauberwald
+r Zwerg | person zauberwald
+r König | person zauberwald
+e Königin | person zauberwald
+e Prinzessin | person zauberwald
+r Prinz | person zauberwald
+r Riese | person zauberwald
+r Pirat | person meer
+r Ritter | person
+r Bäcker | person
+e Ärztin | person
+r Arzt | person
+r Koch | person
+e Köchin | person
+r Polizist | person
+r Bauer | person wiese
+e Bäuerin | person wiese
+r Taucher | person meer
+r Artist | person zirkus
+e Artistin | person zirkus
+r Dompteur | person zirkus
+r Schneemann | ding winter
+# --- Dinge ---
+r Ast | ding zauberwald
+r Mast | ding meer
+s Lasso | ding zirkus
+r Salto | ding zirkus
+s Lotto | ding
+s Atom | ding
+r Atlas | ding
+r Slalom | ding winter
+s Motto | ding
+r Mist | ding
+r Most | trinken
+r Ball | ding
+pl Bälle | ding
+e Puppe | ding
+r Teddy | ding
+s Buch | ding
+pl Bücher | ding
+s Heft | ding
+r Stift | ding
+pl Stifte | ding
+e Tafel | ding
+e Mappe | ding
+r Ranzen | ding
+e Schere | ding
+r Kleber | ding
+e Farbe | ding
+pl Farben | ding
+r Pinsel | ding
+s Bild | ding
+s Papier | ding
+r Hut | ding zirkus
+e Mütze | ding winter
+r Schal | ding winter
+pl Handschuhe | ding winter
+e Jacke | ding
+e Hose | ding
+s Hemd | ding
+r Rock | ding
+s Kleid | ding
+r Schuh | ding
+pl Schuhe | ding
+r Stiefel | ding winter
+pl Socken | ding
+e Socke | ding
+r Pulli | ding
+e Brille | ding
+e Uhr | ding
+e Tasse | ding
+r Teller | ding
+e Gabel | ding
+r Löffel | ding
+s Messer | ding
+r Topf | ding
+e Kanne | ding
+e Flasche | ding
+s Glas | ding
+r Becher | ding
+e Lampe | ding
+r Stuhl | ding
+s Sofa | ding
+s Kissen | ding
+e Decke | ding
+e Tür | ding
+e Wand | ding
+s Dach | ding
+e Treppe | ding
+r Schlüssel | ding
+e Kiste | ding
+r Eimer | ding
+e Schaufel | ding
+r Rechen | ding
+e Leiter | ding
+s Seil | ding zirkus
+e Tasche | ding
+r Koffer | ding
+r Schirm | ding
+s Rad | ding
+s Fahrrad | ding
+r Roller | ding
+r Drachen | ding
+e Schaukel | ding
+e Rutsche | ding
+r Ballon | ding zirkus
+pl Ballons | ding zirkus
+e Fahne | ding zirkus
+e Trommel | ding zirkus
+e Flöte | ding
+e Gitarre | ding
+e Geige | ding
+s Klavier | ding
+e Glocke | ding
+e Kerze | ding winter
+s Geschenk | ding winter
+r Baum | ding wiese
+pl Bäume | ding
+r Tannenbaum | ding winter
+e Tanne | ding winter
+s Blatt | ding
+pl Blätter | ding
+e Blume | ding wiese
+pl Blumen | ding wiese
+e Rose | ding wiese
+e Tulpe | ding wiese
+r Pilz | ding zauberwald
+pl Pilze | ding zauberwald
+e Wurzel | ding zauberwald
+r Stein | ding
+pl Steine | ding
+r Stock | ding
+s Holz | ding
+s Feuer | ding
+r Rauch | ding
+e Wolke | ding
+pl Wolken | ding
+r Regen | ding
+r Wind | ding
+r Sturm | ding
+r Blitz | ding
+r Donner | ding
+r Regenbogen | ding wiese
+e Pfütze | ding
+s Eis | ding winter
+e Schneeflocke | ding winter
+pl Schneeflocken | ding winter
+r Schneeball | ding winter
+r Winter | ding winter
+r Sommer | ding wiese
+r Frühling | ding wiese
+r Herbst | ding
+r Tag | ding
+e Nacht | ding
+r Morgen | ding
+r Abend | ding
+e Woche | ding
+s Jahr | ding
+e Zeit | ding
+s Licht | ding
+e Welle | ding meer
+pl Wellen | ding meer
+s Schiff | ding meer
+s Segel | ding meer
+r Anker | ding meer
+r Schatz | ding meer
+e Perle | ding meer
+e Krone | ding zauberwald
+r Zauberstab | ding zauberwald
+r Besen | ding zauberwald
+s Zauberbuch | ding zauberwald
+r Kessel | ding zauberwald
+r Ring | ding
+e Kette | ding
+s Netz | ding meer
+e Angel | ding meer
+r Eimer | ding
+e Burg | ding
+e Mauer | ding
+r Zaun | ding wiese
+e Bank | ding
+e Hütte | ding
+s Feld | ding
+r Weg | ding
+e Brücke | ding
+s Tor | ding
+e Ampel | ding
+s Auto | ding
+r Bus | ding
+r Zug | ding
+s Flugzeug | ding
+r Laster | ding
+r Bagger | ding
+r Traktor | ding wiese
+s Boot | ding meer
+s Taxi | ding
+s Moped | ding
+e Lok | ding
+e Kutsche | ding
+s Telefon | ding
+s Handy | ding
+r Computer | ding
+s Radio | ding
+s Foto | ding
+s Spiel | ding
+s Puzzle | ding
+e Murmel | ding
+pl Murmeln | ding
+r Würfel | ding
+e Karte | ding
+r Brief | ding
+e Post | ding
+r Name | ding
+e Zahl | ding
+s Lied | ding
+e Musik | ding
+s Fest | ding
+e Party | ding
+r Geburtstag | ding
+e Kerze | ding
+e Maske | ding meer
+e Flosse | ding meer
+r Schnorchel | ding meer
+r Helm | ding weltraum
+r Kopf | ding
+e Nase | ding
+r Mund | ding
+s Ohr | ding
+pl Ohren | ding
+s Auge | ding
+pl Augen | ding
+s Haar | ding
+pl Haare | ding
+e Hand | ding
+pl Hände | ding
+r Arm | ding
+s Bein | ding
+pl Beine | ding
+r Fuß | ding
+pl Füße | ding
+r Bauch | ding
+r Rücken | ding
+r Zahn | ding
+pl Zähne | ding
+r Finger | ding
+r Daumen | ding
+s Knie | ding
+r Hals | ding
+e Zunge | ding
+r Po | ding
+# --- mehr Wörter mit wenigen Buchstaben ---
+e Oase | ding
+s Sofa | ding
+e Tomate | essen
+s Motorrad | ding
+s Lineal | ding
+e Rolle | ding
+e Rasse | ding
+e Masse | ding
+e Tasse | ding
+r Rasen | ding wiese
+e Rinde | ding zauberwald
+s Rind | tier
+e Note | ding
+e Mine | ding
+e Rosine | essen
+pl Rosinen | essen
+e Olive | essen
+pl Oliven | essen
+r Anorak | ding winter
+e Nudel | essen
+s Tomatenbrot | essen
+e Limonade | trinken
+r Saal | ding
+s Lamm | tier wiese
+pl Eltern | person
+e Familie | person
+r Bruder | person
+e Schwester | person
+r Sohn | person
+e Tochter | person
+s Kamel | tier
+r Esel | tier
+e Ente | tier
+e Laterne | ding
+s Land | ding
+e Erde | ding weltraum
+s Ende | ding
+r Tunnel | ding
+e Rakete | ding
+e Antenne | ding weltraum
+s Loch | ding
+s Dach | ding
+e Insel | ding
+e Ebbe | ding meer
+e Flut | ding meer
+e Düne | ding meer
+e Krabbe | tier meer
+r Hummer | tier meer
+r Tintenfisch | tier meer
+e Robbe | tier
+s Floß | ding meer
+e Boje | ding meer
+r Leuchtturm | ding meer
+r Eiszapfen | ding winter
+e Rodel | ding winter
+pl Ski | ding winter
+r Schlittschuh | ding winter
+pl Schlittschuhe | ding winter
+r Nikolaus | person winter
+r Advent | ding winter
+s Plätzchen | essen winter
+pl Plätzchen | essen winter
+r Lebkuchen | essen winter
+e Laterne | ding
+r Kürbis | ding
+r Igel | tier
+e Manege | ding zirkus
+r Akrobat | person zirkus
+r Jongleur | person zirkus
+e Peitsche | ding zirkus
+s Trampolin | ding zirkus
+s Einrad | ding zirkus
+e Kugel | ding zirkus
+r Reifen | ding zirkus
+e Musikkapelle | ding zirkus
+s Kostüm | ding zirkus
+e Nase | ding
+r Zauber | ding zauberwald
+r Zaubertrank | trinken zauberwald
+e Elfe | person zauberwald
+r Kobold | person zauberwald
+r Troll | person zauberwald
+e Quelle | ding zauberwald
+r Fliegenpilz | ding zauberwald
+e Beere | essen zauberwald
+pl Beeren | essen zauberwald
+r Tannenzapfen | ding zauberwald
+e Eichel | ding zauberwald
+e Mondrakete | ding weltraum
+r Satellit | ding weltraum
+s Teleskop | ding weltraum
+e Galaxie | ding weltraum
+r Marsmensch | person weltraum
+r Mars | ding weltraum
+e Sternschnuppe | ding weltraum
+r Raumanzug | ding weltraum
+e Raumstation | ding weltraum
+r Krater | ding weltraum
+r Alien | person weltraum
+s Raumschiff | ding weltraum
+# --- Plural und weitere Wörter ---
+pl Hunde | tier
+pl Katzen | tier
+pl Häuser | ding
+pl Autos | ding
+pl Puppen | ding
+pl Tiere | tier
+pl Fische | tier meer
+pl Enten | tier
+pl Hasen | tier wiese
+pl Pferde | tier
+pl Kühe | tier wiese
+pl Schafe | tier wiese
+pl Ziegen | tier
+pl Schweine | tier
+pl Hühner | tier
+pl Bienen | tier wiese
+pl Ameisen | tier wiese
+pl Raupen | tier wiese
+pl Würmer | tier
+pl Schnecken | tier wiese
+pl Frösche | tier wiese
+pl Löwen | tier zirkus
+pl Affen | tier zirkus
+pl Elefanten | tier zirkus
+pl Füchse | tier zauberwald
+pl Bären | tier
+pl Eulen | tier zauberwald
+pl Monde | ding weltraum
+pl Planeten | ding weltraum
+pl Raketen | ding weltraum
+pl Schiffe | ding meer
+pl Boote | ding meer
+pl Muscheln | ding meer
+pl Stühle | ding
+pl Tische | ding
+pl Lampen | ding
+pl Tassen | ding
+pl Teller | ding
+pl Löffel | ding
+pl Gabeln | ding
+pl Töpfe | ding
+pl Hüte | ding
+pl Mützen | ding winter
+pl Jacken | ding
+pl Hosen | ding
+pl Kleider | ding
+pl Hefte | ding
+pl Bilder | ding
+pl Lieder | ding
+pl Spiele | ding
+pl Karten | ding
+pl Briefe | ding
+pl Kerzen | ding winter
+pl Geschenke | ding winter
+pl Feste | ding
+pl Tage | ding
+pl Nächte | ding
+pl Omas | person
+pl Opas | person
+pl Mamas | person
+pl Papas | person
+pl Tanten | person
+pl Freunde | person
+pl Clowns | person zirkus
+pl Zwerge | person zauberwald
+pl Hexen | person zauberwald
+pl Feen | person zauberwald
+pl Ritter | person
+pl Burgen | ding
+pl Schlösser | ding zauberwald
+pl Türme | ding
+pl Zelte | ding zirkus
+pl Wiesen | ding wiese
+pl Wälder | ding zauberwald
+pl Berge | ding
+pl Seen | ding
+pl Inseln | ding meer
+pl Straßen | ding
+pl Wege | ding
+pl Züge | ding
+pl Busse | ding
+pl Räder | ding
+pl Torten | essen
+pl Brote | essen
+pl Würste | essen
+pl Birnen | essen
+pl Gurken | essen
+pl Zitronen | essen
+pl Melonen | essen
+pl Kisten | ding
+pl Körbe | ding
+pl Nester | ding
+pl Federn | ding
+pl Pfoten | ding
+pl Blüten | ding wiese
+pl Beete | ding wiese
+e Feder | ding
+r Flügel | ding
+r Schwanz | ding
+e Pfote | ding
+s Fell | ding
+r Schnabel | ding
+r Kamm | ding
+e Bürste | ding
+e Seife | ding
+s Handtuch | ding
+e Zahnbürste | ding
+r Spiegel | ding
+r Schrank | ding
+s Regal | ding
+r Teppich | ding
+r Ofen | ding
+r Herd | ding
+r Kühlschrank | ding
+e Küche | ding
+s Wohnzimmer | im
+s Kinderzimmer | im
+e Garage | ding
+r Balkon | am
+e Kirche | ding
+s Rathaus | im
+r Bahnhof | am
+r Spielplatz | am
+r Sandkasten | im
+e Bäckerei | ding
+r Markt | am
+r Supermarkt | im
+e Kasse | ding
+s Geld | ding
+e Münze | ding
+r Sack | ding
+e Tüte | ding
+s Paket | ding
+s Kuscheltier | ding
+r Roboter | ding weltraum
+r Kran | ding
+e Feuerwehr | ding
+s Feuerwehrauto | ding
+r Krankenwagen | ding
+r Hubschrauber | ding
+r Hafen | im meer
+r Kapitän | person meer
+s Ruder | ding meer
+e Dusche | ding
+e Wanne | ding
+r Schwamm | ding
+e Schokolade | essen
+s Bonbon | essen
+pl Bonbons | essen
+e Marmelade | essen
+r Senf | essen
+e Pfanne | ding
+r Teig | ding
+r Himmel | ding weltraum
+s Gewitter | ding
+r Nebel | ding
+r Frost | ding winter
+r Hagel | ding
+e Kälte | ding winter
+e Hitze | ding
+r Sonnenschein | ding wiese
+s Wetter | ding
+s Laub | ding zauberwald
+e Blüte | ding wiese
+e Knospe | ding wiese
+s Beet | ding wiese
+r Samen | ding wiese
+e Gießkanne | ding wiese
+e Hecke | ding wiese
+r Strauch | ding
+r Busch | ding
+e Eiche | ding zauberwald
+e Birke | ding
+r Löwenzahn | ding wiese
+e Pusteblume | ding wiese
+s Gänseblümchen | ding wiese
+e Sonnenblume | ding wiese
+r Klee | ding wiese
+e Mohnblume | ding wiese
+e Lupe | ding
+s Kinderbett | ding
+r Schnuller | ding
+e Windel | ding
+r Stachel | ding
+pl Stacheln | ding
+s Futter | essen
+r Teig | ding
+r Mittag | ding
+r Vormittag | ding
+r Nachmittag | ding
+s Frühstück | essen
+s Mittagessen | essen
+s Abendbrot | essen
+r Hunger | ding
+r Durst | ding
+r Spaß | ding
+e Angst | ding
+e Freude | ding
+e Hilfe | ding
+r Mut | ding
+s Glück | ding
+r Traum | ding
+e Idee | ding
+e Frage | ding
+e Antwort | ding
+e Geschichte | ding
+s Märchen | ding zauberwald
+s Lesebuch | ding
+e Seite | ding
+s Wort | ding
+pl Wörter | ding
+r Satz | ding
+r Buchstabe | ding
+pl Buchstaben | ding
+e Klasse | ding
+e Pause | ding
+r Pausenhof | im
+r Turnbeutel | ding
+e Turnhalle | ding
+s Sportfest | ding
+r Sport | ding
+s Tor | ding
+r Pokal | ding
+e Medaille | ding
+s Rennen | ding
+e Fahrt | ding
+e Reise | ding
+r Urlaub | im
+s Hotel | im
+r Zeltplatz | am
+s Lagerfeuer | ding
+e Wanderung | ding
+r Rucksack | ding
+e Flasche | ding
+e Karte | ding
+r Kompass | ding
+e Taschenlampe | ding
+s Fernglas | ding
+s Picknick | ding wiese
+e Decke | ding
+e Sandburg | ding meer
+r Eimer | ding
+e Luftmatratze | ding meer
+r Badeanzug | ding meer
+e Badehose | ding meer
+s Schwimmbad | im
+r Sprungturm | am
+e Rutsche | ding
+r Bademeister | person
+s Seil | ding
+e Socke | ding
+s Nilpferd | tier
+r Hai | tier
+s Faultier | tier
+r Waschbär | tier
+s Murmeltier | tier
+r Adler | tier
+r Falke | tier
+e Krähe | tier
+r Schwan | tier
+r Flamingo | tier
+s Stinktier | tier
+r Wolf | tier
+pl Wölfe | tier
+s Mammut | tier
+e Hummel | tier
+e Libelle | tier wiese
+r Marienkäfer | tier wiese
+r Grashüpfer | tier wiese
+r Regenwurm | tier wiese

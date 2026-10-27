@@ -1,0 +1,164 @@
+# Infinitiv 3.Person | Tags
+malen malt | intr akk
+essen isst | essen
+trinken trinkt | trinken
+mögen mag | essen trinken akk
+sein ist |
+haben hat | akk
+lachen lacht | intr
+weinen weint | intr
+rennen rennt | intr tier
+laufen läuft | intr tier
+gehen geht | intr
+kommen kommt | intr tier
+singen singt | intr
+tanzen tanzt | intr
+turnen turnt | intr
+spielen spielt | intr
+schlafen schläft | intr tier
+lesen liest | intr akk
+rufen ruft | intr akk
+sehen sieht | akk
+suchen sucht | akk
+finden findet | akk
+holen holt | akk
+bauen baut | intr akk
+backen backt | intr akk
+kochen kocht | intr akk
+rollen rollt | intr
+hüpfen hüpft | intr tier
+springen springt | intr tier
+schwimmen schwimmt | intr tier
+tauchen taucht | intr tier
+fliegen fliegt | intr tier
+klettern klettert | intr tier
+rutschen rutscht | intr
+schaukeln schaukelt | intr
+reiten reitet | intr
+fahren fährt | intr
+winken winkt | intr
+pfeifen pfeift | intr
+summen summt | intr tier
+brummen brummt | intr tier
+bellen bellt | intr tier
+miauen miaut | intr tier
+quaken quakt | intr tier
+muhen muht | intr tier
+wiehern wiehert | intr tier
+zaubern zaubert | intr
+rechnen rechnet | intr
+schreiben schreibt | intr
+zählen zählt | intr akk
+basteln bastelt | intr
+kleben klebt | intr akk
+schneiden schneidet | akk
+waschen wäscht | akk
+putzen putzt | intr akk
+fegen fegt | intr
+helfen hilft | intr
+warten wartet | intr
+sitzen sitzt | intr tier
+liegen liegt | intr tier
+stehen steht | intr tier
+sagen sagt |
+fragen fragt | intr akk
+hören hört | akk
+riechen riecht | akk
+fühlen fühlt | akk
+kaufen kauft | akk
+tragen trägt | akk
+werfen wirft | akk
+fangen fängt | akk
+kicken kickt | intr
+schießen schießt | intr
+gewinnen gewinnt | intr
+staunen staunt | intr
+träumen träumt | intr
+wachen wacht | intr
+lernen lernt | intr
+wohnen wohnt | intr tier
+leben lebt | intr tier
+husten hustet | intr
+niesen niest | intr
+gähnen gähnt | intr tier
+pusten pustet | intr
+blasen bläst | intr
+trommeln trommelt | intr
+jonglieren jongliert | intr
+grüßen grüßt | akk
+küssen küsst | akk
+drücken drückt | akk
+streicheln streichelt | akk
+füttern füttert | akk
+pflücken pflückt | akk
+gießen gießt | akk
+säen sät | intr
+graben gräbt | intr tier
+fressen frisst | essen tier
+nagen nagt | intr tier
+kriechen kriecht | intr tier
+krabbeln krabbelt | intr tier
+flattern flattert | intr tier
+landen landet | intr
+starten startet | intr
+segeln segelt | intr
+rudern rudert | intr
+angeln angelt | intr
+rodeln rodelt | intr
+frieren friert | intr tier
+schwitzen schwitzt | intr
+leuchten leuchtet | intr
+blinken blinkt | intr
+regnen regnet |
+schneien schneit |
+öffnen öffnet | akk
+nehmen nimmt | akk
+geben gibt | akk
+bringen bringt | akk
+legen legt | akk
+stellen stellt | akk
+machen macht | akk
+packen packt | akk
+ziehen zieht | akk
+schieben schiebt | akk
+tippen tippt | intr
+mischen mischt | akk
+rühren rührt | intr
+schmecken schmeckt | intr
+lieben liebt | akk
+loben lobt | akk
+trösten tröstet | akk
+besuchen besucht | akk
+erzählen erzählt | intr
+zeigen zeigt | akk
+schauen schaut | intr
+gucken guckt | intr
+toben tobt | intr
+salzen salzt | akk
+stolpern stolpert | intr
+klatschen klatscht | intr
+fallen fällt | intr
+sammeln sammelt | akk
+jagen jagt | akk tier
+schütteln schüttelt | akk
+wedeln wedelt | intr tier
+lecken leckt | akk tier
+beißen beißt | akk tier
+kratzen kratzt | intr tier
+hängen hängt | intr
+klopfen klopft | intr
+knallen knallt | intr
+plantschen plantscht | intr
+spritzen spritzt | intr
+duschen duscht | intr
+baden badet | intr
+kämmen kämmt | akk
+schminken schminkt | akk
+rasen rast | intr
+bremsen bremst | intr
+hupen hupt | intr
+parken parkt | intr
+reisen reist | intr
+wandern wandert | intr
+zelten zeltet | intr
+picknicken picknickt | intr

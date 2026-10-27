@@ -19,8 +19,12 @@ function colW(items: string[]): string {
   return `${(max * 0.62 + 1.4).toFixed(2)}em`;
 }
 
-function grid(items: string[], cls: string): string {
-  return `<div class="sh-grid ${cls}" style="--colw:${colW(items)}">${items.map((w) => `<span>${esc(w)}</span>`).join('')}</div>`;
+function editAttr(edit: string | null, i: number): string {
+  return edit ? ` data-edit="${edit}:${i}"` : '';
+}
+
+function grid(items: string[], cls: string, edit: string | null): string {
+  return `<div class="sh-grid ${cls}" style="--colw:${colW(items)}">${items.map((w, i) => `<span${editAttr(edit, i)}>${esc(w)}</span>`).join('')}</div>`;
 }
 
 function blockHead(n: number, title: string, id: BlockId, interactive: boolean): string {
@@ -69,9 +73,9 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
     return `<section class="blk blk-${id}${alt ? '' : ' alt'}${extra}" data-zone="block" data-block="${id}">${blockHead(n, title, id, interactive)}${body}</section>`;
   };
 
-  if (d.blocks.silben && d.silben.length) blocks.push(section('silben', 'Silben', grid(d.silben, 'g-silben')));
-  if (d.blocks.woerter && d.woerter.length) blocks.push(section('woerter', 'Wörter', grid(d.woerter, 'g-woerter')));
-  if (d.blocks.kleine && d.kleine.length) blocks.push(section('kleine', 'Kleine Wörter', grid(d.kleine, 'g-kleine')));
+  if (d.blocks.silben && d.silben.length) blocks.push(section('silben', 'Silben', grid(d.silben, 'g-silben', null)));
+  if (d.blocks.woerter && d.woerter.length) blocks.push(section('woerter', 'Wörter', grid(d.woerter, 'g-woerter', interactive ? 'woerter' : null)));
+  if (d.blocks.kleine && d.kleine.length) blocks.push(section('kleine', 'Kleine Wörter', grid(d.kleine, 'g-kleine', interactive ? 'kleine' : null)));
   if (d.blocks.aehnlich && d.aehnlich) {
     const [a, b] = d.aehnlich.pair;
     const title = a.toLowerCase() === b.toLowerCase() || (a === 'l' && b === 'I') ? `Klein ${a} oder groß ${b}?` : `${a} oder ${b}?`;
@@ -81,15 +85,15 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
   }
 
   const saetze =
-    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines">${d.saetze.map((s) => `<p>${esc(s)}</p>`).join('')}</div>`) : null;
+    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines">${d.saetze.map((s, i) => `<p${editAttr(interactive ? 'saetze' : null, i)}>${esc(s)}</p>`).join('')}</div>`) : null;
   const gesch =
     d.blocks.geschichte && d.geschichte && d.geschichte.saetze.length
       ? () => {
           const g = d.geschichte!;
           const lines = g.saetze
-            .map((s, i) => `<p${i === g.saetze.length - 1 && s.trim().endsWith('!') ? ' class="hl"' : ''}>${esc(s)}</p>`)
+            .map((s, i) => `<p${i === g.saetze.length - 1 && s.trim().endsWith('!') ? ' class="hl"' : ''}${editAttr(interactive ? 'geschichte' : null, i)}>${esc(s)}</p>`)
             .join('');
-          return section('geschichte', `Geschichte: ${g.titel}`, `<div class="sh-lines">${lines}</div>`, ' story');
+          return section('geschichte', g.titel ? `Geschichte: ${g.titel}` : 'Geschichte', `<div class="sh-lines">${lines}</div>`, ' story');
         }
       : null;
   if (saetze && gesch) blocks.push(`<div class="blk-row">${saetze()}${gesch()}</div>`);
@@ -100,7 +104,9 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
     const q = d.quest;
     let extra = '';
     if (q.kind === 'zaehle') extra = `<span class="q-box"></span>`;
-    if (q.kind === 'geheimwort' && q.target) extra = `<span class="q-secret">${[...q.target].map(() => '<span></span>').join('')}</span>`;
+    if (q.kind === 'geheimwort' && q.target) {
+      extra = `<span class="q-words">${(q.words ?? []).map((w) => `<u>${esc(w)}</u>`).join(' · ')}</span><span class="q-secret">${[...q.target].map(() => '<span></span>').join('')}</span>`;
+    }
     const male = q.kind === 'male' ? raupeOutlineSvg(t) : '';
     blocks.push(
       `<section class="blk-quest" data-zone="quest" data-block="quest"><span class="q-label">Quest · ${QUEST_LABEL[q.kind]}</span><span class="q-text">${esc(q.text)}</span>${extra}${male}${

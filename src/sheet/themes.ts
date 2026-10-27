@@ -43,7 +43,7 @@ const flag = `<path d="M20 10 L20 92" stroke="#9AA59E" stroke-width="5"/><path d
 
 const wave = (stroke: string, step: number) => {
   let d = `M0 14`;
-  for (let x = 0; x < 720; x += step * 2) d += ` Q${x + step / 2} ${4} ${x + step} 14 T${x + step * 2} 14`;
+  for (let x = 0; x + step * 2 <= 720; x += step * 2) d += ` Q${x + step / 2} 4 ${x + step} 14 T${x + step * 2} 14`;
   return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="3"/>`;
 };
 const row = (n: number, item: (x: number, i: number) => string) =>
@@ -74,7 +74,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     costume: `<path d="M138 30 A28 28 0 0 1 194 30" fill="#DCE6F7" stroke="#2B3A67" stroke-width="3"/><circle cx="166" cy="2" r="4" fill="#E8896A"/><path d="M166 6 L166 12" stroke="#2B3A67" stroke-width="2.5"/>`,
     headDeco: [star('#F2C94C'), planet, rocket],
     footDeco: star('#F2C94C'),
-    strip: row(18, (x, i) => `<polygon transform="translate(${x} 12) scale(${i % 2 ? 0.09 : 0.13}) translate(-50 -50)" points="50,8 61,37 92,39 68,58 76,89 50,72 24,89 32,58 8,39 39,37" fill="${i % 3 ? '#8FA4E8' : '#F2C94C'}"/>`),
+    strip: row(18, (x, i) => `<polygon transform="translate(${x} 12) scale(${i % 2 ? 0.13 : 0.19}) translate(-50 -50)" points="50,8 61,37 92,39 68,58 76,89 50,72 24,89 32,58 8,39 39,37" fill="${i % 3 ? '#8FA4E8' : '#F2C94C'}"/>`),
   },
   meer: {
     id: 'meer',
@@ -99,7 +99,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     headDeco: [balloon('#D9534F'), flag, balloon('#5FB3D6')],
     footDeco: balloon('#F2C94C'),
     strip:
-      `<path d="M0 3 Q180 12 360 3 T720 3" fill="none" stroke="#9AA59E" stroke-width="1.5"/>` +
+      `<path d="M0 3 Q180 12 360 3 Q540 12 720 3" fill="none" stroke="#9AA59E" stroke-width="1.5"/>` +
       row(20, (x, i) => `<path d="M${x - 6} ${5 + (i % 2) * 2} l6 13 l6 -13Z" fill="${['#D9534F', '#F2C94C', '#5FB3D6', '#7FC06D'][i % 4]}"/>`),
   },
   zauberwald: {
