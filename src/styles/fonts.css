@@ -1,0 +1,24 @@
+/* Inter, lokal (OFL). Nie von Google Fonts: dort fehlen cv05 / cv11. */
+@font-face {
+  font-family: 'Inter Schule';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 400 500;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Inter Schule';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  font-weight: 600 700;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Inter Schule';
+  src: url('/fonts/Inter-ExtraBold.woff2') format('woff2');
+  font-weight: 800 900;
+  font-display: block;
+}
+:root {
+  --font: 'Inter Schule', system-ui, sans-serif;
+  /* cv05 = l mit Bogen, cv11 = einstöckiges a (wie Grundschrift) */
+  --font-features: 'cv05' 1, 'cv11' 1;
+}
