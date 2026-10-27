@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Leseraupe — Verlauf</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@font-face{font-family:'Inter Schule';src:url(/_blob/5136bb7d107e9edaaf559049756ef9b5) format('woff2');font-weight:400 500}
+@font-face{font-family:'Inter Schule';src:url(/_blob/4fbacaf98fb996047e8ec03628482f1a) format('woff2');font-weight:600}
+@font-face{font-family:'Inter Schule';src:url(/_blob/521e514a0e1ef882ddcf101834a93143) format('woff2');font-weight:700 900}
+a{color:#2F6B3A}a:hover{color:#1F4A27}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F8F2; font-family: 'Nunito', sans-serif; color: #1F2421; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 16px; display: flex; align-items: center; gap: 10px">
+    <a href="App1-Start.dc.html" aria-label="Zurück" style="width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <span style="font-size: 22px; font-weight: 800">Verlauf</span>
+    <span style="margin-left: auto; font-size: 12px; color: #5B655F">Beispieldaten</span>
+  </div>
+
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; overflow: hidden">
+
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <span style="font-size: 24px; font-weight: 900">15</span><span style="font-size: 11px; color: #5B655F">erstellt</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <span style="font-size: 24px; font-weight: 900">13</span><span style="font-size: 11px; color: #5B655F">gedruckt</span>
+      </div>
+      <div style="background: #2F6B3A; color: #FFFFFF; border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <span style="font-size: 24px; font-weight: 900">12</span><span style="font-size: 11px; color: #D7EBD1">gelesen</span>
+      </div>
+      <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <span style="font-size: 24px; font-weight: 900">65</span><span style="font-size: 11px; color: #5B655F">Minuten</span>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 16px; font-weight: 800">Oktober 2026</span>
+        <span style="font-size: 12px; color: #5B655F">12 Lesetage · 6 in Folge</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; font-size: 11px; color: #8A948E; font-weight: 700">
+        <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+        <sc-for list="{{days}}" as="d" hint-placeholder-count="35">
+          <span style="{{d.style}}">{{d.n}}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 16px; font-weight: 800">Blätter</span>
+      <sc-for list="{{sheets}}" as="s" hint-placeholder-count="5">
+        <div style="background: #FFFFFF; border-radius: 14px; padding: 10px 12px; display: flex; align-items: center; gap: 10px">
+          <span style="width: 34px; height: 34px; border-radius: 50%; background: #E9F3E6; color: #2F6B3A; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center">{{s.n}}</span>
+          <div style="display: flex; flex-direction: column; flex: 1; min-width: 0">
+            <span style="font-size: 15px; font-weight: 800">{{s.title}}</span>
+            <span style="font-size: 12px; color: #5B655F">{{s.meta}}</span>
+          </div>
+          <span style="{{s.badgeStyle}}">{{s.status}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+  </div>
+
+  <div style="padding: 10px 16px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+    <button style="height: 46px; border-radius: 14px; border: 1.5px solid #CBD3CE; background: #FFFFFF; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; color: #3D4A56">Protokoll</button>
+    <button style="height: 46px; border-radius: 14px; border: 1.5px solid #CBD3CE; background: #FFFFFF; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; color: #3D4A56">Sicherung</button>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var read = { 14:1, 15:1, 16:1, 19:1, 20:1, 21:1, 22:1, 23:1, 24:1, 25:1, 26:1, 27:1 };
+    var base = 'height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; ';
+    var days = [];
+    for (var i = 0; i < 3; i++) days.push({ n: '', style: base });
+    for (var d = 1; d <= 31; d++) {
+      var st = base + 'color: #8A948E; background: #F4F6F5;';
+      if (read[d]) st = base + 'color: #12301A; background: #7FC06D;';
+      if (d === 27) st = base + 'color: #FFFFFF; background: #2F6B3A; box-shadow: 0 0 0 2px #F2A65A;';
+      days.push({ n: String(d), style: st });
+    }
+    var badge = 'font-size: 12px; font-weight: 800; padding: 5px 9px; border-radius: 10px; white-space: nowrap; ';
+    var ok = badge + 'background: #E9F3E6; color: #2F6B3A;';
+    var pr = badge + 'background: #FFF1E2; color: #A4521A;';
+    var sheets = [
+      { n: '15', title: 'Im All', meta: '27.10 · Weltraum · 5 Min', status: 'gedruckt', badgeStyle: pr },
+      { n: '14', title: 'Lotta und Olli', meta: '26.10 · Wiese · 5 Min', status: 'gelesen ✓', badgeStyle: ok },
+      { n: '13', title: 'Lolli', meta: '26.10 · Wiese · 5 Min', status: 'gelesen ✓', badgeStyle: ok },
+      { n: '12', title: 'Im Tal', meta: '25.10 · Wiese · 5 Min', status: 'gelesen ✓', badgeStyle: ok },
+      { n: '11', title: 'Mama malt', meta: '24.10 · Meer · 5 Min', status: 'gelesen ✓', badgeStyle: ok }
+    ];
+    return { days: days, sheets: sheets };
+  }
+}
+</script>
+</body>
+</html>

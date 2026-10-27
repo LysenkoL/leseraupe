@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Leseraupe — Start</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@font-face{font-family:'Inter Schule';src:url(/_blob/5136bb7d107e9edaaf559049756ef9b5) format('woff2');font-weight:400 500}
+@font-face{font-family:'Inter Schule';src:url(/_blob/4fbacaf98fb996047e8ec03628482f1a) format('woff2');font-weight:600}
+@font-face{font-family:'Inter Schule';src:url(/_blob/521e514a0e1ef882ddcf101834a93143) format('woff2');font-weight:700 900}
+a{color:#2F6B3A}a:hover{color:#1F4A27}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4F8F2; font-family: 'Nunito', sans-serif; color: #1F2421; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 18px 16px 10px; display: flex; align-items: center; justify-content: space-between">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="58" height="28" viewBox="0 0 116 56" aria-hidden="true">
+        <circle cx="14" cy="38" r="12" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/>
+        <circle cx="36" cy="34" r="13" fill="#9FD18F" stroke="#2F6B3A" stroke-width="2.5"/>
+        <circle cx="60" cy="38" r="13" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/>
+        <circle cx="88" cy="28" r="18" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/>
+        <circle cx="82" cy="24" r="3" fill="#1F2421"/><circle cx="94" cy="24" r="3" fill="#1F2421"/>
+        <path d="M81 34 Q88 40 96 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span style="font-size: 24px; font-weight: 800; color: #2F6B3A">Leseraupe</span>
+    </div>
+    <a href="App4-Historie.dc.html" style="text-decoration: none; background: #FFFFFF; border: 1.5px solid #CFE3C8; border-radius: 22px; padding: 10px 14px; font-size: 14px; font-weight: 700; color: #2F6B3A">Verlauf · 15</a>
+  </div>
+
+  <div style="flex: 1; overflow: hidden; padding: 0 16px; display: flex; flex-direction: column; gap: 14px">
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline">
+        <span style="font-size: 16px; font-weight: 800">Gelernte Buchstaben</span>
+        <span style="font-size: 13px; color: #5B655F">7 von 43 · neu: S</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+        <sc-for list="{{letters}}" as="l" hint-placeholder-count="42">
+          <span style="{{l.style}}">{{l.t}}</span>
+        </sc-for>
+      </div>
+      <div style="display: flex; gap: 14px; font-size: 12px; color: #5B655F">
+        <span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #7FC06D"></span> gelernt</span>
+        <span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #F2A65A"></span> neu</span>
+        <span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid #CBD3CE"></span> noch nicht</span>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 16px; font-weight: 800">Lesezeit</span>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button style="height: 46px; border-radius: 14px; border: none; background: #2F6B3A; color: #FFFFFF; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 800">5 Minuten</button>
+        <button style="height: 46px; border-radius: 14px; border: 1.5px solid #CBD3CE; background: #FFFFFF; color: #1F2421; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700">10 Minuten</button>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 16px; font-weight: 800">Thema</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px">
+        <span style="padding: 9px 12px; border-radius: 20px; background: #E9F3E6; color: #2F6B3A; font-size: 14px; font-weight: 700">Wiese</span>
+        <span style="padding: 9px 12px; border-radius: 20px; background: #2B3A67; color: #FFFFFF; font-size: 14px; font-weight: 800">Weltraum</span>
+        <span style="padding: 9px 12px; border-radius: 20px; background: #E3F2FA; color: #1D5E80; font-size: 14px; font-weight: 700">Meer</span>
+        <span style="padding: 9px 12px; border-radius: 20px; background: #FCE8EC; color: #9C2B45; font-size: 14px; font-weight: 700">Zirkus</span>
+        <span style="padding: 9px 12px; border-radius: 20px; background: #EFE8F8; color: #5B3A8C; font-size: 14px; font-weight: 700">Zauberwald</span>
+        <span style="padding: 9px 12px; border-radius: 20px; background: #EEF1F4; color: #3D4A56; font-size: 14px; font-weight: 700">Zufall</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="padding: 12px 16px 22px; display: flex; flex-direction: column; gap: 8px; background: #F4F8F2">
+    <a href="App2-Vorschau.dc.html" style="text-decoration: none; height: 56px; border-radius: 18px; background: #F2A65A; color: #3B1F06; font-size: 19px; font-weight: 800; display: flex; align-items: center; justify-content: center">Leseblatt erstellen</a>
+    <a href="App2-Vorschau.dc.html" style="text-decoration: none; height: 44px; border-radius: 14px; border: 1.5px solid #CBD3CE; background: #FFFFFF; color: #3D4A56; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center">Mit Chat erstellen (Claude / ChatGPT) …</a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var all = ['Mm','Ll','Ch','Bb','Ss','Dd','Ww','Sch','Gg','Aa','Ee','Ii','Oo','Uu','Au','Ei','Eu','Öö','Üü','ie','Ää','äu','Nn','Hh','Rr','Pp','Zz','Tt','Ff','Jj','Kk','Sp','St','Pf','Qu','Xx','Vv','Yy','Cc','ß','ng','ck','tz'];
+    var known = { 'Mm':1,'Ll':1,'Aa':1,'Ii':1,'Oo':1,'Tt':1 };
+    var base = 'height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: \'Inter Schule\', sans-serif; font-feature-settings: \'cv05\' 1, \'cv11\' 1; font-size: 15px; ';
+    var letters = all.map(function (t) {
+      var st;
+      if (t === 'Ss') st = base + 'background: #F2A65A; color: #3B1F06; font-weight: 400;';
+      else if (known[t]) st = base + 'background: #7FC06D; color: #12301A; font-weight: 400;';
+      else st = base + 'background: #FFFFFF; color: #8A948E; border: 1.5px solid #E0E6E2;';
+      return { t: t, style: st };
+    });
+    return { letters: letters };
+  }
+}
+</script>
+</body>
+</html>
