@@ -1,0 +1,11 @@
+@page { size: A4 portrait; margin: 10mm; }
+
+#print-root { display: none; }
+
+@media print {
+  html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; height: auto !important; overflow: visible !important; }
+  body > *:not(#print-root) { display: none !important; }
+  #print-root { display: block !important; }
+  #print-root .sheet { page-break-after: avoid; break-after: avoid; }
+  #print-root .blk-re { display: none !important; }
+}
