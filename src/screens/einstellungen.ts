@@ -41,6 +41,7 @@ export function renderEinstellungen(root: HTMLElement): void {
     <section class="card">
       <h2>Über</h2>
       <div class="hint">Leseraupe · Alle Daten bleiben nur auf diesem Gerät. Schrift: Inter (SIL Open Font License).</div>
+      <div class="hint">Version: ${__BUILD__} UTC</div>
     </section>
   </div>
 </div>`;

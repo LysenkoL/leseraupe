@@ -13,8 +13,22 @@ import { renderThema } from './screens/thema';
 import { renderEinstellungen } from './screens/einstellungen';
 import { renderChat } from './screens/chat';
 
-// Neue Version wird beim Start mit Internet automatisch geladen.
-registerSW({ immediate: true });
+// Neue Version wird beim Start mit Internet automatisch geladen:
+// beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, reg) {
+    if (!reg) return;
+    const check = () => {
+      if (navigator.onLine) reg.update().catch(() => undefined);
+    };
+    check();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') check();
+    });
+    setInterval(check, 60 * 60 * 1000);
+  },
+});
 
 const app = document.getElementById('app')!;
 
