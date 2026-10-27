@@ -200,12 +200,12 @@ s Tor | am
 r Turm | im
 r Keller | im
 r Hof | im
-s Nest | im
+s Nest | ding
 r Sand | im meer
 r Schnee | im winter
 s Gras | im wiese
 s Moos | im zauberwald
-r Korb | im
+r Korb | ding
 r Kindergarten | im
 r Laden | im
 r Zirkus | im zirkus
@@ -773,7 +773,7 @@ s Wetter | ding
 s Laub | ding zauberwald
 e Blüte | ding wiese
 e Knospe | ding wiese
-s Beet | im wiese
+s Beet | ding wiese
 r Samen | ding wiese
 e Gießkanne | ding wiese
 e Hecke | ding wiese

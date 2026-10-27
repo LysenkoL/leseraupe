@@ -43,16 +43,21 @@ describe('App-Ablauf', () => {
 
   it('neuer Buchstabe mit einem Tippen, bleibt nach Neustart', async () => {
     await page.click('[data-l="e"]');
-    expect(await page.textContent('.lt.neu')).toBe('E');
+    await page.waitForFunction(() => document.querySelector('.lt.neu')?.textContent === 'E');
     await page.reload();
-    await page.waitForSelector('[data-l]');
+    await page.waitForSelector('.lt.neu');
     expect(await page.textContent('.lt.neu')).toBe('E');
     // zurück zum Ausgangszustand: E entfernen (neu → gelernt → weg), S wieder neu
-    await page.click('[data-l="e"]');
-    await page.click('[data-l="e"]');
-    await page.click('[data-l="s"]');
-    await page.click('[data-l="s"]');
+    const tap = async (id: string, cls: string) => {
+      await page.click(`[data-l="${id}"]`);
+      await page.waitForFunction(([i, c]) => document.querySelector(`[data-l="${i}"]`)?.className.includes(c), [id, cls]);
+    };
+    await tap('e', 'lt on');
+    await tap('e', 'lt ');
+    await tap('s', 'lt ');
+    await tap('s', 'lt neu');
     expect(await page.textContent('.lt.neu')).toBe('S');
+    expect(await page.$$eval('.lt.on', (e) => e.length)).toBe(6);
   });
 
   it('Leseblatt erstellen → Vorschau → Drucken vergibt Blatt 1', async () => {

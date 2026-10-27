@@ -2,7 +2,7 @@ import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte, Aehnlic
 import type { ThemeId } from '../sheet/themes';
 import { Vocab } from './vocab';
 import { DICT } from './dict';
-import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, checkText, countUnit } from './letters';
+import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, checkText, countUnit, tokenizeWord } from './letters';
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
 
@@ -44,15 +44,17 @@ export interface Removed {
 }
 
 const SILBEN_CV_EXCLUDE = new Set(['c', 'x', 'y', 'q']);
-const SILBEN_VC = new Set(['m', 'l', 's', 't', 'n', 'r', 'f', 'k', 'p', 'b', 'd', 'g']);
+const SILBEN_VC = new Set(['m', 'l', 's', 't', 'n', 'r', 'f']);
+const PLAIN_VOWELS = new Set(['a', 'e', 'i', 'o', 'u']);
 
 /** Silben aus 2 Buchstaben(-einheiten): Konsonant + Vokal und Vokal + Konsonant. */
 export function makeSilben(letters: string[], newLetter: string | null, n: number, rng: Rng): string[] {
-  const vowels = letters.filter((l) => VOWEL_UNITS.has(l));
+  // Silben aus zwei Buchstaben; Umlaute/Zwielaute nur, wenn sie der neue Buchstabe sind
+  const vowels = letters.filter((l) => VOWEL_UNITS.has(l) && (PLAIN_VOWELS.has(l) || ['ä', 'ö', 'ü'].includes(l) || l === newLetter));
   const cons = letters.filter((l) => SINGLE_CONSONANTS.has(l));
   const all: string[] = [];
   for (const c of cons) for (const v of vowels) if (!SILBEN_CV_EXCLUDE.has(c)) all.push(c + v);
-  for (const v of vowels) for (const c of cons) if (SILBEN_VC.has(c) && 'aeiou'.includes(v)) all.push(v + c);
+  for (const v of vowels) for (const c of cons) if (SILBEN_VC.has(c) && PLAIN_VOWELS.has(v)) all.push(v + c);
   const uniq = [...new Set(all)];
   const withNew = newLetter ? uniq.filter((s) => s.includes(newLetter)) : [];
   const rest = uniq.filter((s) => !withNew.includes(s));
@@ -66,8 +68,9 @@ function pickFresh(cands: string[], n: number, h: History, rng: Rng, prefer: (w:
   const blocked = (w: string) => (h.wordSeq.get(w) ?? -Infinity) >= h.seq - 2;
   const fresh = shuffle(cands.filter((w) => !blocked(w)), rng);
   const stale = cands.filter(blocked).sort((a, b) => (h.wordSeq.get(a) ?? 0) - (h.wordSeq.get(b) ?? 0));
-  const pref = fresh.filter(prefer);
-  const other = fresh.filter((w) => !prefer(w));
+  const isPref = new Map(fresh.map((w) => [w, prefer(w)]));
+  const pref = fresh.filter((w) => isPref.get(w));
+  const other = fresh.filter((w) => !isPref.get(w));
   const k = Math.min(pref.length, Math.round(n * preferShare));
   const out = [...pref.slice(0, k), ...other, ...pref.slice(k)].slice(0, n);
   for (const w of stale) {
@@ -137,8 +140,13 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   const curated = DICT.geschichten.filter(
     (g) => g.saetze.length >= lo && g.saetze.length <= hi && v.has(g.titel) && g.saetze.every((s) => v.has(s)),
   );
+  // reichhaltige Geschichten bevorzugen (viele verschiedene gelernte Einheiten)
+  const richness = (g: { saetze: string[] }) => new Set(g.saetze.flatMap((x) => wordsOf(x).flatMap((w) => tokenizeWord(w).units))).size;
   const fresh = curated.filter((g) => !p.history.recentStories.has(g.titel));
-  const cur = pick(fresh, rng);
+  const maxRich = Math.max(0, ...fresh.map(richness));
+  // zu einfache Geschichte für viele gelernte Buchstaben? Dann lieber eine aus Vorlagen.
+  const minRich = Math.min(p.letters.length, 20) * 0.5;
+  const cur = pick(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich), rng);
   const [fmin, fmax] = COUNTS[p.minutes].fragen;
   if (cur && rng() < 0.75) {
     return { g: { titel: cur.titel, saetze: [...cur.saetze] }, fragen: cur.fragen.slice(0, fmax) };
