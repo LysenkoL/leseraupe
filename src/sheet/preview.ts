@@ -30,7 +30,9 @@ export async function mountPreview(
     scaler.style.height = `${paper.offsetHeight * k}px`;
   };
   resize();
-  const ro = new ResizeObserver(resize);
-  ro.observe(host);
+  const h = host as HTMLElement & { _ro?: ResizeObserver };
+  h._ro?.disconnect();
+  h._ro = new ResizeObserver(resize);
+  h._ro.observe(host);
   return { html: sheet.outerHTML, ...result, sheet };
 }

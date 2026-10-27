@@ -137,7 +137,7 @@
 .q-secret { display: flex; gap: 1.6mm; }
 .q-secret span { width: 8.5mm; height: 10mm; border-bottom: 2px solid var(--ink); }
 .quest-male { width: 60mm; height: 28mm; flex: none; }
-.blk-quest .blk-re { top: 50%; transform: translateY(-50%); }
+.blk-quest .blk-re { top: -4.5mm; right: 2mm; }
 
 /* ---------- Fuß ---------- */
 .sh-foot {
@@ -154,3 +154,6 @@
   background: var(--main); color: #fff; font-weight: 800; font-size: 15px;
   display: flex; align-items: center; justify-content: center;
 }
+.q-words { font-size: calc(var(--fs) * 21px); }
+.q-words u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.sheet [data-edit] { cursor: pointer; }

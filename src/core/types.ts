@@ -53,7 +53,7 @@ export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {
   silben: true,
   woerter: true,
   kleine: true,
-  aehnlich: false,
+  aehnlich: true,
   saetze: true,
   geschichte: true,
   quest: true,
