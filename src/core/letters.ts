@@ -1,5 +1,5 @@
 /**
- * Buchstaben-Einheiten nach der erweiterten Schreibtabelle der Fibel.
+ * Buchstaben-Einheiten in der Reihenfolge einer erweiterten Schreibtabelle (wie in vielen Fibeln).
  * Buchstabenverbindungen (Ch, Sch, Au, …) sind eigene Einheiten: ein Wort mit „Eis“
  * braucht die Einheit „ei“, auch wenn e und i schon gelernt sind.
  */

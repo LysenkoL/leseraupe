@@ -190,3 +190,6 @@ details.card > summary::-webkit-details-marker { display: none; }
 .tc-name { font-weight: 800; font-size: 16px; color: var(--main); padding: 0 4px 2px; }
 .tc-sel { position: absolute; right: 8px; bottom: 8px; background: var(--main); color: #fff; font-size: 12px; font-weight: 800; border-radius: 99px; padding: 3px 9px; }
 .prompt { white-space: pre-wrap; font-size: 12px; background: var(--grey); padding: 10px; border-radius: 10px; margin: 8px 0 0; font-family: ui-monospace, monospace; }
+.name-row { display: flex; gap: 8px; }
+.name-row input { flex: 1; min-width: 0; border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 0 12px; min-height: 48px; font-size: 17px; font-weight: 600; background: #fff; }
+.name-row .btn { min-height: 48px; }

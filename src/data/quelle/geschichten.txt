@@ -83,15 +83,15 @@ Sie schläft lange.
 
 # Ein Eis für Oma
 Oma ist im Garten.
-Lena hat ein Eis.
+Nele hat ein Eis.
 Das Eis ist kalt.
-Lena gibt Oma das Eis.
+Nele gibt Oma das Eis.
 Oma lacht.
 Das Eis ist lecker!
-Danke, Lena!
+Danke, Nele!
 ? Wo ist Oma?
-? Was hat Lena?
-? Was macht Lena mit dem Eis?
+? Was hat Nele?
+? Was macht Nele mit dem Eis?
 
 # Der Ball
 Ben hat einen Ball.

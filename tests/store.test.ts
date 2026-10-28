@@ -13,11 +13,11 @@ beforeEach(() => {
 });
 
 describe('Einstellungen', () => {
-  it('Start: T O M L A I S, neu S, Mia', () => {
+  it('Start: T O M L A I S, neu S, Name leer', () => {
     const s = loadSettings();
     expect(s.letters.sort()).toEqual(['a', 'i', 'l', 'm', 'o', 's', 't']);
     expect(s.newLetter).toBe('s');
-    expect(s.childName).toBe('Mia');
+    expect(s.childName).toBe('');
   });
 
   it('Buchstaben bleiben nach Neustart erhalten', () => {

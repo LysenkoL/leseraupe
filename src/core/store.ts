@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'wiese',
   randomTheme: false,
   blocks: { ...DEFAULT_BLOCKS },
-  childName: 'Mia',
+  childName: '',
   aehnlichPair: ['l', 'I'],
 };
 

@@ -41,6 +41,16 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('.lt.neu')).toBe('S');
   });
 
+  it('Name des Kindes ist zuerst leer und wird einmal eingegeben', async () => {
+    await page.waitForSelector('#child-name');
+    expect(await page.inputValue('#child-name')).toBe('');
+    await page.fill('#child-name', 'Mia');
+    await page.click('#name-form button');
+    await page.waitForFunction(() => !document.querySelector('#child-name'));
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.settings.v1')!).childName);
+    expect(saved).toBe('Mia');
+  });
+
   it('Installieren-Knopf erscheint mit beforeinstallprompt und ruft prompt() auf', async () => {
     expect(await page.$('#install')).toBeNull();
     await page.evaluate(() => {
@@ -82,6 +92,7 @@ describe('App-Ablauf', () => {
     await page.click('#print');
     await page.waitForFunction(() => (window as unknown as { __printed: number }).__printed === 1);
     expect(await page.$eval('#print-root .sh-perle', (e) => e.textContent)).toBe('1');
+    expect(await page.$eval('#print-root .sh-name', (e) => e.textContent)).toBe('Mia');
     expect(await page.$eval('#print-root .sheet', (e) => e.querySelectorAll('.blk-re').length)).toBe(0);
     expect(await page.textContent('#pv-title')).toContain('Blatt 1');
   });

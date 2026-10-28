@@ -56,11 +56,19 @@ export function renderStart(root: HTMLElement): void {
         ? `<section class="card install"><h2>App aufs Handy</h2><button class="btn green" id="install">Leseraupe installieren</button></section>`
         : ''
     }
+    ${
+      s.childName
+        ? ''
+        : `<section class="card"><h2>Name des Kindes</h2>
+      <div class="hint">Steht oben auf jedem Leseblatt. Leer lassen, wenn das Kind den Namen selbst schreiben soll. Später änderbar in den Einstellungen.</div>
+      <form class="name-row" id="name-form"><input id="child-name" autocomplete="off" maxlength="40" placeholder="z. B. Mia" aria-label="Name des Kindes" /><button class="btn green" type="submit">Speichern</button></form>
+    </section>`
+    }
     <section class="card">
       <div class="row"><h2>Gelernte Buchstaben</h2><span class="hint">${s.letters.length} von 43 · neu: ${esc(neu ?? '–')}</span></div>
       <div class="letters">${letters}</div>
       <div class="legend"><span><i style="background:#9FD18F"></i>gelernt</span><span><i style="background:#F2A65A"></i>neu</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>noch nicht</span></div>
-      <div class="hint">Tippen: noch nicht → neu → gelernt → noch nicht</div>
+      <div class="hint">Reihenfolge wie in vielen Fibeln · Tippen: noch nicht → neu → gelernt → noch nicht</div>
     </section>
     <section class="card">
       <h2>Lesezeit</h2>
@@ -115,6 +123,14 @@ export function renderStart(root: HTMLElement): void {
         setSettings({ ...s2, blocks: { ...s2.blocks, [cb.dataset.block!]: cb.checked } });
       }),
     );
+    root.querySelector<HTMLFormElement>('#name-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = root.querySelector<HTMLInputElement>('#child-name')!.value.trim();
+      if (!name) return;
+      setSettings({ ...getSettings(), childName: name });
+      toast('Name gespeichert');
+      draw(count);
+    });
     root.querySelector('#install')?.addEventListener('click', async () => {
       if (await install()) toast('Fertig! Leseraupe ist jetzt bei den Apps.');
       draw(count);

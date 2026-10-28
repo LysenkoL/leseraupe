@@ -7,7 +7,7 @@ export const SAMPLE_SHEET: SheetData = {
   theme: 'wiese',
   letters: ['m', 'l', 's', 'a', 'i', 'o', 't'],
   newLetter: 's',
-  childName: 'Mia',
+  childName: '',
   blocks: { ...DEFAULT_BLOCKS },
   silben: ['ma', 'mi', 'mo', 'la', 'li', 'lo', 'ta', 'ti', 'to', 'sa', 'si', 'so', 'am', 'im', 'al', 'il', 'as', 'it'],
   woerter: ['Mama', 'Oma', 'Tom', 'Tim', 'Mia', 'Lisa', 'Lola', 'Sam', 'Lama', 'Mais', 'Salat', 'Toast', 'Ast', 'Mast', 'Tal', 'Moos', 'Lasso', 'Salto', 'Lotto', 'Atom'],

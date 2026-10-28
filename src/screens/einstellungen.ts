@@ -45,7 +45,7 @@ export function renderEinstellungen(root: HTMLElement): void {
         : `<section class="card">
       <h2>App aufs Handy</h2>
       ${canInstall() ? '<button class="btn green" id="inst">Leseraupe installieren</button>' : ''}
-      <div class="hint">Android, Chrome: am besten diesen Knopf nutzen. Im Chrome-Menü ⋮ steht auf lysenkol.github.io oft „bereits installiert“, weil dort mehrere Apps liegen – dann „Verknüpfung erstellen“ wählen.</div>
+      <div class="hint">Android, Chrome: am besten diesen Knopf nutzen. Steht im Chrome-Menü ⋮ „bereits installiert“ (kommt vor, wenn unter derselben Adresse mehrere Apps liegen) – dann „Verknüpfung erstellen“ wählen.</div>
     </section>`
     }
     <section class="card">

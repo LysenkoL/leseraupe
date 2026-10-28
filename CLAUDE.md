@@ -5,7 +5,7 @@ PWA für Eltern von Erstklässlern: erzeugt tägliche A4-Leseblätter nur aus ge
 ## Immer zuerst lesen
 - `docs/TZ.md` — vollständige Spezifikation (Russisch). Sie ist verbindlich.
 - `docs/design/*.html` — Mockups (Leseblätter, Screens, Themen-Kopfzeilen). Nur als Vorlage für Layout und Farben.
-- Schrift-Vorbild: Grundschrift, Schreibtabelle der Fibel (keine Dateien im Repo).
+- Schrift-Vorbild: Grundschrift, Schreibtabelle der Fibel (keine Dateien im Repo; Merkmale siehe `docs/TZ.md`, Abschnitt 5.3).
 
 ## Harte Regeln
 1. Auf einem Leseblatt erscheint **kein** Buchstabe und **keine** Buchstabenverbindung, die nicht als gelernt markiert ist (Ausnahme: Name des Kindes, Elternfragen). Immer per Code prüfen, nie dem Wörterbuch oder dem Chat vertrauen.
