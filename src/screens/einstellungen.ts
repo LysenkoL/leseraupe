@@ -2,6 +2,7 @@ import { getSettings, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
 import { exportBackup, importBackup, log, parseBackup } from '../core/db';
 import { sanitize } from '../core/store';
+import { canInstall, install, isStandalone } from '../app/install';
 
 export const PAIRS: [string, string][] = [
   ['l', 'I'],
@@ -38,6 +39,15 @@ export function renderEinstellungen(root: HTMLElement): void {
       <label class="btn ghost" for="imp" style="cursor:pointer">Sicherung laden …</label>
       <input type="file" id="imp" accept="application/json,.json" hidden />
     </section>
+    ${
+      isStandalone()
+        ? ''
+        : `<section class="card">
+      <h2>App aufs Handy</h2>
+      ${canInstall() ? '<button class="btn green" id="inst">Leseraupe installieren</button>' : ''}
+      <div class="hint">Android, Chrome: am besten diesen Knopf nutzen. Im Chrome-Menü ⋮ steht auf lysenkol.github.io oft „bereits installiert“, weil dort mehrere Apps liegen – dann „Verknüpfung erstellen“ wählen.</div>
+    </section>`
+    }
     <section class="card">
       <h2>Über</h2>
       <div class="hint">Leseraupe · Alle Daten bleiben nur auf diesem Gerät. Schrift: Inter (SIL Open Font License).</div>
@@ -51,6 +61,11 @@ export function renderEinstellungen(root: HTMLElement): void {
     const pair = root.querySelector<HTMLSelectElement>('#pair')!.value.split('/') as [string, string];
     setSettings({ ...getSettings(), childName: name, aehnlichPair: pair });
     toast('Gespeichert');
+  });
+
+  root.querySelector('#inst')?.addEventListener('click', async () => {
+    if (await install()) toast('Fertig! Leseraupe ist jetzt bei den Apps.');
+    renderEinstellungen(root);
   });
 
   root.querySelector('#exp')!.addEventListener('click', async () => {

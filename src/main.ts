@@ -12,6 +12,7 @@ import { renderBlatt } from './screens/blatt';
 import { renderThema } from './screens/thema';
 import { renderEinstellungen } from './screens/einstellungen';
 import { renderChat } from './screens/chat';
+import { initInstall } from './app/install';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
 // beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
@@ -29,6 +30,8 @@ registerSW({
     setInterval(check, 60 * 60 * 1000);
   },
 });
+
+initInstall();
 
 const app = document.getElementById('app')!;
 
