@@ -41,6 +41,22 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('.lt.neu')).toBe('S');
   });
 
+  it('Installieren-Knopf erscheint mit beforeinstallprompt und ruft prompt() auf', async () => {
+    expect(await page.$('#install')).toBeNull();
+    await page.evaluate(() => {
+      const e = new Event('beforeinstallprompt') as Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+      e.prompt = async () => {
+        (window as unknown as { __prompted: boolean }).__prompted = true;
+      };
+      e.userChoice = Promise.resolve({ outcome: 'accepted' });
+      window.dispatchEvent(e);
+    });
+    await page.waitForSelector('#install');
+    await page.click('#install');
+    await page.waitForFunction(() => (window as unknown as { __prompted: boolean }).__prompted === true);
+    await page.waitForFunction(() => !document.querySelector('#install'));
+  });
+
   it('neuer Buchstabe mit einem Tippen, bleibt nach Neustart', async () => {
     await page.click('[data-l="e"]');
     await page.waitForFunction(() => document.querySelector('.lt.neu')?.textContent === 'E');

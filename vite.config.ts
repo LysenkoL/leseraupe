@@ -10,6 +10,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['fonts/*.woff2', 'icons/*.png', 'icons/*.svg'],
       manifest: {
+        // eigene id: nicht mit anderen Apps auf lysenkol.github.io verwechseln
+        id: '/leseraupe/',
         name: 'Leseraupe',
         short_name: 'Leseraupe',
         description: 'Tägliche Leseblätter für die 1. Klasse – nur mit gelernten Buchstaben.',

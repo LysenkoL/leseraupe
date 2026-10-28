@@ -6,6 +6,7 @@ import { THEMES, THEME_IDS } from '../sheet/themes';
 import { allSheets, log } from '../core/db';
 import { createDraft } from '../app/actions';
 import type { BlockId } from '../core/types';
+import { canInstall, install, isStandalone, onInstallChange } from '../app/install';
 
 const BLOCK_NAMES: [BlockId, string][] = [
   ['silben', 'Silben'],
@@ -21,7 +22,9 @@ const BLOCK_NAMES: [BlockId, string][] = [
 const RAUPE_MINI = `<svg viewBox="0 0 116 56" aria-hidden="true"><circle cx="14" cy="38" r="12" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="36" cy="34" r="13" fill="#9FD18F" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="60" cy="38" r="13" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="88" cy="28" r="18" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="82" cy="24" r="3" fill="#1F2421"/><circle cx="94" cy="24" r="3" fill="#1F2421"/><path d="M81 34 Q88 40 96 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/></svg>`;
 
 export function renderStart(root: HTMLElement): void {
-  const draw = (count = -1) => {
+  let count = -1;
+  const draw = (c = count) => {
+    count = c;
     const s = getSettings();
     const letters = UNITS.map((u) => {
       const on = s.letters.includes(u.id);
@@ -48,6 +51,11 @@ export function renderStart(root: HTMLElement): void {
     <a class="iconbtn" href="#/einstellungen" aria-label="Einstellungen">${GEAR_ICON}</a>
   </div>
   <div class="content">
+    ${
+      canInstall()
+        ? `<section class="card install"><h2>App aufs Handy</h2><button class="btn green" id="install">Leseraupe installieren</button></section>`
+        : ''
+    }
     <section class="card">
       <div class="row"><h2>Gelernte Buchstaben</h2><span class="hint">${s.letters.length} von 43 · neu: ${esc(neu ?? '–')}</span></div>
       <div class="letters">${letters}</div>
@@ -107,6 +115,10 @@ export function renderStart(root: HTMLElement): void {
         setSettings({ ...s2, blocks: { ...s2.blocks, [cb.dataset.block!]: cb.checked } });
       }),
     );
+    root.querySelector('#install')?.addEventListener('click', async () => {
+      if (await install()) toast('Fertig! Leseraupe ist jetzt bei den Apps.');
+      draw(count);
+    });
     root.querySelector('#create')!.addEventListener('click', async () => {
       const s2 = getSettings();
       if (!s2.letters.length) {
@@ -118,5 +130,9 @@ export function renderStart(root: HTMLElement): void {
     });
   };
   draw();
+  if (!isStandalone()) {
+    const off = onInstallChange(() => draw(count));
+    window.addEventListener('hashchange', off, { once: true });
+  }
   allSheets().then((l) => draw(l.length)).catch(() => undefined);
 }
