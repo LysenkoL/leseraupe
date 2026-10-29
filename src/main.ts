@@ -13,6 +13,7 @@ import { renderThema } from './screens/thema';
 import { renderEinstellungen } from './screens/einstellungen';
 import { renderChat } from './screens/chat';
 import { renderWillkommen } from './screens/willkommen';
+import { renderUeber } from './screens/ueber';
 import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
 
@@ -61,6 +62,8 @@ function route(): void {
       return renderEinstellungen(app);
     case '/chat':
       return renderChat(app);
+    case '/ueber':
+      return renderUeber(app);
     case '/willkommen': {
       const back = params.get('zurueck') ?? '';
       return renderWillkommen(app, back.startsWith('#/') ? back : '#/');

@@ -52,15 +52,27 @@ describe('App-Ablauf', () => {
     expect(await page.$('.onb')).toBeNull();
   });
 
-  it('nächster Start: sofort die Startseite; Einführung wieder aus den Einstellungen', async () => {
+  it('nächster Start: sofort die Startseite; Einführung wieder aus „Über die App“', async () => {
     await page.reload();
     await page.waitForSelector('#create');
     expect(await page.$('.onb')).toBeNull();
     await page.goto(base + '#/einstellungen');
+    await page.click('a[href="#/ueber"]');
     await page.click('a[href^="#/willkommen"]');
     await page.waitForSelector('.onb');
     await page.click('#onb-skip');
-    await page.waitForFunction(() => location.hash === '#/einstellungen');
+    await page.waitForFunction(() => location.hash === '#/ueber');
+  });
+
+  it('Über die App: Datenschutz, Kontakt, Feedback mit Version', async () => {
+    await page.waitForSelector('#datenschutz');
+    expect(await page.textContent('#datenschutz')).toContain('nur auf diesem Gerät');
+    const href = (await page.getAttribute('#feedback', 'href'))!;
+    const u = new URL(href);
+    expect(u.protocol).toBe('mailto:');
+    expect(u.pathname).toBe('apps.by.lena@gmail.com');
+    expect(u.searchParams.get('subject')).toBe('Leseraupe Feedback');
+    expect(u.searchParams.get('body')).toMatch(/Version: \d+\.\d+\.\d+ \(/);
   });
 
   it('Start zeigt T O M L A I S, neu: S', async () => {

@@ -48,12 +48,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       <div class="hint">Android, Chrome: am besten diesen Knopf nutzen. Steht im Chrome-Menü ⋮ „bereits installiert“ (kommt vor, wenn unter derselben Adresse mehrere Apps liegen) – dann „Verknüpfung erstellen“ wählen.</div>
     </section>`
     }
-    <section class="card">
-      <h2>Über</h2>
-      <div class="hint">Leseraupe · Alle Daten bleiben nur auf diesem Gerät. Schrift: Inter (SIL Open Font License).</div>
-      <div class="hint">Version: ${__BUILD__} UTC</div>
-      <a class="btn ghost" href="#/willkommen?zurueck=%23%2Feinstellungen">Einführung ansehen</a>
-    </section>
+    <a class="btn ghost" href="#/ueber">Über die App · Datenschutz · Feedback</a>
   </div>
 </div>`;
 
