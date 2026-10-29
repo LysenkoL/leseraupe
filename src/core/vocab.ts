@@ -19,7 +19,7 @@ const TIER_VERBEN: Record<string, string[]> = {
   miaut: ['Katze', 'Kater'],
   quakt: ['Ente', 'Frosch'],
   muht: ['Kuh', 'Kalb'],
-  wiehert: ['Pferd', 'Pony', 'Fohlen', 'Zebra'],
+  wiehert: ['Pferd', 'Fohlen', 'Zebra'],
   summt: ['Biene', 'Hummel', 'Fliege', 'Mücke'],
   brummt: ['Bär', 'Hummel', 'Eisbär'],
   hüpft: ['Hase', 'Frosch', 'Kaninchen', 'Grashüpfer', 'Spatz'],
@@ -29,7 +29,7 @@ const TIER_VERBEN: Record<string, string[]> = {
   krabbelt: ['Käfer', 'Ameise', 'Spinne', 'Marienkäfer', 'Krebs', 'Krabbe'],
   klettert: ['Affe', 'Eichhörnchen', 'Spinne', 'Faultier', 'Waschbär'],
   nagt: ['Maus', 'Biber', 'Hamster', 'Kaninchen', 'Eichhörnchen'],
-  rennt: ['Hund', 'Pferd', 'Pony', 'Zebra', 'Fuchs', 'Wolf', 'Hase', 'Tiger', 'Löwe', 'Reh', 'Strauß', 'Huhn', 'Katze', 'Elch', 'Hirsch'],
+  rennt: ['Hund', 'Pferd', 'Zebra', 'Fuchs', 'Wolf', 'Hase', 'Tiger', 'Löwe', 'Reh', 'Strauß', 'Huhn', 'Katze', 'Elch', 'Hirsch'],
   frisst: ['Hund', 'Katze', 'Maus', 'Lama', 'Kuh', 'Pferd', 'Schaf', 'Ziege', 'Raupe', 'Hase', 'Bär', 'Löwe', 'Tiger', 'Affe', 'Elefant', 'Igel', 'Esel'],
   schläft: ['*'],
 };

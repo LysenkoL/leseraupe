@@ -45,7 +45,6 @@ Nino
 Noah
 Nora
 Rosa
-Romy
 Rita
 Rudi
 Susi
@@ -57,13 +56,11 @@ Hanna
 Hugo
 Hans
 Heidi
-Henri
 Jan
 Jana
 Jonas
 Julia
 Jule
-Kai
 Karl
 Kim
 Klara
@@ -78,7 +75,6 @@ Moritz
 Nils
 Paula
 Pia
-Philipp
 Fritz
 Frida
 Fiona
@@ -109,11 +105,7 @@ Tobi
 Tara
 Vera
 Viktor
-Yasemin
-Zoe
-Ayla
 Amir
 Elif
 Omar
 Selin
-Yusuf

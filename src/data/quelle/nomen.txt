@@ -2,7 +2,6 @@
 # --- Essen ---
 r Mais | essen
 r Salat | essen
-r Toast | essen
 e Salami | essen
 s Obst | essen
 s Brot | essen
@@ -13,11 +12,9 @@ r Honig | essen
 r Kuchen | essen
 e Suppe | essen
 pl Nudeln | essen
-e Pizza | essen
 e Wurst | essen
 s Müsli | essen
 r Quark | essen
-pl Pommes | essen
 e Melone | essen
 pl Kekse | essen
 r Keks | essen
@@ -43,11 +40,9 @@ e Kirsche | essen
 pl Kirschen | essen
 e Pflaume | essen
 e Zitrone | essen
-e Orange | essen
 e Nuss | essen zauberwald
 pl Nüsse | essen
 r Pudding | essen
-r Joghurt | essen
 e Butter | essen
 s Mehl | ding
 r Zucker | essen
@@ -62,7 +57,6 @@ e Bohne | essen
 pl Bohnen | essen
 r Fisch | essen tier meer
 e Brezel | essen
-s Popcorn | essen zirkus
 pl Waffeln | essen
 e Waffel | essen
 s Omelett | essen
@@ -84,7 +78,6 @@ e Maus | tier
 pl Mäuse | tier
 e Kuh | tier wiese
 s Pferd | tier
-s Pony | tier zirkus
 s Schaf | tier wiese
 e Ziege | tier
 s Schwein | tier
@@ -242,7 +235,6 @@ s Ufo | ding weltraum
 # --- Personen ---
 s Kind | person
 pl Kinder | person
-s Baby | person
 r Mann | person
 e Frau | person
 r Junge | person
@@ -253,7 +245,6 @@ e Lehrerin | person
 r Lehrer | person
 r Freund | person
 e Freundin | person
-r Clown | person zirkus
 r Zauberer | person zauberwald
 e Hexe | person zauberwald
 e Fee | person zauberwald
@@ -276,24 +267,19 @@ e Bäuerin | person wiese
 r Taucher | person meer
 r Artist | person zirkus
 e Artistin | person zirkus
-r Dompteur | person zirkus
 r Schneemann | ding winter
 # --- Dinge ---
 r Ast | ding zauberwald
 r Mast | ding meer
 s Lasso | ding zirkus
 r Salto | ding zirkus
-s Lotto | ding
 s Atom | ding
 r Atlas | ding
 r Slalom | ding winter
 s Motto | ding
-r Mist | ding
-r Most | trinken
 r Ball | ding
 pl Bälle | ding
 e Puppe | ding
-r Teddy | ding
 s Buch | ding
 pl Bücher | ding
 s Heft | ding
@@ -456,12 +442,9 @@ s Moped | ding
 e Lok | ding
 e Kutsche | ding
 s Telefon | ding
-s Handy | ding
-r Computer | ding
 s Radio | ding
 s Foto | ding
 s Spiel | ding
-s Puzzle | ding
 e Murmel | ding
 pl Murmeln | ding
 r Würfel | ding
@@ -473,7 +456,6 @@ e Zahl | ding
 s Lied | ding
 e Musik | ding
 s Fest | ding
-e Party | ding
 r Geburtstag | ding
 e Kerze | ding
 e Maske | ding meer
@@ -575,7 +557,6 @@ r Kürbis | ding
 r Igel | tier
 e Manege | ding zirkus
 r Akrobat | person zirkus
-r Jongleur | person zirkus
 e Peitsche | ding zirkus
 s Trampolin | ding zirkus
 s Einrad | ding zirkus
@@ -605,7 +586,6 @@ e Sternschnuppe | ding weltraum
 r Raumanzug | ding weltraum
 e Raumstation | ding weltraum
 r Krater | ding weltraum
-r Alien | person weltraum
 s Raumschiff | ding weltraum
 # --- Plural und weitere Wörter ---
 pl Hunde | tier
@@ -671,7 +651,6 @@ pl Mamas | person
 pl Papas | person
 pl Tanten | person
 pl Freunde | person
-pl Clowns | person zirkus
 pl Zwerge | person zauberwald
 pl Hexen | person zauberwald
 pl Feen | person zauberwald
@@ -725,7 +704,6 @@ r Kühlschrank | ding
 e Küche | ding
 s Wohnzimmer | im
 s Kinderzimmer | im
-e Garage | ding
 r Balkon | am
 e Kirche | ding
 s Rathaus | im
@@ -755,8 +733,6 @@ e Dusche | ding
 e Wanne | ding
 r Schwamm | ding
 e Schokolade | essen
-s Bonbon | essen
-pl Bonbons | essen
 e Marmelade | essen
 r Senf | essen
 e Pfanne | ding

@@ -69,6 +69,14 @@ function addStolper(woerter: string[], kleine: string[], v: Vocab, p: GenParams,
 
 export const MAX_STUFE = 5;
 
+/** Anteil der Wörter/Sätze, die die neue Buchstabe enthalten sollen (wenn das Wörterbuch so viele hat) */
+export const NEU_ANTEIL = 0.6;
+
+/** Anteil der Sätze, die die Einheit enthalten */
+export function neuAnteil(saetze: string[], unit: string): number {
+  return saetze.length ? saetze.filter((x) => countUnit(x, unit) > 0).length / saetze.length : 0;
+}
+
 /**
  * Was eine Stufe bedeutet (B1). Stufe 1 = erstes Blatt nach einer neuen Buchstabe:
  * kurze Wörter, wenig Zweisilber, kurze Sätze und eine kurze Geschichte.
@@ -103,24 +111,57 @@ const SILBEN_CV_EXCLUDE = new Set(['c', 'x', 'y', 'q']);
 const SILBEN_VC = new Set(['m', 'l', 's', 't', 'n', 'r', 'f']);
 const PLAIN_VOWELS = new Set(['a', 'e', 'i', 'o', 'u']);
 
-/** Silben aus 2 Buchstaben(-einheiten): Konsonant + Vokal und Vokal + Konsonant. */
+/**
+ * Silben aus 2 Buchstaben(-einheiten): Konsonant + Vokal und Vokal + Konsonant.
+ * Mit neuer Buchstabe wird die Silbenübung um sie herum gebaut:
+ * Reihen „ma me mi mo“ (neuer Vokal) bzw. „na ne ni no“ (neuer Konsonant)
+ * und Spiegelpaare „el le“, „em me“ – in fester Reihenfolge, nicht gemischt.
+ */
 export function makeSilben(letters: string[], newLetter: string | null, n: number, rng: Rng): string[] {
   // Silben aus zwei Buchstaben; Umlaute/Zwielaute nur, wenn sie der neue Buchstabe sind
   const vowels = letters.filter((l) => VOWEL_UNITS.has(l) && (PLAIN_VOWELS.has(l) || ['ä', 'ö', 'ü'].includes(l) || l === newLetter));
-  const cons = letters.filter((l) => SINGLE_CONSONANTS.has(l));
-  const all: string[] = [];
-  for (const c of cons) for (const v of vowels) if (!SILBEN_CV_EXCLUDE.has(c)) all.push(c + v);
-  for (const v of vowels) for (const c of cons) if (SILBEN_VC.has(c) && PLAIN_VOWELS.has(v)) all.push(v + c);
-  const uniq = [...new Set(all)];
-  const withNew = newLetter ? uniq.filter((s) => s.includes(newLetter)) : [];
-  const rest = uniq.filter((s) => !withNew.includes(s));
-  const takeNew = Math.min(withNew.length, Math.ceil(n / 2));
-  const chosen = [...shuffle(withNew, rng).slice(0, takeNew), ...shuffle(rest, rng)].slice(0, n);
-  return shuffle(chosen, rng);
+  const cons = letters.filter((l) => (SINGLE_CONSONANTS.has(l) && !SILBEN_CV_EXCLUDE.has(l)) || (l === newLetter && !VOWEL_UNITS.has(l)));
+  const cv = (c: string, v: string) => c + v;
+  const vc = (v: string, c: string) => (SILBEN_VC.has(c) && PLAIN_VOWELS.has(v) ? v + c : null);
+  const all = new Set<string>();
+  for (const c of cons) for (const v of vowels) all.add(cv(c, v));
+  for (const v of vowels) for (const c of cons) {
+    const x = vc(v, c);
+    if (x) all.add(x);
+  }
+  if (!newLetter || (!vowels.includes(newLetter) && !cons.includes(newLetter))) {
+    return shuffle([...all], rng).slice(0, n);
+  }
+  const out: string[] = [];
+  const push = (x: string | null) => {
+    if (x && all.has(x) && !out.includes(x) && out.length < n) out.push(x);
+  };
+  const isVowel = vowels.includes(newLetter);
+  const others = shuffle(isVowel ? cons : vowels.filter((v) => v !== newLetter), rng);
+  // 1) Reihen: jede Reihe enthält die neue Buchstabe
+  const rowVowels = vowels.filter((v) => PLAIN_VOWELS.has(v) || v === newLetter);
+  if (isVowel) {
+    for (const c of others.slice(0, Math.max(2, Math.floor(n / (rowVowels.length * 2))))) for (const v of rowVowels) push(cv(c, v));
+  } else {
+    for (const v of rowVowels) push(cv(newLetter, v));
+  }
+  // 2) Spiegelpaare mit der neuen Buchstabe: „el le“, „em me“ bzw. „an na“
+  for (const o of others) {
+    if (isVowel) {
+      push(vc(newLetter, o));
+      push(cv(o, newLetter));
+    } else {
+      push(vc(o, newLetter));
+      push(cv(newLetter, o));
+    }
+  }
+  // 3) Rest mit alten Buchstaben
+  for (const x of shuffle([...all], rng)) push(x);
+  return out;
 }
 
 /** Wortauswahl: nie Wörter der letzten zwei Blätter; wenn zu wenig, die am längsten unbenutzten. */
-function pickFresh(cands: string[], n: number, h: History, rng: Rng, prefer: (w: string) => boolean, preferShare = 0.5): string[] {
+function pickFresh(cands: string[], n: number, h: History, rng: Rng, prefer: (w: string) => boolean, preferShare = 0.5, allowStale = true): string[] {
   const blocked = (w: string) => (h.wordSeq.get(w) ?? -Infinity) >= h.seq - 2;
   const fresh = shuffle(cands.filter((w) => !blocked(w)), rng);
   const stale = cands.filter(blocked).sort((a, b) => (h.wordSeq.get(a) ?? 0) - (h.wordSeq.get(b) ?? 0));
@@ -129,6 +170,7 @@ function pickFresh(cands: string[], n: number, h: History, rng: Rng, prefer: (w:
   const other = fresh.filter((w) => !isPref.get(w));
   const k = Math.min(pref.length, Math.round(n * preferShare));
   const out = [...pref.slice(0, k), ...other, ...pref.slice(k)].slice(0, n);
+  if (!allowStale) return out;
   for (const w of stale) {
     if (out.length >= n) break;
     out.push(w);
@@ -144,22 +186,37 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): st
     .filter((e) => e.typ !== 'Name' || rng() < 0.45);
   const theme = new Set(v.words.filter((e) => e.themen.includes(p.theme)).map((e) => e.w));
   const newU = p.newLetter;
-  const prefer = (w: string) => (newU ? countUnit(w, newU) > 0 : false) || (theme.has(w) && rng() < 0.5);
-  let words: string[];
-  if (p.stufe) {
+  const hasNew = (w: string) => (newU ? countUnit(w, newU) > 0 : false);
+  const prefer = (w: string) => theme.has(w) && rng() < 0.5;
+  const st = p.stufe ? STUFEN[p.stufe] : null;
+
+  /** k Wörter aus einer Gruppe; mit Stufe: kurze Wörter und passender Anteil an Mehrsilbern.
+   *  Wörter der letzten Blätter nur, wenn allowStale (erst ganz am Ende zum Auffüllen). */
+  const fromGroup = (group: string[], k: number, allowStale = false): string[] => {
+    if (k <= 0 || !group.length) return [];
+    const pf = (list: string[], m: number) => pickFresh(list, m, p.history, rng, prefer, 0.5, allowStale);
+    if (!st) return pf(group, k);
     // Stufe: Länge begrenzen und Anteil der Mehrsilber steuern; reicht es nicht, wird gelockert
-    const st = STUFEN[p.stufe];
-    const all = cands.map((e) => e.w);
-    const short = all.filter((w) => [...w].length <= st.wortMax);
-    const base = short.length >= n * 1.5 ? short : all;
+    const short = group.filter((w) => [...w].length <= st.wortMax);
+    const base = short.length >= k * 1.5 ? short : [...group].sort((a, b) => [...a].length - [...b].length);
     const multi = base.filter((w) => silbenZahl(w) >= 2);
     const one = base.filter((w) => silbenZahl(w) < 2);
-    const k = Math.round(n * st.mehrsilbig);
-    words = [...pickFresh(multi, k, p.history, rng, prefer, 0.55), ...pickFresh(one, n - k, p.history, rng, prefer, 0.55)];
-    if (words.length < n) words.push(...pickFresh(base.filter((w) => !words.includes(w)), n - words.length, p.history, rng, prefer, 0.55));
-  } else {
-    words = pickFresh(cands.map((e) => e.w), n, p.history, rng, prefer, 0.55);
-  }
+    const km = Math.round(k * st.mehrsilbig);
+    const out = [...pf(multi, km), ...pf(one, k - km)];
+    if (out.length < k) out.push(...pf(base.filter((w) => !out.includes(w)), k - out.length));
+    if (out.length < k) out.push(...pf(group.filter((w) => !out.includes(w)), k - out.length));
+    return out;
+  };
+
+  // Neue Buchstabe zuerst: mindestens NEU_ANTEIL der Wörter enthalten sie (wenn es so viele gibt)
+  const all = cands.map((e) => e.w);
+  const neu = all.filter(hasNew);
+  const alt = all.filter((w) => !hasNew(w));
+  const words = fromGroup(neu, newU ? Math.ceil(n * NEU_ANTEIL) : 0);
+  words.push(...fromGroup(alt.filter((w) => !words.includes(w)), n - words.length));
+  if (words.length < n) words.push(...fromGroup(neu.filter((w) => !words.includes(w)), n - words.length));
+  // erst jetzt, wenn nichts Frisches mehr da ist: die am längsten unbenutzten Wörter
+  if (words.length < n) words.push(...fromGroup(all.filter((w) => !words.includes(w)), n - words.length, true));
   // erst kurze Wörter
   return words.sort((a, b) => [...a].length - [...b].length);
 }
@@ -167,7 +224,7 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): st
 function makeKleine(v: Vocab, p: GenParams, rng: Rng): string[] {
   const n = COUNTS[p.minutes].kleine;
   const prefer = (w: string) => (p.newLetter ? countUnit(w, p.newLetter) > 0 : false);
-  return pickFresh(v.kleine, n, p.history, rng, prefer, 0.4).sort((a, b) => [...a].length - [...b].length);
+  return pickFresh(v.kleine, n, p.history, rng, prefer, NEU_ANTEIL).sort((a, b) => [...a].length - [...b].length);
 }
 
 /** Satzauswahl: zuerst Sätze mit dem neuen Buchstaben, verschiedene Satzanfänge. */
@@ -188,7 +245,8 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
     starts.set(st, (starts.get(st) ?? 0) + 1);
     out.push(s);
   };
-  const kNew = Math.ceil(n * 0.6);
+  // so viele Sätze mit der neuen Buchstabe wie möglich, die übrigen nur zum Auffüllen
+  const kNew = n;
   for (const s of withNew) {
     if (out.length >= kNew) break;
     tryAdd(s);
@@ -218,17 +276,20 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   const maxRich = Math.max(0, ...fresh.map(richness));
   // zu einfache Geschichte für viele gelernte Buchstaben? Dann lieber eine aus Vorlagen.
   const minRich = Math.min(p.letters.length, 20) * 0.5;
-  const cur = pick(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich), rng);
+  // neue Buchstabe: nur Geschichten, in denen mindestens die Hälfte der Sätze sie enthält
+  const neuOk = (g: { saetze: string[] }) => !p.newLetter || neuAnteil(g.saetze, p.newLetter) >= NEU_ANTEIL - 0.1;
+  const cur = pick(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich && neuOk(g)), rng);
   const [fmin, fmax] = COUNTS[p.minutes].fragen;
   if (cur && rng() < 0.75) {
     return { g: { titel: cur.titel, saetze: [...cur.saetze] }, fragen: cur.fragen.slice(0, fmax) };
   }
   const pl = pools(v, new Set());
+  const neuPrefer = p.newLetter ? (w: string) => countUnit(w, p.newLetter!) > 0 : undefined;
+  const score = (x: { saetze: string[] }) => (p.newLetter ? neuAnteil(x.saetze, p.newLetter) : 0) * 100 + x.saetze.length;
   let best: ReturnType<typeof templateStory> = null;
-  for (let i = 0; i < 6; i++) {
-    const st = templateStory(v, pl, rng, n);
-    if (st && !p.history.recentStories.has(st.titel) && (!best || st.saetze.length > best.saetze.length)) best = st;
-    if (best && best.saetze.length >= n) break;
+  for (let i = 0; i < 10; i++) {
+    const st = templateStory(v, pl, rng, n, neuPrefer);
+    if (st && !p.history.recentStories.has(st.titel) && (!best || score(st) > score(best))) best = st;
   }
   if (!best && cur) return { g: { titel: cur.titel, saetze: [...cur.saetze] }, fragen: cur.fragen.slice(0, fmax) };
   if (!best) {
@@ -247,7 +308,11 @@ function letterLabel(id: string): string {
 export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'woerter' | 'saetze'>, v: Vocab, rng: Rng): Quest {
   const options: Quest[] = [];
   if (p.newLetter) {
-    options.push({ kind: 'finde', text: `Kreise alle Wörter mit ${letterLabel(p.newLetter)} ein.`, target: p.newLetter });
+    const gross = letterLabel(p.newLetter);
+    const klein = gross.toLowerCase();
+    // für Leseanfänger sind E und e zwei Zeichen – beide nennen
+    const zeichen = klein !== gross ? `${gross} oder ${klein}` : gross;
+    options.push({ kind: 'finde', text: `Kreise alle Wörter mit ${zeichen} ein.`, target: p.newLetter });
   }
   if (sheet.geschichte) {
     const text = sheet.geschichte.saetze.join(' ');

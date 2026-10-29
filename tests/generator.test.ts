@@ -213,3 +213,41 @@ describe('A6: mehrere Blätter auf einmal', () => {
     expect(done.map((d) => d.stufe)).toEqual([1, 2, 3, 4]);
   });
 });
+
+describe('Neue Buchstabe im Mittelpunkt (Review 29.10.)', () => {
+  const letters = ['m', 'l', 's', 'a', 'e', 'i', 'o', 't'];
+  for (const stufe of [undefined, 1, 3, 5]) {
+    it(`Stufe ${stufe ?? '–'}: ≥ 50 % der Wörter und Sätze mit E/e`, () => {
+      let w = 0, wt = 0, s = 0, st = 0;
+      for (let seed = 1; seed <= 20; seed++) {
+        const sh = generateSheet(params(letters, { newLetter: 'e', seed, stufe })).sheet;
+        w += sh.woerter.filter((x) => countUnit(x, 'e') > 0).length;
+        wt += sh.woerter.length;
+        s += sh.saetze.filter((x) => countUnit(x, 'e') > 0).length;
+        st += sh.saetze.length;
+      }
+      expect(w / wt).toBeGreaterThanOrEqual(0.5);
+      expect(s / st).toBeGreaterThanOrEqual(0.5);
+    });
+  }
+
+  it('Silben: Reihen und Spiegelpaare mit der neuen Buchstabe', () => {
+    const sh = generateSheet(params(letters, { newLetter: 'e', seed: 4 })).sheet;
+    const s = sh.silben;
+    expect(s.filter((x) => x.includes('e')).length / s.length).toBeGreaterThanOrEqual(0.4);
+    // Spiegelpaar „el“ steht direkt vor „le“ (o. ä.)
+    const pair = s.findIndex((x, i) => x.length === 2 && x[0] === 'e' && s[i + 1] === x[1] + 'e');
+    expect(pair).toBeGreaterThanOrEqual(0);
+  });
+
+  it('Quest „Finde!“ nennt groß und klein', () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      const q = generateSheet(params(letters, { newLetter: 'e', seed })).sheet.quest!;
+      if (q.kind === 'finde') {
+        expect(q.text).toBe('Kreise alle Wörter mit E oder e ein.');
+        return;
+      }
+    }
+    throw new Error('kein Finde-Quest erzeugt');
+  });
+});
