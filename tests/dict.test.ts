@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { DICT } from '../src/core/dict';
-import { tokenizeWord } from '../src/core/letters';
+import { checkText, tokenizeWord } from '../src/core/letters';
 
 describe('Wörterbuch', () => {
   it('woerterbuch.json passt zu den Quellen', () => {
@@ -27,6 +27,24 @@ describe('Wörterbuch', () => {
       for (const w of t.match(/\p{L}+/gu) ?? []) expect(tokenizeWord(w).unknown, `${w} in „${t}“`).toEqual([]);
     }
   });
+  it('genug fertige Geschichten schon für die ersten Buchstaben (A5)', () => {
+    const passt = (letters: string[]) => {
+      const known = new Set(letters);
+      return DICT.geschichten.filter(
+        (g) => g.saetze.length >= 6 && g.saetze.length <= 8 && [g.titel, ...g.saetze].every((t) => checkText(t, known).ok),
+      ).length;
+    };
+    expect(passt(['t', 'o', 'm', 'l', 'a', 'i', 's'])).toBeGreaterThanOrEqual(8);
+    // jede weitere typische Buchstabe bringt mehr Auswahl
+    const reihe = ['e', 'n', 'r', 'u'];
+    let vorher = passt(['t', 'o', 'm', 'l', 'a', 'i', 's']);
+    for (let i = 1; i <= reihe.length; i++) {
+      const n = passt(['t', 'o', 'm', 'l', 'a', 'i', 's', ...reihe.slice(0, i)]);
+      expect(n).toBeGreaterThan(vorher);
+      vorher = n;
+    }
+  });
+
   it('Nomen haben Artikel', () => {
     for (const e of DICT.woerter.filter((x) => x.typ === 'Nomen')) expect(['r', 'e', 's', 'pl']).toContain(e.art);
   });
