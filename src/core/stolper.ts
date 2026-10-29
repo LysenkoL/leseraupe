@@ -4,17 +4,18 @@ import type { SheetData } from './types';
 
 /**
  * Stolperwörter (B2): Wörter, bei denen das Kind gestockt hat.
- * Sie kommen auf den nächsten Blättern öfter vor – bis sie dreimal
- * hintereinander ohne Stocken gelesen wurden.
+ * Sie kommen auf den nächsten Blättern öfter vor. Die App hört nicht zu: sie weiß nur,
+ * was die Eltern antippen. Ein Wort verschwindet nie von selbst, sondern erst,
+ * wenn die Eltern „Kann es ✓“ tippen.
  */
 export interface Stolper {
   /** Wort, wie es auf dem Blatt stand */
   w: string;
-  /** so oft hintereinander ohne Stocken gelesen */
+  /** so oft hintereinander auf einem Blatt, ohne dass es angetippt wurde */
   ok: number;
 }
 
-/** So oft ohne Stocken, dann ist das Wort „besiegt“ */
+/** So oft nicht angetippt, dann schlägt die App vor: „vielleicht schon sicher?“ */
 export const STOLPER_FREI = 3;
 /** höchstens so viele Stolperwörter auf einem Blatt */
 export const STOLPER_PRO_BLATT = 3;
@@ -43,22 +44,23 @@ export function sheetReadingWords(d: SheetData): string[] {
 /**
  * Nach dem Lesen: angetippte Wörter kommen auf die Liste (oder fangen wieder bei 0 an);
  * Stolperwörter, die auf dem Blatt standen und nicht angetippt wurden, zählen +1.
- * Nach STOLPER_FREI-mal hintereinander sind sie besiegt und verschwinden.
+ * Nichts wird von selbst entfernt. `bereit`: Wörter, die gerade STOLPER_FREI erreicht haben
+ * (die App fragt dann nur nach, ob das Wort schon sitzt).
  */
-export function updateStolper(list: Stolper[], onSheet: string[], tapped: string[]): { list: Stolper[]; besiegt: string[] } {
+export function updateStolper(list: Stolper[], onSheet: string[], tapped: string[]): { list: Stolper[]; bereit: string[] } {
   const tap = new Set(tapped.map(key));
   const shown = new Set(onSheet.map(key));
-  const besiegt: string[] = [];
+  const bereit: string[] = [];
   const next: Stolper[] = [];
   for (const s of list) {
     if (tap.has(key(s.w))) next.push({ ...s, ok: 0 });
     else if (shown.has(key(s.w))) {
-      if (s.ok + 1 >= STOLPER_FREI) besiegt.push(s.w);
-      else next.push({ ...s, ok: s.ok + 1 });
+      next.push({ ...s, ok: s.ok + 1 });
+      if (s.ok + 1 === STOLPER_FREI) bereit.push(s.w);
     } else next.push(s);
   }
   for (const w of tapped) if (!next.some((s) => key(s.w) === key(w))) next.push({ w, ok: 0 });
-  return { list: next, besiegt };
+  return { list: next, bereit };
 }
 
 /** Welche Stolperwörter kommen auf das nächste Blatt? Zufällig, nicht alle, höchstens STOLPER_PRO_BLATT. */

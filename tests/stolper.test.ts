@@ -11,19 +11,24 @@ describe('B2: Stolperwörter – Liste', () => {
     expect(r.list).toEqual([{ w: 'Mama', ok: 0 }]);
     r = updateStolper([{ w: 'Mama', ok: 2 }], ['Mama'], ['mama']);
     expect(r.list).toEqual([{ w: 'Mama', ok: 0 }]);
-    expect(r.besiegt).toEqual([]);
+    expect(r.bereit).toEqual([]);
   });
 
-  it('dreimal hintereinander flüssig → besiegt und weg', () => {
+  it('verschwindet nie von selbst: nach 3× nicht angetippt nur ein Hinweis', () => {
     let list: Stolper[] = [{ w: 'Salat', ok: 0 }];
     for (let i = 1; i <= 2; i++) {
       const r = updateStolper(list, ['Salat', 'isst'], []);
       list = r.list;
       expect(list).toEqual([{ w: 'Salat', ok: i }]);
+      expect(r.bereit).toEqual([]);
     }
-    const r = updateStolper(list, ['Salat'], []);
-    expect(r.list).toEqual([]);
-    expect(r.besiegt).toEqual(['Salat']);
+    let r = updateStolper(list, ['Salat'], []);
+    expect(r.list).toEqual([{ w: 'Salat', ok: 3 }]);
+    expect(r.bereit).toEqual(['Salat']);
+    // weiter auf der Liste, Hinweis nur einmal
+    r = updateStolper(r.list, ['Salat'], []);
+    expect(r.list).toEqual([{ w: 'Salat', ok: 4 }]);
+    expect(r.bereit).toEqual([]);
   });
 
   it('nicht auf dem Blatt → zählt nicht', () => {

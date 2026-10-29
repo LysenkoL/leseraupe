@@ -61,12 +61,10 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
   ok.addEventListener('click', async () => {
     const s = getSettings();
     const r = updateStolper(s.stolper, words, [...tapped]);
-    setSettings({ ...s, stolper: r.list, stolperBesiegt: s.stolperBesiegt + r.besiegt.length });
+    setSettings({ ...s, stolper: r.list });
     if (tapped.size) await log(`Stolperwörter: ${[...tapped].join(', ')}`);
-    if (r.besiegt.length) {
-      await log(`Besiegt: ${r.besiegt.join(', ')}`);
-      toast(t('stolper.besiegt', { w: r.besiegt.join(', ') }));
-    }
+    // nichts verschwindet von selbst – nur ein Hinweis, die Eltern entscheiden
+    if (r.bereit.length) toast(t('stolper.bereit', { w: r.bereit.join(', ') }), 5000);
     go(back);
   });
 }
