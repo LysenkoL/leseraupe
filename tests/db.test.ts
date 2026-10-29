@@ -44,7 +44,7 @@ describe('Verlauf und Protokoll', () => {
     await db.addRead(a.id!, 5);
     await db.log('Buchstabe E hinzugefügt');
     const texts = (await db.allLog()).map((e) => e.text);
-    expect(texts).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 gedruckt', 'Blatt 1 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
+    expect(texts).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 1 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
   });
 
   it('Serie: Tage in Folge', () => {
@@ -68,5 +68,27 @@ describe('Verlauf und Protokoll', () => {
     expect(list[0].scale).toBe(1.3);
     expect((await db.allLog()).length).toBe(backup.log.length);
     expect(() => db.parseBackup('{"foo":1}')).toThrow();
+  });
+});
+
+describe('Sicherung wird streng geprüft', () => {
+  it('kaputte Blätter werden übersprungen, gute geladen', async () => {
+    const a = await db.saveOnPrint(SAMPLE_SHEET, 1.2, null, true);
+    const ok = JSON.parse(JSON.stringify(await db.exportBackup(sanitizeProfile(null))));
+    const gut = ok.sheets[0];
+    ok.sheets.push({ ...gut, number: 99, data: { ...gut.data, woerter: 'kaputt' } });
+    ok.sheets.push({ ...gut, number: 98, createdAt: 'gestern' });
+    ok.sheets.push({ ...gut, number: 97, data: { ...gut.data, theme: 'gibtsnicht' } });
+    ok.sheets.push({ ...gut }); // doppelte Nummer
+    const b = db.parseBackup(JSON.stringify(ok));
+    expect(b.sheets.map((s) => s.number)).toEqual([a.number]);
+    expect(b.uebersprungen).toBe(4);
+  });
+
+  it('nur kaputte Blätter → Fehler, nichts wird ersetzt', async () => {
+    await db.saveOnPrint(SAMPLE_SHEET, 1.2, null, true);
+    const ok = JSON.parse(JSON.stringify(await db.exportBackup(sanitizeProfile(null))));
+    ok.sheets = ok.sheets.map((s: object) => ({ ...s, reads: 'nein' }));
+    expect(() => db.parseBackup(JSON.stringify(ok))).toThrow();
   });
 });

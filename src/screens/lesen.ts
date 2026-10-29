@@ -1,6 +1,6 @@
 import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
-import { confirmDialog, esc, go, toast } from '../app/ui';
+import { confirmDialog, esc, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { questSpielAktiv, questSpielHtml } from './questspiel';
 import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
@@ -64,13 +64,15 @@ export function fitLines(container: HTMLElement, minPx = 22): void {
 
 /**
  * „Am Bildschirm lesen“ (A4): das Blatt Block für Block in großer Schrift,
- * wischen oder „Weiter“, oben läuft die Lesezeit. Bildschirm bleibt an.
+ * wischen oder „Weiter“, die Lesezeit läuft ab dem Öffnen. Bildschirm bleibt an.
  * Auf der letzten Seite hält die Zeit an: „Fertig ✓“ speichert die Lesung, „Weiterlesen“ lässt sie weiterlaufen.
  */
 export async function renderLesen(root: HTMLElement, params: URLSearchParams): Promise<void> {
   const sheetId = params.get('id') ? Number(params.get('id')) : null;
   const draft = sheetId ? null : getDraft();
+  const routeNr = aktuelleRoute();
   const rec = sheetId ? await getSheet(sheetId) : null;
+  if (!nochAktuell(routeNr)) return;
   const data = rec?.data ?? draft?.data;
   if (!data) {
     go('#/');
@@ -81,6 +83,12 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const minutes = getSettings().minutes;
   let farbig = !!data.silbenFarbig;
   let pages = readingPages(data);
+  if (!pages.length) {
+    // Blatt ohne Blöcke: nichts zu lesen
+    toast(t('start.keinBlock'));
+    go(back);
+    return;
+  }
   const name = getSettings().childName;
   let idx = 0;
   let left = false;
@@ -211,11 +219,6 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   };
 
   const next = () => {
-    // erstes Weiter startet die Lesezeit, falls noch nicht geschehen
-    if (!gestartet()) {
-      cd.start();
-      syncClock();
-    }
     if (idx < pages.length - 1) {
       idx++;
       draw();
@@ -296,6 +299,9 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   window.addEventListener('resize', onResize);
 
   showTime(minutes * 60);
+  // Lesezeit läuft ab dem Öffnen (Pause oben rechts) – eine klare Regel statt „ab dem ersten Weiter“
+  cd.start();
+  syncClock();
   draw();
   window.addEventListener(
     'hashchange',

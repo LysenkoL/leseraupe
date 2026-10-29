@@ -382,13 +382,13 @@ Toll im Moos!
 ? Wie fühlen sie sich am Ende?
 
 # Salat
-Im Saal ist Salat.
+Lisa ist im Saal.
 Lisa isst Salat.
 Lisa isst Mais.
 Lisa isst Salami.
 Lisa ist satt.
 So satt ist Lisa!
-? Wo gibt es Salat?
+? Wo ist Lisa?
 ? Was isst Lisa alles?
 ? Wie geht es Lisa am Ende?
 
@@ -475,16 +475,16 @@ Emma ist so toll!
 ? Was isst Emma?
 ? Was macht Lea?
 
-# Tee
+# Mit Oma
 Lisa ist mit Oma.
 Oma isst Tomate.
 Lisa isst Salat.
-Oma testet Tee.
-Lisa testet Tee.
-Tee ist toll!
+Lisa malt Oma.
+Oma malt Lisa.
+Toll, Oma!
 ? Bei wem ist Lisa?
 ? Was essen die beiden?
-? Was trinken sie?
+? Wer malt wen?
 
 # Melli malt
 Melli malt.
@@ -559,17 +559,17 @@ Torte ist toll!
 ? Was gibt es im Saal?
 ? Magst du Torte?
 
-# Nuss
-Uli isst Nuss.
-Ute isst Nuss.
-Uli nimmt Nuss mit.
-Ute nimmt Nuss mit.
-Nuss ist toll.
+# Melone
+Uli isst Melone.
+Ute isst Melone.
+Uli nimmt Melone mit.
+Ute nimmt Melone mit.
+Melone ist toll.
 Uli ist satt.
 Ute ist so satt!
 ? Was essen Uli und Ute?
 ? Was nehmen sie mit?
-? Magst du Nüsse?
+? Magst du Melone?
 
 # Tunnel
 Tom ist mit Uli im Tunnel.

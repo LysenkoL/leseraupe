@@ -1,5 +1,5 @@
 import { allSheets, dayKey, readingDays, stats, statusOf, streak, type SheetRecord } from '../core/db';
-import { backButton, esc, formatDate } from '../app/ui';
+import { backButton, esc, formatDate, aktuelleRoute, nochAktuell } from '../app/ui';
 import { THEMES } from '../sheet/themes';
 import { getSettings } from '../app/state';
 import { raupenstand } from '../sheet/urkunde';
@@ -22,6 +22,7 @@ export function calendarHtml(year: number, month: number, days: Set<string>, tod
 }
 
 export function renderVerlauf(root: HTMLElement): void {
+  const routeNr = aktuelleRoute();
   const now = new Date();
   let y = now.getFullYear();
   let m = now.getMonth();
@@ -90,6 +91,7 @@ export function renderVerlauf(root: HTMLElement): void {
   };
   draw();
   allSheets().then((l) => {
+    if (!nochAktuell(routeNr)) return;
     list = l;
     draw();
   });

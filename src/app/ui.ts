@@ -92,3 +92,18 @@ export function formatDate(iso: string, withTime = false): string {
   if (!withTime) return date;
   return `${date}, ${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`;
 }
+
+/*
+ * Routen-Zähler: Bildschirme, die erst nach dem Laden (IndexedDB) zeichnen, prüfen damit,
+ * ob sie noch dran sind – sonst würden sie den inzwischen geöffneten Bildschirm überschreiben.
+ */
+let routeNr = 0;
+export function neueRoute(): number {
+  return ++routeNr;
+}
+export function aktuelleRoute(): number {
+  return routeNr;
+}
+export function nochAktuell(nr: number): boolean {
+  return nr === routeNr;
+}

@@ -1,3 +1,4 @@
+import { t as tr } from '../app/i18n';
 import type { BlockId, SheetData } from '../core/types';
 import { unitById } from '../core/letters';
 import { esc } from '../core/html';
@@ -43,7 +44,7 @@ function grid(items: string[], cls: string, edit: string | null, farbig?: boolea
 }
 
 function blockHead(n: number, title: string, id: BlockId, interactive: boolean): string {
-  const re = interactive ? `<button class="blk-re" type="button" data-reroll="${id}" aria-label="Block neu mischen">↻</button>` : '';
+  const re = interactive ? `<button class="blk-re" type="button" data-reroll="${id}" aria-label="${tr('vorschau.blockMischen')}">↻</button>` : '';
   return `<div class="blk-h"><span class="blk-n">${n}</span><h2>${esc(title)}</h2>${re}</div>`;
 }
 
@@ -125,7 +126,7 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
     const male = q.kind === 'male' ? raupeOutlineSvg(t) : '';
     blocks.push(
       `<section class="blk-quest" data-zone="quest" data-block="quest"><span class="q-label">Quest · ${QUEST_LABEL[q.kind]}</span><span class="q-text">${esc(q.text)}</span>${extra}${male}${
-        interactive ? `<button class="blk-re" type="button" data-reroll="quest" aria-label="Quest neu mischen">↻</button>` : ''
+        interactive ? `<button class="blk-re" type="button" data-reroll="quest" aria-label="${tr('vorschau.blockMischen')}">↻</button>` : ''
       }</section>`,
     );
   }

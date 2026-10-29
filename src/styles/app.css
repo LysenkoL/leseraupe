@@ -294,3 +294,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 .qs-done { text-align: center; font-size: 30px; font-weight: 800; color: var(--green); margin: 16px 0 0; }
 .qs-male svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; }
 .qs-male .qs-fill { cursor: pointer; }
+
+/* schmale Telefone: weniger Spalten im Buchstabenraster, damit die Tasten groß genug bleiben */
+@media (max-width: 360px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }

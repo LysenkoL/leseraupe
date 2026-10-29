@@ -6,7 +6,7 @@ import { sprache, t, type Key } from './i18n';
  */
 const MUSTER: [RegExp, Key][] = [
   [/^Blatt (?<nr>\d+) erstellt$/, 'log.erstellt'],
-  [/^Blatt (?<nr>\d+) gedruckt$/, 'log.gedruckt'],
+  [/^Blatt (?<nr>\d+) (gedruckt|zum Drucken geschickt)$/, 'log.gedruckt'],
   [/^Blatt (?<nr>\d+) als PDF gespeichert$/, 'log.pdf'],
   [/^Blatt (?<nr>\d+) gelesen, (?<min>\d+) Min \(von Hand\)$/, 'log.gelesenHand'],
   [/^Blatt (?<nr>\d+) gelesen, (?<min>\d+) Min$/, 'log.gelesen'],

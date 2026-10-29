@@ -4,11 +4,11 @@ import { MAX_BLAETTER } from '../core/store';
 import { raupenstand, type Raupenstand } from '../sheet/urkunde';
 import { raupenKarte } from '../app/raupe';
 import { getSettings, setSettings } from '../app/state';
-import { esc, go, toast, GEAR_ICON } from '../app/ui';
+import { esc, go, toast, GEAR_ICON, aktuelleRoute, nochAktuell } from '../app/ui';
 import { THEMES, THEME_IDS } from '../sheet/themes';
 import { allSheets } from '../core/db';
 import { createDraft } from '../app/actions';
-import type { BlockId } from '../core/types';
+import { hatBlock, type BlockId } from '../core/types';
 import { canInstall, install, isStandalone, onInstallChange } from '../app/install';
 
 /** Installieren-Hinweis auf der Startseite: schmal, mit ✕ dauerhaft ausblendbar (bleibt in den Einstellungen) */
@@ -27,6 +27,7 @@ const BLOCKS: BlockId[] = ['silben', 'woerter', 'kleine', 'saetze', 'geschichte'
 const RAUPE_MINI = `<svg viewBox="0 0 116 56" aria-hidden="true"><circle cx="14" cy="38" r="12" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="36" cy="34" r="13" fill="#9FD18F" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="60" cy="38" r="13" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="88" cy="28" r="18" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="82" cy="24" r="3" fill="#1F2421"/><circle cx="94" cy="24" r="3" fill="#1F2421"/><path d="M81 34 Q88 40 96 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/></svg>`;
 
 export function renderStart(root: HTMLElement): void {
+  const routeNr = aktuelleRoute();
   let count = -1;
   let stand: Raupenstand | null = null;
   const draw = (c = count) => {
@@ -143,6 +144,10 @@ export function renderStart(root: HTMLElement): void {
         toast(t('start.erstBuchstaben'));
         return;
       }
+      if (!hatBlock(s2.blocks)) {
+        toast(t('start.keinBlock'));
+        return;
+      }
       await createDraft();
       go('#/vorschau');
     });
@@ -154,6 +159,7 @@ export function renderStart(root: HTMLElement): void {
   }
   allSheets()
     .then((l) => {
+      if (!nochAktuell(routeNr)) return;
       stand = raupenstand(l);
       draw(l.length);
     })

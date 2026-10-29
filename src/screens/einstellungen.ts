@@ -147,7 +147,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       useKind(b.profile.activeKindId);
       setSettings(activeKind(b.profile).settings);
       await log('Sicherung geladen');
-      toast(t('einst.sicherungGeladen'));
+      toast(b.uebersprungen ? t('einst.sicherungTeilweise', { n: b.sheets.length, s: b.uebersprungen }) : t('einst.sicherungGeladen'));
       renderEinstellungen(root);
     } catch (err) {
       toast(t('einst.dateiFehler'));

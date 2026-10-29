@@ -19,6 +19,7 @@ import { renderStolper } from './screens/stolper';
 import { renderUrkundeScreen } from './screens/urkunde';
 import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
+import { neueRoute } from './app/ui';
 import { PLAY } from './app/platform';
 import { sprache } from './app/i18n';
 
@@ -47,6 +48,7 @@ document.documentElement.lang = sprache();
 const app = document.getElementById('app')!;
 
 function route(): void {
+  neueRoute();
   const raw = location.hash.replace(/^#/, '') || '/';
   const [path, query = ''] = raw.split('?');
   const params = new URLSearchParams(query);

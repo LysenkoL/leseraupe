@@ -4,10 +4,11 @@ import { PERLEN_JE_RAUPE, raupenstand, renderUrkunde } from '../src/sheet/urkund
 const blatt = (...tage: number[]) => ({ reads: tage.map((t) => ({ at: `2026-10-${String(t).padStart(2, '0')}T17:00:00.000Z` })) });
 
 describe('B4: Leseraupe aus dem Verlauf', () => {
-  it('jedes gelesene Blatt eine Perle; ungelesene und Wiederholungen zählen nicht extra', () => {
+  it('jeder Lesetag eine Perle; nochmal lesen zählt, zwei Lesungen am selben Tag nur einmal', () => {
     expect(raupenstand([])).toEqual({ perlen: 0, fertig: [] });
-    const s = raupenstand([blatt(3), blatt(), blatt(1, 5, 6), blatt(2)]);
-    expect(s.perlen).toBe(3);
+    // Tage 3, 1, 5, 6, 2 – Tag 3 kommt doppelt vor (zwei Blätter am selben Tag)
+    const s = raupenstand([blatt(3), blatt(), blatt(1, 5, 6), blatt(2), blatt(3)]);
+    expect(s.perlen).toBe(5);
     expect(s.fertig).toEqual([]);
   });
 
@@ -26,7 +27,7 @@ describe('B4: Leseraupe aus dem Verlauf', () => {
   it('Urkunde: Name oder Linie, Zahl der Blätter, Datum', () => {
     const mit = renderUrkunde({ name: 'Mia', nr: 1, datum: '2026-10-10T17:00:00.000Z', gesamt: 10 });
     expect(mit).toContain('Mia');
-    expect(mit).toContain('<b>10</b> Leseblätter');
+    expect(mit).toContain('an <b>10</b> Tagen gelesen');
     expect(mit).toContain('10.10.2026');
     expect(renderUrkunde({ name: '', nr: 2, datum: '2026-10-20T17:00:00.000Z', gesamt: 20 })).toContain('uk-linie');
     expect(renderUrkunde({ name: '<b>x</b>', nr: 1, datum: '2026-10-10T17:00:00.000Z', gesamt: 10 })).toContain('&lt;b&gt;');

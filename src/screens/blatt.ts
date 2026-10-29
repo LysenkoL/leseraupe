@@ -3,13 +3,14 @@ import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheet } from '../sheet/print';
 import { sharePdf, sheetToPdf } from '../sheet/pdf';
-import { backButton, formatDate, go, toast } from '../app/ui';
+import { backButton, formatDate, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { getSettings } from '../app/state';
 import { stolperLink } from './stolper';
 import { t, themaName } from '../app/i18n';
 
 /** Ein gespeichertes Blatt: genau so wieder drucken, Timer, „gelesen“ von Hand. */
 export function renderBlatt(root: HTMLElement, id: number): void {
+  const routeNr = aktuelleRoute();
   root.innerHTML = `<div class="screen"><div class="topbar">${backButton('#/verlauf')}<div class="grow"><h1 id="b-t">${t('vorschau.blatt')}</h1><div class="sub" id="b-s"></div></div></div>
   <div class="preview-wrap" id="b-pv"></div>
   <div class="bottom">
@@ -18,6 +19,7 @@ export function renderBlatt(root: HTMLElement, id: number): void {
   </div></div>`;
   const draw = async () => {
     const r = await getSheet(id);
+    if (!nochAktuell(routeNr)) return;
     if (!r) {
       go('#/verlauf');
       return;

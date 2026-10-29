@@ -194,6 +194,15 @@ describe('B1: Schwierigkeit wächst innerhalb einer Buchstabe', () => {
     expect(stufeFor([blatt(START), blatt(START)], [...START, 'e'])).toBe(1);
     expect(stufeFor(Array.from({ length: 9 }, () => blatt(START)), START)).toBe(MAX_STUFE);
   });
+
+  it('Stufe folgt der Einschätzung: leicht +1, geht so ±0, schwer −1 (nie unter 1)', () => {
+    const b = (gefuehl?: 'leicht' | 'geht' | 'schwer') => ({ letters: START, gefuehl });
+    expect(stufeFor([b('leicht'), b('leicht')], START)).toBe(3);
+    expect(stufeFor([b('geht'), b('geht'), b('geht')], START)).toBe(1);
+    expect(stufeFor([b('leicht'), b('leicht'), b('schwer')], START)).toBe(2);
+    expect(stufeFor([b('schwer'), b('schwer')], START)).toBe(1);
+    expect(stufeFor([b(), b('schwer'), b()], START)).toBe(2);
+  });
 });
 
 describe('A6: mehrere Blätter auf einmal', () => {

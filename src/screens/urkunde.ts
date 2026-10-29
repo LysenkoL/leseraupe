@@ -1,6 +1,6 @@
 import { allSheets } from '../core/db';
 import { getSettings } from '../app/state';
-import { backButton, go, toast } from '../app/ui';
+import { backButton, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
 import { sharePdf, sheetsToPdf } from '../sheet/pdf';
@@ -10,7 +10,9 @@ import { t } from '../app/i18n';
 /** Urkunde Nr. n (B4): Vorschau, Drucken, als PDF teilen */
 export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchParams): Promise<void> {
   const nr = Number(params.get('nr'));
+  const routeNr = aktuelleRoute();
   const stand = raupenstand(await allSheets());
+  if (!nochAktuell(routeNr)) return;
   const f = stand.fertig.find((x) => x.nr === nr);
   if (!f) {
     go('#/verlauf');

@@ -249,7 +249,7 @@ describe('App-Ablauf', () => {
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
     const log = await page.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
-    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 gedruckt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
+    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
   });
 
   it('gespeichertes Blatt wird genau gleich wieder gedruckt', async () => {
@@ -292,10 +292,10 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('#rd-body h1')).toBe('Silben');
     const total = Number((await page.textContent('#rd-pos'))!.split('/')[1]);
     expect(total).toBeGreaterThanOrEqual(5);
-    // erstes „Weiter“ startet die Zeit
+    // die Zeit läuft ab dem Öffnen
+    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
     await page.click('#rd-next');
     expect(await page.textContent('#rd-pos')).toBe(`2 / ${total}`);
-    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
     await page.click('#rd-prev');
     expect(await page.textContent('#rd-pos')).toBe(`1 / ${total}`);
     // Wörter auf Karten, nicht als Fließtext
@@ -323,7 +323,10 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('#rd-time')).toBe(t1);
     // „Fertig ✓“ speichert die Lesung mit der echten Zeit (≈ 2 Min)
     await page.click('#rd-next');
-    // danach freiwillig: Stolperwörter – hier überspringen
+    // danach freiwillig: „Wie ging das Lesen heute?“ und Stolperwörter
+    await page.waitForSelector('[data-g="schwer"]');
+    await page.click('[data-g="schwer"]');
+    await page.waitForFunction(() => document.querySelector('[data-g="schwer"]')?.getAttribute('aria-pressed') === 'true');
     await page.waitForSelector('#st-skip');
     await page.click('#st-skip');
     await page.waitForSelector('#b-s');
@@ -491,6 +494,18 @@ describe('App-Ablauf', () => {
     await page.waitForFunction((a) => document.querySelector('#pv-silben')?.getAttribute('aria-pressed') === a, an);
   });
 
+  it('schnelles Umschalten: späte Ladeergebnisse überschreiben den neuen Bildschirm nicht', async () => {
+    await page.goto(base + '#/');
+    await page.waitForSelector('#create');
+    for (const r of ['#/protokoll', '#/verlauf', '#/', '#/protokoll', '#/einstellungen']) {
+      await page.evaluate((h) => (location.hash = h), r);
+    }
+    await page.waitForSelector('#name');
+    await page.waitForTimeout(300);
+    expect(await page.$('#name')).not.toBeNull();
+    expect(await page.$('#pl')).toBeNull();
+  });
+
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
   });
@@ -564,7 +579,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.waitForSelector('#uk-pv .urkunde');
     const text = await p.textContent('#uk-pv .urkunde');
     expect(text).toContain('Mia');
-    expect(text).toContain('10 Leseblätter');
+    expect(text).toContain('an 10 Tagen gelesen');
     expect(text).toContain('10.10.2026');
     await p.goto(base + '#/verlauf');
     await p.waitForSelector('.uk-liste a');

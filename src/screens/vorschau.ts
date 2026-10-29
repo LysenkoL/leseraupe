@@ -3,7 +3,7 @@ import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
 import { sharePdf, sheetsToPdf } from '../sheet/pdf';
-import { addRead, nextNumber, saveOnPrint } from '../core/db';
+import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
 import { checkText, unitById } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
@@ -122,7 +122,7 @@ export function renderVorschau(root: HTMLElement): void {
   });
 
   /** Alle Blätter der Serie einpassen und der Reihe nach speichern; liefert das Druck-HTML */
-  const saveAll = async (printed: boolean): Promise<{ html: string[]; first: number; last: number }> => {
+  const saveAll = async (printed: boolean | 'none'): Promise<{ html: string[]; first: number; last: number; nums: number[] }> => {
     const hidden = document.createElement('div');
     hidden.style.cssText = 'position:fixed;left:-10000px;top:0;width:900px';
     document.body.appendChild(hidden);
@@ -140,7 +140,7 @@ export function renderVorschau(root: HTMLElement): void {
     } finally {
       hidden.remove();
     }
-    return { html, first: nums[0], last: nums[nums.length - 1] };
+    return { html, first: nums[0], last: nums[nums.length - 1], nums };
   };
 
   const reroll = async (block: BlockId) => {
@@ -196,10 +196,12 @@ export function renderVorschau(root: HTMLElement): void {
     const btn = e.currentTarget as HTMLButtonElement;
     btn.disabled = true;
     try {
-      const { html, first, last } = await saveAll(false);
+      // Nummern vergeben, aber erst ins Protokoll, wenn das PDF wirklich geteilt/gespeichert ist
+      const { html, first, last, nums } = await saveAll('none');
       const name = first === last ? `Leseblatt-${first}` : `Leseblaetter-${first}-${last}`;
       const pdf = await sheetsToPdf(html, name.replace('-', ' '));
       const r = await sharePdf(pdf, `${name}.pdf`);
+      if (r !== 'abgebrochen') for (const nr of nums) await log(`Blatt ${nr} als PDF gespeichert`);
       if (r === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));
       await draw();
     } catch (err) {

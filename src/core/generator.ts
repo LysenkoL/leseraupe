@@ -89,11 +89,23 @@ export const STUFEN: Record<number, { wortMax: number; mehrsilbig: number; satzM
   5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8 },
 };
 
-/** Stufe für das nächste Blatt: Blätter mit genau denselben Buchstaben zählen; neue Buchstabe → wieder 1. */
-export function stufeFor(saved: { letters: string[] }[], letters: string[]): number {
+/** Wie ging das Lesen? (Eltern tippen es nach dem Lesen an, freiwillig) */
+export type Gefuehl = 'leicht' | 'geht' | 'schwer';
+
+/**
+ * Stufe für das nächste Blatt. Neue Buchstabe → wieder 1. Jedes Blatt mit denselben Buchstaben
+ * (in Reihenfolge) verschiebt die Stufe: leicht +1, geht so ±0, schwer −1, ohne Angabe +1
+ * (wie früher – wer nichts antippt, bekommt langsam schwerere Blätter). Immer 1 … MAX_STUFE.
+ */
+export function stufeFor(saved: { letters: string[]; gefuehl?: Gefuehl }[], letters: string[]): number {
   const key = sortUnits(letters).join(',');
-  const same = saved.filter((d) => sortUnits(d.letters).join(',') === key).length;
-  return Math.min(MAX_STUFE, same + 1);
+  let stufe = 1;
+  for (const d of saved) {
+    if (sortUnits(d.letters).join(',') !== key) continue;
+    const delta = d.gefuehl === 'schwer' ? -1 : d.gefuehl === 'geht' ? 0 : 1;
+    stufe = Math.max(1, Math.min(MAX_STUFE, stufe + delta));
+  }
+  return stufe;
 }
 
 /** Silben eines Wortes ≈ Anzahl der Vokal-Einheiten */
