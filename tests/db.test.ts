@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import { describe, expect, it, beforeEach } from 'vitest';
 import * as db from '../src/core/db';
 import { SAMPLE_SHEET } from '../src/core/sample';
+import { sanitizeProfile } from '../src/core/store';
 
 beforeEach(async () => {
   await db._resetDbHandle();
@@ -56,7 +57,7 @@ describe('Verlauf und Protokoll', () => {
   it('Sicherung: Export und Import', async () => {
     const a = await db.saveOnPrint(SAMPLE_SHEET, 1.3, null, true);
     await db.addRead(a.id!, 5);
-    const backup = await db.exportBackup({ childName: 'Mia' });
+    const backup = await db.exportBackup(sanitizeProfile(null));
     const json = JSON.stringify(backup);
     await db.importBackup(db.parseBackup('{"app":"leseraupe","version":1,"sheets":[],"log":[]}'));
     expect(await db.allSheets()).toEqual([]);

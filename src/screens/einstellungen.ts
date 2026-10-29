@@ -1,7 +1,7 @@
 import { getSettings, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
-import { exportBackup, importBackup, log, parseBackup } from '../core/db';
-import { sanitize } from '../core/store';
+import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/db';
+import { activeKind, loadProfile, saveProfile } from '../core/store';
 import { canInstall, install, isStandalone } from '../app/install';
 
 export const PAIRS: [string, string][] = [
@@ -69,7 +69,7 @@ export function renderEinstellungen(root: HTMLElement): void {
   });
 
   root.querySelector('#exp')!.addEventListener('click', async () => {
-    const b = await exportBackup(getSettings());
+    const b = await exportBackup(loadProfile());
     const blob = new Blob([JSON.stringify(b, null, 1)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -89,7 +89,9 @@ export function renderEinstellungen(root: HTMLElement): void {
       const ok = await confirmDialog(`Sicherung vom ${new Date(b.exportedAt).toLocaleDateString('de-DE')} mit ${b.sheets.length} Blättern laden? Die jetzigen Daten werden ersetzt.`, 'Laden');
       if (!ok) return;
       await importBackup(b);
-      if (b.settings) setSettings(sanitize(b.settings as never));
+      saveProfile(b.profile);
+      useKind(b.profile.activeKindId);
+      setSettings(activeKind(b.profile).settings);
       await log('Sicherung geladen');
       toast('Sicherung geladen');
       renderEinstellungen(root);

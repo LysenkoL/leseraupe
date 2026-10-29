@@ -48,19 +48,79 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   return s;
 }
 
-export function loadSettings(): Settings {
+/* ---------- Kinder (Profile) ---------- */
+
+/** Profil eines Kindes: Name, gelernte Buchstaben und alle Einstellungen stecken in `settings`. */
+export interface Kind {
+  id: string;
+  settings: Settings;
+}
+
+export interface Profile {
+  activeKindId: string;
+  kinder: Kind[];
+}
+
+/** Das erste (und vorerst einzige) Kind; auch alte Daten ohne Profil gehören zu ihm. */
+export const FIRST_KIND_ID = 'k1';
+const PROFILE_KEY = 'leseraupe.kinder.v2';
+
+export function sanitizeProfile(raw: Partial<Profile> | null | undefined): Profile {
+  const kinder = (Array.isArray(raw?.kinder) ? raw.kinder : [])
+    .filter((k): k is Kind => !!k && typeof k.id === 'string' && k.id !== '')
+    .map((k) => ({ id: k.id, settings: sanitize(k.settings) }));
+  if (!kinder.length) kinder.push({ id: FIRST_KIND_ID, settings: { ...DEFAULT_SETTINGS } });
+  const activeKindId = kinder.some((k) => k.id === raw?.activeKindId) ? raw!.activeKindId! : kinder[0].id;
+  return { activeKindId, kinder };
+}
+
+/**
+ * Profile laden. Gibt es noch keine (alte Version), werden die Einstellungen v1
+ * zum ersten Kind. Der alte Schlüssel bleibt zur Sicherheit stehen.
+ */
+export function loadProfile(): Profile {
   const st = storage();
-  if (!st) return { ...DEFAULT_SETTINGS };
+  if (!st) return sanitizeProfile(null);
+  try {
+    const raw = st.getItem(PROFILE_KEY);
+    if (raw) return sanitizeProfile(JSON.parse(raw));
+  } catch {
+    /* kaputt – unten aus v1 neu aufbauen */
+  }
+  let old: Partial<Settings> | null = null;
   try {
     const raw = st.getItem(KEY);
-    return sanitize(raw ? JSON.parse(raw) : null);
+    old = raw ? JSON.parse(raw) : null;
   } catch {
-    return { ...DEFAULT_SETTINGS };
+    old = null;
+  }
+  const p = sanitizeProfile({ activeKindId: FIRST_KIND_ID, kinder: [{ id: FIRST_KIND_ID, settings: sanitize(old) }] });
+  saveProfile(p);
+  return p;
+}
+
+export function saveProfile(p: Profile): void {
+  try {
+    storage()?.setItem(PROFILE_KEY, JSON.stringify(p));
+  } catch {
+    /* Speicher voll oder gesperrt */
   }
 }
 
+export function activeKind(p: Profile): Kind {
+  return p.kinder.find((k) => k.id === p.activeKindId) ?? p.kinder[0];
+}
+
+/** Einstellungen des aktiven Kindes */
+export function loadSettings(): Settings {
+  return activeKind(loadProfile()).settings;
+}
+
+/** Einstellungen des aktiven Kindes speichern */
 export function saveSettings(s: Settings): void {
-  storage()?.setItem(KEY, JSON.stringify(s));
+  const p = loadProfile();
+  const k = activeKind(p);
+  saveProfile({ ...p, kinder: p.kinder.map((x) => (x.id === k.id ? { ...x, settings: s } : x)) });
 }
 
 /**

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createServer, type ViteDevServer } from 'vite';
 import { chromium, type Browser, type Page } from 'playwright';
 import { resolve } from 'node:path';
+import { SAMPLE_SHEET } from '../src/core/sample';
 
 let server: ViteDevServer;
 let browser: Browser;
@@ -47,7 +48,7 @@ describe('App-Ablauf', () => {
     await page.fill('#child-name', 'Mia');
     await page.click('#name-form button');
     await page.waitForFunction(() => !document.querySelector('#child-name'));
-    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.settings.v1')!).childName);
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.kinder.v2')!).kinder[0].settings.childName);
     expect(saved).toBe('Mia');
   });
 
@@ -159,5 +160,42 @@ describe('App-Ablauf', () => {
 
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
+  });
+});
+
+describe('A1: Update von der alten Version', () => {
+  it('alte Daten (v1) sind nach dem Update im Verlauf und auf Start', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    // gleiche Herkunft, aber ohne App: dort die Daten der alten Version anlegen
+    await p.goto(base + 'icons/icon-192.png');
+    await p.evaluate(async (SAMPLE_SHEET) => {
+      localStorage.setItem('leseraupe.settings.v1', JSON.stringify({ letters: ['t', 'o', 'm', 'l', 'a', 'i', 's', 'e'], newLetter: 'e', childName: 'Mia' }));
+      const d = await new Promise<IDBDatabase>((res) => {
+        const r = indexedDB.open('leseraupe', 1);
+        r.onupgradeneeded = () => {
+          r.result.createObjectStore('sheets', { keyPath: 'id', autoIncrement: true }).createIndex('number', 'number', { unique: true });
+          r.result.createObjectStore('log', { keyPath: 'id', autoIncrement: true });
+        };
+        r.onsuccess = () => res(r.result);
+      });
+      const tx = d.transaction(['sheets', 'log'], 'readwrite');
+      for (const number of [1, 2, 3]) {
+        const at = new Date().toISOString();
+        tx.objectStore('sheets').add({ number, createdAt: at, printedAt: at, reads: [{ at, minutes: 5 }], data: { ...SAMPLE_SHEET, number }, scale: 1 });
+        tx.objectStore('log').add({ at, text: `Blatt ${number} erstellt` });
+      }
+      await new Promise((res) => (tx.oncomplete = res));
+      d.close();
+    }, SAMPLE_SHEET);
+    await p.goto(base);
+    await p.waitForSelector('.lt.neu');
+    expect(await p.textContent('.lt.neu')).toBe('E');
+    await p.goto(base + '#/verlauf');
+    await p.waitForSelector('.sheet-item');
+    expect(await p.$$eval('.sheet-item .si-n', (els) => els.map((e) => e.textContent))).toEqual(['3', '2', '1']);
+    expect(errors).toEqual([]);
+    await ctx.close();
   });
 });
