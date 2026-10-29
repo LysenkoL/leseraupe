@@ -1,6 +1,6 @@
 # Leseraupe
 
-PWA für Eltern von Erstklässlern: erzeugt tägliche A4-Leseblätter nur aus gelernten Buchstaben
+PWA für Eltern von Kindern, die lesen lernen (Vorschule, Grundschule): erzeugt tägliche A4-Leseblätter nur aus gelernten Buchstaben
 (Reihenfolge wie in vielen Fibeln), druckt sie, misst die Lesezeit und führt Verlauf und Protokoll.
 
 **App:** https://lysenkol.github.io/leseraupe/ – in Chrome auf Android öffnen → Menü → „App installieren“.

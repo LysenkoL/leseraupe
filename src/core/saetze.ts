@@ -144,17 +144,20 @@ export interface StoryResult {
  * Geschichte aus Vorlagen: 2–3 Figuren, ein Ort, Essen, Malen.
  * Liefert so viele Sätze wie möglich (bis `count`), alle geprüft.
  */
-export function templateStory(v: Vocab, p: Pools, rng: Rng, count: number): StoryResult | null {
-  const people = shuffle(p.persons, rng);
+export function templateStory(v: Vocab, p: Pools, rng: Rng, count: number, prefer?: (w: string) => boolean): StoryResult | null {
+  // bevorzugte Wörter (z. B. mit der neuen Buchstabe) nach vorn, sonst zufällig
+  const vorn = <T>(list: T[], word: (x: T) => string) =>
+    prefer ? [...shuffle(list.filter((x) => prefer(word(x))), rng), ...shuffle(list.filter((x) => !prefer(word(x))), rng)] : shuffle(list, rng);
+  const people = vorn(p.persons, (x) => x);
   if (people.length < 2) return null;
   const [A, B, C0] = people;
   const C = C0 ?? B;
-  const place = pick(p.places, rng);
-  const foods = shuffle(p.foods, rng);
-  const drink = pick(p.drinks, rng);
-  const adj = shuffle(p.adjP, rng);
-  const animal = pick(p.animals, rng);
-  const intr = shuffle(p.intr, rng);
+  const place = vorn(p.places, (n) => n.e.w)[0];
+  const foods = vorn(p.foods, (n) => n.e.w);
+  const drink = vorn(p.drinks, (n) => n.e.w)[0];
+  const adj = vorn(p.adjP, (x) => x);
+  const animal = vorn(p.animals, (n) => n.e.w)[0];
+  const intr = vorn(p.intr, (x) => x);
   const ort = place ? v.ort(place) : null;
 
   type Line = { s: string | null; q?: string; prio: number };

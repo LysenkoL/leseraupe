@@ -1,9 +1,10 @@
 import { backButton } from '../app/ui';
 import { t } from '../app/i18n';
+import { PLAY } from '../app/platform';
 
 export const KONTAKT = 'apps.by.lena@gmail.com';
-/** Öffentliche Datenschutz-Seite (Google Sites); leer, solange es sie noch nicht gibt */
-export const DATENSCHUTZ_URL = '';
+/** Öffentliche Datenschutz-Seite (statisch, public/privacy.html) – auch für den Eintrag in Google Play */
+export const DATENSCHUTZ_URL = 'https://lysenkol.github.io/leseraupe/privacy.html';
 
 export const VERSION_TEXT = `${__VERSION__} (${__BUILD__} UTC)`;
 
@@ -31,7 +32,7 @@ export function renderUeber(root: HTMLElement): void {
       <div>${t('ueber.ds2')}</div>
       <div>${t('ueber.ds3')}</div>
       <div>${t('ueber.ds4')}</div>
-      <div>${t('ueber.ds5')}</div>
+      <div>${t(PLAY ? 'ueber.ds5play' : 'ueber.ds5')}</div>
       ${DATENSCHUTZ_URL ? `<a class="hint" href="${DATENSCHUTZ_URL}" target="_blank" rel="noopener">${t('ueber.dsLink')}</a>` : ''}
     </section>
     <section class="card">

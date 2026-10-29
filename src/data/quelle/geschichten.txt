@@ -4,7 +4,7 @@
 # Im Tal
 Tim ist im Tal.
 Mia ist im Tal.
-Tim isst Toast.
+Tim isst Salat.
 Mia isst Mais.
 Oma malt Tim.
 Oma malt Mia.
@@ -30,7 +30,7 @@ Toll, Tilo!
 Lotta ist im Tal.
 Im Tal ist Olli.
 Olli isst Mais.
-Lotta isst Toast.
+Lotta isst Salat.
 Lotta malt Olli.
 Olli malt Lotta.
 Toll, toll!
@@ -57,7 +57,7 @@ Oma ist im Saal.
 Mama malt Oma.
 Oma malt Mama.
 Lisa ist mit Tom im Saal.
-Lisa isst Toast.
+Lisa isst Mais.
 Tom isst Salat.
 Alle malen.
 Mama malt so toll!
@@ -155,15 +155,15 @@ Dann fliegt er nach Hause.
 
 # Im Zirkus
 Lea ist im Zirkus.
-Der Clown hat eine rote Nase.
-Er stolpert und lacht.
-Das Pony tanzt.
+Der Zauberer hat einen Hut.
+Er zaubert einen Hasen.
+Das Pferd tanzt.
 Der Elefant macht Musik.
 Lea klatscht.
 Der Zirkus ist toll!
 ? Wo ist Lea?
-? Was hat der Clown?
-? Was macht das Pony?
+? Was hat der Zauberer?
+? Was macht das Pferd?
 
 # Der Zauberwald
 Im Wald wohnt eine Fee.
@@ -382,14 +382,13 @@ Toll im Moos!
 ? Wie fühlen sie sich am Ende?
 
 # Salat
-Im Saal ist Salat.
+Lisa ist im Saal.
 Lisa isst Salat.
 Lisa isst Mais.
 Lisa isst Salami.
-Lisa isst Toast.
 Lisa ist satt.
 So satt ist Lisa!
-? Wo gibt es Salat?
+? Wo ist Lisa?
 ? Was isst Lisa alles?
 ? Wie geht es Lisa am Ende?
 
@@ -402,7 +401,7 @@ Tim malt Lolo.
 Lolo ist satt.
 Toll, Lolo!
 ? Wo lebt Lolo?
-? Was frisst Lolo?
+? Was isst Lolo?
 ? Wer malt Lolo?
 
 # Slalom
@@ -456,7 +455,7 @@ Oma ist so satt.
 # Am See
 Leo ist am See.
 Am See ist Ole.
-Leo isst Toast.
+Leo isst Tomate.
 Ole isst Salat.
 Leo malt Ole.
 Ole malt Leo.
@@ -473,19 +472,19 @@ Lea ist mit Emma im Tal.
 Lea malt Emma.
 Emma ist so toll!
 ? Wo wohnt Emma?
-? Was frisst Emma?
+? Was isst Emma?
 ? Was macht Lea?
 
-# Tee
+# Mit Oma
 Lisa ist mit Oma.
-Oma isst Toast.
-Lisa isst Toast.
-Oma testet Tee.
-Lisa testet Tee.
-Tee ist toll!
+Oma isst Tomate.
+Lisa isst Salat.
+Lisa malt Oma.
+Oma malt Lisa.
+Toll, Oma!
 ? Bei wem ist Lisa?
 ? Was essen die beiden?
-? Was trinken sie?
+? Wer malt wen?
 
 # Melli malt
 Melli malt.
@@ -503,9 +502,9 @@ Toll, Leo!
 Am See ist Ente Nanni.
 Nanni ist nass.
 Nina ist am See.
-Nina isst Toast.
-Nina nimmt Toast mit.
-Nanni isst Toast.
+Nina isst Tomaten.
+Nina nimmt Tomaten mit.
+Nanni isst Tomaten.
 Nanni ist satt.
 Nett, Nina!
 ? Wo wohnt Nanni?
@@ -560,17 +559,17 @@ Torte ist toll!
 ? Was gibt es im Saal?
 ? Magst du Torte?
 
-# Nuss
-Uli isst Nuss.
-Ute isst Nuss.
-Uli nimmt Nuss mit.
-Ute nimmt Nuss mit.
-Nuss ist toll.
+# Melone
+Uli isst Melone.
+Ute isst Melone.
+Uli nimmt Melone mit.
+Ute nimmt Melone mit.
+Melone ist toll.
 Uli ist satt.
 Ute ist so satt!
 ? Was essen Uli und Ute?
 ? Was nehmen sie mit?
-? Magst du Nüsse?
+? Magst du Melone?
 
 # Tunnel
 Tom ist mit Uli im Tunnel.

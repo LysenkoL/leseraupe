@@ -109,6 +109,25 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => !document.querySelector('#install'));
   });
 
+  it('Installieren-Hinweis ist schmal und lässt sich mit ✕ dauerhaft ausblenden', async () => {
+    const fire = () =>
+      page.evaluate(() => {
+        const e = new Event('beforeinstallprompt') as Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+        e.prompt = async () => undefined;
+        e.userChoice = Promise.resolve({ outcome: 'dismissed' });
+        window.dispatchEvent(e);
+      });
+    await fire();
+    await page.waitForSelector('.install-strip #install-x');
+    await page.click('#install-x');
+    await page.waitForFunction(() => !document.querySelector('.install-strip'));
+    await page.reload();
+    await page.waitForSelector('[data-l]');
+    await fire();
+    await page.waitForTimeout(200);
+    expect(await page.$('.install-strip')).toBeNull();
+  });
+
   it('neuer Buchstabe mit einem Tippen, bleibt nach Neustart', async () => {
     await page.click('[data-l="e"]');
     await page.waitForFunction(() => document.querySelector('.lt.neu')?.textContent === 'E');
@@ -230,7 +249,7 @@ describe('App-Ablauf', () => {
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
     const log = await page.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
-    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 gedruckt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
+    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
   });
 
   it('gespeichertes Blatt wird genau gleich wieder gedruckt', async () => {
@@ -273,23 +292,88 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('#rd-body h1')).toBe('Silben');
     const total = Number((await page.textContent('#rd-pos'))!.split('/')[1]);
     expect(total).toBeGreaterThanOrEqual(5);
-    // erstes „Weiter“ startet die Zeit
+    // die Zeit läuft ab dem Öffnen
+    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
     await page.click('#rd-next');
     expect(await page.textContent('#rd-pos')).toBe(`2 / ${total}`);
-    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
     await page.click('#rd-prev');
     expect(await page.textContent('#rd-pos')).toBe(`1 / ${total}`);
-    for (let i = 1; i < total; i++) await page.click('#rd-next');
-    expect(await page.textContent('#rd-next')).toBe('Fertig');
-    expect(await page.textContent('#rd-body h1')).toContain('Für Eltern');
-    await page.clock.runFor(5 * 60 * 1000 + 2000);
-    await page.waitForSelector('#rd-clock.fertig');
+    // Wörter auf Karten, nicht als Fließtext
     await page.click('#rd-next');
-    // danach freiwillig: Stolperwörter – hier überspringen
+    expect(await page.$$eval('#rd-body .rd-card', (e) => e.length)).toBeGreaterThan(3);
+    await page.click('#rd-prev');
+    // ✕ während die Zeit läuft: erst nachfragen
+    await page.click('#rd-close');
+    await page.waitForSelector('.modal-bg');
+    await page.click('.modal-bg [data-x="no"]');
+    expect(await page.$('#rd-body')).not.toBeNull();
+    await page.clock.runFor(2 * 60 * 1000);
+    for (let i = 1; i < total; i++) {
+      await page.click('#rd-next');
+      // Sätze: jeder Satz in einer Zeile (wenn es mit Mindestschrift geht)
+      const umbruch = await page.$$eval('#rd-body .rd-lines p', (ps) => ps.filter((p) => p.style.whiteSpace === 'nowrap' && p.scrollWidth > p.clientWidth + 1).length);
+      expect(umbruch).toBe(0);
+    }
+    expect(await page.textContent('#rd-next')).toBe('Fertig ✓');
+    expect(await page.textContent('#rd-body h1')).toContain('Für Eltern');
+    // letzte Seite: Zeit hält an
+    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit starten');
+    const t1 = await page.textContent('#rd-time');
+    await page.clock.runFor(30 * 1000);
+    expect(await page.textContent('#rd-time')).toBe(t1);
+    // „Fertig ✓“ speichert die Lesung mit der echten Zeit (≈ 2 Min)
+    await page.click('#rd-next');
+    // danach freiwillig: „Wie ging das Lesen heute?“ und Stolperwörter
+    await page.waitForSelector('[data-g="schwer"]');
+    await page.click('[data-g="schwer"]');
+    await page.waitForFunction(() => document.querySelector('[data-g="schwer"]')?.getAttribute('aria-pressed') === 'true');
     await page.waitForSelector('#st-skip');
     await page.click('#st-skip');
     await page.waitForSelector('#b-s');
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
+  });
+
+  it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
+    // als Text, damit der Test-Runner das import() nicht umschreibt
+    const html: string = await page.evaluate(`(async () => {
+      const m = await import('/leseraupe/src/screens/questspiel.ts');
+      const sample = (await import('/leseraupe/src/core/sample.ts')).SAMPLE_SHEET;
+      const d = { ...sample, quest: { kind: 'finde', text: 'Kreise …', target: 's' } };
+      const host = document.createElement('div');
+      host.id = 'qs-test';
+      host.innerHTML = m.questSpielHtml(d.quest, d);
+      document.body.appendChild(host);
+      m.questSpielAktiv(host);
+      return host.innerHTML;
+    })()`);
+    expect(html).toContain('S / s');
+    const ja = await page.$$('#qs-test .qs-w[data-ja="1"]');
+    const nein = await page.$$('#qs-test .qs-w[data-ja="0"]');
+    expect(ja.length).toBeGreaterThan(0);
+    expect(nein.length).toBeGreaterThan(0);
+    await nein[0].click();
+    expect(await nein[0].getAttribute('class')).not.toContain('ok');
+    for (const b of ja) await b.click();
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(true);
+    await page.evaluate(() => document.getElementById('qs-test')!.remove());
+  });
+
+  it('Quest am Bildschirm: Geheimwort mit Buchstaben-Tasten', async () => {
+    await page.evaluate(`(async () => {
+      const m = await import('/leseraupe/src/screens/questspiel.ts');
+      const sample = (await import('/leseraupe/src/core/sample.ts')).SAMPLE_SHEET;
+      const d = { ...sample, quest: { kind: 'geheimwort', text: 'Schreibe …', target: 'OMA', words: ['Oma', 'Mais', 'Ast'] } };
+      const host = document.createElement('div');
+      host.id = 'qs-test';
+      host.innerHTML = m.questSpielHtml(d.quest, d);
+      document.body.appendChild(host);
+      m.questSpielAktiv(host);
+    })()`);
+    expect(await page.$$eval('#qs-test .qs-box', (e) => e.length)).toBe(3);
+    for (const k of ['O', 'M', 'A']) await page.click(`#qs-test .qs-key[data-k="${k}"]`);
+    expect(await page.$$eval('#qs-test .qs-box.ok', (e) => e.map((x) => x.textContent).join(''))).toBe('OMA');
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(true);
+    await page.evaluate(() => document.getElementById('qs-test')!.remove());
   });
 
   it('A6: 3 Blätter auf einmal – blättern, alle zusammen drucken, Nummern der Reihe nach', async () => {
@@ -383,6 +467,45 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => document.querySelector('h1')?.textContent === 'Einstellungen');
   });
 
+  it('Einstellungen: Name wird ohne Knopf gespeichert', async () => {
+    await page.goto(base + '#/einstellungen');
+    await page.waitForSelector('#name');
+    const vorher = await page.inputValue('#name');
+    await page.fill('#name', 'Mila');
+    await page.waitForFunction(() => (document.querySelector('#name-saved')?.textContent ?? '').includes('✓'));
+    const gespeichert = () => page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.kinder.v2')!).kinder[0].settings.childName);
+    expect(await gespeichert()).toBe('Mila');
+    await page.fill('#name', vorher);
+    await page.locator('#name').blur();
+    await page.waitForFunction((v) => JSON.parse(localStorage.getItem('leseraupe.kinder.v2')!).kinder[0].settings.childName === v, vorher);
+  });
+
+  it('Vorschau: Silben farbig direkt umschalten', async () => {
+    await page.goto(base + '#/');
+    await page.waitForSelector('#create');
+    await page.click('#create');
+    await page.waitForSelector('#pv .sheet');
+    const an = await page.getAttribute('#pv-silben', 'aria-pressed');
+    await page.click('#pv-silben');
+    await page.waitForFunction((a) => document.querySelector('#pv-silben')?.getAttribute('aria-pressed') !== a, an);
+    const farbig = (await page.getAttribute('#pv-silben', 'aria-pressed')) === 'true';
+    await page.waitForFunction((f) => !!document.querySelector('#pv .sheet .sy1') === f, farbig);
+    await page.click('#pv-silben');
+    await page.waitForFunction((a) => document.querySelector('#pv-silben')?.getAttribute('aria-pressed') === a, an);
+  });
+
+  it('schnelles Umschalten: späte Ladeergebnisse überschreiben den neuen Bildschirm nicht', async () => {
+    await page.goto(base + '#/');
+    await page.waitForSelector('#create');
+    for (const r of ['#/protokoll', '#/verlauf', '#/', '#/protokoll', '#/einstellungen']) {
+      await page.evaluate((h) => (location.hash = h), r);
+    }
+    await page.waitForSelector('#name');
+    await page.waitForTimeout(300);
+    expect(await page.$('#name')).not.toBeNull();
+    expect(await page.$('#pl')).toBeNull();
+  });
+
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
   });
@@ -456,7 +579,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.waitForSelector('#uk-pv .urkunde');
     const text = await p.textContent('#uk-pv .urkunde');
     expect(text).toContain('Mia');
-    expect(text).toContain('10 Leseblätter');
+    expect(text).toContain('an 10 Tagen gelesen');
     expect(text).toContain('10.10.2026');
     await p.goto(base + '#/verlauf');
     await p.waitForSelector('.uk-liste a');

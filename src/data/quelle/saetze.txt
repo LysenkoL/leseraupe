@@ -7,7 +7,6 @@ Im Saal ist Lilo.
 Lolli ist lila.
 Mia malt lila.
 Oma isst Salat.
-Tim isst Toast.
 Mila isst Salami.
 Tilo malt Lamas.
 Das Lama ist alt.
@@ -72,8 +71,6 @@ Der Fisch ist bunt.
 Das Boot ist im Wasser.
 Die Rakete fliegt.
 Die Rakete ist schnell.
-Der Clown lacht.
-Der Clown ist lustig.
 Der Löwe brüllt.
 Der Affe klettert.
 Der Zauberer zaubert.
@@ -135,8 +132,6 @@ Die Tür ist offen.
 Das Licht ist an.
 Die Lampe ist hell.
 Die Uhr tickt.
-Das Baby schläft.
-Das Baby lacht.
 Das Kind spielt.
 Die Kinder spielen.
 Die Kinder lachen.
@@ -161,7 +156,6 @@ Uli ist im Zoo.
 Rosa ist rot.
 Rita rennt.
 Rudi ruft Rosa.
-Romy ist mutig.
 Hanna hilft Mama.
 Hugo hat Hunger.
 Hans hat einen Hut.
@@ -231,8 +225,6 @@ Die Rakete fliegt zum Mond.
 Der Astronaut hat einen Helm.
 Im All ist es dunkel.
 Im Zirkus ist es laut.
-Der Clown hat eine rote Nase.
-Das Pony tanzt.
 Der Elefant macht Musik.
 Die Artistin fliegt.
 Tom isst so viel Salat.
@@ -242,10 +234,7 @@ Tim malt Tom.
 Sam ist so alt.
 Ist Oma im Saal?
 Ist Mia im Tal?
-Lola isst Toast.
 Mimi malt Momo.
 Momo isst Mais.
-Oma malt mal.
 Mama isst mal Salat.
-Ali malt Salami.
 Das Atoll ist im Meer.

@@ -258,3 +258,44 @@ details.card > summary::-webkit-details-marker { display: none; }
 /* Leseraupe und Urkunde (B4) */
 .raupe-svg { width: 100%; height: auto; display: block; }
 .uk-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* schmaler Installieren-Hinweis (Startseite) */
+.install-strip { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 2px 4px 2px 12px; }
+.install-strip .install-go { flex: 1; text-align: left; background: none; border: none; color: var(--green); font-weight: 700; font-size: 14px; min-height: 44px; padding: 0; }
+.install-strip .install-x { width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
+/* Silben-farbig-Schalter (Vorschau, Lesen) */
+.sy-toggle { display: inline-flex; align-items: center; gap: 0; font-weight: 800; opacity: .55; }
+.sy-toggle.on { opacity: 1; border-color: var(--green); }
+.saved-hint { min-height: 1.2em; color: var(--green); }
+
+/* Am Bildschirm lesen: Wörter/Silben als Karten, Sätze je eine Zeile */
+.rd-grid .rd-card { background: #F1F5F1; border-radius: 14px; padding: 4px 18px; }
+.rd-lines p { white-space: nowrap; }
+.rd-body #rd-more { margin: 10px auto 0; display: flex; }
+
+/* Quest am Bildschirm – kleine Spiele */
+.qs-hint { font-size: 15px; color: var(--muted); margin: 0 0 12px; text-align: center; }
+.qs-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.qs-w, .qs-key {
+  min-height: 56px; min-width: 56px; padding: 6px 18px; border-radius: 16px; border: 2px solid #DADFDB; background: #fff;
+  font-size: clamp(26px, 7vw, 40px); font-weight: 600; font-feature-settings: var(--font-features);
+}
+.qs-w.ok, .qs-key.ok { border-color: var(--green); background: var(--green-light); color: var(--green); border-width: 3px; }
+.qs-w.ok { border-radius: 999px; }
+.nein { animation: qs-nein .35s; }
+@keyframes qs-nein { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.qs-geheim { display: flex; flex-wrap: wrap; gap: 16px 22px; justify-content: center; }
+.qs-gw { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.qs-word { font-size: clamp(28px, 8vw, 44px); font-weight: 600; }
+.qs-box { width: 54px; height: 60px; border: 3px solid #1F2421; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800; }
+.qs-box.ok { border-color: var(--green); color: var(--green); background: var(--green-light); }
+.qs-keys { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; }
+.qs-ziel { text-align: center; font-size: clamp(34px, 9vw, 56px); font-weight: 600; margin: 4px 0; }
+.qs-done { text-align: center; font-size: 30px; font-weight: 800; color: var(--green); margin: 16px 0 0; }
+.qs-male svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; }
+.qs-male .qs-fill { cursor: pointer; }
+
+/* schmale Telefone: weniger Spalten im Buchstabenraster, damit die Tasten groß genug bleiben */
+@media (max-width: 360px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }

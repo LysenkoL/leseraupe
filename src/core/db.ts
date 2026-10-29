@@ -1,3 +1,4 @@
+import { THEME_IDS } from '../sheet/themes';
 import type { SheetData, Minutes } from './types';
 import { FIRST_KIND_ID, sanitizeProfile, type Profile } from './store';
 
@@ -8,6 +9,8 @@ export type Status = 'erstellt' | 'gedruckt' | 'gelesen';
 export interface Lesung {
   at: string;
   minutes: number;
+  /** wie es ging (freiwillig, nach dem Lesen) – steuert die Stufe des nächsten Blatts */
+  gefuehl?: 'leicht' | 'geht' | 'schwer';
 }
 
 export interface SheetRecord {
@@ -152,7 +155,8 @@ export async function saveOnPrint(
   if (printed === true) {
     rec.printedAt = now();
     await putSheet(rec);
-    await log(`Blatt ${rec.number} gedruckt`);
+    // ob der Drucker wirklich gedruckt hat, kann die App nicht wissen – nur, dass gedruckt werden sollte
+    await log(`Blatt ${rec.number} zum Drucken geschickt`);
   } else if (printed === false) {
     await log(`Blatt ${rec.number} als PDF gespeichert`);
   }
@@ -166,6 +170,14 @@ export async function addRead(id: number, minutes: number, manual = false): Prom
   await putSheet(rec);
   await log(`Blatt ${rec.number} gelesen, ${minutes} Min${manual ? ' (von Hand)' : ''}`);
   return rec;
+}
+
+/** „Wie ging das Lesen heute?“ an die letzte Lesung des Blatts hängen */
+export async function setGefuehl(id: number, gefuehl: NonNullable<Lesung['gefuehl']>): Promise<void> {
+  const rec = await getSheet(id);
+  if (!rec || !rec.reads.length) return;
+  rec.reads[rec.reads.length - 1].gefuehl = gefuehl;
+  await putSheet(rec);
 }
 
 export interface Stats {
@@ -230,20 +242,67 @@ export async function exportBackup(profile: Profile): Promise<Backup> {
 }
 
 /** Liest Sicherungen v1 (ein Kind, `settings`) und v2; liefert immer v2. */
-export function parseBackup(text: string): Backup {
+const istText = (x: unknown): x is string => typeof x === 'string';
+const istTextListe = (x: unknown) => Array.isArray(x) && x.every(istText);
+const istDatum = (x: unknown) => istText(x) && !Number.isNaN(Date.parse(x));
+
+/** Ist ein Blatt aus einer Sicherung vollständig genug, um es anzuzeigen und zu drucken? */
+export function gueltigesBlatt(r: unknown): r is SheetRecord {
+  const x = r as Partial<SheetRecord> | null;
+  const d = x?.data as Partial<SheetData> | undefined;
+  return (
+    !!x &&
+    Number.isInteger(x.number) &&
+    (x.number as number) > 0 &&
+    istDatum(x.createdAt) &&
+    (x.printedAt == null || istDatum(x.printedAt)) &&
+    Array.isArray(x.reads) &&
+    x.reads.every((l) => !!l && istDatum(l.at) && typeof l.minutes === 'number' && l.minutes >= 0) &&
+    typeof x.scale === 'number' &&
+    !!d &&
+    typeof d === 'object' &&
+    THEME_IDS.includes(d.theme as never) &&
+    !!d.blocks &&
+    typeof d.blocks === 'object' &&
+    ['letters', 'silben', 'woerter', 'kleine', 'saetze', 'fragen'].every((k) => istTextListe((d as Record<string, unknown>)[k])) &&
+    (d.geschichte == null || (istText(d.geschichte.titel) && istTextListe(d.geschichte.saetze)))
+  );
+}
+
+/**
+ * Sicherung lesen und prüfen. Unvollständige Blätter oder Einträge werden übersprungen
+ * (Anzahl in `uebersprungen`); ist gar nichts Brauchbares drin, gibt es einen Fehler.
+ */
+export function parseBackup(text: string): Backup & { uebersprungen: number } {
   const b = JSON.parse(text);
   if (!b || b.app !== 'leseraupe' || !Array.isArray(b.sheets) || !Array.isArray(b.log)) {
     throw new Error('Das ist keine Leseraupe-Sicherung.');
   }
-  if (b.version === 2) return { ...b, profile: sanitizeProfile(b.profile) } as Backup;
+  const v2 = b.version === 2;
   const k = FIRST_KIND_ID;
+  const profile = v2 ? sanitizeProfile(b.profile) : sanitizeProfile({ activeKindId: k, kinder: [{ id: k, settings: b.settings }] });
+  const kinder = new Set(profile.kinder.map((x) => x.id));
+  const roh = (b.sheets as unknown[]).map((r) => (v2 ? r : { ...(r as object), kindId: k }));
+  const gesehen = new Set<string>();
+  const sheets = roh.filter((r): r is SheetRecord => {
+    if (!gueltigesBlatt(r) || !kinder.has(r.kindId)) return false;
+    const key = `${r.kindId}:${r.number}`;
+    if (gesehen.has(key)) return false;
+    gesehen.add(key);
+    return true;
+  });
+  if (roh.length && !sheets.length) throw new Error('Die Sicherung ist beschädigt.');
+  const log = (b.log as unknown[])
+    .map((e) => (v2 ? e : { ...(e as object), kindId: k }) as LogEntry)
+    .filter((e) => !!e && istDatum(e.at) && istText(e.text) && kinder.has(e.kindId));
   return {
     app: 'leseraupe',
     version: 2,
-    exportedAt: b.exportedAt ?? now(),
-    profile: sanitizeProfile({ activeKindId: k, kinder: [{ id: k, settings: b.settings }] }),
-    sheets: (b.sheets as SheetRecord[]).map((r) => ({ ...r, kindId: k })),
-    log: (b.log as LogEntry[]).map((e) => ({ ...e, kindId: k })),
+    exportedAt: istDatum(b.exportedAt) ? b.exportedAt : now(),
+    profile,
+    sheets,
+    log,
+    uebersprungen: roh.length - sheets.length,
   };
 }
 

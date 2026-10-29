@@ -132,7 +132,8 @@
   display: flex; align-items: center; flex-wrap: wrap; gap: 2mm 3.5mm;
 }
 .q-label { font-size: calc(var(--fs) * 13px); font-weight: 800; color: var(--acc-text); white-space: nowrap; }
-.q-text { font-size: calc(var(--fs) * 19px); flex: 1 1 60mm; }
+/* Anleitung ist für Eltern (enthält oft noch nicht gelernte Buchstaben): klein und grau */
+.q-text { font-size: calc(var(--fs) * 14px); color: var(--muted); font-weight: 500; flex: 1 1 60mm; }
 .q-box { width: 11mm; height: 11mm; border: 2px solid var(--ink); border-radius: 2mm; flex: none; }
 .q-secret { display: flex; gap: 1.6mm; }
 .q-secret span { width: 8.5mm; height: 10mm; border-bottom: 2px solid var(--ink); }
@@ -159,8 +160,8 @@
 .sheet [data-edit] { cursor: pointer; }
 
 /* Silben farbig (B3): dunkles Blau / helleres Rot – auch schwarz-weiß gedruckt verschieden grau */
-.sheet .sy1, .lesen .sy1, .sy-demo .sy1 { color: #1D3F9E; }
-.sheet .sy2, .lesen .sy2, .sy-demo .sy2 { color: #E8473A; }
+.sheet .sy1, .lesen .sy1, .sy-demo .sy1, .sy-toggle .sy1 { color: #1D3F9E; }
+.sheet .sy2, .lesen .sy2, .sy-demo .sy2, .sy-toggle .sy2 { color: #E8473A; }
 
 /* Urkunde (B4): gleiche A4-Fläche wie ein Leseblatt */
 .sheet.urkunde { padding: 0; }

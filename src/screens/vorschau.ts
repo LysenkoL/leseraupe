@@ -1,9 +1,9 @@
-import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, type Draft } from '../app/state';
+import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
 import { sharePdf, sheetsToPdf } from '../sheet/pdf';
-import { addRead, nextNumber, saveOnPrint } from '../core/db';
+import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
 import { checkText, unitById } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
@@ -38,7 +38,8 @@ export function renderVorschau(root: HTMLElement): void {
 
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div>
+    <button class="pillbtn sy-toggle" id="pv-silben" aria-pressed="false" title="${t('vorschau.silben')}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button></div>
   <div class="serie-nav" id="pv-nav"></div>
   <div id="pv-removed"></div>
   <div class="preview-wrap" id="pv"></div>
@@ -102,11 +103,26 @@ export function renderVorschau(root: HTMLElement): void {
     rm.innerHTML = d.removed.length
       ? `<div class="removed"><b>${t('vorschau.entfernt')}</b> ${d.removed.map((r) => `${esc(r.text)} (${esc(r.missing.join(', '))})`).join(' · ')}</div>`
       : '';
+    const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
+    sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
+    sy.classList.toggle('on', !!d.data.silbenFarbig);
     setDraft(await fit(pv, d, h.nr, true));
   };
 
+  // Silben farbig direkt hier umschalten – gilt für alle Blätter der Serie und wird gemerkt
+  root.querySelector('#pv-silben')!.addEventListener('click', async () => {
+    const cur = getDraft();
+    if (!cur) return;
+    const an = !cur.data.silbenFarbig;
+    setSettings({ ...getSettings(), silbenFarbig: an });
+    const serie = getSerie();
+    serie?.items.forEach((it, i) => setSerieItem(i, { ...it, data: { ...it.data, silbenFarbig: an } }));
+    if (!serie) setDraft({ ...cur, data: { ...cur.data, silbenFarbig: an } });
+    await draw();
+  });
+
   /** Alle Blätter der Serie einpassen und der Reihe nach speichern; liefert das Druck-HTML */
-  const saveAll = async (printed: boolean): Promise<{ html: string[]; first: number; last: number }> => {
+  const saveAll = async (printed: boolean | 'none'): Promise<{ html: string[]; first: number; last: number; nums: number[] }> => {
     const hidden = document.createElement('div');
     hidden.style.cssText = 'position:fixed;left:-10000px;top:0;width:900px';
     document.body.appendChild(hidden);
@@ -124,7 +140,7 @@ export function renderVorschau(root: HTMLElement): void {
     } finally {
       hidden.remove();
     }
-    return { html, first: nums[0], last: nums[nums.length - 1] };
+    return { html, first: nums[0], last: nums[nums.length - 1], nums };
   };
 
   const reroll = async (block: BlockId) => {
@@ -180,10 +196,12 @@ export function renderVorschau(root: HTMLElement): void {
     const btn = e.currentTarget as HTMLButtonElement;
     btn.disabled = true;
     try {
-      const { html, first, last } = await saveAll(false);
+      // Nummern vergeben, aber erst ins Protokoll, wenn das PDF wirklich geteilt/gespeichert ist
+      const { html, first, last, nums } = await saveAll('none');
       const name = first === last ? `Leseblatt-${first}` : `Leseblaetter-${first}-${last}`;
       const pdf = await sheetsToPdf(html, name.replace('-', ' '));
       const r = await sharePdf(pdf, `${name}.pdf`);
+      if (r !== 'abgebrochen') for (const nr of nums) await log(`Blatt ${nr} als PDF gespeichert`);
       if (r === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));
       await draw();
     } catch (err) {

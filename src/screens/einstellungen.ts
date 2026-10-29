@@ -4,6 +4,7 @@ import { backButton, confirmDialog, esc, toast } from '../app/ui';
 import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/db';
 import { activeKind, loadProfile, saveProfile } from '../core/store';
 import { canInstall, install, isStandalone } from '../app/install';
+import { PLAY } from '../app/platform';
 import { setSprache, t } from '../app/i18n';
 
 export function renderEinstellungen(root: HTMLElement): void {
@@ -17,7 +18,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       <label class="field">${t('einst.name')}
         <input id="name" value="${esc(s.childName)}" autocomplete="off" maxlength="40" />
       </label>
-      <button class="btn green" id="save">${t('start.speichern')}</button>
+      <div class="hint saved-hint" id="name-saved" aria-live="polite"></div>
     </section>
     <section class="card">
       <label class="field">${t('einst.sprache')}
@@ -54,7 +55,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       <input type="file" id="imp" accept="application/json,.json" hidden />
     </section>
     ${
-      isStandalone()
+      PLAY || isStandalone()
         ? ''
         : `<section class="card">
       <h2>${t('start.appAufsHandy')}</h2>
@@ -97,11 +98,24 @@ export function renderEinstellungen(root: HTMLElement): void {
     renderEinstellungen(root);
   });
 
-  root.querySelector('#save')!.addEventListener('click', () => {
-    const name = (root.querySelector<HTMLInputElement>('#name')!.value || '').trim();
+  // Name wird beim Tippen gespeichert (kurz verzögert) und beim Verlassen des Feldes
+  const nameInput = root.querySelector<HTMLInputElement>('#name')!;
+  const savedHint = root.querySelector<HTMLElement>('#name-saved')!;
+  let nameTimer = 0;
+  const saveName = () => {
+    clearTimeout(nameTimer);
+    const name = nameInput.value.trim();
+    if (name === getSettings().childName) return;
     setSettings({ ...getSettings(), childName: name });
-    toast(t('einst.gespeichert'));
+    savedHint.textContent = `${t('einst.gespeichert')} ✓`;
+  };
+  nameInput.addEventListener('input', () => {
+    savedHint.textContent = '';
+    clearTimeout(nameTimer);
+    nameTimer = window.setTimeout(saveName, 500);
   });
+  nameInput.addEventListener('blur', saveName);
+  window.addEventListener('hashchange', saveName, { once: true });
 
   root.querySelector('#inst')?.addEventListener('click', async () => {
     if (await install()) toast(t('start.installiert'));
@@ -133,7 +147,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       useKind(b.profile.activeKindId);
       setSettings(activeKind(b.profile).settings);
       await log('Sicherung geladen');
-      toast(t('einst.sicherungGeladen'));
+      toast(b.uebersprungen ? t('einst.sicherungTeilweise', { n: b.sheets.length, s: b.uebersprungen }) : t('einst.sicherungGeladen'));
       renderEinstellungen(root);
     } catch (err) {
       toast(t('einst.dateiFehler'));

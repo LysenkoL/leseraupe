@@ -1,3 +1,4 @@
+import { hatBlock } from '../core/types';
 import { getSettings, setDraft } from '../app/state';
 import { backButton, esc, go, toast } from '../app/ui';
 import { buildPrompt, parseChat, sheetFromChat, PARSE_ERROR } from '../core/chat';
@@ -62,6 +63,10 @@ export function renderChat(root: HTMLElement): void {
   });
   root.querySelector('#make')!.addEventListener('click', async () => {
     err.textContent = '';
+    if (!hatBlock(getSettings().blocks)) {
+      err.textContent = t('start.keinBlock');
+      return;
+    }
     try {
       const answer = parseChat(ta.value);
       const p = await genParams();
@@ -69,7 +74,8 @@ export function renderChat(root: HTMLElement): void {
       setDraft({ data: sheet, seed: p.seed, removed, savedId: null, scale: 1 });
       go('#/vorschau');
     } catch (e) {
-      err.textContent = e instanceof Error ? e.message : PARSE_ERROR;
+      // Meldung in der Sprache der Oberfläche
+      err.textContent = !(e instanceof Error) || e.message === PARSE_ERROR ? t('chat.parseFehler') : e.message;
     }
   });
 }

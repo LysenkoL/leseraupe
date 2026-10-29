@@ -28,7 +28,7 @@ describe('B3: Silben', () => {
     expect(sb('Sternschnuppe')).toBe('Stern|schnup|pe');
     expect(sb('Zitrone')).toBe('Zi|tro|ne');
     expect(sb('Familie')).toBe('Fa|mi|li|e');
-    expect(sb('Toast')).toBe('Toast');
+    expect(sb('Marienkäfer')).toBe('Ma|ri|en|kä|fer');
     // Schreibung des Blatts bleibt (Satzanfang groß)
     expect(sb('Oma')).toBe('O|ma');
     expect(sb('Ameise')).toBe('A|mei|se');

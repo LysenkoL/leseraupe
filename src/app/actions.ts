@@ -18,7 +18,11 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
     blocks: s.blocks,
     history: historyFrom(sheets.map((r) => ({ seq: r.number, data: r.data })), next),
     seed,
-    stufe: stufeFor(sheets.map((r) => r.data), s.letters),
+    // Reihenfolge der Blätter (älteste zuerst); zählt die letzte Einschätzung je Blatt
+    stufe: stufeFor(
+      [...sheets].sort((a, b) => a.number - b.number).map((r) => ({ letters: r.data.letters, gefuehl: r.reads[r.reads.length - 1]?.gefuehl })),
+      s.letters,
+    ),
     stolper: s.stolper,
     silbenFarbig: s.silbenFarbig,
   };

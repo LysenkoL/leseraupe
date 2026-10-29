@@ -1,6 +1,6 @@
 import { getSettings, setSettings } from '../app/state';
-import { getSheet, log } from '../core/db';
-import { esc, go, toast } from '../app/ui';
+import { getSheet, log, setGefuehl } from '../core/db';
+import { esc, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { sheetReadingWords, updateStolper } from '../core/stolper';
 import { t } from '../app/i18n';
 
@@ -17,7 +17,9 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
   const id = Number(params.get('id'));
   const backRaw = params.get('zurueck') ?? '';
   const back = backRaw.startsWith('#/') ? backRaw : '#/';
+  const routeNr = aktuelleRoute();
   const rec = id ? await getSheet(id) : undefined;
+  if (!nochAktuell(routeNr)) return;
   if (!rec) {
     go(back);
     return;
@@ -30,6 +32,13 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
 <div class="screen">
   <div class="topbar"><div class="grow"><h1>${t('stolper.titel')}</h1><div class="sub">${t('stolper.sub', { nr: rec.number })}</div></div></div>
   <div class="content">
+    <section class="card gefuehl">
+      <h2>${t('gefuehl.frage')}</h2>
+      <div class="seg three">${(['leicht', 'geht', 'schwer'] as const)
+        .map((g) => `<button data-g="${g}" aria-pressed="${rec.reads[rec.reads.length - 1]?.gefuehl === g}" class="${rec.reads[rec.reads.length - 1]?.gefuehl === g ? 'on' : ''}">${t(`gefuehl.${g}`)}</button>`)
+        .join('')}</div>
+      <div class="hint">${t('gefuehl.hinweis')}</div>
+    </section>
     <div class="hint">${t('stolper.hinweis')}</div>
     <div class="st-words">${words
       .map((w) => `<button class="st-w${known.has(w.toLowerCase()) ? ' alt' : ''}" data-w="${esc(w)}" aria-pressed="false">${esc(w)}</button>`)
@@ -57,6 +66,15 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
     }),
   );
 
+  root.querySelectorAll<HTMLButtonElement>('[data-g]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      root.querySelectorAll<HTMLButtonElement>('[data-g]').forEach((x) => {
+        x.classList.toggle('on', x === b);
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      await setGefuehl(id, b.dataset.g as 'leicht' | 'geht' | 'schwer');
+    }),
+  );
   root.querySelector('#st-skip')!.addEventListener('click', () => go(back));
   ok.addEventListener('click', async () => {
     const s = getSettings();

@@ -6,24 +6,35 @@ export const PERLEN_JE_RAUPE = 10;
 export interface Raupenstand {
   /** Perlen der aktuellen Raupe (0–9) */
   perlen: number;
-  /** fertige Raupen: Nummer, Tag der 10. Perle, Blätter insgesamt */
+  /** fertige Raupen: Nummer, Tag der 10. Perle, Lesetage insgesamt */
   fertig: { nr: number; datum: string; gesamt: number }[];
 }
 
+/** Tag (lokales Datum) einer Lesung */
+function tagVon(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 /**
- * Perlen aus dem Verlauf (nicht aus einem eigenen Zähler): jedes gelesene Blatt ist eine Perle,
- * in der Reihenfolge seiner ersten Lesung.
+ * Perlen aus dem Verlauf (nicht aus einem eigenen Zähler): jeder Tag, an dem gelesen wurde,
+ * ist eine Perle – wie im Lesepass. Auch nochmal dasselbe Blatt zählt; mehrere Lesungen
+ * an einem Tag geben trotzdem nur eine Perle (Gewohnheit statt Menge).
  */
 export function raupenstand(sheets: { reads: { at: string }[] }[]): Raupenstand {
-  const ersteLesung = sheets
-    .filter((s) => s.reads.length)
-    .map((s) => s.reads.reduce((m, r) => (r.at < m ? r.at : m), s.reads[0].at))
-    .sort();
+  const ersteJeTag = new Map<string, string>();
+  for (const s of sheets)
+    for (const r of s.reads) {
+      const tag = tagVon(r.at);
+      const bisher = ersteJeTag.get(tag);
+      if (!bisher || r.at < bisher) ersteJeTag.set(tag, r.at);
+    }
+  const tage = [...ersteJeTag.values()].sort();
   const fertig: Raupenstand['fertig'] = [];
-  for (let nr = 1; nr * PERLEN_JE_RAUPE <= ersteLesung.length; nr++) {
-    fertig.push({ nr, datum: ersteLesung[nr * PERLEN_JE_RAUPE - 1], gesamt: nr * PERLEN_JE_RAUPE });
+  for (let nr = 1; nr * PERLEN_JE_RAUPE <= tage.length; nr++) {
+    fertig.push({ nr, datum: tage[nr * PERLEN_JE_RAUPE - 1], gesamt: nr * PERLEN_JE_RAUPE });
   }
-  return { perlen: ersteLesung.length % PERLEN_JE_RAUPE, fertig };
+  return { perlen: tage.length % PERLEN_JE_RAUPE, fertig };
 }
 
 /** Raupe mit Perlen: volle Perlen grün, leere gestrichelt */
@@ -57,7 +68,7 @@ export function renderUrkunde(u: { name: string; nr: number; datum: string; gesa
     <div class="uk-raupe">${perlenRaupeSvg(PERLEN_JE_RAUPE)}</div>
     <div class="uk-text">Die Leseraupe ist voll!</div>
     <div class="uk-name">${u.name ? esc(u.name) : '<span class="uk-linie"></span>'}</div>
-    <div class="uk-text">hat schon <b>${u.gesamt}</b> Leseblätter gelesen.</div>
+    <div class="uk-text">hat schon an <b>${u.gesamt}</b> Tagen gelesen.</div>
     <div class="uk-toll">Super gemacht!</div>
     <div class="uk-fuss"><span>Raupe Nr. ${u.nr}</span><span>${d}</span></div>
   </div>

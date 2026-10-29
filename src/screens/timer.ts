@@ -1,6 +1,6 @@
 import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
-import { esc, toast } from '../app/ui';
+import { esc, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
 import { t } from '../app/i18n';
@@ -131,7 +131,8 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
     root.querySelector('#t-sub')!.textContent = t('timer.uebrig', { n: minutes });
   });
 
-  if (sheetId) getSheet(sheetId).then((r) => r && (root.querySelector('#t-top')!.textContent = `Blatt ${r.number} · Lesezeit`));
+  const routeNr = aktuelleRoute();
+  if (sheetId) getSheet(sheetId).then((r) => r && nochAktuell(routeNr) && (root.querySelector('#t-top')!.textContent = t('timer.blattNr', { nr: r.number }) + t('timer.lesezeit')));
 
   show(total);
   window.addEventListener('hashchange', () => cd.dispose(), { once: true });

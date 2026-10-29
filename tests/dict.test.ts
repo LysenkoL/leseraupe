@@ -49,3 +49,12 @@ describe('Wörterbuch', () => {
     for (const e of DICT.woerter.filter((x) => x.typ === 'Nomen')) expect(['r', 'e', 's', 'pl']).toContain(e.art);
   });
 });
+
+describe('Wörterbuch: kindgerecht und lauttreu (Review 29.10.)', () => {
+  // keine Schimpfwörter, kein Alkohol, kein Glücksspiel, keine Wörter, die nicht wie im Deutschen gelesen werden
+  const VERBOTEN = ['Mist', 'Most', 'Lotto', 'Toast', 'Pizza', 'Pommes', 'Joghurt', 'Popcorn', 'Pony', 'Baby', 'Clown', 'Clowns', 'Teddy', 'Handy', 'Computer', 'Party', 'Puzzle', 'Bonbon', 'Bonbons', 'Garage', 'Orange', 'Jongleur', 'Dompteur', 'Alien', 'jonglieren', 'jongliert', 'Wein', 'Bier', 'Sekt'];
+  it('verbotene Wörter fehlen in Wörtern, Sätzen und Geschichten', () => {
+    const texte = [...DICT.woerter.map((e) => e.w), ...DICT.saetze, ...DICT.geschichten.flatMap((g) => [g.titel, ...g.saetze, ...g.fragen])];
+    for (const t of texte) for (const w of t.match(/\p{L}+/gu) ?? []) expect(VERBOTEN, `„${w}“ in „${t}“`).not.toContain(w);
+  });
+});

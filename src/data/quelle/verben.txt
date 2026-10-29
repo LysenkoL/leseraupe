@@ -84,7 +84,6 @@ gähnen gähnt | intr tier
 pusten pustet | intr
 blasen bläst | intr
 trommeln trommelt | intr
-jonglieren jongliert | intr
 grüßen grüßt | akk
 küssen küsst | akk
 drücken drückt | akk

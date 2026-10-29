@@ -63,3 +63,8 @@ export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {
   quest: true,
   fragen: true,
 };
+
+/** Mindestens ein Block mit Inhalt eingeschaltet? (sonst wäre das Blatt leer) */
+export function hatBlock(blocks: Record<BlockId, boolean>): boolean {
+  return (['silben', 'woerter', 'kleine', 'aehnlich', 'saetze', 'geschichte', 'quest'] as BlockId[]).some((b) => blocks[b]);
+}

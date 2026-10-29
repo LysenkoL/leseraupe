@@ -3,3 +3,7 @@
 
 declare const __BUILD__: string;
 declare const __VERSION__: string;
+
+interface ImportMetaEnv {
+  readonly VITE_TARGET?: 'web' | 'play';
+}
