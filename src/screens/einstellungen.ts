@@ -1,3 +1,4 @@
+import { STOLPER_FREI } from '../core/stolper';
 import { getSettings, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
 import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/db';
@@ -33,7 +34,12 @@ export function renderEinstellungen(root: HTMLElement): void {
       ${
         s.stolper.length
           ? `<div class="st-list">${s.stolper
-              .map((x, i) => `<div class="st-row"><b>${esc(x.w)}</b><small>${t('einst.fluessig', { n: x.ok })}</small><button class="pillbtn" data-st-del="${i}">${t('einst.entfernen')}</button></div>`)
+              .map(
+                (x, i) =>
+                  `<div class="st-row${x.ok >= STOLPER_FREI ? ' bereit' : ''}"><b>${esc(x.w)}</b><small>${t('einst.fluessig', { n: x.ok })}${
+                    x.ok >= STOLPER_FREI ? ` · ${t('einst.bereit')}` : ''
+                  }</small><button class="pillbtn" data-st-kann="${i}">${t('einst.kannEs')}</button><button class="pillbtn" data-st-del="${i}" aria-label="${t('einst.entfernen')}">✕</button></div>`,
+              )
               .join('')}</div>
       <button class="btn ghost" id="st-all">${t('einst.alleLoeschen')}</button>`
           : `<div class="hint">${t('einst.stolperLeer')}</div>`
@@ -60,6 +66,18 @@ export function renderEinstellungen(root: HTMLElement): void {
   </div>
 </div>`;
 
+  root.querySelectorAll<HTMLButtonElement>('[data-st-kann]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      const cur = getSettings();
+      const i = Number(b.dataset.stKann);
+      const w = cur.stolper[i]?.w;
+      if (!w) return;
+      setSettings({ ...cur, stolper: cur.stolper.filter((_, j) => j !== i), stolperBesiegt: cur.stolperBesiegt + 1 });
+      await log(`Besiegt: ${w}`);
+      toast(t('stolper.besiegt', { w }));
+      renderEinstellungen(root);
+    }),
+  );
   root.querySelectorAll<HTMLButtonElement>('[data-st-del]').forEach((b) =>
     b.addEventListener('click', () => {
       const cur = getSettings();
