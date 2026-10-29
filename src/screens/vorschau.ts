@@ -1,4 +1,4 @@
-import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, type Draft } from '../app/state';
+import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
@@ -38,7 +38,8 @@ export function renderVorschau(root: HTMLElement): void {
 
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div>
+    <button class="pillbtn sy-toggle" id="pv-silben" aria-pressed="false" title="${t('vorschau.silben')}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button></div>
   <div class="serie-nav" id="pv-nav"></div>
   <div id="pv-removed"></div>
   <div class="preview-wrap" id="pv"></div>
@@ -102,8 +103,23 @@ export function renderVorschau(root: HTMLElement): void {
     rm.innerHTML = d.removed.length
       ? `<div class="removed"><b>${t('vorschau.entfernt')}</b> ${d.removed.map((r) => `${esc(r.text)} (${esc(r.missing.join(', '))})`).join(' · ')}</div>`
       : '';
+    const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
+    sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
+    sy.classList.toggle('on', !!d.data.silbenFarbig);
     setDraft(await fit(pv, d, h.nr, true));
   };
+
+  // Silben farbig direkt hier umschalten – gilt für alle Blätter der Serie und wird gemerkt
+  root.querySelector('#pv-silben')!.addEventListener('click', async () => {
+    const cur = getDraft();
+    if (!cur) return;
+    const an = !cur.data.silbenFarbig;
+    setSettings({ ...getSettings(), silbenFarbig: an });
+    const serie = getSerie();
+    serie?.items.forEach((it, i) => setSerieItem(i, { ...it, data: { ...it.data, silbenFarbig: an } }));
+    if (!serie) setDraft({ ...cur, data: { ...cur.data, silbenFarbig: an } });
+    await draw();
+  });
 
   /** Alle Blätter der Serie einpassen und der Reihe nach speichern; liefert das Druck-HTML */
   const saveAll = async (printed: boolean): Promise<{ html: string[]; first: number; last: number }> => {

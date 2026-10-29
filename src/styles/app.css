@@ -258,3 +258,12 @@ details.card > summary::-webkit-details-marker { display: none; }
 /* Leseraupe und Urkunde (B4) */
 .raupe-svg { width: 100%; height: auto; display: block; }
 .uk-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* schmaler Installieren-Hinweis (Startseite) */
+.install-strip { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 2px 4px 2px 12px; }
+.install-strip .install-go { flex: 1; text-align: left; background: none; border: none; color: var(--green); font-weight: 700; font-size: 14px; min-height: 44px; padding: 0; }
+.install-strip .install-x { width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
+/* Silben-farbig-Schalter (Vorschau, Lesen) */
+.sy-toggle { display: inline-flex; align-items: center; gap: 0; font-weight: 800; opacity: .55; }
+.sy-toggle.on { opacity: 1; border-color: var(--green); }
+.saved-hint { min-height: 1.2em; color: var(--green); }

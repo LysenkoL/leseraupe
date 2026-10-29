@@ -19,24 +19,27 @@ import { renderStolper } from './screens/stolper';
 import { renderUrkundeScreen } from './screens/urkunde';
 import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
+import { PLAY } from './app/platform';
 import { sprache } from './app/i18n';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
 // beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
-registerSW({
-  immediate: true,
-  onRegisteredSW(_url, reg) {
-    if (!reg) return;
-    const check = () => {
-      if (navigator.onLine) reg.update().catch(() => undefined);
-    };
-    check();
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') check();
-    });
-    setInterval(check, 60 * 60 * 1000);
-  },
-});
+if (!PLAY) {
+  registerSW({
+    immediate: true,
+    onRegisteredSW(_url, reg) {
+      if (!reg) return;
+      const check = () => {
+        if (navigator.onLine) reg.update().catch(() => undefined);
+      };
+      check();
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') check();
+      });
+      setInterval(check, 60 * 60 * 1000);
+    },
+  });
+}
 
 initInstall();
 document.documentElement.lang = sprache();

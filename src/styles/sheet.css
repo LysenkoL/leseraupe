@@ -159,8 +159,8 @@
 .sheet [data-edit] { cursor: pointer; }
 
 /* Silben farbig (B3): dunkles Blau / helleres Rot – auch schwarz-weiß gedruckt verschieden grau */
-.sheet .sy1, .lesen .sy1, .sy-demo .sy1 { color: #1D3F9E; }
-.sheet .sy2, .lesen .sy2, .sy-demo .sy2 { color: #E8473A; }
+.sheet .sy1, .lesen .sy1, .sy-demo .sy1, .sy-toggle .sy1 { color: #1D3F9E; }
+.sheet .sy2, .lesen .sy2, .sy-demo .sy2, .sy-toggle .sy2 { color: #E8473A; }
 
 /* Urkunde (B4): gleiche A4-Fläche wie ein Leseblatt */
 .sheet.urkunde { padding: 0; }

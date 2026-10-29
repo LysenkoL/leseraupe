@@ -10,6 +10,16 @@ import { allSheets } from '../core/db';
 import { createDraft } from '../app/actions';
 import type { BlockId } from '../core/types';
 import { canInstall, install, isStandalone, onInstallChange } from '../app/install';
+
+/** Installieren-Hinweis auf der Startseite: schmal, mit ✕ dauerhaft ausblendbar (bleibt in den Einstellungen) */
+const STRIP_KEY = 'leseraupe.installStrip.hidden';
+function stripVersteckt(): boolean {
+  try {
+    return localStorage.getItem(STRIP_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 import { t, themaName } from '../app/i18n';
 
 const BLOCKS: BlockId[] = ['silben', 'woerter', 'kleine', 'saetze', 'geschichte', 'quest', 'fragen'];
@@ -41,8 +51,8 @@ export function renderStart(root: HTMLElement): void {
   </div>
   <div class="content">
     ${
-      canInstall()
-        ? `<section class="card install"><h2>${t('start.appAufsHandy')}</h2><button class="btn green" id="install">${t('start.installieren')}</button></section>`
+      canInstall() && !stripVersteckt()
+        ? `<div class="install-strip"><button class="install-go" id="install">⬇ ${t('start.installieren')}</button><button class="install-x" id="install-x" aria-label="${t('ui.schliessen')}">✕</button></div>`
         : ''
     }
     ${
@@ -113,6 +123,14 @@ export function renderStart(root: HTMLElement): void {
       if (!name) return;
       setSettings({ ...getSettings(), childName: name });
       toast(t('start.nameGespeichert'));
+      draw(count);
+    });
+    root.querySelector('#install-x')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(STRIP_KEY, '1');
+      } catch {
+        /* egal – dann eben nur bis zum Neuladen */
+      }
       draw(count);
     });
     root.querySelector('#install')?.addEventListener('click', async () => {

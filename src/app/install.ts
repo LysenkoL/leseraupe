@@ -1,3 +1,4 @@
+import { PLAY } from './platform';
 /**
  * Installation direkt aus der App (beforeinstallprompt).
  * Auf lysenkol.github.io liegen mehrere Apps; Chromes Menü meldet dort oft „bereits installiert“,
@@ -12,6 +13,7 @@ let deferred: InstallEvent | null = null;
 const listeners = new Set<() => void>();
 
 export function initInstall(): void {
+  if (PLAY) return;
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferred = e as InstallEvent;
@@ -28,7 +30,7 @@ export function isStandalone(): boolean {
 }
 
 export function canInstall(): boolean {
-  return !!deferred && !isStandalone();
+  return !PLAY && !!deferred && !isStandalone();
 }
 
 export function onInstallChange(f: () => void): () => void {

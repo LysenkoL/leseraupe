@@ -1,4 +1,4 @@
-import { getDraft, getSettings } from '../app/state';
+import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { esc, go, toast } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
@@ -60,7 +60,8 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const back = sheetId ? `#/blatt/${sheetId}` : '#/vorschau';
   // Lesezeit wie zuletzt im Timer gewählt (A6), nicht der Umfang des Blatts
   const minutes = getSettings().minutes;
-  const pages = readingPages(data);
+  let farbig = !!data.silbenFarbig;
+  let pages = readingPages(data);
   const name = getSettings().childName;
   let idx = 0;
 
@@ -69,6 +70,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   <div class="topbar">
     <a class="iconbtn" href="${back}" aria-label="${t('ui.schliessen')}">✕</a>
     <div class="grow rd-pos" id="rd-pos"></div>
+    <button class="pillbtn sy-toggle${data.silbenFarbig ? ' on' : ''}" id="rd-silben" aria-pressed="${!!data.silbenFarbig}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button>
     <button class="pillbtn rd-clock" id="rd-clock" aria-label="${t('lesen.starten')}">▶ <span id="rd-time"></span></button>
   </div>
   <div class="content rd-body" id="rd-body"></div>
@@ -150,6 +152,16 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     if (cd.running) cd.pause();
     else cd.start();
     syncClock();
+  });
+  // Silben farbig während des Lesens umschalten (nur Anzeige; wird für die nächsten Blätter gemerkt)
+  root.querySelector('#rd-silben')!.addEventListener('click', (e) => {
+    farbig = !farbig;
+    const b = e.currentTarget as HTMLButtonElement;
+    b.classList.toggle('on', farbig);
+    b.setAttribute('aria-pressed', String(farbig));
+    setSettings({ ...getSettings(), silbenFarbig: farbig });
+    pages = readingPages({ ...data, silbenFarbig: farbig });
+    draw();
   });
   root.querySelector('#rd-next')!.addEventListener('click', next);
   root.querySelector('#rd-prev')!.addEventListener('click', prev);

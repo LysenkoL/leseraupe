@@ -37,6 +37,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,json}'],
         navigateFallback: '/leseraupe/index.html',
+        navigateFallbackDenylist: [/privacy\.html$/],
       },
     }),
   ],

@@ -13,12 +13,12 @@
 | Доход | нет, приложение бесплатное, без рекламы (адрес публично не показывается) |
 | Технология | Capacitor: веб-приложение целиком внутри APK/AAB, без сайта, офлайн |
 | Package-ID | `de.appsbylena.leseraupe` — **изменить потом нельзя**; если не хочется имени в ID, решить до создания приложения в Play Console (например, `de.leseraupe.app`) |
-| Целевая аудитория в Play | Erwachsene / Eltern (18+), НЕ «Kinder» → не включаются правила Families |
+| Целевая аудитория в Play | было: Erwachsene / Eltern (18+). **Открыто (ревью 29.10.2026):** режим «Am Bildschirm lesen», гусеница и таймер обращены к ребёнку — честнее смешанная аудитория (6–8 + взрослые) с правилами Families. Нет рекламы, аккаунтов, сбора данных и SDK → требования выполнимы. Нужен ли parental gate — проверить по анкете в Play Console. Решает владелица |
 | Категория | Bildung |
 | Страны: закрытый тест | Deutschland + Ukraine (+ где живут тестеры) |
 | Страны: публикация | Deutschland (по желанию Österreich, Schweiz) |
 | Тестеры | Google Group «Leseraupe Tester» (каждый вступает сам, e-mail не собираем) |
-| Datenschutz | одна страница на Google Sites (аккаунт разработчика), ссылка в Play и в «Über die App»; в тексте только контактная почта, без имени и адреса (приложение не собирает данных) |
+| Datenschutz | статическая страница https://lysenkol.github.io/leseraupe/privacy.html (`public/privacy.html`, DE/UK/EN), ссылка в Play и в «Über die App»; в тексте только контактная почта, без имени и адреса |
 | Веб-версия | остаётся на GitHub Pages для личного использования |
 | Данные | только на устройстве, ничего не собираем → «Datensicherheit: keine Daten erhoben» |
 
@@ -37,7 +37,7 @@
 - [ ] B5 «Lesezeit!»-уведомления (нужна Android-версия)
 - [ ] Тест APK на своём телефоне, **первым делом печать**
 - [ ] Google Group тестеров + 15–20 тестеров с Android
-- [ ] Страница Datenschutz (Google Sites)
+- [x] 29.10.2026 Страница Datenschutz: `public/privacy.html` на GitHub Pages
 - [ ] Приложение в Play Console + анкеты + Store-Eintrag
 - [ ] Закрытый тест 14 дней (план из трёх касаний для тестеров)
 - [ ] Заявка на Produktionszugriff
@@ -51,7 +51,7 @@
 - `window.print` → нативная печать Android (PrintManager), лист ровно A4.
 - Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
   ссылки на Claude/ChatGPT → внешний браузер; Sicherung и «PDF teilen» → Filesystem + Share.
-- Service worker / установка PWA — только для веб-версии, в Android-сборке выключить.
+- Service worker / установка PWA — только для веб-версии: Android-сборку делать с `VITE_TARGET=play` (готово 29.10.2026: без SW, без кнопки установки, без подсказок про Chrome).
 - Иконка: гусеница из шапки листа.
 - Результат: debug-APK для телефона; подписанный `.aab` (versionCode 1, versionName 1.0.0).
 - Ключ подписи: создать, объяснить, где лежит и что сохранить в резервную копию. **Ключ и пароли — НЕ в git.**
@@ -73,6 +73,6 @@
 
 ## Тексты (подготовить)
 
-- [ ] Datenschutzerklärung (DE)
+- [x] 29.10.2026 Datenschutzerklärung (DE/UK/EN) — `public/privacy.html`
 - [ ] Store-Eintrag: название (≤30), короткое описание (≤80), полное (≤4000) — DE
 - [ ] Приглашение тестерам — UK и DE

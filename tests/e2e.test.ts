@@ -109,6 +109,25 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => !document.querySelector('#install'));
   });
 
+  it('Installieren-Hinweis ist schmal und lässt sich mit ✕ dauerhaft ausblenden', async () => {
+    const fire = () =>
+      page.evaluate(() => {
+        const e = new Event('beforeinstallprompt') as Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+        e.prompt = async () => undefined;
+        e.userChoice = Promise.resolve({ outcome: 'dismissed' });
+        window.dispatchEvent(e);
+      });
+    await fire();
+    await page.waitForSelector('.install-strip #install-x');
+    await page.click('#install-x');
+    await page.waitForFunction(() => !document.querySelector('.install-strip'));
+    await page.reload();
+    await page.waitForSelector('[data-l]');
+    await fire();
+    await page.waitForTimeout(200);
+    expect(await page.$('.install-strip')).toBeNull();
+  });
+
   it('neuer Buchstabe mit einem Tippen, bleibt nach Neustart', async () => {
     await page.click('[data-l="e"]');
     await page.waitForFunction(() => document.querySelector('.lt.neu')?.textContent === 'E');
@@ -381,6 +400,33 @@ describe('App-Ablauf', () => {
     await page.goto(base + '#/einstellungen');
     await page.selectOption('#sprache', '');
     await page.waitForFunction(() => document.querySelector('h1')?.textContent === 'Einstellungen');
+  });
+
+  it('Einstellungen: Name wird ohne Knopf gespeichert', async () => {
+    await page.goto(base + '#/einstellungen');
+    await page.waitForSelector('#name');
+    const vorher = await page.inputValue('#name');
+    await page.fill('#name', 'Mila');
+    await page.waitForFunction(() => (document.querySelector('#name-saved')?.textContent ?? '').includes('✓'));
+    const gespeichert = () => page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.kinder.v2')!).kinder[0].settings.childName);
+    expect(await gespeichert()).toBe('Mila');
+    await page.fill('#name', vorher);
+    await page.locator('#name').blur();
+    await page.waitForFunction((v) => JSON.parse(localStorage.getItem('leseraupe.kinder.v2')!).kinder[0].settings.childName === v, vorher);
+  });
+
+  it('Vorschau: Silben farbig direkt umschalten', async () => {
+    await page.goto(base + '#/');
+    await page.waitForSelector('#create');
+    await page.click('#create');
+    await page.waitForSelector('#pv .sheet');
+    const an = await page.getAttribute('#pv-silben', 'aria-pressed');
+    await page.click('#pv-silben');
+    await page.waitForFunction((a) => document.querySelector('#pv-silben')?.getAttribute('aria-pressed') !== a, an);
+    const farbig = (await page.getAttribute('#pv-silben', 'aria-pressed')) === 'true';
+    await page.waitForFunction((f) => !!document.querySelector('#pv .sheet .sy1') === f, farbig);
+    await page.click('#pv-silben');
+    await page.waitForFunction((a) => document.querySelector('#pv-silben')?.getAttribute('aria-pressed') === a, an);
   });
 
   it('keine Fehler in der Konsole', () => {

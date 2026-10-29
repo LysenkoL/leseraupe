@@ -90,7 +90,7 @@
   "start.bloecke": "Blöcke",
   "start.erstellen1": "Leseblatt erstellen",
   "start.erstellenN": "{n} Leseblätter erstellen",
-  "start.chat": "Mit Chat erstellen (Claude / ChatGPT) …",
+  "start.chat": "Mit KI-Chat erstellen …",
   "start.nameGespeichert": "Name gespeichert",
   "start.installiert": "Fertig! Leseraupe ist jetzt bei den Apps.",
   "start.erstBuchstaben": "Bitte zuerst gelernte Buchstaben antippen.",
@@ -190,7 +190,7 @@
   "ueber.ds1": "Leseraupe sammelt keine Daten. Es gibt kein Konto, keine Werbung und keine Statistik.",
   "ueber.ds2": "Buchstaben, Name des Kindes, Leseblätter und Protokoll werden nur auf diesem Gerät gespeichert. Sie werden nicht an uns oder an andere geschickt.",
   "ueber.ds3": "Eine Sicherung ist eine Datei, die du selbst speicherst und selbst weitergibst.",
-  "ueber.ds4": "„Mit Chat erstellen“ kopiert nur einen Text. Erst wenn du Claude oder ChatGPT selbst öffnest und den Text dort einfügst, gelten die Regeln dieser Anbieter.",
+  "ueber.ds4": "„Mit KI-Chat erstellen“ kopiert nur einen Text. Erst wenn du selbst einen KI-Chat (z. B. Claude oder ChatGPT) öffnest und den Text dort einfügst, gelten die Regeln dieses Anbieters.",
   "ueber.ds5": "Beim Löschen der App oder der Website-Daten werden alle Daten entfernt.",
   "ueber.dsLink": "Datenschutzerklärung im Internet ›",
   "ueber.kontakt": "Kontakt",
@@ -214,5 +214,7 @@
   "ueber.schriftText": "Inter von Rasmus Andersson, SIL Open Font License 1.1.",
   "stolper.bereit": "{w}: schon 3× nicht angetippt. Sitzt das Wort? Dann in den Einstellungen „Kann es ✓“ tippen.",
   "einst.kannEs": "Kann es ✓",
-  "einst.bereit": "vielleicht schon sicher?"
+  "einst.bereit": "vielleicht schon sicher?",
+  "ueber.ds5play": "Beim Löschen der App werden alle Daten entfernt.",
+  "vorschau.silben": "Silben farbig"
 }
