@@ -216,5 +216,15 @@
   "einst.kannEs": "Kann es ✓",
   "einst.bereit": "vielleicht schon sicher?",
   "ueber.ds5play": "Beim Löschen der App werden alle Daten entfernt.",
-  "vorschau.silben": "Silben farbig"
+  "vorschau.silben": "Silben farbig",
+  "quest.finde": "Tippe alle Wörter mit {x} an.",
+  "quest.geheim": "Wie heißen die ersten Buchstaben? Tippe sie der Reihe nach.",
+  "quest.zaehle": "Wie oft steht dieses Wort in der Geschichte?",
+  "quest.male": "Male die Raupe an: Tippe auf die Kreise.",
+  "quest.super": "Super!",
+  "lesen.fertigOk": "Fertig ✓",
+  "lesen.weiterlesen": "Weiterlesen",
+  "lesen.beenden": "Lesen beenden? Die Zeit wird nicht gespeichert.",
+  "lesen.beendenJa": "Beenden",
+  "lesen.stolperHinweis": "Nach „Fertig ✓“ kannst du antippen, wo dein Kind gestockt hat."
 }

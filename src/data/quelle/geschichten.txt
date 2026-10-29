@@ -401,7 +401,7 @@ Tim malt Lolo.
 Lolo ist satt.
 Toll, Lolo!
 ? Wo lebt Lolo?
-? Was frisst Lolo?
+? Was isst Lolo?
 ? Wer malt Lolo?
 
 # Slalom
@@ -472,7 +472,7 @@ Lea ist mit Emma im Tal.
 Lea malt Emma.
 Emma ist so toll!
 ? Wo wohnt Emma?
-? Was frisst Emma?
+? Was isst Emma?
 ? Was macht Lea?
 
 # Tee

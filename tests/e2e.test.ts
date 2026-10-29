@@ -298,17 +298,79 @@ describe('App-Ablauf', () => {
     expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
     await page.click('#rd-prev');
     expect(await page.textContent('#rd-pos')).toBe(`1 / ${total}`);
-    for (let i = 1; i < total; i++) await page.click('#rd-next');
-    expect(await page.textContent('#rd-next')).toBe('Fertig');
+    // Wörter auf Karten, nicht als Fließtext
+    await page.click('#rd-next');
+    expect(await page.$$eval('#rd-body .rd-card', (e) => e.length)).toBeGreaterThan(3);
+    await page.click('#rd-prev');
+    // ✕ während die Zeit läuft: erst nachfragen
+    await page.click('#rd-close');
+    await page.waitForSelector('.modal-bg');
+    await page.click('.modal-bg [data-x="no"]');
+    expect(await page.$('#rd-body')).not.toBeNull();
+    await page.clock.runFor(2 * 60 * 1000);
+    for (let i = 1; i < total; i++) {
+      await page.click('#rd-next');
+      // Sätze: jeder Satz in einer Zeile (wenn es mit Mindestschrift geht)
+      const umbruch = await page.$$eval('#rd-body .rd-lines p', (ps) => ps.filter((p) => p.style.whiteSpace === 'nowrap' && p.scrollWidth > p.clientWidth + 1).length);
+      expect(umbruch).toBe(0);
+    }
+    expect(await page.textContent('#rd-next')).toBe('Fertig ✓');
     expect(await page.textContent('#rd-body h1')).toContain('Für Eltern');
-    await page.clock.runFor(5 * 60 * 1000 + 2000);
-    await page.waitForSelector('#rd-clock.fertig');
+    // letzte Seite: Zeit hält an
+    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit starten');
+    const t1 = await page.textContent('#rd-time');
+    await page.clock.runFor(30 * 1000);
+    expect(await page.textContent('#rd-time')).toBe(t1);
+    // „Fertig ✓“ speichert die Lesung mit der echten Zeit (≈ 2 Min)
     await page.click('#rd-next');
     // danach freiwillig: Stolperwörter – hier überspringen
     await page.waitForSelector('#st-skip');
     await page.click('#st-skip');
     await page.waitForSelector('#b-s');
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
+  });
+
+  it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
+    // als Text, damit der Test-Runner das import() nicht umschreibt
+    const html: string = await page.evaluate(`(async () => {
+      const m = await import('/leseraupe/src/screens/questspiel.ts');
+      const sample = (await import('/leseraupe/src/core/sample.ts')).SAMPLE_SHEET;
+      const d = { ...sample, quest: { kind: 'finde', text: 'Kreise …', target: 's' } };
+      const host = document.createElement('div');
+      host.id = 'qs-test';
+      host.innerHTML = m.questSpielHtml(d.quest, d);
+      document.body.appendChild(host);
+      m.questSpielAktiv(host);
+      return host.innerHTML;
+    })()`);
+    expect(html).toContain('S / s');
+    const ja = await page.$$('#qs-test .qs-w[data-ja="1"]');
+    const nein = await page.$$('#qs-test .qs-w[data-ja="0"]');
+    expect(ja.length).toBeGreaterThan(0);
+    expect(nein.length).toBeGreaterThan(0);
+    await nein[0].click();
+    expect(await nein[0].getAttribute('class')).not.toContain('ok');
+    for (const b of ja) await b.click();
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(true);
+    await page.evaluate(() => document.getElementById('qs-test')!.remove());
+  });
+
+  it('Quest am Bildschirm: Geheimwort mit Buchstaben-Tasten', async () => {
+    await page.evaluate(`(async () => {
+      const m = await import('/leseraupe/src/screens/questspiel.ts');
+      const sample = (await import('/leseraupe/src/core/sample.ts')).SAMPLE_SHEET;
+      const d = { ...sample, quest: { kind: 'geheimwort', text: 'Schreibe …', target: 'OMA', words: ['Oma', 'Mais', 'Ast'] } };
+      const host = document.createElement('div');
+      host.id = 'qs-test';
+      host.innerHTML = m.questSpielHtml(d.quest, d);
+      document.body.appendChild(host);
+      m.questSpielAktiv(host);
+    })()`);
+    expect(await page.$$eval('#qs-test .qs-box', (e) => e.length)).toBe(3);
+    for (const k of ['O', 'M', 'A']) await page.click(`#qs-test .qs-key[data-k="${k}"]`);
+    expect(await page.$$eval('#qs-test .qs-box.ok', (e) => e.map((x) => x.textContent).join(''))).toBe('OMA');
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(true);
+    await page.evaluate(() => document.getElementById('qs-test')!.remove());
   });
 
   it('A6: 3 Blätter auf einmal – blättern, alle zusammen drucken, Nummern der Reihe nach', async () => {
