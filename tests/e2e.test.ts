@@ -34,6 +34,35 @@ afterAll(async () => {
 });
 
 describe('App-Ablauf', () => {
+  it('Neuinstallation: zuerst die Einführung, 4 Schritte bis „Los geht’s“', async () => {
+    await page.goto(base);
+    await page.waitForSelector('.onb');
+    expect(await page.textContent('.onb h1')).toContain('Willkommen');
+    expect(await page.$('#onb-skip')).not.toBeNull();
+    await page.click('#onb-next');
+    await page.waitForFunction(() => document.querySelector('.onb h1')?.textContent?.includes('wächst'));
+    await page.click('#onb-next');
+    await page.waitForSelector('.onb .letters [data-l="s"]');
+    expect(await page.textContent('.onb .lt.neu')).toBe('S');
+    await page.click('#onb-next');
+    await page.waitForSelector('#onb-name');
+    expect(await page.$('#onb-skip')).toBeNull();
+    await page.click('#onb-next');
+    await page.waitForSelector('#create');
+    expect(await page.$('.onb')).toBeNull();
+  });
+
+  it('nächster Start: sofort die Startseite; Einführung wieder aus den Einstellungen', async () => {
+    await page.reload();
+    await page.waitForSelector('#create');
+    expect(await page.$('.onb')).toBeNull();
+    await page.goto(base + '#/einstellungen');
+    await page.click('a[href^="#/willkommen"]');
+    await page.waitForSelector('.onb');
+    await page.click('#onb-skip');
+    await page.waitForFunction(() => location.hash === '#/einstellungen');
+  });
+
   it('Start zeigt T O M L A I S, neu: S', async () => {
     await page.goto(base);
     await page.waitForSelector('[data-l]');

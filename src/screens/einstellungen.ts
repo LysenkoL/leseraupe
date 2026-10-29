@@ -52,6 +52,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       <h2>Über</h2>
       <div class="hint">Leseraupe · Alle Daten bleiben nur auf diesem Gerät. Schrift: Inter (SIL Open Font License).</div>
       <div class="hint">Version: ${__BUILD__} UTC</div>
+      <a class="btn ghost" href="#/willkommen?zurueck=%23%2Feinstellungen">Einführung ansehen</a>
     </section>
   </div>
 </div>`;

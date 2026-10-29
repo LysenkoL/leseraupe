@@ -12,6 +12,8 @@ import { renderBlatt } from './screens/blatt';
 import { renderThema } from './screens/thema';
 import { renderEinstellungen } from './screens/einstellungen';
 import { renderChat } from './screens/chat';
+import { renderWillkommen } from './screens/willkommen';
+import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
@@ -40,6 +42,8 @@ function route(): void {
   const [path, query = ''] = raw.split('?');
   const params = new URLSearchParams(query);
   window.scrollTo(0, 0);
+  // Neuinstallation: zuerst die Einführung
+  if (path !== '/willkommen' && !loadProfile().onboarded) return renderWillkommen(app);
   const blatt = path.match(/^\/blatt\/(\d+)$/);
   if (blatt) return renderBlatt(app, Number(blatt[1]));
   switch (path) {
@@ -57,6 +61,10 @@ function route(): void {
       return renderEinstellungen(app);
     case '/chat':
       return renderChat(app);
+    case '/willkommen': {
+      const back = params.get('zurueck') ?? '';
+      return renderWillkommen(app, back.startsWith('#/') ? back : '#/');
+    }
     default:
       return renderStart(app);
   }

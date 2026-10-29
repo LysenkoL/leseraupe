@@ -1,9 +1,9 @@
-import { UNITS, unitById } from '../core/letters';
-import { toggleLetter } from '../core/store';
+import { unitById } from '../core/letters';
+import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { getSettings, setSettings } from '../app/state';
 import { esc, go, toast, GEAR_ICON } from '../app/ui';
 import { THEMES, THEME_IDS } from '../sheet/themes';
-import { allSheets, log } from '../core/db';
+import { allSheets } from '../core/db';
 import { createDraft } from '../app/actions';
 import type { BlockId } from '../core/types';
 import { canInstall, install, isStandalone, onInstallChange } from '../app/install';
@@ -26,13 +26,6 @@ export function renderStart(root: HTMLElement): void {
   const draw = (c = count) => {
     count = c;
     const s = getSettings();
-    const letters = UNITS.map((u) => {
-      const on = s.letters.includes(u.id);
-      const cls = u.id === s.newLetter ? 'neu' : on ? 'on' : '';
-      const small = u.label.length > 2 ? ' small' : '';
-      const state = u.id === s.newLetter ? 'neu' : on ? 'gelernt' : 'noch nicht';
-      return `<button class="lt ${cls}${small}" data-l="${u.id}" aria-label="${esc(u.label)}: ${state}">${esc(u.label)}</button>`;
-    }).join('');
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
     const themeChips = THEME_IDS.map((id) => {
       const t = THEMES[id];
@@ -66,9 +59,7 @@ export function renderStart(root: HTMLElement): void {
     }
     <section class="card">
       <div class="row"><h2>Gelernte Buchstaben</h2><span class="hint">${s.letters.length} von 43 · neu: ${esc(neu ?? '–')}</span></div>
-      <div class="letters">${letters}</div>
-      <div class="legend"><span><i style="background:#9FD18F"></i>gelernt</span><span><i style="background:#F2A65A"></i>neu</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>noch nicht</span></div>
-      <div class="hint">Reihenfolge wie in vielen Fibeln · Tippen: noch nicht → neu → gelernt → noch nicht</div>
+      ${lettersHtml(s)}
     </section>
     <section class="card">
       <h2>Lesezeit</h2>
@@ -92,17 +83,7 @@ export function renderStart(root: HTMLElement): void {
   </div>
 </div>`;
 
-    root.querySelectorAll<HTMLButtonElement>('[data-l]').forEach((b) =>
-      b.addEventListener('click', async () => {
-        const id = b.dataset.l!;
-        const r = toggleLetter(getSettings(), id);
-        setSettings(r.settings);
-        const lbl = unitById(id)!.label.replace('-', '');
-        if (r.added) await log(`Buchstabe ${lbl} hinzugefügt`);
-        if (r.removed) await log(`Buchstabe ${lbl} entfernt`);
-        draw(count);
-      }),
-    );
+    bindLetters(root, () => draw(count));
     root.querySelectorAll<HTMLButtonElement>('[data-min]').forEach((b) =>
       b.addEventListener('click', () => {
         setSettings({ ...getSettings(), minutes: Number(b.dataset.min) as 5 | 10 });

@@ -59,6 +59,8 @@ export interface Kind {
 export interface Profile {
   activeKindId: string;
   kinder: Kind[];
+  /** Einführung (A2) gesehen oder übersprungen */
+  onboarded: boolean;
 }
 
 /** Das erste (und vorerst einzige) Kind; auch alte Daten ohne Profil gehören zu ihm. */
@@ -71,7 +73,8 @@ export function sanitizeProfile(raw: Partial<Profile> | null | undefined): Profi
     .map((k) => ({ id: k.id, settings: sanitize(k.settings) }));
   if (!kinder.length) kinder.push({ id: FIRST_KIND_ID, settings: { ...DEFAULT_SETTINGS } });
   const activeKindId = kinder.some((k) => k.id === raw?.activeKindId) ? raw!.activeKindId! : kinder[0].id;
-  return { activeKindId, kinder };
+  // fehlt das Feld (z. B. alte Sicherung), war die App schon in Gebrauch
+  return { activeKindId, kinder, onboarded: raw?.onboarded !== false };
 }
 
 /**
@@ -94,7 +97,8 @@ export function loadProfile(): Profile {
   } catch {
     old = null;
   }
-  const p = sanitizeProfile({ activeKindId: FIRST_KIND_ID, kinder: [{ id: FIRST_KIND_ID, settings: sanitize(old) }] });
+  // Einführung nur bei echter Neuinstallation, nicht nach dem Update von v1
+  const p = sanitizeProfile({ activeKindId: FIRST_KIND_ID, kinder: [{ id: FIRST_KIND_ID, settings: sanitize(old) }], onboarded: old !== null });
   saveProfile(p);
   return p;
 }
@@ -105,6 +109,10 @@ export function saveProfile(p: Profile): void {
   } catch {
     /* Speicher voll oder gesperrt */
   }
+}
+
+export function setOnboarded(done = true): void {
+  saveProfile({ ...loadProfile(), onboarded: done });
 }
 
 export function activeKind(p: Profile): Kind {

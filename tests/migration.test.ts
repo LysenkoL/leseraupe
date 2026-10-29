@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 import { describe, expect, it, beforeEach } from 'vitest';
 import * as db from '../src/core/db';
 import { SAMPLE_SHEET } from '../src/core/sample';
-import { FIRST_KIND_ID, loadProfile, loadSettings, sanitizeProfile, saveSettings } from '../src/core/store';
+import { FIRST_KIND_ID, loadProfile, loadSettings, sanitizeProfile, saveSettings, setOnboarded } from '../src/core/store';
 
 class MemStorage {
   m = new Map<string, string>();
@@ -86,6 +86,15 @@ describe('A1: Umzug alter Daten zum ersten Kind', () => {
     saveSettings({ ...loadSettings(), childName: 'Ben' });
     expect(loadSettings().childName).toBe('Ben');
     expect(loadProfile().kinder[0].settings.childName).toBe('Ben');
+  });
+
+  it('Einführung: nur bei Neuinstallation, nicht nach dem Update von v1', () => {
+    expect(loadProfile().onboarded).toBe(false);
+    setOnboarded();
+    expect(loadProfile().onboarded).toBe(true);
+    (globalThis as unknown as { localStorage: MemStorage }).localStorage = new MemStorage();
+    localStorage.setItem('leseraupe.settings.v1', '{"letters":["t"]}');
+    expect(loadProfile().onboarded).toBe(true);
   });
 
   it('kaputtes Profil wird repariert', () => {
