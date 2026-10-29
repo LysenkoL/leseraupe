@@ -6,6 +6,7 @@ import { sharePdf, sheetToPdf } from '../sheet/pdf';
 import { backButton, esc, formatDate, go, toast } from '../app/ui';
 import { THEMES } from '../sheet/themes';
 import { getSettings } from '../app/state';
+import { stolperLink } from './stolper';
 
 /** Ein gespeichertes Blatt: genau so wieder drucken, Timer, „gelesen“ von Hand. */
 export function renderBlatt(root: HTMLElement, id: number): void {
@@ -58,6 +59,6 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     if (!r) return;
     await addRead(id, getSettings().minutes, true);
     toast(`Blatt ${esc(String(r.number))}: gelesen ✓`);
-    draw();
+    go(stolperLink(id, `#/blatt/${id}`));
   });
 }

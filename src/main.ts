@@ -15,6 +15,7 @@ import { renderChat } from './screens/chat';
 import { renderWillkommen } from './screens/willkommen';
 import { renderUeber } from './screens/ueber';
 import { renderLesen } from './screens/lesen';
+import { renderStolper } from './screens/stolper';
 import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
 
@@ -63,6 +64,9 @@ function route(): void {
       return renderEinstellungen(app);
     case '/chat':
       return renderChat(app);
+    case '/stolper':
+      renderStolper(app, params);
+      return;
     case '/lesen':
       renderLesen(app, params);
       return;

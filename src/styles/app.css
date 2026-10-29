@@ -242,3 +242,13 @@ details.card > summary::-webkit-details-marker { display: none; }
 .t-wahl .chip { background: rgba(255,255,255,.14); color: #fff; border: 1.5px solid transparent; min-width: 48px; }
 .t-wahl .chip.on { background: #F2C94C; color: #2B3A67; }
 .t-wahl .chip:disabled { opacity: .35; }
+
+/* Stolperwörter (B2) */
+.st-words { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-w { min-height: 48px; padding: 0 14px; border-radius: 14px; border: 1.5px solid #CCD3CE; background: #fff; font-size: 20px; font-weight: 600; }
+.st-w.alt::after { content: ' •'; color: var(--orange); }
+.st-w.on { background: var(--orange-light); border-color: var(--orange); color: var(--orange-ink); }
+.st-list { display: flex; flex-direction: column; gap: 6px; }
+.st-row { display: flex; align-items: center; gap: 10px; }
+.st-row b { flex: 1; font-size: 18px; }
+.st-row small { color: var(--muted); }

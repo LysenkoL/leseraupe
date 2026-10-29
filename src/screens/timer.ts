@@ -2,6 +2,7 @@ import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { esc, toast } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
+import { stolperLink } from './stolper';
 
 export const TIMER_WAHL = [5, 10, 15, 20];
 export const TIMER_MAX = 60;
@@ -78,14 +79,18 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
     perlen(Math.min(perlenZahl, Math.floor((total - remaining) / 60 / schritt)));
   };
 
+  let readId: number | null = null;
   const cd = createCountdown(total, {
     tick: show,
     done: async () => {
       root.querySelector('#t-sub')!.innerHTML = '<span class="t-toll">Toll gelesen!</span>';
       startBtn.textContent = 'Fertig';
       try {
-        const nr = await recordRead(sheetId, draft, minutes);
-        if (nr) toast(`Blatt ${nr}: gelesen ✓`);
+        const r = await recordRead(sheetId, draft, minutes);
+        if (r) {
+          readId = r.id;
+          toast(`Blatt ${r.number}: gelesen ✓`);
+        }
       } catch {
         toast('Lesung konnte nicht gespeichert werden.');
       }
@@ -107,7 +112,8 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
 
   startBtn.addEventListener('click', () => {
     if (cd.done) {
-      location.hash = back;
+      // danach freiwillig: Wo hat das Kind gestockt? (B2)
+      location.hash = readId ? stolperLink(readId, back) : back;
     } else if (cd.running) {
       cd.pause();
       startBtn.textContent = 'Weiter';

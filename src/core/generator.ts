@@ -5,6 +5,7 @@ import { DICT } from './dict';
 import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } from './letters';
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
+import { pickStolper, STOLPER_PRO_BLATT, type Stolper } from './stolper';
 
 export const COUNTS: Record<Minutes, { silben: number; woerter: number; kleine: number; saetze: number; geschichte: number; fragen: [number, number]; aehnlich: number }> = {
   5: { silben: 18, woerter: 20, kleine: 8, saetze: 7, geschichte: 7, fragen: [3, 4], aehnlich: 4 },
@@ -36,6 +37,32 @@ export interface GenParams {
   seed: number;
   /** Schwierigkeit 1–5 (B1): wie viele Blätter seit der letzten neuen Buchstabe; fehlt = ohne Stufen */
   stufe?: number;
+  /** Stolperwörter des Kindes (B2): kommen öfter vor */
+  stolper?: Stolper[];
+}
+
+/**
+ * Einige Stolperwörter (B2) ins Blatt holen: kleine Wörter zu den kleinen, sonst zu den Wörtern.
+ * Sie ersetzen hinten Wörter, damit der Umfang gleich bleibt; die Wiederholungssperre gilt für sie nicht.
+ */
+function addStolper(woerter: string[], kleine: string[], v: Vocab, p: GenParams, rng: Rng): { woerter: string[]; kleine: string[] } {
+  if (!p.stolper?.length) return { woerter, kleine };
+  const w = [...woerter];
+  const k = [...kleine];
+  const lower = new Set(v.kleine.map((x) => x.toLowerCase()));
+  const has = (list: string[], x: string) => list.some((y) => y.toLowerCase() === x.toLowerCase());
+  // schon zufällig auf dem Blatt stehende Stolperwörter zählen mit
+  let frei = STOLPER_PRO_BLATT - p.stolper.filter((x) => has(w, x.w) || has(k, x.w)).length;
+  for (const s of pickStolper(p.stolper, (x) => v.has(x), rng)) {
+    if (frei <= 0) break;
+    if (has(w, s) || has(k, s)) continue;
+    frei--;
+    const list = lower.has(s.toLowerCase()) ? k : w;
+    if (list.length) list[list.length - 1 - Math.floor(rng() * Math.min(3, list.length))] = s;
+    else list.push(s);
+  }
+  const byLen = (a: string, b: string) => [...a].length - [...b].length;
+  return { woerter: w.sort(byLen), kleine: k.sort(byLen) };
 }
 
 export const MAX_STUFE = 5;
@@ -278,9 +305,11 @@ export function generateSheet(p: GenParams): Generated {
   const c = COUNTS[p.minutes];
 
   const silben = makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng);
-  const kleine = makeKleine(v, p, rng);
   const story = p.blocks.geschichte || p.blocks.fragen ? makeGeschichte(v, p, rng) : null;
-  const woerter = makeWoerter(v, p, rng, new Set(kleine));
+  const { woerter, kleine } = (() => {
+    const k = makeKleine(v, p, rng);
+    return addStolper(makeWoerter(v, p, rng, new Set(k)), k, v, p, rng);
+  })();
 
   const avoid = new Set(story?.g.saetze ?? []);
   const cands = [

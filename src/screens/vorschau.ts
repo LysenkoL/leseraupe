@@ -10,6 +10,7 @@ import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
 import { backButton, editDialog, esc, go, toast } from '../app/ui';
 import { THEMES } from '../sheet/themes';
 import { trimOnce } from '../app/fitflow';
+import { stolperLink } from './stolper';
 import type { BlockId, SheetData } from '../core/types';
 
 export function renderVorschau(root: HTMLElement): void {
@@ -200,7 +201,7 @@ export function renderVorschau(root: HTMLElement): void {
     const d = await saveSerieBis(getSerie()!.idx);
     await addRead(d.savedId!, getSettings().minutes, true);
     toast(`Blatt ${d.data.number}: gelesen ✓`);
-    await draw();
+    go(stolperLink(d.savedId!, '#/vorschau'));
   });
 
   draw();

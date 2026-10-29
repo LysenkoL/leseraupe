@@ -19,6 +19,7 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
     history: historyFrom(sheets.map((r) => ({ seq: r.number, data: r.data })), next),
     seed,
     stufe: stufeFor(sheets.map((r) => r.data), s.letters),
+    stolper: s.stolper,
   };
 }
 

@@ -1,6 +1,7 @@
 import { allSheets, dayKey, readingDays, stats, statusOf, streak, type SheetRecord } from '../core/db';
 import { backButton, esc, formatDate } from '../app/ui';
 import { THEMES } from '../sheet/themes';
+import { getSettings } from '../app/state';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const STATUS_LABEL = { erstellt: 'erstellt', gedruckt: 'gedruckt', gelesen: 'gelesen ✓' } as const;
@@ -40,6 +41,7 @@ export function renderVerlauf(root: HTMLElement): void {
           <span class="si-st st-${s}">${STATUS_LABEL[s]}</span></a>`;
       })
       .join('');
+    const cfg = getSettings();
     root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>Verlauf</h1></div></div>
@@ -50,6 +52,11 @@ export function renderVerlauf(root: HTMLElement): void {
       <div class="tile on"><b>${st.gelesen}</b><small>gelesen</small></div>
       <div class="tile"><b>${st.minuten}</b><small>Minuten</small></div>
     </div>
+    ${
+      cfg.stolper.length || cfg.stolperBesiegt
+        ? `<div class="hint" id="st-info">Stolperwörter: <b>${cfg.stolperBesiegt}</b> besiegt · ${cfg.stolper.length} noch in Arbeit</div>`
+        : ''
+    }
     <section class="card">
       <div class="row">
         <button class="iconbtn sm" id="prev" aria-label="Voriger Monat">‹</button>

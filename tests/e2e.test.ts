@@ -285,6 +285,9 @@ describe('App-Ablauf', () => {
     await page.clock.runFor(5 * 60 * 1000 + 2000);
     await page.waitForSelector('#rd-clock.fertig');
     await page.click('#rd-next');
+    // danach freiwillig: Stolperwörter – hier überspringen
+    await page.waitForSelector('#st-skip');
+    await page.click('#st-skip');
     await page.waitForSelector('#b-s');
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
   });
@@ -329,6 +332,30 @@ describe('App-Ablauf', () => {
     await page.click('#t-reset');
     await page.click('[data-tmin="5"]');
     await page.waitForFunction(() => document.querySelector('#t-digits')?.textContent === '05:00');
+  });
+
+  it('B2: nach „Gelesen ✓“ Stolperwörter antippen, in den Einstellungen sehen und entfernen', async () => {
+    await page.goto(base + '#/verlauf');
+    await page.waitForSelector('.sheet-item');
+    await page.click('.sheet-item');
+    await page.waitForSelector('#b-read');
+    await page.click('#b-read');
+    await page.waitForSelector('.st-w');
+    const [w1, w2] = await page.$$eval('.st-w', (e) => e.slice(0, 2).map((x) => (x as HTMLElement).dataset.w!));
+    await page.click(`.st-w[data-w="${w1}"]`);
+    await page.click(`.st-w[data-w="${w2}"]`);
+    expect(await page.textContent('#st-ok')).toBe('Fertig · 2 Wörter');
+    await page.click('#st-ok');
+    await page.waitForSelector('#b-s');
+    await page.goto(base + '#/einstellungen');
+    await page.waitForSelector('#stolper');
+    expect(await page.$$eval('.st-row b', (e) => e.map((x) => x.textContent))).toEqual([w1, w2]);
+    await page.click('[data-st-del="0"]');
+    await page.waitForFunction(() => document.querySelectorAll('.st-row').length === 1);
+    expect(await page.textContent('.st-row b')).toBe(w2);
+    await page.goto(base + '#/verlauf');
+    await page.waitForSelector('#st-info');
+    expect(await page.textContent('#st-info')).toContain('1 noch in Arbeit');
   });
 
   it('keine Fehler in der Konsole', () => {

@@ -16,6 +16,18 @@ export function renderEinstellungen(root: HTMLElement): void {
       </label>
       <button class="btn green" id="save">Speichern</button>
     </section>
+    <section class="card" id="stolper">
+      <div class="row"><h2>Stolperwörter</h2><span class="hint">${s.stolperBesiegt} besiegt</span></div>
+      ${
+        s.stolper.length
+          ? `<div class="st-list">${s.stolper
+              .map((x, i) => `<div class="st-row"><b>${esc(x.w)}</b><small>${x.ok}× flüssig</small><button class="pillbtn" data-st-del="${i}">Entfernen</button></div>`)
+              .join('')}</div>
+      <button class="btn ghost" id="st-all">Alle löschen</button>`
+          : '<div class="hint">Noch keine. Nach dem Lesen kannst du antippen, wo dein Kind gestockt hat.</div>'
+      }
+      <div class="hint">Ein Wort verschwindet von selbst, wenn es dreimal hintereinander flüssig gelesen wurde.</div>
+    </section>
     <section class="card">
       <h2>Sicherung</h2>
       <div class="hint">Alle Blätter, das Protokoll und die Einstellungen in einer Datei. Die Datei kann man z. B. in Google Drive ablegen.</div>
@@ -35,6 +47,19 @@ export function renderEinstellungen(root: HTMLElement): void {
     <a class="btn ghost" href="#/ueber">Über die App · Datenschutz · Feedback</a>
   </div>
 </div>`;
+
+  root.querySelectorAll<HTMLButtonElement>('[data-st-del]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const cur = getSettings();
+      setSettings({ ...cur, stolper: cur.stolper.filter((_, i) => i !== Number(b.dataset.stDel)) });
+      renderEinstellungen(root);
+    }),
+  );
+  root.querySelector('#st-all')?.addEventListener('click', async () => {
+    if (!(await confirmDialog('Alle Stolperwörter löschen?', 'Löschen'))) return;
+    setSettings({ ...getSettings(), stolper: [] });
+    renderEinstellungen(root);
+  });
 
   root.querySelector('#save')!.addEventListener('click', () => {
     const name = (root.querySelector<HTMLInputElement>('#name')!.value || '').trim();

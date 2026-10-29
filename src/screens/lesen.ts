@@ -2,6 +2,7 @@ import { getDraft, getSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { esc, go, toast } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
+import { stolperLink } from './stolper';
 import type { SheetData } from '../core/types';
 
 interface Page {
@@ -85,14 +86,18 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     time.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
   };
 
+  let readId: number | null = null;
   const cd = createCountdown(minutes * 60, {
     tick: showTime,
     done: async () => {
       clockBtn.innerHTML = 'Toll gelesen! ✓';
       clockBtn.classList.add('fertig');
       try {
-        const nr = await recordRead(sheetId, draft, minutes);
-        if (nr) toast(`Blatt ${nr}: gelesen ✓`);
+        const r = await recordRead(sheetId, draft, minutes);
+        if (r) {
+          readId = r.id;
+          toast(`Blatt ${r.number}: gelesen ✓`);
+        }
       } catch {
         toast('Lesung konnte nicht gespeichert werden.');
       }
@@ -127,7 +132,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
       idx++;
       draw();
     } else {
-      go(back);
+      go(readId ? stolperLink(readId, back) : back);
     }
   };
   const prev = () => {

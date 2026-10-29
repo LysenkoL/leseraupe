@@ -1,5 +1,6 @@
 import { DEFAULT_BLOCKS, type BlockId } from './types';
 import { sortUnits, UNIT_IDS } from './letters';
+import { sanitizeStolper, type Stolper } from './stolper';
 import type { ThemeId } from '../sheet/themes';
 import { THEME_IDS } from '../sheet/themes';
 
@@ -11,6 +12,10 @@ export interface Settings {
   minutes: number;
   /** wie viele Blätter auf einmal erstellt werden (A6) */
   blaetter: number;
+  /** Stolperwörter des Kindes (B2) */
+  stolper: Stolper[];
+  /** so viele Stolperwörter sind schon besiegt */
+  stolperBesiegt: number;
   theme: ThemeId;
   randomTheme: boolean;
   blocks: Record<BlockId, boolean>;
@@ -26,6 +31,8 @@ export const DEFAULT_SETTINGS: Settings = {
   newLetter: 's',
   minutes: 5,
   blaetter: 1,
+  stolper: [],
+  stolperBesiegt: 0,
   theme: 'wiese',
   randomTheme: false,
   blocks: { ...DEFAULT_BLOCKS },
@@ -46,6 +53,8 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   if (s.newLetter && !s.letters.includes(s.newLetter)) s.newLetter = null;
   if (!Number.isInteger(s.minutes) || s.minutes < 1 || s.minutes > 60) s.minutes = 5;
   if (!Number.isInteger(s.blaetter) || s.blaetter < 1 || s.blaetter > MAX_BLAETTER) s.blaetter = 1;
+  s.stolper = sanitizeStolper(s.stolper);
+  if (!Number.isInteger(s.stolperBesiegt) || s.stolperBesiegt < 0) s.stolperBesiegt = 0;
   if (!THEME_IDS.includes(s.theme)) s.theme = 'wiese';
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';

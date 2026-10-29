@@ -137,19 +137,19 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
 
 /**
  * Lesung speichern: gespeichertes Blatt (sheetId) oder der aktuelle Entwurf,
- * der dabei eine Nummer bekommt. Liefert die Blatt-Nummer.
+ * der dabei eine Nummer bekommt. Liefert id und Nummer des Blatts.
  */
-export async function recordRead(sheetId: number | null, draft: Draft | null, minutes: number): Promise<number | null> {
+export async function recordRead(sheetId: number | null, draft: Draft | null, minutes: number): Promise<{ id: number; number: number } | null> {
   if (sheetId) {
     const r = await addRead(sheetId, minutes);
-    return r?.number ?? null;
+    return r ? { id: sheetId, number: r.number } : null;
   }
   const serie = getSerie();
   if (draft && serie) {
     // frühere Blätter der Serie zuerst speichern, damit die Nummern stimmen
     const d = await saveSerieBis(serie.idx);
     await addRead(d.savedId!, minutes);
-    return d.data.number;
+    return { id: d.savedId!, number: d.data.number! };
   }
   return null;
 }
