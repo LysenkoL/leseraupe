@@ -1,10 +1,11 @@
-import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte, Aehnlich } from './types';
+import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte } from './types';
 import type { ThemeId } from '../sheet/themes';
 import { Vocab } from './vocab';
 import { DICT } from './dict';
-import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, checkText, countUnit, tokenizeWord } from './letters';
+import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } from './letters';
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
+import { pickStolper, STOLPER_PRO_BLATT, type Stolper } from './stolper';
 
 export const COUNTS: Record<Minutes, { silben: number; woerter: number; kleine: number; saetze: number; geschichte: number; fragen: [number, number]; aehnlich: number }> = {
   5: { silben: 18, woerter: 20, kleine: 8, saetze: 7, geschichte: 7, fragen: [3, 4], aehnlich: 4 },
@@ -32,9 +33,64 @@ export interface GenParams {
   theme: ThemeId;
   childName: string;
   blocks: Record<BlockId, boolean>;
-  aehnlichPair: [string, string];
   history: History;
   seed: number;
+  /** Schwierigkeit 1–5 (B1): wie viele Blätter seit der letzten neuen Buchstabe; fehlt = ohne Stufen */
+  stufe?: number;
+  /** Stolperwörter des Kindes (B2): kommen öfter vor */
+  stolper?: Stolper[];
+  /** Silben farbig (B3) */
+  silbenFarbig?: boolean;
+}
+
+/**
+ * Einige Stolperwörter (B2) ins Blatt holen: kleine Wörter zu den kleinen, sonst zu den Wörtern.
+ * Sie ersetzen hinten Wörter, damit der Umfang gleich bleibt; die Wiederholungssperre gilt für sie nicht.
+ */
+function addStolper(woerter: string[], kleine: string[], v: Vocab, p: GenParams, rng: Rng): { woerter: string[]; kleine: string[] } {
+  if (!p.stolper?.length) return { woerter, kleine };
+  const w = [...woerter];
+  const k = [...kleine];
+  const lower = new Set(v.kleine.map((x) => x.toLowerCase()));
+  const has = (list: string[], x: string) => list.some((y) => y.toLowerCase() === x.toLowerCase());
+  // schon zufällig auf dem Blatt stehende Stolperwörter zählen mit
+  let frei = STOLPER_PRO_BLATT - p.stolper.filter((x) => has(w, x.w) || has(k, x.w)).length;
+  for (const s of pickStolper(p.stolper, (x) => v.has(x), rng)) {
+    if (frei <= 0) break;
+    if (has(w, s) || has(k, s)) continue;
+    frei--;
+    const list = lower.has(s.toLowerCase()) ? k : w;
+    if (list.length) list[list.length - 1 - Math.floor(rng() * Math.min(3, list.length))] = s;
+    else list.push(s);
+  }
+  const byLen = (a: string, b: string) => [...a].length - [...b].length;
+  return { woerter: w.sort(byLen), kleine: k.sort(byLen) };
+}
+
+export const MAX_STUFE = 5;
+
+/**
+ * Was eine Stufe bedeutet (B1). Stufe 1 = erstes Blatt nach einer neuen Buchstabe:
+ * kurze Wörter, wenig Zweisilber, kurze Sätze und eine kurze Geschichte.
+ */
+export const STUFEN: Record<number, { wortMax: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number }> = {
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6 },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7 },
+  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7 },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8 },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8 },
+};
+
+/** Stufe für das nächste Blatt: Blätter mit genau denselben Buchstaben zählen; neue Buchstabe → wieder 1. */
+export function stufeFor(saved: { letters: string[] }[], letters: string[]): number {
+  const key = sortUnits(letters).join(',');
+  const same = saved.filter((d) => sortUnits(d.letters).join(',') === key).length;
+  return Math.min(MAX_STUFE, same + 1);
+}
+
+/** Silben eines Wortes ≈ Anzahl der Vokal-Einheiten */
+export function silbenZahl(w: string): number {
+  return tokenizeWord(w.toLowerCase()).units.filter((u) => VOWEL_UNITS.has(u)).length;
 }
 
 /** Wörter, die der Wortliste fehlen (für „Entfernt: …“) */
@@ -89,7 +145,21 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): st
   const theme = new Set(v.words.filter((e) => e.themen.includes(p.theme)).map((e) => e.w));
   const newU = p.newLetter;
   const prefer = (w: string) => (newU ? countUnit(w, newU) > 0 : false) || (theme.has(w) && rng() < 0.5);
-  const words = pickFresh(cands.map((e) => e.w), n, p.history, rng, prefer, 0.55);
+  let words: string[];
+  if (p.stufe) {
+    // Stufe: Länge begrenzen und Anteil der Mehrsilber steuern; reicht es nicht, wird gelockert
+    const st = STUFEN[p.stufe];
+    const all = cands.map((e) => e.w);
+    const short = all.filter((w) => [...w].length <= st.wortMax);
+    const base = short.length >= n * 1.5 ? short : all;
+    const multi = base.filter((w) => silbenZahl(w) >= 2);
+    const one = base.filter((w) => silbenZahl(w) < 2);
+    const k = Math.round(n * st.mehrsilbig);
+    words = [...pickFresh(multi, k, p.history, rng, prefer, 0.55), ...pickFresh(one, n - k, p.history, rng, prefer, 0.55)];
+    if (words.length < n) words.push(...pickFresh(base.filter((w) => !words.includes(w)), n - words.length, p.history, rng, prefer, 0.55));
+  } else {
+    words = pickFresh(cands.map((e) => e.w), n, p.history, rng, prefer, 0.55);
+  }
   // erst kurze Wörter
   return words.sort((a, b) => [...a].length - [...b].length);
 }
@@ -135,8 +205,10 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
 }
 
 function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; fragen: string[] } | null {
-  const n = COUNTS[p.minutes].geschichte;
-  const [lo, hi] = p.minutes === 5 ? [6, 8] : [10, 13];
+  const st = p.stufe ? STUFEN[p.stufe] : null;
+  const n = st ? Math.min(COUNTS[p.minutes].geschichte, st.geschichteMax) : COUNTS[p.minutes].geschichte;
+  const [lo, base] = p.minutes === 5 ? [6, 8] : [10, 13];
+  const hi = st && p.minutes === 5 ? st.geschichteMax : base;
   const curated = DICT.geschichten.filter(
     (g) => g.saetze.length >= lo && g.saetze.length <= hi && v.has(g.titel) && g.saetze.every((s) => v.has(s)),
   );
@@ -223,32 +295,6 @@ function makeGeheimwort(v: Vocab, rng: Rng): Quest | null {
   return null;
 }
 
-/** Block „Ähnliche Buchstaben“: Wörter mit dem einen und mit dem anderen Buchstaben. */
-export function makeAehnlich(v: Vocab, p: GenParams, rng: Rng, prefer: string[]): Aehnlich | null {
-  const [a, b] = p.aehnlichPair;
-  const n = COUNTS[p.minutes].aehnlich;
-  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-  const all = [...new Set([...prefer, ...v.words.map((e) => e.w), ...v.kleine.map(cap)])].filter((w) => v.has(w));
-  const contains = (w: string, x: string) => (x.length > 1 ? w.toLowerCase().includes(x) : w.includes(x));
-  const forX = (x: string) => {
-    const c = all.filter((w) => contains(w, x));
-    const pref = c.filter((w) => prefer.includes(w));
-    return [...shuffle(pref, rng), ...shuffle(c.filter((w) => !pref.includes(w)), rng)]
-      .filter((w, i, arr) => arr.indexOf(w) === i)
-      .slice(0, n)
-      .sort((x1, x2) => x1.length - x2.length);
-  };
-  const wa = forX(a);
-  const wb = forX(b);
-  if (!wa.length || !wb.length) return null;
-  return { pair: [a, b], words: [wa, wb] };
-}
-
-/** Prüft, ob beide Buchstaben eines Paars gelernt sind. */
-export function pairKnown(pair: [string, string], known: ReadonlySet<string>): boolean {
-  return pair.every((x) => checkText(x, known).ok);
-}
-
 export interface Generated {
   sheet: SheetData;
   removed: Removed[];
@@ -261,20 +307,31 @@ export function generateSheet(p: GenParams): Generated {
   const c = COUNTS[p.minutes];
 
   const silben = makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng);
-  const kleine = makeKleine(v, p, rng);
   const story = p.blocks.geschichte || p.blocks.fragen ? makeGeschichte(v, p, rng) : null;
-  const woerter = makeWoerter(v, p, rng, new Set(kleine));
+  const { woerter, kleine } = (() => {
+    const k = makeKleine(v, p, rng);
+    return addStolper(makeWoerter(v, p, rng, new Set(k)), k, v, p, rng);
+  })();
 
   const avoid = new Set(story?.g.saetze ?? []);
   const cands = [
     ...DICT.saetze.filter((s) => v.has(s)),
     ...templateSentences(v, pools(v), rng),
   ];
-  const saetze = chooseSentences(cands, c.saetze, p, rng, avoid);
+  // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
+  let satzCands = cands;
+  if (p.stufe) {
+    const st = STUFEN[p.stufe];
+    const len = (x: string) => wordsOf(x).length;
+    const passend = cands.filter((x) => len(x) >= st.satzMin && len(x) <= st.satzWoerter);
+    const kurz = cands.filter((x) => len(x) <= st.satzWoerter);
+    if (passend.length >= c.saetze * 2) satzCands = passend;
+    else if (kurz.length >= c.saetze * 2) satzCands = kurz;
+  }
+  const saetze = chooseSentences(satzCands, c.saetze, p, rng, avoid);
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
-  const aehnlich = pairKnown(p.aehnlichPair, known) ? makeAehnlich(v, p, rng, [...woerter, ...saetze.flatMap(wordsOf)]) : null;
 
   const sheet: SheetData = {
     number: null,
@@ -284,10 +341,13 @@ export function generateSheet(p: GenParams): Generated {
     newLetter: p.newLetter,
     childName: p.childName,
     blocks: { ...p.blocks },
+    ...(p.stufe ? { stufe: p.stufe } : {}),
+    ...(p.silbenFarbig ? { silbenFarbig: true } : {}),
     silben,
     woerter,
     kleine,
-    aehnlich,
+    // Block „Ähnliche Buchstaben“ entfällt (A6); nur alte Blätter haben ihn noch
+    aehnlich: null,
     saetze,
     geschichte: story?.g ?? null,
     quest,
@@ -313,9 +373,6 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
       break;
     case 'kleine':
       s.kleine = g.sheet.kleine;
-      break;
-    case 'aehnlich':
-      s.aehnlich = g.sheet.aehnlich;
       break;
     case 'saetze':
       s.saetze = g.sheet.saetze;
@@ -352,6 +409,21 @@ export function readingTexts(s: SheetData): string[] {
     if (s.quest.kind === 'geheimwort') t.push(...(s.quest.words ?? []), s.quest.target ?? '');
   }
   return t;
+}
+
+/**
+ * Andere Blätter derselben Serie (A6) sperren: ihre Wörter, Sätze und Geschichten
+ * gelten als „gerade benutzt“, damit sich innerhalb der Serie nichts wiederholt.
+ */
+export function withSerie(h: History, andere: SheetData[]): History {
+  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories) };
+  for (const d of andere) {
+    for (const w of sheetWords(d)) out.wordSeq.set(w, h.seq - 1);
+    for (const x of d.saetze) out.recentSentences.add(x);
+    if (d.geschichte) out.recentStories.add(d.geschichte.titel);
+    if (d.quest) out.lastQuest = d.quest.kind;
+  }
+  return out;
 }
 
 /** Baut die Wiederholungs-Historie aus gespeicherten Blättern (seq = laufende Nummer). */

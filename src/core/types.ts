@@ -45,6 +45,10 @@ export interface SheetData {
   geschichte: Geschichte | null;
   quest: Quest | null;
   fragen: string[];
+  /** Schwierigkeit 1–5 (B1); alte Blätter haben keine */
+  stufe?: number;
+  /** Silben abwechselnd farbig (B3) */
+  silbenFarbig?: boolean;
   /** Herkunft: Wörterbuch oder Chat */
   source: 'dict' | 'chat';
 }
@@ -53,7 +57,7 @@ export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {
   silben: true,
   woerter: true,
   kleine: true,
-  aehnlich: true,
+  aehnlich: false,
   saetze: true,
   geschichte: true,
   quest: true,

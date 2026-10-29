@@ -193,3 +193,68 @@ details.card > summary::-webkit-details-marker { display: none; }
 .name-row { display: flex; gap: 8px; }
 .name-row input { flex: 1; min-width: 0; border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 0 12px; min-height: 48px; font-size: 17px; font-weight: 600; background: #fff; }
 .name-row .btn { min-height: 48px; }
+
+/* Einführung (A2) */
+.onb .onb-body { justify-content: center; text-align: center; touch-action: pan-y; }
+.onb .onb-body h1 { margin: 0; font-size: 26px; font-weight: 800; line-height: 1.2; color: var(--green); }
+.onb .onb-body p { margin: 0; font-size: 18px; line-height: 1.45; }
+.onb .onb-body .hint { font-size: 15px; }
+.onb .onb-body .card { text-align: left; }
+.onb-art { display: flex; justify-content: center; }
+.onb-art svg { width: 200px; height: 96px; }
+.onb-steps { gap: 10px; align-items: flex-end; height: 96px; }
+.onb-steps span { width: 44px; border-radius: 12px; background: var(--green-2); color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; }
+.onb-steps span:nth-child(1) { height: 40px; opacity: .6; }
+.onb-steps span:nth-child(2) { height: 64px; opacity: .8; }
+.onb-steps span:nth-child(3) { height: 92px; background: var(--green); }
+.onb-dots { display: flex; gap: 8px; }
+.onb-dots i { width: 10px; height: 10px; border-radius: 5px; background: var(--line); }
+.onb-dots i.on { width: 26px; background: var(--green); }
+.onb-input { width: 100%; min-height: 56px; border-radius: 14px; border: 1.5px solid #CCD3CE; padding: 0 16px; font-size: 20px; background: #fff; text-align: center; }
+
+/* Am Bildschirm lesen (A4) */
+.lesen .rd-pos { text-align: center; color: var(--muted); font-weight: 700; }
+.rd-clock { font-variant-numeric: tabular-nums; min-width: 104px; }
+.rd-clock.fertig { background: var(--green); color: #fff; border-color: var(--green); }
+.rd-body { overflow-y: auto; touch-action: pan-y; padding-top: 8px; }
+.rd-body h1 { margin: 0; font-size: 20px; font-weight: 800; color: var(--green); }
+.rd-grid { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: center; padding: 10px 0; font-size: clamp(34px, 9vw, 64px); font-weight: 600; line-height: 1.25; }
+.rd-ae { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: baseline; justify-content: center; width: 100%; padding: 10px; border-radius: 18px; background: var(--card); }
+.rd-ae b { color: var(--orange-ink); font-weight: 800; }
+.rd-lines p { margin: 0 0 .5em; font-size: clamp(28px, 7.4vw, 52px); font-weight: 600; line-height: 1.3; }
+.rd-lines .rd-q { color: var(--green); }
+.rd-small p { margin: 0 0 .6em; font-size: 22px; line-height: 1.35; color: var(--muted); }
+.rd-end { margin-top: 18px; padding: 14px; border-radius: 18px; background: var(--green-light); color: var(--green); font-weight: 800; font-size: 20px; text-align: center; }
+
+/* Serie in der Vorschau (A6) */
+.serie-nav { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; font-size: 14px; color: var(--muted); }
+.serie-nav:empty { display: none; }
+.serie-nav b { color: var(--ink); }
+.serie-nav .iconbtn:disabled { opacity: .35; }
+
+.stepper { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.stepper .iconbtn { background: var(--green-light); color: var(--green); font-size: 26px; font-weight: 800; }
+.stepper .iconbtn:disabled { opacity: .35; }
+.stepper b { font-size: 30px; min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; }
+
+.t-wahl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.t-wahl[hidden] { display: none; }
+.t-wahl .chip { background: rgba(255,255,255,.14); color: #fff; border: 1.5px solid transparent; min-width: 48px; }
+.t-wahl .chip.on { background: #F2C94C; color: #2B3A67; }
+.t-wahl .chip:disabled { opacity: .35; }
+
+/* Stolperwörter (B2) */
+.st-words { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-w { min-height: 48px; padding: 0 14px; border-radius: 14px; border: 1.5px solid #CCD3CE; background: #fff; font-size: 20px; font-weight: 600; }
+.st-w.alt::after { content: ' •'; color: var(--orange); }
+.st-w.on { background: var(--orange-light); border-color: var(--orange); color: var(--orange-ink); }
+.st-list { display: flex; flex-direction: column; gap: 6px; }
+.st-row { display: flex; align-items: center; gap: 10px; }
+.st-row b { flex: 1; font-size: 18px; }
+.st-row small { color: var(--muted); }
+
+.sy-demo { font-weight: 800; margin-left: auto; font-size: 18px; }
+
+/* Leseraupe und Urkunde (B4) */
+.raupe-svg { width: 100%; height: auto; display: block; }
+.uk-liste { display: flex; flex-wrap: wrap; gap: 8px; }

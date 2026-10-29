@@ -356,3 +356,230 @@ Sie erzählt Mama alles.
 ? Was hat die Fee auf dem Kopf?
 ? Was zaubert die Fee?
 ? Wem erzählt Klara alles?
+
+# Mila malt
+Mila malt.
+Mila malt Mama.
+Mama ist lila.
+Mila malt Oma.
+Oma ist lila.
+Mila malt Tom.
+Tom ist so lila!
+? Wen malt Mila zuerst?
+? Welche Farbe nimmt Mila?
+? Was würdest du malen?
+
+# Im Moos
+Tim ist im Moos.
+Olli ist mit Tim im Moos.
+Tim tollt im Moos.
+Olli tollt mit.
+Tim ist matt.
+Olli ist matt.
+Toll im Moos!
+? Wo sind Tim und Olli?
+? Was machen die beiden im Moos?
+? Wie fühlen sie sich am Ende?
+
+# Salat
+Im Saal ist Salat.
+Lisa isst Salat.
+Lisa isst Mais.
+Lisa isst Salami.
+Lisa isst Toast.
+Lisa ist satt.
+So satt ist Lisa!
+? Wo gibt es Salat?
+? Was isst Lisa alles?
+? Wie geht es Lisa am Ende?
+
+# Lama Lolo
+Lolo ist alt.
+Lolo ist im Tal.
+Im Tal ist Moos.
+Lolo isst Moos.
+Tim malt Lolo.
+Lolo ist satt.
+Toll, Lolo!
+? Wo lebt Lolo?
+? Was frisst Lolo?
+? Wer malt Lolo?
+
+# Slalom
+Im Tal ist Slalom.
+Tom ist im Slalom.
+Lisa ist im Slalom.
+Tom ist toll.
+Lisa ist so toll.
+Mama ist im Tal.
+Mama malt Tom mit Lisa.
+? Wo ist der Slalom?
+? Wer fährt Slalom?
+? Was macht Mama?
+
+# Lollis
+Mimi ist mit Ali im Saal.
+Mimi isst Lolli.
+Ali isst Lolli.
+Mimis Lolli ist lila.
+Alis Lolli ist toll.
+Mimi isst Alis Lolli.
+So, so, Mimi!
+? Wo sind Mimi und Ali?
+? Welche Farbe hat Mimis Lolli?
+? Was macht Mimi am Ende? War das nett?
+
+# Atlas
+Tim ist mit Oma im Saal.
+Im Atlas ist Malta.
+Tim malt Malta.
+Im Atlas ist Mali.
+Tim malt Mali.
+Oma malt mit.
+So toll, Oma!
+? Was schauen Tim und Oma an?
+? Welche Länder malt Tim?
+? Wer malt mit?
+
+# Mais
+Sam ist mit Oma im Tal.
+Im Tal ist Mais.
+Oma isst Mais.
+Sam isst Mais.
+Mais ist toll!
+Sam ist satt.
+Oma ist so satt.
+? Wo sind Sam und Oma?
+? Was essen die beiden?
+? Isst du gern Mais?
+
+# Am See
+Leo ist am See.
+Am See ist Ole.
+Leo isst Toast.
+Ole isst Salat.
+Leo malt Ole.
+Ole malt Leo.
+Toll am See!
+? Wo sind Leo und Ole?
+? Was essen die beiden?
+? Was machen sie danach?
+
+# Esel Emma
+Im Tal ist Esel Emma.
+Emma ist alt.
+Emma isst Salat.
+Lea ist mit Emma im Tal.
+Lea malt Emma.
+Emma ist so toll!
+? Wo wohnt Emma?
+? Was frisst Emma?
+? Was macht Lea?
+
+# Tee
+Lisa ist mit Oma.
+Oma isst Toast.
+Lisa isst Toast.
+Oma testet Tee.
+Lisa testet Tee.
+Tee ist toll!
+? Bei wem ist Lisa?
+? Was essen die beiden?
+? Was trinken sie?
+
+# Melli malt
+Melli malt.
+Melli malt See.
+Melli malt Esel.
+Melli malt Leo.
+Leo malt Melli.
+Toll, Melli!
+Toll, Leo!
+? Was malt Melli?
+? Wer malt Melli?
+? Was würdest du malen?
+
+# Ente Nanni
+Am See ist Ente Nanni.
+Nanni ist nass.
+Nina ist am See.
+Nina isst Toast.
+Nina nimmt Toast mit.
+Nanni isst Toast.
+Nanni ist satt.
+Nett, Nina!
+? Wo wohnt Nanni?
+? Was nimmt Nina mit?
+? Wie geht es Nanni am Ende?
+
+# Tante Anne
+Tante Anne ist mit Anton am See.
+Anne nimmt Melone mit.
+Anton isst Melone.
+Anne isst Melone.
+Anton malt Tante Anne.
+Tante Anne malt Anton.
+So nett!
+? Wo sind Anton und Tante Anne?
+? Was essen sie?
+? Was machen sie danach?
+
+# Nina malt
+Nina malt.
+Nina malt Sonne.
+Nina malt Tanne.
+Nina malt Ente.
+Nina malt Mama.
+Mama malt Nina.
+Toll, Nina!
+? Was malt Nina alles?
+? Wer malt Nina?
+? Was malst du gern?
+
+# Rita rennt
+Rita rennt.
+Rosa rennt mit.
+Rita rennt am Rasen.
+Rita ist am Tor.
+Tor! Toll, Rita!
+Rosa ist matt.
+Rita ist so matt!
+? Wer rennt mit Rita?
+? Was passiert am Tor?
+? Wie fühlen sich Rita und Rosa am Ende?
+
+# Torte
+Oma Rosi ist mit Lars im Saal.
+Im Saal ist Torte.
+Rosi nimmt Torte.
+Lars nimmt Torte.
+Rosi isst Torte.
+Lars isst Torte.
+Torte ist toll!
+? Wer ist im Saal?
+? Was gibt es im Saal?
+? Magst du Torte?
+
+# Nuss
+Uli isst Nuss.
+Ute isst Nuss.
+Uli nimmt Nuss mit.
+Ute nimmt Nuss mit.
+Nuss ist toll.
+Uli ist satt.
+Ute ist so satt!
+? Was essen Uli und Ute?
+? Was nehmen sie mit?
+? Magst du Nüsse?
+
+# Tunnel
+Tom ist mit Uli im Tunnel.
+Tom tutet.
+Uli tutet mit.
+Tuuut! Tuuut!
+Tuten ist toll.
+Nun rennt Tom.
+Uli rennt mit.
+? Wo sind Tom und Uli?
+? Was machen sie im Tunnel?
+? Wie klingt das?

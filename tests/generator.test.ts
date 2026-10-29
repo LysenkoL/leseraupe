@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, type GenParams } from '../src/core/generator';
+import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
 import { DEFAULT_BLOCKS, type SheetData, type BlockId } from '../src/core/types';
-import { checkText, countUnit, UNIT_IDS } from '../src/core/letters';
+import { checkText, countUnit, UNIT_IDS, wordsOf } from '../src/core/letters';
 import { mulberry32, shuffle } from '../src/core/random';
 
 const START = ['t', 'o', 'm', 'l', 'a', 'i', 's'];
@@ -15,7 +15,6 @@ function params(letters: string[], over: Partial<GenParams> = {}): GenParams {
     theme: 'wiese',
     childName: 'Mia',
     blocks: ALL_BLOCKS,
-    aehnlichPair: ['l', 'I'],
     history: emptyHistory(),
     seed: 1,
     ...over,
@@ -72,7 +71,7 @@ describe('Generator: Umfang', () => {
       expect(sheet.fragen.length).toBeGreaterThanOrEqual(c.fragen[0]);
       expect(sheet.fragen.length).toBeLessThanOrEqual(c.fragen[1]);
       expect(sheet.quest).not.toBeNull();
-      expect(sheet.aehnlich).not.toBeNull();
+      expect(sheet.aehnlich).toBeNull(); // Block „Ähnliche Buchstaben“ entfällt (A6)
     });
   }
 
@@ -158,4 +157,59 @@ describe('↻ einzelner Block', () => {
       }
     });
   }
+});
+
+describe('B1: Schwierigkeit wächst innerhalb einer Buchstabe', () => {
+  const MITTEL = UNIT_IDS.slice(0, 25);
+  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const messen = (stufe: number, letters: string[]) => {
+    const wortLen: number[] = [];
+    const satzLen: number[] = [];
+    const mehr: number[] = [];
+    for (let seed = 1; seed <= 25; seed++) {
+      const s = generateSheet(params(letters, { seed, stufe })).sheet;
+      expect(s.stufe).toBe(stufe);
+      wortLen.push(avg(s.woerter.map((w) => [...w].length)));
+      mehr.push(s.woerter.filter((w) => silbenZahl(w) >= 2).length / s.woerter.length);
+      satzLen.push(avg(s.saetze.map((x) => wordsOf(x).length)));
+      for (const t of readingTexts(s)) expect(checkText(t, new Set(letters)).ok, t).toBe(true);
+    }
+    return { wort: avg(wortLen), satz: avg(satzLen), mehr: avg(mehr) };
+  };
+
+  it('Stufe 1 hat kürzere Wörter, weniger Zweisilber und kürzere Sätze als Stufe 3', () => {
+    for (const letters of [START, MITTEL]) {
+      const s1 = messen(1, letters);
+      const s3 = messen(3, letters);
+      expect(s1.wort, letters.join('')).toBeLessThan(s3.wort);
+      expect(s1.satz, letters.join('')).toBeLessThan(s3.satz);
+      expect(s1.mehr, letters.join('')).toBeLessThan(s3.mehr);
+    }
+  });
+
+  it('Stufe zählt Blätter mit denselben Buchstaben; neue Buchstabe → wieder Stufe 1', () => {
+    const blatt = (letters: string[]) => ({ letters });
+    expect(stufeFor([], START)).toBe(1);
+    expect(stufeFor([blatt(START), blatt([...START].reverse())], START)).toBe(3);
+    expect(stufeFor([blatt(START), blatt(START)], [...START, 'e'])).toBe(1);
+    expect(stufeFor(Array.from({ length: 9 }, () => blatt(START)), START)).toBe(MAX_STUFE);
+  });
+});
+
+describe('A6: mehrere Blätter auf einmal', () => {
+  it('4 Blätter: keine Wörter, Sätze oder Geschichten doppelt', () => {
+    const letters = UNIT_IDS.slice(0, 25);
+    const done: SheetData[] = [];
+    for (let i = 0; i < 4; i++) {
+      const h = withSerie({ ...emptyHistory(), seq: 1 + i }, done);
+      done.push(generateSheet(params(letters, { seed: 100 + i, stufe: 1 + i, history: h })).sheet);
+    }
+    const woerter = done.flatMap((d) => [...d.woerter, ...d.kleine]);
+    expect(new Set(woerter).size).toBe(woerter.length);
+    const saetze = done.flatMap((d) => d.saetze);
+    expect(new Set(saetze).size).toBe(saetze.length);
+    const titel = done.flatMap((d) => (d.geschichte ? [d.geschichte.titel] : []));
+    expect(new Set(titel).size).toBe(titel.length);
+    expect(done.map((d) => d.stufe)).toEqual([1, 2, 3, 4]);
+  });
 });

@@ -7,5 +7,7 @@
   body > *:not(#print-root) { display: none !important; }
   #print-root { display: block !important; }
   #print-root .sheet { page-break-after: avoid; break-after: avoid; }
+  /* mehrere Blätter (A6): jedes auf seiner eigenen Seite */
+  #print-root .sheet + .sheet { page-break-before: always; break-before: page; }
   #print-root .blk-re { display: none !important; }
 }

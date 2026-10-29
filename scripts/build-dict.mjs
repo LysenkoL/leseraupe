@@ -3,9 +3,13 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// Silbentrennung (B3) – dieselbe Funktion wie in der App
+import { silbiere, parseAusnahmen } from '../src/core/silben.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const Q = (f) => readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8');
+// Windows/git autocrlf: Zeilenenden vereinheitlichen
+const crlf = (txt) => txt.replace(/\r\n?/g, '\n');
+const Q = (f) => crlf(readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8'));
 const lines = (txt) => txt.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
 const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'winter']);
 
@@ -68,13 +72,24 @@ export function buildDict() {
     if (/\p{L}-\p{L}/u.test(s)) throw new Error(`Silbentrennstrich: ${s}`);
   }
 
-  return { woerter, verben, adjektive, saetze, geschichten };
+  // Silben für „Silben farbig“ (B3): zusammengesetzte Wörter über die Nomen/Adjektive des Wörterbuchs
+  const ausnahmenText = Q('silben-ausnahmen.txt');
+  const ausnahmen = parseAusnahmen(ausnahmenText);
+  const lexikon = new Set(woerter.filter((e) => ['Nomen', 'Adjektiv'].includes(e.typ) && e.w.length >= 3).map((e) => e.w.toLowerCase()));
+  for (const e of woerter) {
+    const s = silbiere(e.w, lexikon, ausnahmen);
+    if (s.join('') !== e.w) throw new Error(`Silben passen nicht: ${e.w}`);
+    if (s.length > 1) e.silben = s.join('|');
+  }
+  const silbenAusnahmen = lines(ausnahmenText);
+
+  return { woerter, verben, adjektive, saetze, geschichten, silbenAusnahmen };
 }
 
 const out = resolve(ROOT, 'src/data/woerterbuch.json');
 const json = JSON.stringify(buildDict(), null, 0).replace(/\},\{/g, '},\n{') + '\n';
 if (process.argv.includes('--check')) {
-  if (readFileSync(out, 'utf8') !== json) {
+  if (crlf(readFileSync(out, 'utf8')) !== json) {
     console.error('woerterbuch.json ist veraltet – bitte npm run dict ausführen');
     process.exit(1);
   }

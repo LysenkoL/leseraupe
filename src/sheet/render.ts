@@ -1,6 +1,7 @@
 import type { BlockId, SheetData } from '../core/types';
 import { unitById } from '../core/letters';
 import { esc } from '../core/html';
+import { silbenVon } from '../core/dict';
 import { THEMES, raupeSvg, raupeOutlineSvg, decoSvg } from './themes';
 
 export interface RenderOptions {
@@ -23,8 +24,22 @@ function editAttr(edit: string | null, i: number): string {
   return edit ? ` data-edit="${edit}:${i}"` : '';
 }
 
-function grid(items: string[], cls: string, edit: string | null): string {
-  return `<div class="sh-grid ${cls}" style="--colw:${colW(items)}">${items.map((w, i) => `<span${editAttr(edit, i)}>${esc(w)}</span>`).join('')}</div>`;
+/**
+ * Lesetext als HTML; mit „Silben farbig“ (B3) bekommt jede Silbe abwechselnd eine Farbe –
+ * ohne Strich und ohne Lücke, jedes Wort beginnt mit der ersten Farbe.
+ */
+export function lesetext(s: string, farbig: boolean | undefined): string {
+  if (!farbig) return esc(s);
+  return s
+    .split(/(\p{L}+)/u)
+    .map((part, i) =>
+      i % 2 ? silbenVon(part).map((sy, k) => `<span class="sy${(k % 2) + 1}">${esc(sy)}</span>`).join('') : esc(part),
+    )
+    .join('');
+}
+
+function grid(items: string[], cls: string, edit: string | null, farbig?: boolean): string {
+  return `<div class="sh-grid ${cls}" style="--colw:${colW(items)}">${items.map((w, i) => `<span${editAttr(edit, i)}>${lesetext(w, farbig)}</span>`).join('')}</div>`;
 }
 
 function blockHead(n: number, title: string, id: BlockId, interactive: boolean): string {
@@ -74,8 +89,8 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
   };
 
   if (d.blocks.silben && d.silben.length) blocks.push(section('silben', 'Silben', grid(d.silben, 'g-silben', null)));
-  if (d.blocks.woerter && d.woerter.length) blocks.push(section('woerter', 'Wörter', grid(d.woerter, 'g-woerter', interactive ? 'woerter' : null)));
-  if (d.blocks.kleine && d.kleine.length) blocks.push(section('kleine', 'Kleine Wörter', grid(d.kleine, 'g-kleine', interactive ? 'kleine' : null)));
+  if (d.blocks.woerter && d.woerter.length) blocks.push(section('woerter', 'Wörter', grid(d.woerter, 'g-woerter', interactive ? 'woerter' : null, d.silbenFarbig)));
+  if (d.blocks.kleine && d.kleine.length) blocks.push(section('kleine', 'Kleine Wörter', grid(d.kleine, 'g-kleine', interactive ? 'kleine' : null, d.silbenFarbig)));
   if (d.blocks.aehnlich && d.aehnlich) {
     const [a, b] = d.aehnlich.pair;
     const title = a.toLowerCase() === b.toLowerCase() || (a === 'l' && b === 'I') ? `Klein ${a} oder groß ${b}?` : `${a} oder ${b}?`;
@@ -85,13 +100,13 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
   }
 
   const saetze =
-    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines">${d.saetze.map((s, i) => `<p${editAttr(interactive ? 'saetze' : null, i)}>${esc(s)}</p>`).join('')}</div>`) : null;
+    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines">${d.saetze.map((s, i) => `<p${editAttr(interactive ? 'saetze' : null, i)}>${lesetext(s, d.silbenFarbig)}</p>`).join('')}</div>`) : null;
   const gesch =
     d.blocks.geschichte && d.geschichte && d.geschichte.saetze.length
       ? () => {
           const g = d.geschichte!;
           const lines = g.saetze
-            .map((s, i) => `<p${i === g.saetze.length - 1 && s.trim().endsWith('!') ? ' class="hl"' : ''}${editAttr(interactive ? 'geschichte' : null, i)}>${esc(s)}</p>`)
+            .map((s, i) => `<p${i === g.saetze.length - 1 && s.trim().endsWith('!') ? ' class="hl"' : ''}${editAttr(interactive ? 'geschichte' : null, i)}>${lesetext(s, d.silbenFarbig)}</p>`)
             .join('');
           return section('geschichte', g.titel ? `Geschichte: ${g.titel}` : 'Geschichte', `<div class="sh-lines">${lines}</div>`, ' story');
         }

@@ -12,7 +12,14 @@ import { renderBlatt } from './screens/blatt';
 import { renderThema } from './screens/thema';
 import { renderEinstellungen } from './screens/einstellungen';
 import { renderChat } from './screens/chat';
+import { renderWillkommen } from './screens/willkommen';
+import { renderUeber } from './screens/ueber';
+import { renderLesen } from './screens/lesen';
+import { renderStolper } from './screens/stolper';
+import { renderUrkundeScreen } from './screens/urkunde';
+import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
+import { sprache } from './app/i18n';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
 // beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
@@ -32,6 +39,7 @@ registerSW({
 });
 
 initInstall();
+document.documentElement.lang = sprache();
 
 const app = document.getElementById('app')!;
 
@@ -40,6 +48,8 @@ function route(): void {
   const [path, query = ''] = raw.split('?');
   const params = new URLSearchParams(query);
   window.scrollTo(0, 0);
+  // Neuinstallation: zuerst die Einführung
+  if (path !== '/willkommen' && !loadProfile().onboarded) return renderWillkommen(app);
   const blatt = path.match(/^\/blatt\/(\d+)$/);
   if (blatt) return renderBlatt(app, Number(blatt[1]));
   switch (path) {
@@ -57,6 +67,21 @@ function route(): void {
       return renderEinstellungen(app);
     case '/chat':
       return renderChat(app);
+    case '/urkunde':
+      renderUrkundeScreen(app, params);
+      return;
+    case '/stolper':
+      renderStolper(app, params);
+      return;
+    case '/lesen':
+      renderLesen(app, params);
+      return;
+    case '/ueber':
+      return renderUeber(app);
+    case '/willkommen': {
+      const back = params.get('zurueck') ?? '';
+      return renderWillkommen(app, back.startsWith('#/') ? back : '#/');
+    }
     default:
       return renderStart(app);
   }

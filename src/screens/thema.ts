@@ -4,6 +4,7 @@ import { THEMES, THEME_IDS, type ThemeId } from '../sheet/themes';
 import { renderSheet } from '../sheet/render';
 import { SAMPLE_SHEET } from '../core/sample';
 import { loadFonts } from '../sheet/fit';
+import { t, themaName } from '../app/i18n';
 
 /** Kopfzeile eines Themas als verkleinerte Vorschau (echtes Blatt, oben abgeschnitten). */
 function headPreview(theme: ThemeId): string {
@@ -25,19 +26,19 @@ export function renderThema(root: HTMLElement): void {
   const draw = () => {
     root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1>Thema wählen</h1></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('thema.titel')}</h1></div></div>
   <div class="content">
-    <div class="hint">Vorschau: ${THEMES[sel].name}</div>
+    <div class="hint">${t('thema.vorschau', { name: themaName(sel) })}</div>
     <div class="card hp-big">${headPreview(sel)}</div>
     <div class="theme-grid">
       ${THEME_IDS.map(
         (id) => `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[id].main}">
-          ${headPreview(id)}<span class="tc-name">${THEMES[id].name}</span>${id === sel ? '<span class="tc-sel">gewählt</span>' : ''}</button>`,
+          ${headPreview(id)}<span class="tc-name">${themaName(id)}</span>${id === sel ? `<span class="tc-sel">${t('thema.gewaehlt')}</span>` : ''}</button>`,
       ).join('')}
     </div>
-    <label class="toggle"><input type="checkbox" id="rnd" ${random ? 'checked' : ''}/> Jeden Tag ein anderes Thema (Zufall)</label>
+    <label class="toggle"><input type="checkbox" id="rnd" ${random ? 'checked' : ''}/> ${t('thema.zufall')}</label>
   </div>
-  <div class="bottom"><button class="btn primary big" id="ok">Übernehmen</button></div>
+  <div class="bottom"><button class="btn primary big" id="ok">${t('ui.uebernehmen')}</button></div>
 </div>`;
     const fit = () =>
       root.querySelectorAll<HTMLElement>('.hp').forEach((hp) => {

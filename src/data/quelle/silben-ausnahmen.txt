@@ -1,0 +1,20 @@
+# Silben, die die Regeln in src/core/silben.ts nicht richtig treffen.
+# Je Zeile ein Wort, Silben mit | getrennt (nur für „Silben farbig“, nie als Strich auf dem Blatt).
+Toast
+See|pferd|chen
+Fa|mi|li|e
+Ma|ri|en|kä|fer
+Ay|la
+Puz|zle
+Zau|ber|stab
+Raum|sta|ti|on
+Früh|stück
+Mit|tag|es|sen
+Raum|an|zug
+Rat|haus
+Te|le|skop
+Buch|sta|be
+Buch|sta|ben
+Jong|leur
+jong|liert
+jong|lie|ren
