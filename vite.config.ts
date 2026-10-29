@@ -20,7 +20,7 @@ export default defineConfig({
         id: '/leseraupe/',
         name: 'Leseraupe',
         short_name: 'Leseraupe',
-        description: 'Tägliche Leseblätter für die 1. Klasse – nur mit gelernten Buchstaben.',
+        description: 'Tägliche Leseblätter für Leseanfänger – nur mit Buchstaben, die das Kind schon kennt.',
         lang: 'de',
         start_url: '/leseraupe/',
         scope: '/leseraupe/',

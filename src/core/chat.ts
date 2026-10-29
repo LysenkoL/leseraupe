@@ -14,7 +14,7 @@ export function buildPrompt(letters: string[], newLetter: string | null, minutes
   const single = ids.filter((id) => [...id].length === 1).map(label);
   const multi = ids.filter((id) => [...id].length > 1).map(label);
   const c = COUNTS[minutes];
-  return `Du schreibst Lesetexte für ein Kind in der 1. Klasse (Deutschland).
+  return `Du schreibst Lesetexte für ein Kind, das gerade lesen lernt (Deutschland).
 Das Kind kennt NUR diese Buchstaben: ${single.join(', ') || 'keine'}.
 Neuester Buchstabe (bitte oft verwenden): ${newLetter ? label(newLetter) : 'keiner'}.
 Bekannte Buchstabenverbindungen: ${multi.join(', ') || 'keine'}.

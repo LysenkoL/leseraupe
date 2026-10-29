@@ -1,6 +1,6 @@
 # Leseraupe — Projektregeln für Claude
 
-PWA für Eltern von Erstklässlern: erzeugt tägliche A4-Leseblätter nur aus gelernten Buchstaben (Reihenfolge wie in vielen Fibeln), druckt sie, misst die Lesezeit, führt Verlauf und Protokoll.
+PWA für Eltern von Kindern, die lesen lernen (Vorschule, Grundschule): erzeugt tägliche A4-Leseblätter nur aus gelernten Buchstaben (Reihenfolge wie in vielen Fibeln), druckt sie, misst die Lesezeit, führt Verlauf und Protokoll.
 
 ## Immer zuerst lesen
 - `docs/TZ.md` — vollständige Spezifikation (Russisch). Sie ist verbindlich.
