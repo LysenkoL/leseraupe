@@ -8,10 +8,10 @@ import { rerollBlock } from '../core/generator';
 import { checkText, unitById } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
 import { backButton, editDialog, esc, go, toast } from '../app/ui';
-import { THEMES } from '../sheet/themes';
 import { trimOnce } from '../app/fitflow';
 import { stolperLink } from './stolper';
 import type { BlockId, SheetData } from '../core/types';
+import { t, themaName } from '../app/i18n';
 
 export function renderVorschau(root: HTMLElement): void {
   const draft = getDraft();
@@ -32,28 +32,28 @@ export function renderVorschau(root: HTMLElement): void {
   const header = async (d: Draft) => {
     const nr = await nrFor(getSerie()!.idx);
     const letters = d.data.letters.map((id) => unitById(id)?.label.replace('-', '') ?? id).join(' ');
-    const neu = d.data.newLetter ? ` · neu: ${unitById(d.data.newLetter)?.label.replace('-', '')}` : '';
-    return { nr, title: `Blatt ${nr} · ${THEMES[d.data.theme].name}`, sub: `${letters}${neu}${d.data.stufe ? ` · Stufe ${d.data.stufe}` : ''}` };
+    const neu = d.data.newLetter ? ` · ${t('blatt.neu', { b: unitById(d.data.newLetter)?.label.replace('-', '') ?? '' })}` : '';
+    return { nr, title: t('blatt.titel', { nr, thema: themaName(d.data.theme) }), sub: `${letters}${neu}${d.data.stufe ? ` · ${t('blatt.stufe', { n: d.data.stufe })}` : ''}` };
   };
 
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">Blatt</h1><div class="sub" id="pv-sub"></div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div></div>
   <div class="serie-nav" id="pv-nav"></div>
   <div id="pv-removed"></div>
   <div class="preview-wrap" id="pv"></div>
-  <div class="hint" style="padding:6px 16px 0">Wort oder Satz antippen zum Ändern · ↻ mischt nur diesen Block</div>
+  <div class="hint" style="padding:6px 16px 0">${t('vorschau.hinweis')}</div>
   <div class="bottom">
     <div class="btnrow">
-      <button class="btn ghost" id="mix">Neu mischen</button>
-      <button class="btn green" id="print">Drucken</button>
-      <button class="btn primary" id="timer">Timer</button>
+      <button class="btn ghost" id="mix">${t('vorschau.mischen')}</button>
+      <button class="btn green" id="print">${t('aktion.drucken')}</button>
+      <button class="btn primary" id="timer">${t('vorschau.timer')}</button>
     </div>
     <div class="btnrow two">
-      <button class="btn ghost" id="pdf">Als PDF teilen</button>
-      <button class="btn ghost" id="read">Gelesen ✓</button>
+      <button class="btn ghost" id="pdf">${t('aktion.pdf')}</button>
+      <button class="btn ghost" id="read">${t('vorschau.gelesen')}</button>
     </div>
-    <a class="btn ghost" id="screen" href="#/lesen">Am Bildschirm lesen</a>
+    <a class="btn ghost" id="screen" href="#/lesen">${t('vorschau.bildschirm')}</a>
   </div>
 </div>`;
 
@@ -77,9 +77,9 @@ export function renderVorschau(root: HTMLElement): void {
     const n = serie.items.length;
     root.querySelector('#pv-nav')!.innerHTML =
       n > 1
-        ? `<button class="iconbtn" id="pv-prev" aria-label="Voriges Blatt" ${serie.idx === 0 ? 'disabled' : ''}>‹</button>
-           <span><b>${serie.idx + 1} / ${n}</b> · Druck/PDF: alle</span>
-           <button class="iconbtn" id="pv-next" aria-label="Nächstes Blatt" ${serie.idx === n - 1 ? 'disabled' : ''}>›</button>`
+        ? `<button class="iconbtn" id="pv-prev" aria-label="${t('vorschau.voriges')}" ${serie.idx === 0 ? 'disabled' : ''}>‹</button>
+           <span><b>${serie.idx + 1} / ${n}</b> · ${t('vorschau.alle')}</span>
+           <button class="iconbtn" id="pv-next" aria-label="${t('vorschau.naechstes')}" ${serie.idx === n - 1 ? 'disabled' : ''}>›</button>`
         : '';
     root.querySelector('#pv-prev')?.addEventListener('click', () => {
       setSerieIndex(serie.idx - 1);
@@ -100,7 +100,7 @@ export function renderVorschau(root: HTMLElement): void {
     root.querySelector('#pv-sub')!.textContent = h.sub;
     const rm = root.querySelector<HTMLElement>('#pv-removed')!;
     rm.innerHTML = d.removed.length
-      ? `<div class="removed"><b>Entfernt:</b> ${d.removed.map((r) => `${esc(r.text)} (${esc(r.missing.join(', '))})`).join(' · ')}</div>`
+      ? `<div class="removed"><b>${t('vorschau.entfernt')}</b> ${d.removed.map((r) => `${esc(r.text)} (${esc(r.missing.join(', '))})`).join(' · ')}</div>`
       : '';
     setDraft(await fit(pv, d, h.nr, true));
   };
@@ -147,11 +147,11 @@ export function renderVorschau(root: HTMLElement): void {
     const data = structuredClone(d.data);
     const list = block === 'geschichte' ? data.geschichte!.saetze : (data[block as 'woerter' | 'kleine' | 'saetze'] as string[]);
     const known = new Set(data.letters);
-    const v = await editDialog('Ändern', list[idx], (s) => {
+    const v = await editDialog(t('vorschau.aendern'), list[idx], (s) => {
       if (!s) return null;
-      if (/\p{L}-\p{L}/u.test(s)) return 'Bitte ohne Silbentrennstriche.';
+      if (/\p{L}-\p{L}/u.test(s)) return t('vorschau.ohneStriche');
       const c = checkText(s, known);
-      return c.ok ? null : `Nicht gelernt: ${c.missing.join(', ')}`;
+      return c.ok ? null : t('vorschau.nichtGelernt', { b: c.missing.join(', ') });
     });
     if (v === null) return;
     if (v === '') list.splice(idx, 1);
@@ -184,10 +184,10 @@ export function renderVorschau(root: HTMLElement): void {
       const name = first === last ? `Leseblatt-${first}` : `Leseblaetter-${first}-${last}`;
       const pdf = await sheetsToPdf(html, name.replace('-', ' '));
       const r = await sharePdf(pdf, `${name}.pdf`);
-      if (r === 'gespeichert') toast(`${name}.pdf gespeichert`);
+      if (r === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));
       await draw();
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'PDF konnte nicht erstellt werden.');
+      toast(err instanceof Error ? err.message : t('aktion.pdfFehler'));
     } finally {
       btn.disabled = false;
     }
@@ -200,7 +200,7 @@ export function renderVorschau(root: HTMLElement): void {
   root.querySelector('#read')!.addEventListener('click', async () => {
     const d = await saveSerieBis(getSerie()!.idx);
     await addRead(d.savedId!, getSettings().minutes, true);
-    toast(`Blatt ${d.data.number}: gelesen ✓`);
+    toast(t('blatt.gelesenToast', { nr: d.data.number! }));
     go(stolperLink(d.savedId!, '#/vorschau'));
   });
 

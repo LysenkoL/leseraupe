@@ -5,6 +5,7 @@ import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
 import type { SheetData } from '../core/types';
 import { lesetext } from '../sheet/render';
+import { t } from '../app/i18n';
 
 interface Page {
   title: string;
@@ -16,12 +17,12 @@ interface Page {
 /** Blätter in Bildschirm-Seiten zerlegen – gleiche Reihenfolge wie auf dem Papier. */
 export function readingPages(d: SheetData): Page[] {
   const pages: Page[] = [];
-  const t = (s: string) => lesetext(s, d.silbenFarbig);
-  const grid = (items: string[]) => items.map((w) => `<span>${t(w)}</span>`).join('');
-  const lines = (items: string[]) => items.map((s) => `<p>${t(s)}</p>`).join('');
-  if (d.blocks.silben && d.silben.length) pages.push({ title: 'Silben', html: grid(d.silben), kind: 'grid' });
-  if (d.blocks.woerter && d.woerter.length) pages.push({ title: 'Wörter', html: grid(d.woerter), kind: 'grid' });
-  if (d.blocks.kleine && d.kleine.length) pages.push({ title: 'Kleine Wörter', html: grid(d.kleine), kind: 'grid' });
+  const lt = (s: string) => lesetext(s, d.silbenFarbig);
+  const grid = (items: string[]) => items.map((w) => `<span>${lt(w)}</span>`).join('');
+  const lines = (items: string[]) => items.map((s) => `<p>${lt(s)}</p>`).join('');
+  if (d.blocks.silben && d.silben.length) pages.push({ title: t('block.silben'), html: grid(d.silben), kind: 'grid' });
+  if (d.blocks.woerter && d.woerter.length) pages.push({ title: t('block.woerter'), html: grid(d.woerter), kind: 'grid' });
+  if (d.blocks.kleine && d.kleine.length) pages.push({ title: t('block.kleine'), html: grid(d.kleine), kind: 'grid' });
   if (d.blocks.aehnlich && d.aehnlich) {
     const [a, b] = d.aehnlich.pair;
     const title = a === 'l' && b === 'I' ? `Klein ${a} oder groß ${b}?` : `${a} oder ${b}?`;
@@ -30,16 +31,16 @@ export function readingPages(d: SheetData): Page[] {
       .join('');
     pages.push({ title, html, kind: 'grid' });
   }
-  if (d.blocks.saetze && d.saetze.length) pages.push({ title: 'Sätze', html: lines(d.saetze), kind: 'lines' });
+  if (d.blocks.saetze && d.saetze.length) pages.push({ title: t('block.saetze'), html: lines(d.saetze), kind: 'lines' });
   if (d.blocks.geschichte && d.geschichte) {
     const g = d.geschichte;
-    pages.push({ title: g.titel ? `Geschichte: ${g.titel}` : 'Geschichte', html: lines(g.saetze), kind: 'lines' });
+    pages.push({ title: g.titel ? `${t('block.geschichte')}: ${g.titel}` : t('block.geschichte'), html: lines(g.saetze), kind: 'lines' });
   }
   if (d.blocks.quest && d.quest && d.quest.kind !== 'male') {
     const extra = d.quest.words?.length ? `<p class="rd-q">${d.quest.words.map(esc).join(' · ')}</p>` : '';
-    pages.push({ title: 'Quest', html: `<p>${esc(d.quest.text)}</p>${extra}`, kind: 'lines' });
+    pages.push({ title: t('block.quest'), html: `<p>${esc(d.quest.text)}</p>${extra}`, kind: 'lines' });
   }
-  if (d.blocks.fragen && d.fragen.length) pages.push({ title: 'Für Eltern – Fragen', html: lines(d.fragen), kind: 'small' });
+  if (d.blocks.fragen && d.fragen.length) pages.push({ title: t('lesen.fragen'), html: lines(d.fragen), kind: 'small' });
   return pages;
 }
 
@@ -66,15 +67,15 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   root.innerHTML = `
 <div class="screen lesen">
   <div class="topbar">
-    <a class="iconbtn" href="${back}" aria-label="Schließen">✕</a>
+    <a class="iconbtn" href="${back}" aria-label="${t('ui.schliessen')}">✕</a>
     <div class="grow rd-pos" id="rd-pos"></div>
-    <button class="pillbtn rd-clock" id="rd-clock" aria-label="Lesezeit starten">▶ <span id="rd-time"></span></button>
+    <button class="pillbtn rd-clock" id="rd-clock" aria-label="${t('lesen.starten')}">▶ <span id="rd-time"></span></button>
   </div>
   <div class="content rd-body" id="rd-body"></div>
   <div class="bottom">
     <div class="btnrow two">
-      <button class="btn ghost big" id="rd-prev">Zurück</button>
-      <button class="btn primary big" id="rd-next">Weiter</button>
+      <button class="btn ghost big" id="rd-prev">${t('ui.zurueck')}</button>
+      <button class="btn primary big" id="rd-next">${t('timer.weiter')}</button>
     </div>
   </div>
 </div>`;
@@ -92,16 +93,16 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const cd = createCountdown(minutes * 60, {
     tick: showTime,
     done: async () => {
-      clockBtn.innerHTML = 'Toll gelesen! ✓';
+      clockBtn.textContent = t('lesen.toll');
       clockBtn.classList.add('fertig');
       try {
         const r = await recordRead(sheetId, draft, minutes);
         if (r) {
           readId = r.id;
-          toast(`Blatt ${r.number}: gelesen ✓`);
+          toast(t('blatt.gelesenToast', { nr: r.number }));
         }
       } catch {
-        toast('Lesung konnte nicht gespeichert werden.');
+        toast(t('lesung.fehler'));
       }
     },
   });
@@ -109,7 +110,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const syncClock = () => {
     if (cd.done) return;
     clockBtn.firstChild!.textContent = cd.running ? '❚❚ ' : '▶ ';
-    clockBtn.setAttribute('aria-label', cd.running ? 'Lesezeit anhalten' : 'Lesezeit starten');
+    clockBtn.setAttribute('aria-label', cd.running ? t('lesen.anhalten') : t('lesen.starten'));
   };
 
   const draw = () => {
@@ -117,11 +118,11 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     const last = idx === pages.length - 1;
     root.querySelector('#rd-pos')!.textContent = `${idx + 1} / ${pages.length}`;
     body.innerHTML = `<h1>${esc(p.title)}</h1><div class="rd-${p.kind}">${p.html}</div>${
-      last ? `<div class="rd-end">${name ? `Super, ${esc(name)}!` : 'Super!'} Das ganze Blatt ist geschafft.</div>` : ''
+      last ? `<div class="rd-end">${name ? t('lesen.endeName', { name: esc(name) }) : t('lesen.ende')}</div>` : ''
     }`;
     body.scrollTop = 0;
     (root.querySelector('#rd-prev') as HTMLButtonElement).disabled = idx === 0;
-    root.querySelector('#rd-next')!.textContent = last ? 'Fertig' : 'Weiter';
+    root.querySelector('#rd-next')!.textContent = last ? t('timer.fertig') : t('timer.weiter');
   };
 
   const next = () => {

@@ -75,11 +75,15 @@ export interface Kind {
   settings: Settings;
 }
 
+export type Sprache = 'de' | 'uk';
+
 export interface Profile {
   activeKindId: string;
   kinder: Kind[];
   /** Einführung (A2) gesehen oder übersprungen */
   onboarded: boolean;
+  /** Sprache der Oberfläche (B6); null = wie das Telefon */
+  sprache: Sprache | null;
 }
 
 /** Das erste (und vorerst einzige) Kind; auch alte Daten ohne Profil gehören zu ihm. */
@@ -93,7 +97,8 @@ export function sanitizeProfile(raw: Partial<Profile> | null | undefined): Profi
   if (!kinder.length) kinder.push({ id: FIRST_KIND_ID, settings: { ...DEFAULT_SETTINGS } });
   const activeKindId = kinder.some((k) => k.id === raw?.activeKindId) ? raw!.activeKindId! : kinder[0].id;
   // fehlt das Feld (z. B. alte Sicherung), war die App schon in Gebrauch
-  return { activeKindId, kinder, onboarded: raw?.onboarded !== false };
+  const sprache = raw?.sprache === 'de' || raw?.sprache === 'uk' ? raw.sprache : null;
+  return { activeKindId, kinder, onboarded: raw?.onboarded !== false, sprache };
 }
 
 /**

@@ -2,6 +2,7 @@ import { getSettings, setDraft } from '../app/state';
 import { backButton, esc, go, toast } from '../app/ui';
 import { buildPrompt, parseChat, sheetFromChat, PARSE_ERROR } from '../core/chat';
 import { genParams } from '../app/actions';
+import { t } from '../app/i18n';
 
 export function renderChat(root: HTMLElement): void {
   const s = getSettings();
@@ -9,30 +10,30 @@ export function renderChat(root: HTMLElement): void {
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1>Mit Chat erstellen</h1><div class="sub">ohne API-Schlüssel</div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1><div class="sub">${t('chat.sub')}</div></div></div>
   <div class="content">
     <section class="card">
-      <h2>1. Prompt kopieren</h2>
-      <button class="btn green" id="copy">Prompt kopieren</button>
-      <details><summary class="hint">Prompt ansehen</summary><pre class="prompt">${esc(prompt)}</pre></details>
+      <h2>${t('chat.schritt1')}</h2>
+      <button class="btn green" id="copy">${t('chat.kopieren')}</button>
+      <details><summary class="hint">${t('chat.ansehen')}</summary><pre class="prompt">${esc(prompt)}</pre></details>
     </section>
     <section class="card">
-      <h2>2. Im Chat einfügen</h2>
+      <h2>${t('chat.schritt2')}</h2>
       <div class="btnrow two">
-        <a class="btn ghost" href="https://claude.ai/new?q=${q}" target="_blank" rel="noopener">Claude öffnen</a>
-        <a class="btn ghost" href="https://chatgpt.com/?q=${q}" target="_blank" rel="noopener">ChatGPT öffnen</a>
+        <a class="btn ghost" href="https://claude.ai/new?q=${q}" target="_blank" rel="noopener">${t('chat.claude')}</a>
+        <a class="btn ghost" href="https://chatgpt.com/?q=${q}" target="_blank" rel="noopener">${t('chat.chatgpt')}</a>
       </div>
     </section>
     <section class="card">
-      <h2>3. Antwort einfügen</h2>
-      <button class="btn ghost" id="paste">Aus Zwischenablage einfügen</button>
-      <label class="field">Antwort einfügen
-        <textarea id="answer" placeholder="Die ganze Antwort aus dem Chat hier einfügen …"></textarea>
+      <h2>${t('chat.schritt3')}</h2>
+      <button class="btn ghost" id="paste">${t('chat.ausZwischenablage')}</button>
+      <label class="field">${t('chat.antwort')}
+        <textarea id="answer" placeholder="${t('chat.platzhalter')}"></textarea>
       </label>
       <div class="modal-err" id="err" aria-live="polite"></div>
     </section>
   </div>
-  <div class="bottom"><button class="btn primary big" id="make">Leseblatt erstellen</button></div>
+  <div class="bottom"><button class="btn primary big" id="make">${t('chat.erstellen')}</button></div>
 </div>`;
 
   const ta = root.querySelector<HTMLTextAreaElement>('#answer')!;
@@ -41,22 +42,22 @@ export function renderChat(root: HTMLElement): void {
   root.querySelector('#copy')!.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(prompt);
-      toast('Prompt kopiert');
+      toast(t('chat.kopiert'));
     } catch {
-      const t = document.createElement('textarea');
-      t.value = prompt;
-      document.body.appendChild(t);
-      t.select();
+      const tmp = document.createElement('textarea');
+      tmp.value = prompt;
+      document.body.appendChild(tmp);
+      tmp.select();
       document.execCommand('copy');
-      t.remove();
-      toast('Prompt kopiert');
+      tmp.remove();
+      toast(t('chat.kopiert'));
     }
   });
   root.querySelector('#paste')!.addEventListener('click', async () => {
     try {
       ta.value = await navigator.clipboard.readText();
     } catch {
-      toast('Bitte lange ins Feld tippen und „Einfügen“ wählen.');
+      toast(t('chat.langTippen'));
     }
   });
   root.querySelector('#make')!.addEventListener('click', async () => {

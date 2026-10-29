@@ -5,6 +5,7 @@ import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
 import { sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { raupenstand, renderUrkunde } from '../sheet/urkunde';
+import { t } from '../app/i18n';
 
 /** Urkunde Nr. n (B4): Vorschau, Drucken, als PDF teilen */
 export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchParams): Promise<void> {
@@ -18,12 +19,12 @@ export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchPa
   const html = renderUrkunde({ name: getSettings().childName, ...f });
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/verlauf')}<div class="grow"><h1>Urkunde ${nr}</h1><div class="sub">${f.gesamt} Leseblätter gelesen</div></div></div>
+  <div class="topbar">${backButton('#/verlauf')}<div class="grow"><h1>${t('urkunde.titel', { nr })}</h1><div class="sub">${t('urkunde.sub', { n: f.gesamt })}</div></div></div>
   <div class="preview-wrap" id="uk-pv"></div>
   <div class="bottom">
     <div class="btnrow two">
-      <button class="btn green" id="uk-print">Drucken</button>
-      <button class="btn ghost" id="uk-pdf">Als PDF teilen</button>
+      <button class="btn green" id="uk-print">${t('aktion.drucken')}</button>
+      <button class="btn ghost" id="uk-pdf">${t('aktion.pdf')}</button>
     </div>
   </div>
 </div>`;
@@ -32,9 +33,9 @@ export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchPa
   root.querySelector('#uk-pdf')!.addEventListener('click', async () => {
     try {
       const name = `Urkunde-${nr}`;
-      if ((await sharePdf(await sheetsToPdf([html], `Urkunde ${nr}`), `${name}.pdf`)) === 'gespeichert') toast(`${name}.pdf gespeichert`);
+      if ((await sharePdf(await sheetsToPdf([html], `Urkunde ${nr}`), `${name}.pdf`)) === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));
     } catch (err) {
-      toast(err instanceof Error ? err.message : 'PDF konnte nicht erstellt werden.');
+      toast(err instanceof Error ? err.message : t('aktion.pdfFehler'));
     }
   });
 }

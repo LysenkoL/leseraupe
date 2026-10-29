@@ -3,6 +3,7 @@ import { getSheet } from '../core/db';
 import { esc, toast } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
+import { t } from '../app/i18n';
 
 export const TIMER_WAHL = [5, 10, 15, 20];
 export const TIMER_MAX = 60;
@@ -26,29 +27,29 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   const name = getSettings().childName;
 
   const back = sheetId ? `#/blatt/${sheetId}` : draft ? '#/vorschau' : '#/';
-  const nrLabel = sheetId ? '' : draft?.data.number ? `Blatt ${draft.data.number} · ` : '';
+  const nrLabel = sheetId ? '' : draft?.data.number ? t('timer.blattNr', { nr: draft.data.number }) : '';
 
   root.innerHTML = `
 <div class="screen timer">
-  <div class="topbar"><a class="iconbtn dark" href="${back}" aria-label="Schließen">✕</a><div class="grow tcenter" id="t-top">${esc(nrLabel)}Lesezeit</div><span style="width:44px"></span></div>
+  <div class="topbar"><a class="iconbtn dark" href="${back}" aria-label="${t('ui.schliessen')}">✕</a><div class="grow tcenter" id="t-top">${esc(nrLabel)}${t('timer.lesezeit')}</div><span style="width:44px"></span></div>
   <div class="t-main">
-    <div class="t-hello">${name ? `Lies mal, ${esc(name)}!` : 'Lies mal!'}</div>
+    <div class="t-hello">${name ? t('timer.halloName', { name: esc(name) }) : t('timer.hallo')}</div>
     <div class="t-digits" id="t-digits" aria-live="off">00:00</div>
-    <div class="t-sub" id="t-sub">von ${minutes} Minuten übrig</div>
+    <div class="t-sub" id="t-sub">${t('timer.uebrig', { n: minutes })}</div>
     <div class="t-wahl" id="t-wahl">
-      ${TIMER_WAHL.map((m) => `<button class="chip${m === minutes ? ' on' : ''}" data-tmin="${m}">${m} Min</button>`).join('')}
-      <button class="chip" data-tstep="-5" aria-label="5 Minuten weniger" ${minutes <= 5 ? 'disabled' : ''}>−</button>
-      <button class="chip" data-tstep="5" aria-label="5 Minuten mehr" ${minutes >= TIMER_MAX ? 'disabled' : ''}>+</button>
+      ${TIMER_WAHL.map((m) => `<button class="chip${m === minutes ? ' on' : ''}" data-tmin="${m}">${t('timer.min', { n: m })}</button>`).join('')}
+      <button class="chip" data-tstep="-5" aria-label="${t('timer.weniger')}" ${minutes <= 5 ? 'disabled' : ''}>−</button>
+      <button class="chip" data-tstep="5" aria-label="${t('timer.mehr')}" ${minutes >= TIMER_MAX ? 'disabled' : ''}>+</button>
     </div>
     <div class="t-raupe" id="t-raupe"></div>
-    <div class="t-hint">${schritt === 1 ? 'Jede Minute' : `Alle ${schritt} Minuten`} bekommt die Raupe eine neue Perle</div>
+    <div class="t-hint">${schritt === 1 ? t('timer.perleMinute') : t('timer.perleN', { n: schritt })}</div>
   </div>
   <div class="bottom dark">
     <div class="btnrow two">
-      <button class="btn primary big" id="t-start">Start</button>
-      <button class="btn outline big" id="t-reset">Neustart</button>
+      <button class="btn primary big" id="t-start">${t('timer.start')}</button>
+      <button class="btn outline big" id="t-reset">${t('timer.neustart')}</button>
     </div>
-    <div class="t-foot">Bildschirm bleibt an · am Ende Ton und Vibration</div>
+    <div class="t-foot">${t('timer.fuss')}</div>
   </div>
 </div>`;
 
@@ -83,16 +84,16 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   const cd = createCountdown(total, {
     tick: show,
     done: async () => {
-      root.querySelector('#t-sub')!.innerHTML = '<span class="t-toll">Toll gelesen!</span>';
-      startBtn.textContent = 'Fertig';
+      root.querySelector('#t-sub')!.innerHTML = `<span class="t-toll">${t('timer.toll')}</span>`;
+      startBtn.textContent = t('timer.fertig');
       try {
         const r = await recordRead(sheetId, draft, minutes);
         if (r) {
           readId = r.id;
-          toast(`Blatt ${r.number}: gelesen ✓`);
+          toast(t('blatt.gelesenToast', { nr: r.number }));
         }
       } catch {
-        toast('Lesung konnte nicht gespeichert werden.');
+        toast(t('lesung.fehler'));
       }
     },
   });
@@ -116,18 +117,18 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
       location.hash = readId ? stolperLink(readId, back) : back;
     } else if (cd.running) {
       cd.pause();
-      startBtn.textContent = 'Weiter';
+      startBtn.textContent = t('timer.weiter');
     } else {
       cd.start();
       wahl.hidden = true;
-      startBtn.textContent = 'Pause';
+      startBtn.textContent = t('timer.pause');
     }
   });
   root.querySelector('#t-reset')!.addEventListener('click', () => {
     cd.reset();
     wahl.hidden = false;
-    startBtn.textContent = 'Start';
-    root.querySelector('#t-sub')!.textContent = `von ${minutes} Minuten übrig`;
+    startBtn.textContent = t('timer.start');
+    root.querySelector('#t-sub')!.textContent = t('timer.uebrig', { n: minutes });
   });
 
   if (sheetId) getSheet(sheetId).then((r) => r && (root.querySelector('#t-top')!.textContent = `Blatt ${r.number} · Lesezeit`));

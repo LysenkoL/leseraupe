@@ -1,4 +1,5 @@
 import { esc } from '../core/html';
+import { t } from './i18n';
 
 export { esc };
 
@@ -11,13 +12,13 @@ export function $(sel: string, root: ParentNode = document): HTMLElement {
 let toastTimer = 0;
 export function toast(msg: string, ms = 2600): void {
   document.querySelector('.toast')?.remove();
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.setAttribute('role', 'status');
-  t.textContent = msg;
-  document.body.appendChild(t);
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.setAttribute('role', 'status');
+  el.textContent = msg;
+  document.body.appendChild(el);
   clearTimeout(toastTimer);
-  toastTimer = window.setTimeout(() => t.remove(), ms);
+  toastTimer = window.setTimeout(() => el.remove(), ms);
 }
 
 export function go(hash: string): void {
@@ -29,7 +30,7 @@ export const BACK_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" aria-h
 export const GEAR_ICON = `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 
 export function backButton(target = '#/'): string {
-  return `<a class="iconbtn" href="${target}" aria-label="Zurück">${BACK_ICON}</a>`;
+  return `<a class="iconbtn" href="${target}" aria-label="${t('ui.zurueck')}">${BACK_ICON}</a>`;
 }
 
 /** Kleines Dialogfenster mit Textfeld. Liefert den neuen Text oder null (abgebrochen). */
@@ -46,8 +47,8 @@ export function editDialog(
       <input class="modal-input" value="${esc(value)}" autocomplete="off" autocapitalize="off" spellcheck="false" />
       <div class="modal-err" aria-live="polite"></div>
       <div class="btnrow two">
-        <button type="button" class="btn ghost" data-x="cancel">Abbrechen</button>
-        <button type="submit" class="btn green">Übernehmen</button>
+        <button type="button" class="btn ghost" data-x="cancel">${t('ui.abbrechen')}</button>
+        <button type="submit" class="btn green">${t('ui.uebernehmen')}</button>
       </div>
     </form>`;
     document.body.appendChild(wrap);
@@ -73,7 +74,7 @@ export function editDialog(
   });
 }
 
-export function confirmDialog(text: string, yes = 'Ja', no = 'Abbrechen'): Promise<boolean> {
+export function confirmDialog(text: string, yes = t('ui.ja'), no = t('ui.abbrechen')): Promise<boolean> {
   return new Promise((resolve) => {
     const wrap = document.createElement('div');
     wrap.className = 'modal-bg';

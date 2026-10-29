@@ -2,6 +2,7 @@ import { getSettings, setSettings } from '../app/state';
 import { getSheet, log } from '../core/db';
 import { esc, go, toast } from '../app/ui';
 import { sheetReadingWords, updateStolper } from '../core/stolper';
+import { t } from '../app/i18n';
 
 /** Link zum Schritt „Wo hat dein Kind gestockt?“ nach einer Lesung */
 export function stolperLink(sheetId: number, back: string): string {
@@ -27,22 +28,22 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
 
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar"><div class="grow"><h1>Wo hat dein Kind gestockt?</h1><div class="sub">Blatt ${rec.number} · freiwillig</div></div></div>
+  <div class="topbar"><div class="grow"><h1>${t('stolper.titel')}</h1><div class="sub">${t('stolper.sub', { nr: rec.number })}</div></div></div>
   <div class="content">
-    <div class="hint">Tippe die Wörter an, bei denen es gestockt hat. Sie kommen auf den nächsten Blättern öfter vor – bis sie dreimal ohne Stocken klappen. Wörter mit Punkt sind schon Stolperwörter.</div>
+    <div class="hint">${t('stolper.hinweis')}</div>
     <div class="st-words">${words
       .map((w) => `<button class="st-w${known.has(w.toLowerCase()) ? ' alt' : ''}" data-w="${esc(w)}" aria-pressed="false">${esc(w)}</button>`)
       .join('')}</div>
   </div>
   <div class="bottom">
-    <button class="btn primary big" id="st-ok">Fertig</button>
-    <button class="btn ghost" id="st-skip">Überspringen</button>
+    <button class="btn primary big" id="st-ok">${t('timer.fertig')}</button>
+    <button class="btn ghost" id="st-skip">${t('stolper.ueberspringen')}</button>
   </div>
 </div>`;
 
   const ok = root.querySelector<HTMLButtonElement>('#st-ok')!;
   const label = () => {
-    ok.textContent = tapped.size ? `Fertig · ${tapped.size} ${tapped.size === 1 ? 'Wort' : 'Wörter'}` : 'Fertig · alles flüssig';
+    ok.textContent = tapped.size === 0 ? t('stolper.fertig0') : tapped.size === 1 ? t('stolper.fertig1') : t('stolper.fertigN', { n: tapped.size });
   };
   label();
   root.querySelectorAll<HTMLButtonElement>('[data-w]').forEach((b) =>
@@ -64,7 +65,7 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
     if (tapped.size) await log(`Stolperwörter: ${[...tapped].join(', ')}`);
     if (r.besiegt.length) {
       await log(`Besiegt: ${r.besiegt.join(', ')}`);
-      toast(`Super! Besiegt: ${r.besiegt.join(', ')}`);
+      toast(t('stolper.besiegt', { w: r.besiegt.join(', ') }));
     }
     go(back);
   });

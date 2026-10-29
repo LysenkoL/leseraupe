@@ -358,6 +358,31 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('#st-info')).toContain('1 noch in Arbeit');
   });
 
+  it('B6: Sprache Ukrainisch – Oberfläche übersetzt, Leseblatt bleibt deutsch', async () => {
+    await page.goto(base + '#/verlauf');
+    await page.waitForSelector('.sheet-item');
+    await page.click('.sheet-item');
+    await page.waitForSelector('#b-pv .sheet');
+    const blattDe = await page.$eval('#b-pv .sheet', (e) => e.outerHTML);
+    await page.goto(base + '#/einstellungen');
+    await page.selectOption('#sprache', 'uk');
+    await page.waitForFunction(() => document.querySelector('h1')?.textContent === 'Налаштування');
+    expect(await page.getAttribute('html', 'lang')).toBe('uk');
+    await page.goto(base);
+    await page.waitForSelector('#create');
+    expect(await page.textContent('#create')).toBe('Створити аркуш');
+    await page.goto(base + '#/verlauf');
+    await page.waitForSelector('.sheet-item');
+    await page.click('.sheet-item');
+    await page.waitForSelector('#b-pv .sheet');
+    expect(await page.textContent('#b-read')).toBe('Прочитано ✓');
+    expect(await page.$eval('#b-pv .sheet', (e) => e.outerHTML)).toBe(blattDe);
+    // zurück: wie das Telefon (hier Englisch → Deutsch)
+    await page.goto(base + '#/einstellungen');
+    await page.selectOption('#sprache', '');
+    await page.waitForFunction(() => document.querySelector('h1')?.textContent === 'Einstellungen');
+  });
+
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
   });

@@ -19,6 +19,7 @@ import { renderStolper } from './screens/stolper';
 import { renderUrkundeScreen } from './screens/urkunde';
 import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
+import { sprache } from './app/i18n';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
 // beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
@@ -38,6 +39,7 @@ registerSW({
 });
 
 initInstall();
+document.documentElement.lang = sprache();
 
 const app = document.getElementById('app')!;
 
