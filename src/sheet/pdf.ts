@@ -99,11 +99,16 @@ function canvasToJpeg(canvas: HTMLCanvasElement): Promise<Uint8Array> {
   );
 }
 
-/**
- * Minimales PDF: eine A4-Seite, darauf ein JPEG-Bild.
- * `wMm` × `hMm`: Größe des Bildes auf dem Papier, oben links bei 10 mm Rand.
- */
-export function jpegToPdf(jpeg: Uint8Array, px: { w: number; h: number }, wMm: number, hMm: number, title = 'Leseblatt'): Uint8Array {
+export interface PdfPage {
+  jpeg: Uint8Array;
+  px: { w: number; h: number };
+  /** Größe des Bildes auf dem Papier, oben links bei 10 mm Rand */
+  wMm: number;
+  hMm: number;
+}
+
+/** Minimales PDF: je Seite A4 mit einem JPEG-Bild (A6: mehrere Blätter in einer Datei). */
+export function jpegsToPdf(pages: PdfPage[], title = 'Leseblatt'): Uint8Array {
   const enc = new TextEncoder();
   const chunks: Uint8Array[] = [];
   const offsets: number[] = [];
@@ -118,25 +123,31 @@ export function jpegToPdf(jpeg: Uint8Array, px: { w: number; h: number }, wMm: n
     push(`${n} 0 obj\n${body}\nendobj\n`);
   };
   const f = (x: number) => x.toFixed(2);
-  const iw = wMm * MM;
-  const ih = hMm * MM;
-  const content = `q ${f(iw)} 0 0 ${f(ih)} ${f(MARGIN)} ${f(A4.h - MARGIN - ih)} cm /Im1 Do Q`;
   // Titel nur aus ASCII-Zeichen, damit kein Encoding nötig ist
   const safeTitle = title.replace(/[^\x20-\x7e]/g, '').replace(/[()\\]/g, '');
+  // Objekte: 1 Katalog, 2 Seitenbaum, je Seite 3 (Seite, Bild, Inhalt), zuletzt Info
+  const pageObj = (k: number) => 3 + k * 3;
+  const info = 3 + pages.length * 3;
 
   push('%PDF-1.4\n%\xe2\xe3\xcf\xd3\n');
   obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
-  obj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-  obj(3, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${f(A4.w)} ${f(A4.h)}] /Resources << /XObject << /Im1 4 0 R >> >> /Contents 5 0 R >>`);
-  offsets[4] = pos;
-  push(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${px.w} /Height ${px.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`);
-  push(jpeg);
-  push('\nendstream\nendobj\n');
-  obj(5, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
-  obj(6, `<< /Title (${safeTitle}) /Producer (Leseraupe) >>`);
+  obj(2, `<< /Type /Pages /Kids [${pages.map((_, k) => `${pageObj(k)} 0 R`).join(' ')}] /Count ${pages.length} >>`);
+  pages.forEach((pg, k) => {
+    const n = pageObj(k);
+    const iw = pg.wMm * MM;
+    const ih = pg.hMm * MM;
+    const content = `q ${f(iw)} 0 0 ${f(ih)} ${f(MARGIN)} ${f(A4.h - MARGIN - ih)} cm /Im1 Do Q`;
+    obj(n, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${f(A4.w)} ${f(A4.h)}] /Resources << /XObject << /Im1 ${n + 1} 0 R >> >> /Contents ${n + 2} 0 R >>`);
+    offsets[n + 1] = pos;
+    push(`${n + 1} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${pg.px.w} /Height ${pg.px.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${pg.jpeg.length} >>\nstream\n`);
+    push(pg.jpeg);
+    push('\nendstream\nendobj\n');
+    obj(n + 2, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
+  });
+  obj(info, `<< /Title (${safeTitle}) /Producer (Leseraupe) >>`);
   const xref = pos;
-  push(`xref\n0 7\n0000000000 65535 f \n${offsets.slice(1).map((o) => `${String(o).padStart(10, '0')} 00000 n \n`).join('')}`);
-  push(`trailer\n<< /Size 7 /Root 1 0 R /Info 6 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  push(`xref\n0 ${info + 1}\n0000000000 65535 f \n${offsets.slice(1).map((o) => `${String(o).padStart(10, '0')} 00000 n \n`).join('')}`);
+  push(`trailer\n<< /Size ${info + 1} /Root 1 0 R /Info ${info} 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
 
   const out = new Uint8Array(pos);
   let o = 0;
@@ -147,13 +158,21 @@ export function jpegToPdf(jpeg: Uint8Array, px: { w: number; h: number }, wMm: n
   return out;
 }
 
-/** Blatt-HTML → PDF-Bytes (A4, 1 Seite) */
-export async function sheetToPdf(sheetHtml: string, title?: string): Promise<Uint8Array> {
-  const canvas = await sheetToCanvas(sheetHtml);
-  const jpeg = await canvasToJpeg(canvas);
-  // Blatt: 190 × 276 mm (sheet.css)
-  const mmPerPx = 190 / (canvas.width / PIXEL_RATIO);
-  return jpegToPdf(jpeg, { w: canvas.width, h: canvas.height }, 190, (canvas.height / PIXEL_RATIO) * mmPerPx, title);
+/** Blätter (HTML wie für den Druck) → ein PDF, jedes Blatt auf eigener A4-Seite */
+export async function sheetsToPdf(sheetsHtml: string[], title?: string): Promise<Uint8Array> {
+  const pages: PdfPage[] = [];
+  for (const html of sheetsHtml) {
+    const canvas = await sheetToCanvas(html);
+    const jpeg = await canvasToJpeg(canvas);
+    // Blatt: 190 mm breit (sheet.css), Höhe im selben Maßstab
+    const mmPerPx = 190 / (canvas.width / PIXEL_RATIO);
+    pages.push({ jpeg, px: { w: canvas.width, h: canvas.height }, wMm: 190, hMm: (canvas.height / PIXEL_RATIO) * mmPerPx });
+  }
+  return jpegsToPdf(pages, title);
+}
+
+export function sheetToPdf(sheetHtml: string, title?: string): Promise<Uint8Array> {
+  return sheetsToPdf([sheetHtml], title);
 }
 
 /**

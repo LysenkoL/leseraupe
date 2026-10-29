@@ -225,3 +225,20 @@ details.card > summary::-webkit-details-marker { display: none; }
 .rd-lines .rd-q { color: var(--green); }
 .rd-small p { margin: 0 0 .6em; font-size: 22px; line-height: 1.35; color: var(--muted); }
 .rd-end { margin-top: 18px; padding: 14px; border-radius: 18px; background: var(--green-light); color: var(--green); font-weight: 800; font-size: 20px; text-align: center; }
+
+/* Serie in der Vorschau (A6) */
+.serie-nav { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; font-size: 14px; color: var(--muted); }
+.serie-nav:empty { display: none; }
+.serie-nav b { color: var(--ink); }
+.serie-nav .iconbtn:disabled { opacity: .35; }
+
+.stepper { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.stepper .iconbtn { background: var(--green-light); color: var(--green); font-size: 26px; font-weight: 800; }
+.stepper .iconbtn:disabled { opacity: .35; }
+.stepper b { font-size: 30px; min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; }
+
+.t-wahl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.t-wahl[hidden] { display: none; }
+.t-wahl .chip { background: rgba(255,255,255,.14); color: #fff; border: 1.5px solid transparent; min-width: 48px; }
+.t-wahl .chip.on { background: #F2C94C; color: #2B3A67; }
+.t-wahl .chip:disabled { opacity: .35; }

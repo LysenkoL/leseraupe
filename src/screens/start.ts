@@ -1,5 +1,6 @@
 import { unitById } from '../core/letters';
 import { bindLetters, lettersHtml } from '../app/lettergrid';
+import { MAX_BLAETTER } from '../core/store';
 import { getSettings, setSettings } from '../app/state';
 import { esc, go, toast, GEAR_ICON } from '../app/ui';
 import { THEMES, THEME_IDS } from '../sheet/themes';
@@ -12,7 +13,6 @@ const BLOCK_NAMES: [BlockId, string][] = [
   ['silben', 'Silben'],
   ['woerter', 'Wörter'],
   ['kleine', 'Kleine Wörter'],
-  ['aehnlich', 'Ähnliche Buchstaben'],
   ['saetze', 'Sätze'],
   ['geschichte', 'Geschichte'],
   ['quest', 'Quest'],
@@ -62,10 +62,11 @@ export function renderStart(root: HTMLElement): void {
       ${lettersHtml(s)}
     </section>
     <section class="card">
-      <h2>Lesezeit</h2>
-      <div class="seg">
-        <button data-min="5" class="${s.minutes === 5 ? 'on' : ''}">5 Minuten</button>
-        <button data-min="10" class="${s.minutes === 10 ? 'on' : ''}">10 Minuten</button>
+      <div class="row"><h2>Blätter auf einmal</h2><span class="hint">jedes weitere etwas schwerer</span></div>
+      <div class="stepper">
+        <button class="iconbtn" data-bl="-1" aria-label="Ein Blatt weniger" ${s.blaetter <= 1 ? 'disabled' : ''}>−</button>
+        <b id="bl-n">${s.blaetter}</b>
+        <button class="iconbtn" data-bl="1" aria-label="Ein Blatt mehr" ${s.blaetter >= MAX_BLAETTER ? 'disabled' : ''}>+</button>
       </div>
     </section>
     <section class="card">
@@ -78,15 +79,16 @@ export function renderStart(root: HTMLElement): void {
     </details>
   </div>
   <div class="bottom">
-    <button class="btn primary big" id="create">Leseblatt erstellen</button>
+    <button class="btn primary big" id="create">${s.blaetter > 1 ? `${s.blaetter} Leseblätter erstellen` : 'Leseblatt erstellen'}</button>
     <a class="btn ghost" href="#/chat">Mit Chat erstellen (Claude / ChatGPT) …</a>
   </div>
 </div>`;
 
     bindLetters(root, () => draw(count));
-    root.querySelectorAll<HTMLButtonElement>('[data-min]').forEach((b) =>
+    root.querySelectorAll<HTMLButtonElement>('[data-bl]').forEach((b) =>
       b.addEventListener('click', () => {
-        setSettings({ ...getSettings(), minutes: Number(b.dataset.min) as 5 | 10 });
+        const n = Math.min(MAX_BLAETTER, Math.max(1, getSettings().blaetter + Number(b.dataset.bl)));
+        setSettings({ ...getSettings(), blaetter: n });
         draw(count);
       }),
     );

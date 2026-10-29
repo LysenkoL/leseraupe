@@ -54,7 +54,8 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     return;
   }
   const back = sheetId ? `#/blatt/${sheetId}` : '#/vorschau';
-  const minutes = data.minutes;
+  // Lesezeit wie zuletzt im Timer gewählt (A6), nicht der Umfang des Blatts
+  const minutes = getSettings().minutes;
   const pages = readingPages(data);
   const name = getSettings().childName;
   let idx = 0;

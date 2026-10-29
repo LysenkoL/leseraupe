@@ -1,5 +1,6 @@
-import { addRead, saveOnPrint } from '../core/db';
-import { getDraft, setDraft, type Draft } from './state';
+import { addRead } from '../core/db';
+import { getSerie, type Draft } from './state';
+import { saveSerieBis } from './actions';
 
 /**
  * Countdown für die Lesezeit – gemeinsam für den Vollbild-Timer und „Am Bildschirm lesen“:
@@ -143,12 +144,12 @@ export async function recordRead(sheetId: number | null, draft: Draft | null, mi
     const r = await addRead(sheetId, minutes);
     return r?.number ?? null;
   }
-  if (draft) {
-    const d = getDraft() ?? draft;
-    const rec = await saveOnPrint(d.data, d.scale, d.savedId, 'none');
-    setDraft({ ...d, data: rec.data, savedId: rec.id ?? null });
-    await addRead(rec.id!, minutes);
-    return rec.number;
+  const serie = getSerie();
+  if (draft && serie) {
+    // frühere Blätter der Serie zuerst speichern, damit die Nummern stimmen
+    const d = await saveSerieBis(serie.idx);
+    await addRead(d.savedId!, minutes);
+    return d.data.number;
   }
   return null;
 }

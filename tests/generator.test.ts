@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, silbenZahl, stufeFor, type GenParams } from '../src/core/generator';
+import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
 import { DEFAULT_BLOCKS, type SheetData, type BlockId } from '../src/core/types';
 import { checkText, countUnit, UNIT_IDS, wordsOf } from '../src/core/letters';
 import { mulberry32, shuffle } from '../src/core/random';
@@ -15,7 +15,6 @@ function params(letters: string[], over: Partial<GenParams> = {}): GenParams {
     theme: 'wiese',
     childName: 'Mia',
     blocks: ALL_BLOCKS,
-    aehnlichPair: ['l', 'I'],
     history: emptyHistory(),
     seed: 1,
     ...over,
@@ -72,7 +71,7 @@ describe('Generator: Umfang', () => {
       expect(sheet.fragen.length).toBeGreaterThanOrEqual(c.fragen[0]);
       expect(sheet.fragen.length).toBeLessThanOrEqual(c.fragen[1]);
       expect(sheet.quest).not.toBeNull();
-      expect(sheet.aehnlich).not.toBeNull();
+      expect(sheet.aehnlich).toBeNull(); // Block „Ähnliche Buchstaben“ entfällt (A6)
     });
   }
 
@@ -194,5 +193,23 @@ describe('B1: Schwierigkeit wächst innerhalb einer Buchstabe', () => {
     expect(stufeFor([blatt(START), blatt([...START].reverse())], START)).toBe(3);
     expect(stufeFor([blatt(START), blatt(START)], [...START, 'e'])).toBe(1);
     expect(stufeFor(Array.from({ length: 9 }, () => blatt(START)), START)).toBe(MAX_STUFE);
+  });
+});
+
+describe('A6: mehrere Blätter auf einmal', () => {
+  it('4 Blätter: keine Wörter, Sätze oder Geschichten doppelt', () => {
+    const letters = UNIT_IDS.slice(0, 25);
+    const done: SheetData[] = [];
+    for (let i = 0; i < 4; i++) {
+      const h = withSerie({ ...emptyHistory(), seq: 1 + i }, done);
+      done.push(generateSheet(params(letters, { seed: 100 + i, stufe: 1 + i, history: h })).sheet);
+    }
+    const woerter = done.flatMap((d) => [...d.woerter, ...d.kleine]);
+    expect(new Set(woerter).size).toBe(woerter.length);
+    const saetze = done.flatMap((d) => d.saetze);
+    expect(new Set(saetze).size).toBe(saetze.length);
+    const titel = done.flatMap((d) => (d.geschichte ? [d.geschichte.titel] : []));
+    expect(new Set(titel).size).toBe(titel.length);
+    expect(done.map((d) => d.stufe)).toEqual([1, 2, 3, 4]);
   });
 });

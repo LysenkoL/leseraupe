@@ -26,7 +26,7 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
         return `<div class="onb-art">${RAUPE}</div>
           <h1>Willkommen bei der Leseraupe</h1>
           <p>Tägliche Leseblätter nur mit den Buchstaben, die dein Kind schon kennt.</p>
-          <p class="hint">Blatt erstellen, drucken, 5 oder 10 Minuten lesen – fertig.</p>`;
+          <p class="hint">Blatt erstellen, drucken oder am Bildschirm lesen, Timer an – fertig.</p>`;
       case 1:
         return `<div class="onb-art onb-steps" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
           <h1>Die App wächst mit</h1>

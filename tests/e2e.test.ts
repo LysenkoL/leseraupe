@@ -289,6 +289,48 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
   });
 
+  it('A6: 3 Blätter auf einmal – blättern, alle zusammen drucken, Nummern der Reihe nach', async () => {
+    await page.goto(base);
+    await page.waitForSelector('#create');
+    await page.click('[data-bl="1"]');
+    await page.click('[data-bl="1"]');
+    expect(await page.textContent('#create')).toBe('3 Leseblätter erstellen');
+    await page.click('#create');
+    await page.waitForSelector('#pv-nav b');
+    expect(await page.textContent('#pv-nav b')).toBe('1 / 3');
+    const first = Number((await page.textContent('#pv-title'))!.match(/Blatt (\d+)/)![1]);
+    await page.click('#pv-next');
+    await page.waitForFunction(() => document.querySelector('#pv-nav b')?.textContent === '2 / 3');
+    await page.waitForFunction((n) => document.querySelector('#pv-title')?.textContent?.startsWith(`Blatt ${n} `), first + 1);
+    const printed = await page.evaluate(() => (window as unknown as { __printed: number }).__printed);
+    await page.click('#print');
+    await page.waitForFunction((n) => (window as unknown as { __printed: number }).__printed === n + 1, printed);
+    expect(await page.$$eval('#print-root .sheet .sh-perle', (e) => e.map((x) => Number(x.textContent)))).toEqual([first, first + 1, first + 2]);
+    // zurück auf ein Blatt
+    await page.goto(base);
+    await page.click('[data-bl="-1"]');
+    await page.click('[data-bl="-1"]');
+    expect(await page.textContent('#create')).toBe('Leseblatt erstellen');
+  });
+
+  it('A6: Timer-Zeit frei wählen, wird gemerkt', async () => {
+    await page.goto(base + '#/timer');
+    await page.waitForSelector('#t-wahl');
+    expect(await page.textContent('#t-digits')).toBe('05:00');
+    await page.click('[data-tmin="15"]');
+    await page.waitForFunction(() => document.querySelector('#t-digits')?.textContent === '15:00');
+    await page.click('[data-tstep="5"]');
+    await page.waitForFunction(() => document.querySelector('#t-digits')?.textContent === '20:00');
+    await page.reload();
+    await page.waitForSelector('#t-digits');
+    expect(await page.textContent('#t-digits')).toBe('20:00');
+    await page.click('#t-start');
+    expect(await page.isHidden('#t-wahl')).toBe(true);
+    await page.click('#t-reset');
+    await page.click('[data-tmin="5"]');
+    await page.waitForFunction(() => document.querySelector('#t-digits')?.textContent === '05:00');
+  });
+
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
   });

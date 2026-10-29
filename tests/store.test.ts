@@ -44,7 +44,7 @@ describe('Einstellungen', () => {
   });
 
   it('kaputte Daten werden repariert', () => {
-    localStorage.setItem('leseraupe.settings.v1', '{"letters":["x1","t"],"minutes":7,"theme":"foo"}');
+    localStorage.setItem('leseraupe.settings.v1', '{"letters":["x1","t"],"minutes":0,"theme":"foo"}');
     const s = loadSettings();
     expect(s.letters).toEqual(['t']);
     expect(s.minutes).toBe(5);

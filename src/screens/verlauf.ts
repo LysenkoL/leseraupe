@@ -36,7 +36,7 @@ export function renderVerlauf(root: HTMLElement): void {
         return `<a class="sheet-item" href="#/blatt/${r.id}">
           <span class="si-n" style="background:${t.light};color:${t.main}">${r.number}</span>
           <span class="si-main"><b>${esc(r.data.geschichte?.titel || `Blatt ${r.number}`)}</b>
-          <small>${formatDate(r.createdAt)} · ${t.name} · ${r.data.minutes} Min${r.reads.length > 1 ? ` · ${r.reads.length}× gelesen` : ''}</small></span>
+          <small>${formatDate(r.createdAt)} · ${t.name}${r.reads.length ? ` · ${r.reads.reduce((a, x) => a + x.minutes, 0)} Min gelesen` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
           <span class="si-st st-${s}">${STATUS_LABEL[s]}</span></a>`;
       })
       .join('');

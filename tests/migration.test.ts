@@ -99,7 +99,7 @@ describe('A1: Umzug alter Daten zum ersten Kind', () => {
 
   it('kaputtes Profil wird repariert', () => {
     expect(sanitizeProfile({ activeKindId: 'x', kinder: [] }).kinder[0].id).toBe(FIRST_KIND_ID);
-    const p = sanitizeProfile({ activeKindId: 'zz', kinder: [{ id: 'k7', settings: { minutes: 3 } as never }] });
+    const p = sanitizeProfile({ activeKindId: 'zz', kinder: [{ id: 'k7', settings: { minutes: 99 } as never }] });
     expect(p.activeKindId).toBe('k7');
     expect(p.kinder[0].settings.minutes).toBe(5);
   });

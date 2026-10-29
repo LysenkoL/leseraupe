@@ -26,3 +26,15 @@ describe('Druck: genau eine A4-Seite', () => {
     }
   }
 });
+
+describe('Druck einer Serie (A6): jedes Blatt auf eigener A4-Seite', () => {
+  it('3 Blätter → 3 Seiten', async () => {
+    const html: string[] = [];
+    for (const [i, theme] of (['wiese', 'meer', 'winter'] as const).entries()) {
+      const r = await place(page, renderSheet({ ...SAMPLE_SHEET, theme, number: 7 + i }, { displayNumber: 7 + i }));
+      expect(r.fits).toBe(true);
+      html.push(r.html);
+    }
+    expect(await pdfPages(page, html.join(''))).toBe(3);
+  });
+});

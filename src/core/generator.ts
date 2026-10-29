@@ -1,8 +1,8 @@
-import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte, Aehnlich } from './types';
+import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte } from './types';
 import type { ThemeId } from '../sheet/themes';
 import { Vocab } from './vocab';
 import { DICT } from './dict';
-import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, checkText, countUnit, tokenizeWord } from './letters';
+import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } from './letters';
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
 
@@ -32,7 +32,6 @@ export interface GenParams {
   theme: ThemeId;
   childName: string;
   blocks: Record<BlockId, boolean>;
-  aehnlichPair: [string, string];
   history: History;
   seed: number;
   /** Schwierigkeit 1–5 (B1): wie viele Blätter seit der letzten neuen Buchstabe; fehlt = ohne Stufen */
@@ -267,32 +266,6 @@ function makeGeheimwort(v: Vocab, rng: Rng): Quest | null {
   return null;
 }
 
-/** Block „Ähnliche Buchstaben“: Wörter mit dem einen und mit dem anderen Buchstaben. */
-export function makeAehnlich(v: Vocab, p: GenParams, rng: Rng, prefer: string[]): Aehnlich | null {
-  const [a, b] = p.aehnlichPair;
-  const n = COUNTS[p.minutes].aehnlich;
-  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-  const all = [...new Set([...prefer, ...v.words.map((e) => e.w), ...v.kleine.map(cap)])].filter((w) => v.has(w));
-  const contains = (w: string, x: string) => (x.length > 1 ? w.toLowerCase().includes(x) : w.includes(x));
-  const forX = (x: string) => {
-    const c = all.filter((w) => contains(w, x));
-    const pref = c.filter((w) => prefer.includes(w));
-    return [...shuffle(pref, rng), ...shuffle(c.filter((w) => !pref.includes(w)), rng)]
-      .filter((w, i, arr) => arr.indexOf(w) === i)
-      .slice(0, n)
-      .sort((x1, x2) => x1.length - x2.length);
-  };
-  const wa = forX(a);
-  const wb = forX(b);
-  if (!wa.length || !wb.length) return null;
-  return { pair: [a, b], words: [wa, wb] };
-}
-
-/** Prüft, ob beide Buchstaben eines Paars gelernt sind. */
-export function pairKnown(pair: [string, string], known: ReadonlySet<string>): boolean {
-  return pair.every((x) => checkText(x, known).ok);
-}
-
 export interface Generated {
   sheet: SheetData;
   removed: Removed[];
@@ -328,7 +301,6 @@ export function generateSheet(p: GenParams): Generated {
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
-  const aehnlich = pairKnown(p.aehnlichPair, known) ? makeAehnlich(v, p, rng, [...woerter, ...saetze.flatMap(wordsOf)]) : null;
 
   const sheet: SheetData = {
     number: null,
@@ -342,7 +314,8 @@ export function generateSheet(p: GenParams): Generated {
     silben,
     woerter,
     kleine,
-    aehnlich,
+    // Block „Ähnliche Buchstaben“ entfällt (A6); nur alte Blätter haben ihn noch
+    aehnlich: null,
     saetze,
     geschichte: story?.g ?? null,
     quest,
@@ -368,9 +341,6 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
       break;
     case 'kleine':
       s.kleine = g.sheet.kleine;
-      break;
-    case 'aehnlich':
-      s.aehnlich = g.sheet.aehnlich;
       break;
     case 'saetze':
       s.saetze = g.sheet.saetze;
@@ -407,6 +377,21 @@ export function readingTexts(s: SheetData): string[] {
     if (s.quest.kind === 'geheimwort') t.push(...(s.quest.words ?? []), s.quest.target ?? '');
   }
   return t;
+}
+
+/**
+ * Andere Blätter derselben Serie (A6) sperren: ihre Wörter, Sätze und Geschichten
+ * gelten als „gerade benutzt“, damit sich innerhalb der Serie nichts wiederholt.
+ */
+export function withSerie(h: History, andere: SheetData[]): History {
+  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories) };
+  for (const d of andere) {
+    for (const w of sheetWords(d)) out.wordSeq.set(w, h.seq - 1);
+    for (const x of d.saetze) out.recentSentences.add(x);
+    if (d.geschichte) out.recentStories.add(d.geschichte.titel);
+    if (d.quest) out.lastQuest = d.quest.kind;
+  }
+  return out;
 }
 
 /** Baut die Wiederholungs-Historie aus gespeicherten Blättern (seq = laufende Nummer). */

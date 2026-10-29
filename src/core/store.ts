@@ -1,4 +1,4 @@
-import { DEFAULT_BLOCKS, type BlockId, type Minutes } from './types';
+import { DEFAULT_BLOCKS, type BlockId } from './types';
 import { sortUnits, UNIT_IDS } from './letters';
 import type { ThemeId } from '../sheet/themes';
 import { THEME_IDS } from '../sheet/themes';
@@ -7,25 +7,29 @@ import { THEME_IDS } from '../sheet/themes';
 export interface Settings {
   letters: string[];
   newLetter: string | null;
-  minutes: Minutes;
+  /** Lesezeit des Timers in Minuten (A6: frei wählbar, unabhängig vom Blatt) */
+  minutes: number;
+  /** wie viele Blätter auf einmal erstellt werden (A6) */
+  blaetter: number;
   theme: ThemeId;
   randomTheme: boolean;
   blocks: Record<BlockId, boolean>;
   childName: string;
-  aehnlichPair: [string, string];
 }
 
 const KEY = 'leseraupe.settings.v1';
+
+export const MAX_BLAETTER = 5;
 
 export const DEFAULT_SETTINGS: Settings = {
   letters: sortUnits(['t', 'o', 'm', 'l', 'a', 'i', 's']),
   newLetter: 's',
   minutes: 5,
+  blaetter: 1,
   theme: 'wiese',
   randomTheme: false,
   blocks: { ...DEFAULT_BLOCKS },
   childName: '',
-  aehnlichPair: ['l', 'I'],
 };
 
 function storage(): Storage | null {
@@ -40,11 +44,13 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   const s = { ...DEFAULT_SETTINGS, ...(raw ?? {}) } as Settings;
   s.letters = sortUnits((Array.isArray(s.letters) ? s.letters : []).filter((id) => UNIT_IDS.includes(id)));
   if (s.newLetter && !s.letters.includes(s.newLetter)) s.newLetter = null;
-  if (s.minutes !== 5 && s.minutes !== 10) s.minutes = 5;
+  if (!Number.isInteger(s.minutes) || s.minutes < 1 || s.minutes > 60) s.minutes = 5;
+  if (!Number.isInteger(s.blaetter) || s.blaetter < 1 || s.blaetter > MAX_BLAETTER) s.blaetter = 1;
   if (!THEME_IDS.includes(s.theme)) s.theme = 'wiese';
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';
-  if (!Array.isArray(s.aehnlichPair) || s.aehnlichPair.length !== 2) s.aehnlichPair = ['l', 'I'];
+  delete (s as Partial<{ aehnlichPair: unknown }>).aehnlichPair;
+  s.blocks.aehnlich = false;
   return s;
 }
 

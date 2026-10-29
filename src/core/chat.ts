@@ -1,6 +1,6 @@
 import type { Minutes, SheetData } from './types';
 import { UNITS, checkText, sortUnits, unitById } from './letters';
-import { COUNTS, makeAehnlich, makeQuest, makeSilben, pairKnown, type GenParams, type Removed } from './generator';
+import { COUNTS, makeQuest, makeSilben, type GenParams, type Removed } from './generator';
 import { Vocab } from './vocab';
 import { mulberry32 } from './random';
 
@@ -129,7 +129,7 @@ export function sheetFromChat(answer: ChatJson, p: GenParams): { sheet: SheetDat
     silben: makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng),
     woerter,
     kleine,
-    aehnlich: pairKnown(p.aehnlichPair, known) ? makeAehnlich(v, p, rng, [...woerter, ...saetze]) : null,
+    aehnlich: null,
     saetze,
     geschichte,
     quest: makeQuest(p, base, v, rng),

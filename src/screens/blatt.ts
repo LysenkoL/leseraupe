@@ -5,6 +5,7 @@ import { printSheet } from '../sheet/print';
 import { sharePdf, sheetToPdf } from '../sheet/pdf';
 import { backButton, esc, formatDate, go, toast } from '../app/ui';
 import { THEMES } from '../sheet/themes';
+import { getSettings } from '../app/state';
 
 /** Ein gespeichertes Blatt: genau so wieder drucken, Timer, „gelesen“ von Hand. */
 export function renderBlatt(root: HTMLElement, id: number): void {
@@ -22,7 +23,7 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     }
     root.querySelector('#b-t')!.textContent = `Blatt ${r.number} · ${THEMES[r.data.theme].name}`;
     const reads = r.reads.length ? ` · gelesen: ${r.reads.map((x) => formatDate(x.at)).join(', ')}` : '';
-    root.querySelector('#b-s')!.textContent = `${formatDate(r.createdAt)} · ${r.data.minutes} Minuten · ${statusOf(r)}${reads}`;
+    root.querySelector('#b-s')!.textContent = `${formatDate(r.createdAt)} · ${statusOf(r)}${reads}`;
     await mountPreview(root.querySelector('#b-pv')!, renderSheet(r.data, { displayNumber: r.number, scale: r.scale }), { fixedScale: r.scale });
     return r;
   };
@@ -50,12 +51,12 @@ export function renderBlatt(root: HTMLElement, id: number): void {
   });
   root.querySelector('#b-timer')!.addEventListener('click', async () => {
     const r = await getSheet(id);
-    go(`#/timer?id=${id}&min=${r?.data.minutes ?? 5}`);
+    if (r) go(`#/timer?id=${id}`);
   });
   root.querySelector('#b-read')!.addEventListener('click', async () => {
     const r = await getSheet(id);
     if (!r) return;
-    await addRead(id, r.data.minutes, true);
+    await addRead(id, getSettings().minutes, true);
     toast(`Blatt ${esc(String(r.number))}: gelesen ✓`);
     draw();
   });

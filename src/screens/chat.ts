@@ -5,11 +5,11 @@ import { genParams } from '../app/actions';
 
 export function renderChat(root: HTMLElement): void {
   const s = getSettings();
-  const prompt = buildPrompt(s.letters, s.newLetter, s.minutes);
+  const prompt = buildPrompt(s.letters, s.newLetter, 5);
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1>Mit Chat erstellen</h1><div class="sub">ohne API-Schlüssel · ${s.minutes} Minuten</div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1>Mit Chat erstellen</h1><div class="sub">ohne API-Schlüssel</div></div></div>
   <div class="content">
     <section class="card">
       <h2>1. Prompt kopieren</h2>

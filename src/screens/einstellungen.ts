@@ -4,21 +4,8 @@ import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/d
 import { activeKind, loadProfile, saveProfile } from '../core/store';
 import { canInstall, install, isStandalone } from '../app/install';
 
-export const PAIRS: [string, string][] = [
-  ['l', 'I'],
-  ['b', 'd'],
-  ['b', 'p'],
-  ['d', 'p'],
-  ['m', 'n'],
-  ['n', 'u'],
-  ['f', 't'],
-  ['ei', 'ie'],
-  ['au', 'eu'],
-];
-
 export function renderEinstellungen(root: HTMLElement): void {
   const s = getSettings();
-  const pairKey = s.aehnlichPair.join('/');
   root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>Einstellungen</h1></div></div>
@@ -26,9 +13,6 @@ export function renderEinstellungen(root: HTMLElement): void {
     <section class="card">
       <label class="field">Name des Kindes (steht auf jedem Blatt)
         <input id="name" value="${esc(s.childName)}" autocomplete="off" maxlength="40" />
-      </label>
-      <label class="field">Ähnliche Buchstaben (Block „Klein l oder groß I?“)
-        <select id="pair">${PAIRS.map((p) => `<option value="${p.join('/')}" ${p.join('/') === pairKey ? 'selected' : ''}>${p[0]} / ${p[1]}</option>`).join('')}</select>
       </label>
       <button class="btn green" id="save">Speichern</button>
     </section>
@@ -54,8 +38,7 @@ export function renderEinstellungen(root: HTMLElement): void {
 
   root.querySelector('#save')!.addEventListener('click', () => {
     const name = (root.querySelector<HTMLInputElement>('#name')!.value || '').trim();
-    const pair = root.querySelector<HTMLSelectElement>('#pair')!.value.split('/') as [string, string];
-    setSettings({ ...getSettings(), childName: name, aehnlichPair: pair });
+    setSettings({ ...getSettings(), childName: name });
     toast('Gespeichert');
   });
 

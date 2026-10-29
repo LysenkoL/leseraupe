@@ -32,7 +32,6 @@ function sheetFor(letters: string[], minutes: 5 | 10, theme: (typeof THEME_IDS)[
     theme,
     childName: 'Mia',
     blocks: { ...DEFAULT_BLOCKS, aehnlich: true },
-    aehnlichPair: ['l', 'I'],
     history: emptyHistory(),
     seed,
   }).sheet;
