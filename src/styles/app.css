@@ -82,6 +82,7 @@ button { cursor: pointer; }
 .btn {
   min-height: 52px; border-radius: 16px; border: 1.5px solid transparent; font-weight: 800; font-size: 17px; padding: 0 14px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+  text-align: center; text-wrap: balance;
 }
 .btn.big { min-height: 56px; font-size: 18px; }
 .btn.primary { background: var(--orange); color: var(--orange-ink); }
@@ -299,3 +300,14 @@ details.card > summary::-webkit-details-marker { display: none; }
 @media (max-width: 360px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 @media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* Einführung: Knöpfe unter dem Inhalt (nicht klebend) – sonst verdecken sie auf kleinen Handys
+   die letzte Buchstabenreihe und die Legende, und man merkt nicht, dass man scrollen kann */
+.onb .bottom { position: static; }
+.onb .letters { gap: 5px; }
+.onb .lt { min-height: 40px; font-size: 16px; }
+.toggle.disabled { opacity: .45; }
+.raupe-card.kompakt { padding: 10px 14px; gap: 4px; }
+.raupe-card.kompakt .raupe-svg { max-height: 56px; }
+.btnrow.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }

@@ -21,14 +21,14 @@ export function renderChat(root: HTMLElement): void {
     <section class="card">
       <h2>${t('chat.schritt2')}</h2>
       <div class="btnrow two">
-        <a class="btn ghost" href="https://claude.ai/new?q=${q}" target="_blank" rel="noopener">${t('chat.claude')}</a>
-        <a class="btn ghost" href="https://chatgpt.com/?q=${q}" target="_blank" rel="noopener">${t('chat.chatgpt')}</a>
+        <a class="btn ghost" href="https://claude.ai/new?q=${q}" target="_blank" data-eltern rel="noopener">${t('chat.claude')}</a>
+        <a class="btn ghost" href="https://chatgpt.com/?q=${q}" target="_blank" data-eltern rel="noopener">${t('chat.chatgpt')}</a>
       </div>
     </section>
     <section class="card">
       <h2>${t('chat.schritt3')}</h2>
       <button class="btn ghost" id="paste">${t('chat.ausZwischenablage')}</button>
-      <label class="field">${t('chat.antwort')}
+      <label class="field" aria-label="${t('chat.antwort')}">
         <textarea id="answer" placeholder="${t('chat.platzhalter')}"></textarea>
       </label>
       <div class="modal-err" id="err" aria-live="polite"></div>

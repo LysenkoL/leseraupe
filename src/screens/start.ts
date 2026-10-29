@@ -40,7 +40,11 @@ export function renderStart(root: HTMLElement): void {
       return `<button class="chip${on}" data-theme="${id}" style="background:${th.light};color:${th.main}">${themaName(id)}</button>`;
     }).join('');
     const blocks = BLOCKS.map(
-      (id) => `<label class="toggle small"><input type="checkbox" data-block="${id}" ${s.blocks[id] ? 'checked' : ''}/> ${t(`block.${id}`)}</label>`,
+      (id) => {
+        // Elternfragen gehören zur Geschichte: ohne Geschichte keine Fragen
+        const aus = id === 'fragen' && !s.blocks.geschichte;
+        return `<label class="toggle small${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/> ${t(`block.${id}`)}</label>`;
+      },
     ).join('');
 
     root.innerHTML = `
@@ -64,7 +68,7 @@ export function renderStart(root: HTMLElement): void {
       <form class="name-row" id="name-form"><input id="child-name" autocomplete="off" maxlength="40" placeholder="${t('start.namePlatzhalter')}" aria-label="${t('start.nameTitel')}" /><button class="btn green" type="submit">${t('start.speichern')}</button></form>
     </section>`
     }
-    ${stand && (stand.perlen || stand.fertig.length) ? raupenKarte(stand) : ''}
+    ${stand ? raupenKarte(stand, true) : ''}
     <section class="card">
       <div class="row"><h2>${t('start.buchstaben')}</h2><span class="hint">${t('start.buchstabenZahl', { n: s.letters.length, neu: esc(neu ?? '–') })}</span></div>
       ${lettersHtml(s)}
@@ -116,6 +120,7 @@ export function renderStart(root: HTMLElement): void {
       cb.addEventListener('change', () => {
         const s2 = getSettings();
         setSettings({ ...s2, blocks: { ...s2.blocks, [cb.dataset.block!]: cb.checked } });
+        if (cb.dataset.block === 'geschichte') draw(count);
       }),
     );
     root.querySelector<HTMLFormElement>('#name-form')?.addEventListener('submit', (e) => {

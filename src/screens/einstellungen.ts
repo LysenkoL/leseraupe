@@ -18,6 +18,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       <label class="field">${t('einst.name')}
         <input id="name" value="${esc(s.childName)}" autocomplete="off" maxlength="40" />
       </label>
+      <div class="hint">${t('onb.hint4')}</div>
       <div class="hint saved-hint" id="name-saved" aria-live="polite"></div>
     </section>
     <section class="card">

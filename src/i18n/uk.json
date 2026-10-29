@@ -29,7 +29,7 @@
   "raupe.urkundeAnsehen": "Переглянути грамоту {nr}",
   "protokoll.titel": "Журнал",
   "protokoll.leer": "Ще немає записів.",
-  "thema.titel": "Обрати тему",
+  "thema.titel": "Обрати оформлення",
   "thema.vorschau": "Попередній перегляд: {name}",
   "thema.gewaehlt": "обрано",
   "thema.zufall": "Щодня інша тема (випадково)",
@@ -84,7 +84,7 @@
   "start.blattWeniger": "На один аркуш менше",
   "start.blattMehr": "На один аркуш більше",
   "start.silbenFarbig": "Кольорові склади",
-  "start.thema": "Тема",
+  "start.thema": "Оформлення",
   "start.themaVorschau": "Перегляд ›",
   "start.zufall": "Випадково",
   "start.bloecke": "Блоки",
@@ -145,7 +145,7 @@
   "status.gedruckt": "на друк",
   "status.gelesen": "прочитано ✓",
   "verlauf.gelesen": "прочитано",
-  "verlauf.minuten": "Хвилин",
+  "verlauf.minuten": "хвилин",
   "verlauf.minGelesen": "прочитано {n} хв",
   "verlauf.stolper": "Слова із запинкою: подолано {b} · ще в роботі {n}",
   "verlauf.urkunde": "Грамота {nr}",
@@ -235,5 +235,9 @@
   "gefuehl.leicht": "Легко",
   "gefuehl.geht": "Нормально",
   "gefuehl.schwer": "Важко",
-  "gefuehl.hinweis": "Від цього залежить складність наступного аркуша: легко → трохи складніше, важко → трохи легше."
+  "gefuehl.hinweis": "Від цього залежить складність наступного аркуша: легко → трохи складніше, важко → трохи легше.",
+  "verlauf.neu": "нова: {b}",
+  "eltern.titel": "Лише для дорослих",
+  "eltern.frage": "Порахуйте, будь ласка: {a} + {b} = ?",
+  "eltern.falsch": "На жаль, неправильно. Ще раз?"
 }

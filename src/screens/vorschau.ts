@@ -1,3 +1,4 @@
+import { elternCheck } from '../app/elterncheck';
 import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
@@ -45,16 +46,17 @@ export function renderVorschau(root: HTMLElement): void {
   <div class="preview-wrap" id="pv"></div>
   <div class="hint" style="padding:6px 16px 0">${t('vorschau.hinweis')}</div>
   <div class="bottom">
-    <div class="btnrow">
-      <button class="btn ghost" id="mix">${t('vorschau.mischen')}</button>
-      <button class="btn green" id="print">${t('aktion.drucken')}</button>
-      <button class="btn primary" id="timer">${t('vorschau.timer')}</button>
-    </div>
+    <!-- zwei Hauptwege: auf Papier oder am Bildschirm; der Rest kleiner darunter -->
     <div class="btnrow two">
-      <button class="btn ghost" id="pdf">${t('aktion.pdf')}</button>
-      <button class="btn ghost" id="read">${t('vorschau.gelesen')}</button>
+      <button class="btn green" id="print">${t('aktion.drucken')}</button>
+      <a class="btn primary" id="screen" href="#/lesen">${t('vorschau.bildschirm')}</a>
     </div>
-    <a class="btn ghost" id="screen" href="#/lesen">${t('vorschau.bildschirm')}</a>
+    <div class="btnrow four">
+      <button class="btn ghost sm" id="mix">${t('vorschau.mischen')}</button>
+      <button class="btn ghost sm" id="timer">${t('vorschau.timer')}</button>
+      <button class="btn ghost sm" id="pdf">${t('aktion.pdf')}</button>
+      <button class="btn ghost sm" id="read">${t('vorschau.gelesen')}</button>
+    </div>
   </div>
 </div>`;
 
@@ -200,6 +202,7 @@ export function renderVorschau(root: HTMLElement): void {
       const { html, first, last, nums } = await saveAll('none');
       const name = first === last ? `Leseblatt-${first}` : `Leseblaetter-${first}-${last}`;
       const pdf = await sheetsToPdf(html, name.replace('-', ' '));
+      if (!(await elternCheck())) return;
       const r = await sharePdf(pdf, `${name}.pdf`);
       if (r !== 'abgebrochen') for (const nr of nums) await log(`Blatt ${nr} als PDF gespeichert`);
       if (r === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));

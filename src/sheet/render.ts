@@ -132,7 +132,7 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
   }
 
   const fragen =
-    d.blocks.fragen && d.fragen.length
+    d.blocks.fragen && d.blocks.geschichte && d.fragen.length
       ? `<span class="f-h">Für Eltern – Fragen zur Geschichte:</span><span class="f-q">${d.fragen.map(esc).join(' · ')}</span>`
       : '';
 

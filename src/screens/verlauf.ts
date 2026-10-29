@@ -1,3 +1,4 @@
+import { unitById } from '../core/letters';
 import { allSheets, dayKey, readingDays, stats, statusOf, streak, type SheetRecord } from '../core/db';
 import { backButton, esc, formatDate, aktuelleRoute, nochAktuell } from '../app/ui';
 import { THEMES } from '../sheet/themes';
@@ -39,7 +40,7 @@ export function renderVerlauf(root: HTMLElement): void {
         return `<a class="sheet-item" href="#/blatt/${r.id}">
           <span class="si-n" style="background:${th.light};color:${th.main}">${r.number}</span>
           <span class="si-main"><b>${esc(r.data.geschichte?.titel || `${t('vorschau.blatt')} ${r.number}`)}</b>
-          <small>${formatDate(r.createdAt)} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${t('verlauf.minGelesen', { n: r.reads.reduce((a, x) => a + x.minutes, 0) })}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
+          <small>${formatDate(r.createdAt)}${r.data.newLetter ? ` · ${t('verlauf.neu', { b: esc(unitById(r.data.newLetter)?.label.replace('-', '') ?? r.data.newLetter) })}` : ''} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${t('verlauf.minGelesen', { n: r.reads.reduce((a, x) => a + x.minutes, 0) })}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
           <span class="si-st st-${s}">${t(`status.${s}`)}</span></a>`;
       })
       .join('');
@@ -55,7 +56,7 @@ export function renderVerlauf(root: HTMLElement): void {
     <div class="tiles">
       <div class="tile"><b>${st.erstellt}</b><small>${t('status.erstellt')}</small></div>
       <div class="tile"><b>${st.gedruckt}</b><small>${t('status.gedruckt')}</small></div>
-      <div class="tile on"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
+      <div class="tile${st.gelesen > 0 ? ' on' : ''}"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
       <div class="tile"><b>${st.minuten}</b><small>${t('verlauf.minuten')}</small></div>
     </div>
     ${

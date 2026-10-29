@@ -21,6 +21,7 @@ import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
 import { neueRoute } from './app/ui';
 import { PLAY } from './app/platform';
+import { initElternLinks } from './app/elterncheck';
 import { sprache } from './app/i18n';
 
 // Neue Version wird beim Start mit Internet automatisch geladen:
@@ -43,6 +44,7 @@ if (!PLAY) {
 }
 
 initInstall();
+initElternLinks();
 document.documentElement.lang = sprache();
 
 const app = document.getElementById('app')!;

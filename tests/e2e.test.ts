@@ -506,6 +506,23 @@ describe('App-Ablauf', () => {
     expect(await page.$('#pl')).toBeNull();
   });
 
+  it('Play-App: Frage für Erwachsene vor Links nach außen (falsch → nochmal, richtig → weiter)', async () => {
+    await page.evaluate(`(async () => {
+      const m = await import('/leseraupe/src/app/elterncheck.ts');
+      window.__gate = m.elternCheck(true);
+    })()`);
+    await page.waitForSelector('.modal-bg input');
+    const frage = (await page.textContent('.modal-bg p'))!;
+    const [a, b] = frage.match(/(\d+) \+ (\d+)/)!.slice(1).map(Number);
+    await page.fill('.modal-bg input', String(a + b + 1));
+    await page.click('.modal-bg button[type="submit"]');
+    await page.waitForFunction(() => (document.querySelector('.modal-err')?.textContent ?? '') !== '');
+    await page.fill('.modal-bg input', String(a + b));
+    await page.click('.modal-bg button[type="submit"]');
+    expect(await page.evaluate('window.__gate')).toBe(true);
+    expect(await page.$('.modal-bg')).toBeNull();
+  });
+
   it('keine Fehler in der Konsole', () => {
     expect(errors).toEqual([]);
   });

@@ -1,3 +1,4 @@
+import { elternCheck } from '../app/elterncheck';
 import { allSheets } from '../core/db';
 import { getSettings } from '../app/state';
 import { backButton, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
@@ -35,6 +36,7 @@ export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchPa
   root.querySelector('#uk-pdf')!.addEventListener('click', async () => {
     try {
       const name = `Urkunde-${nr}`;
+      if (!(await elternCheck())) return;
       if ((await sharePdf(await sheetsToPdf([html], `Urkunde ${nr}`), `${name}.pdf`)) === 'gespeichert') toast(t('aktion.pdfGespeichert', { name }));
     } catch (err) {
       toast(err instanceof Error ? err.message : t('aktion.pdfFehler'));
