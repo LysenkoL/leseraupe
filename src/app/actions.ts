@@ -1,5 +1,5 @@
 import { getSettings, setDraft, themeForToday } from './state';
-import { generateSheet, historyFrom, type GenParams } from '../core/generator';
+import { generateSheet, historyFrom, stufeFor, type GenParams } from '../core/generator';
 import { allSheets, nextNumber } from '../core/db';
 import { randomSeed } from '../core/random';
 
@@ -18,6 +18,7 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
     aehnlichPair: s.aehnlichPair,
     history: historyFrom(sheets.map((r) => ({ seq: r.number, data: r.data })), next),
     seed,
+    stufe: stufeFor(sheets.map((r) => r.data), s.letters),
   };
 }
 

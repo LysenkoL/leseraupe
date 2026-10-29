@@ -35,6 +35,34 @@ export interface GenParams {
   aehnlichPair: [string, string];
   history: History;
   seed: number;
+  /** Schwierigkeit 1–5 (B1): wie viele Blätter seit der letzten neuen Buchstabe; fehlt = ohne Stufen */
+  stufe?: number;
+}
+
+export const MAX_STUFE = 5;
+
+/**
+ * Was eine Stufe bedeutet (B1). Stufe 1 = erstes Blatt nach einer neuen Buchstabe:
+ * kurze Wörter, wenig Zweisilber, kurze Sätze und eine kurze Geschichte.
+ */
+export const STUFEN: Record<number, { wortMax: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number }> = {
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6 },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7 },
+  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7 },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8 },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8 },
+};
+
+/** Stufe für das nächste Blatt: Blätter mit genau denselben Buchstaben zählen; neue Buchstabe → wieder 1. */
+export function stufeFor(saved: { letters: string[] }[], letters: string[]): number {
+  const key = sortUnits(letters).join(',');
+  const same = saved.filter((d) => sortUnits(d.letters).join(',') === key).length;
+  return Math.min(MAX_STUFE, same + 1);
+}
+
+/** Silben eines Wortes ≈ Anzahl der Vokal-Einheiten */
+export function silbenZahl(w: string): number {
+  return tokenizeWord(w.toLowerCase()).units.filter((u) => VOWEL_UNITS.has(u)).length;
 }
 
 /** Wörter, die der Wortliste fehlen (für „Entfernt: …“) */
@@ -89,7 +117,21 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): st
   const theme = new Set(v.words.filter((e) => e.themen.includes(p.theme)).map((e) => e.w));
   const newU = p.newLetter;
   const prefer = (w: string) => (newU ? countUnit(w, newU) > 0 : false) || (theme.has(w) && rng() < 0.5);
-  const words = pickFresh(cands.map((e) => e.w), n, p.history, rng, prefer, 0.55);
+  let words: string[];
+  if (p.stufe) {
+    // Stufe: Länge begrenzen und Anteil der Mehrsilber steuern; reicht es nicht, wird gelockert
+    const st = STUFEN[p.stufe];
+    const all = cands.map((e) => e.w);
+    const short = all.filter((w) => [...w].length <= st.wortMax);
+    const base = short.length >= n * 1.5 ? short : all;
+    const multi = base.filter((w) => silbenZahl(w) >= 2);
+    const one = base.filter((w) => silbenZahl(w) < 2);
+    const k = Math.round(n * st.mehrsilbig);
+    words = [...pickFresh(multi, k, p.history, rng, prefer, 0.55), ...pickFresh(one, n - k, p.history, rng, prefer, 0.55)];
+    if (words.length < n) words.push(...pickFresh(base.filter((w) => !words.includes(w)), n - words.length, p.history, rng, prefer, 0.55));
+  } else {
+    words = pickFresh(cands.map((e) => e.w), n, p.history, rng, prefer, 0.55);
+  }
   // erst kurze Wörter
   return words.sort((a, b) => [...a].length - [...b].length);
 }
@@ -135,8 +177,10 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
 }
 
 function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; fragen: string[] } | null {
-  const n = COUNTS[p.minutes].geschichte;
-  const [lo, hi] = p.minutes === 5 ? [6, 8] : [10, 13];
+  const st = p.stufe ? STUFEN[p.stufe] : null;
+  const n = st ? Math.min(COUNTS[p.minutes].geschichte, st.geschichteMax) : COUNTS[p.minutes].geschichte;
+  const [lo, base] = p.minutes === 5 ? [6, 8] : [10, 13];
+  const hi = st && p.minutes === 5 ? st.geschichteMax : base;
   const curated = DICT.geschichten.filter(
     (g) => g.saetze.length >= lo && g.saetze.length <= hi && v.has(g.titel) && g.saetze.every((s) => v.has(s)),
   );
@@ -270,7 +314,17 @@ export function generateSheet(p: GenParams): Generated {
     ...DICT.saetze.filter((s) => v.has(s)),
     ...templateSentences(v, pools(v), rng),
   ];
-  const saetze = chooseSentences(cands, c.saetze, p, rng, avoid);
+  // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
+  let satzCands = cands;
+  if (p.stufe) {
+    const st = STUFEN[p.stufe];
+    const len = (x: string) => wordsOf(x).length;
+    const passend = cands.filter((x) => len(x) >= st.satzMin && len(x) <= st.satzWoerter);
+    const kurz = cands.filter((x) => len(x) <= st.satzWoerter);
+    if (passend.length >= c.saetze * 2) satzCands = passend;
+    else if (kurz.length >= c.saetze * 2) satzCands = kurz;
+  }
+  const saetze = chooseSentences(satzCands, c.saetze, p, rng, avoid);
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
@@ -284,6 +338,7 @@ export function generateSheet(p: GenParams): Generated {
     newLetter: p.newLetter,
     childName: p.childName,
     blocks: { ...p.blocks },
+    ...(p.stufe ? { stufe: p.stufe } : {}),
     silben,
     woerter,
     kleine,

@@ -45,6 +45,8 @@ export interface SheetData {
   geschichte: Geschichte | null;
   quest: Quest | null;
   fragen: string[];
+  /** Schwierigkeit 1–5 (B1); alte Blätter haben keine */
+  stufe?: number;
   /** Herkunft: Wörterbuch oder Chat */
   source: 'dict' | 'chat';
 }

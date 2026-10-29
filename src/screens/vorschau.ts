@@ -24,7 +24,7 @@ export function renderVorschau(root: HTMLElement): void {
     const nr = d.data.number ?? (await nextNumber());
     const letters = d.data.letters.map((id) => unitById(id)?.label.replace('-', '') ?? id).join(' ');
     const neu = d.data.newLetter ? ` · neu: ${unitById(d.data.newLetter)?.label.replace('-', '')}` : '';
-    return { nr, title: `Blatt ${nr} · ${THEMES[d.data.theme].name}`, sub: `${d.data.minutes} Minuten · ${letters}${neu}` };
+    return { nr, title: `Blatt ${nr} · ${THEMES[d.data.theme].name}`, sub: `${d.data.minutes} Minuten · ${letters}${neu}${d.data.stufe ? ` · Stufe ${d.data.stufe}` : ''}` };
   };
 
   root.innerHTML = `
@@ -79,6 +79,7 @@ export function renderVorschau(root: HTMLElement): void {
     p.letters = d.data.letters;
     p.newLetter = d.data.newLetter;
     p.blocks = d.data.blocks;
+    p.stufe = d.data.stufe;
     setDraft({ ...d, data: rerollBlock(d.data, block, p) });
     await draw();
   };
