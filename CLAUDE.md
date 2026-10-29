@@ -22,3 +22,10 @@ PWA für Eltern von Erstklässlern: erzeugt tägliche A4-Leseblätter nur aus ge
 - Nach jeder Etappe: `npm run build` und `npm test` müssen grün sein; kurz zeigen, was fertig ist.
 - Bei Usage-Limits nach dem Reset weitermachen, bis alles fertig ist.
 - Commits klein und mit klarer Nachricht.
+
+## Arbeitsablauf (Порядок работы)
+- Backlog: `docs/IDEEN.md`. Veröffentlichung in Google Play: `docs/PLAY.md` (Status und alle Entscheidungen).
+- Gearbeitet wird im Branch `features-v1`. Nach `main` nur mit ausdrücklichem „ok“ der Projektinhaberin mergen.
+- **Eine Aufgabe pro Sitzung.** Erst Plan → „ok“ → dann Code.
+- Nach der Aufgabe: `npm test` und `npm run build` grün → Status in `docs/IDEEN.md` / `docs/PLAY.md` abhaken (mit Datum) → Commit → selbst `git push`.
+- **Nie committen:** Signaturschlüssel (Keystore, `*.jks`, `*.keystore`), Passwörter, `key.properties` und ähnliche Geheimnisse; ebenso keine persönlichen Daten der Projektinhaberin oder ihrer Familie (Adresse, Telefon, private E-Mail, Name des Kindes …), falls sie irgendwo auftauchen. Im Zweifel vorher fragen.
