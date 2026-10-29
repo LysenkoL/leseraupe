@@ -29,7 +29,7 @@
   "raupe.urkundeAnsehen": "Urkunde {nr} ansehen",
   "protokoll.titel": "Protokoll",
   "protokoll.leer": "Noch keine Einträge.",
-  "thema.titel": "Thema wählen",
+  "thema.titel": "Gestaltung wählen",
   "thema.vorschau": "Vorschau: {name}",
   "thema.gewaehlt": "gewählt",
   "thema.zufall": "Jeden Tag ein anderes Thema (Zufall)",
@@ -84,7 +84,7 @@
   "start.blattWeniger": "Ein Blatt weniger",
   "start.blattMehr": "Ein Blatt mehr",
   "start.silbenFarbig": "Silben farbig",
-  "start.thema": "Thema",
+  "start.thema": "Gestaltung",
   "start.themaVorschau": "Vorschau ›",
   "start.zufall": "Zufall",
   "start.bloecke": "Blöcke",
@@ -235,5 +235,9 @@
   "gefuehl.leicht": "Leicht",
   "gefuehl.geht": "Geht so",
   "gefuehl.schwer": "Schwer",
-  "gefuehl.hinweis": "Davon hängt ab, wie schwer das nächste Blatt wird: leicht → etwas schwerer, schwer → etwas leichter."
+  "gefuehl.hinweis": "Davon hängt ab, wie schwer das nächste Blatt wird: leicht → etwas schwerer, schwer → etwas leichter.",
+  "verlauf.neu": "neu: {b}",
+  "eltern.titel": "Nur für Erwachsene",
+  "eltern.frage": "Bitte rechnen: {a} + {b} = ?",
+  "eltern.falsch": "Leider falsch. Noch einmal?"
 }

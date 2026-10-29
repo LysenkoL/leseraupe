@@ -33,12 +33,12 @@ export function renderUeber(root: HTMLElement): void {
       <div>${t('ueber.ds3')}</div>
       <div>${t('ueber.ds4')}</div>
       <div>${t(PLAY ? 'ueber.ds5play' : 'ueber.ds5')}</div>
-      ${DATENSCHUTZ_URL ? `<a class="hint" href="${DATENSCHUTZ_URL}" target="_blank" rel="noopener">${t('ueber.dsLink')}</a>` : ''}
+      ${DATENSCHUTZ_URL ? `<a class="hint" href="${DATENSCHUTZ_URL}" target="_blank" data-eltern rel="noopener">${t('ueber.dsLink')}</a>` : ''}
     </section>
     <section class="card">
       <h2>${t('ueber.kontakt')}</h2>
-      <div>${t('ueber.kontaktText')} <a href="mailto:${KONTAKT}">${KONTAKT}</a></div>
-      <a class="btn green" id="feedback" href="${feedbackMailto()}">${t('ueber.feedback')}</a>
+      <div>${t('ueber.kontaktText')} <a href="mailto:${KONTAKT}" data-eltern>${KONTAKT}</a></div>
+      <a class="btn green" id="feedback" data-eltern href="${feedbackMailto()}">${t('ueber.feedback')}</a>
     </section>
     <section class="card">
       <h2>${t('ueber.schrift')}</h2>

@@ -40,7 +40,7 @@ export function readingPages(d: SheetData): Page[] {
   }
   // Quest als kleines Spiel; Anleitung klein in der Sprache der Oberfläche
   if (d.blocks.quest && d.quest) pages.push({ title: t('block.quest'), html: questSpielHtml(d.quest, d), kind: 'quest' });
-  if (d.blocks.fragen && d.fragen.length) pages.push({ title: t('lesen.fragen'), html: lines(d.fragen), kind: 'small' });
+  if (d.blocks.fragen && d.blocks.geschichte && d.fragen.length) pages.push({ title: t('lesen.fragen'), html: lines(d.fragen), kind: 'small' });
   return pages;
 }
 

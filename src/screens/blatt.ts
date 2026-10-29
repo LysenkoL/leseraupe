@@ -1,3 +1,4 @@
+import { elternCheck } from '../app/elterncheck';
 import { addRead, getSheet, saveOnPrint, statusOf } from '../core/db';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
@@ -45,6 +46,7 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     btn.disabled = true;
     try {
       const pdf = await sheetToPdf(renderSheet(r.data, { displayNumber: r.number, scale: r.scale }), `Leseblatt ${r.number}`);
+      if (!(await elternCheck())) return;
       if ((await sharePdf(pdf, `Leseblatt-${r.number}.pdf`)) === 'gespeichert') toast(t('aktion.pdfGespeichert', { name: `Leseblatt-${r.number}` }));
     } catch (err) {
       toast(err instanceof Error ? err.message : t('aktion.pdfFehler'));

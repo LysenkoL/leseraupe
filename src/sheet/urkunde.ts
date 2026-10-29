@@ -39,8 +39,9 @@ export function raupenstand(sheets: { reads: { at: string }[] }[]): Raupenstand 
 
 /** Raupe mit Perlen: volle Perlen grün, leere gestrichelt */
 export function perlenRaupeSvg(voll: number, cls = ''): string {
-  const r = 15;
-  const gap = 3;
+  // etwas kleiner und mit Luft dazwischen – auf schmalen Handys kleben sie sonst aneinander
+  const r = 13;
+  const gap = 7;
   const w = PERLEN_JE_RAUPE * (2 * r + gap) + 66;
   let s = '';
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
