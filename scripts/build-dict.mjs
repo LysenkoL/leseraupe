@@ -5,7 +5,9 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const Q = (f) => readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8');
+// Windows/git autocrlf: Zeilenenden vereinheitlichen
+const crlf = (txt) => txt.replace(/\r\n?/g, '\n');
+const Q = (f) => crlf(readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8'));
 const lines = (txt) => txt.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
 const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'winter']);
 
@@ -74,7 +76,7 @@ export function buildDict() {
 const out = resolve(ROOT, 'src/data/woerterbuch.json');
 const json = JSON.stringify(buildDict(), null, 0).replace(/\},\{/g, '},\n{') + '\n';
 if (process.argv.includes('--check')) {
-  if (readFileSync(out, 'utf8') !== json) {
+  if (crlf(readFileSync(out, 'utf8')) !== json) {
     console.error('woerterbuch.json ist veraltet – bitte npm run dict ausführen');
     process.exit(1);
   }
