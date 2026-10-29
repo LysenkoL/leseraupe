@@ -2,6 +2,7 @@ import { getDraft, getSettings, setDraft, type Draft } from '../app/state';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheet } from '../sheet/print';
+import { sharePdf, sheetToPdf } from '../sheet/pdf';
 import { addRead, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
 import { checkText, unitById } from '../core/letters';
@@ -39,9 +40,10 @@ export function renderVorschau(root: HTMLElement): void {
       <button class="btn primary" id="timer">Timer</button>
     </div>
     <div class="btnrow two">
-      <button class="btn ghost" id="pdf">Als PDF speichern</button>
+      <button class="btn ghost" id="pdf">Als PDF teilen</button>
       <button class="btn ghost" id="read">Gelesen ✓</button>
     </div>
+    <a class="btn ghost" id="screen" href="#/lesen">Am Bildschirm lesen</a>
   </div>
 </div>`;
 
@@ -121,9 +123,22 @@ export function renderVorschau(root: HTMLElement): void {
   };
 
   root.querySelector('#print')!.addEventListener('click', () => doPrint(true));
-  root.querySelector('#pdf')!.addEventListener('click', () => {
-    toast('Im Druckdialog „Als PDF speichern“ wählen.');
-    setTimeout(() => doPrint(false), 400);
+  root.querySelector<HTMLButtonElement>('#pdf')!.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    btn.disabled = true;
+    try {
+      const d = getDraft()!;
+      const rec = await saveOnPrint(d.data, d.scale, d.savedId, false);
+      setDraft({ ...d, data: rec.data, savedId: rec.id ?? null });
+      const pdf = await sheetToPdf(renderSheet(rec.data, { displayNumber: rec.number, scale: rec.scale }), `Leseblatt ${rec.number}`);
+      const r = await sharePdf(pdf, `Leseblatt-${rec.number}.pdf`);
+      if (r === 'gespeichert') toast(`Leseblatt-${rec.number}.pdf gespeichert`);
+      await draw();
+    } catch (err) {
+      toast(err instanceof Error ? err.message : 'PDF konnte nicht erstellt werden.');
+    } finally {
+      btn.disabled = false;
+    }
   });
   root.querySelector('#mix')!.addEventListener('click', async () => {
     const keepTheme = getDraft()?.data.theme;

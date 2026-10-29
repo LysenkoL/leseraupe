@@ -139,6 +139,68 @@ describe('App-Ablauf', () => {
     expect(await page.textContent('#pv-title')).toContain('Blatt 1');
   });
 
+  it('Als PDF teilen: eine A4-Seite, sieht aus wie das Blatt', async () => {
+    await page.evaluate(() => {
+      const w = window as unknown as { __pdf?: number[]; __pdfName?: string };
+      (navigator as Navigator & { canShare: () => boolean }).canShare = () => true;
+      navigator.share = async (d?: ShareData) => {
+        w.__pdf = Array.from(new Uint8Array(await d!.files![0].arrayBuffer()));
+        w.__pdfName = d!.files![0].name;
+      };
+    });
+    await page.click('#pdf');
+    await page.waitForFunction(() => (window as unknown as { __pdf?: number[] }).__pdf);
+    const { bytes, name } = await page.evaluate(() => {
+      const w = window as unknown as { __pdf: number[]; __pdfName: string };
+      return { bytes: w.__pdf, name: w.__pdfName };
+    });
+    expect(name).toBe('Leseblatt-1.pdf');
+    const pdf = Buffer.from(bytes);
+    const text = pdf.toString('latin1');
+    expect(text.startsWith('%PDF-1.4')).toBe(true);
+    expect(text.trimEnd().endsWith('%%EOF')).toBe(true);
+    expect(text.match(/\/Type \/Page\b/g)).toHaveLength(1);
+    expect(text).toContain('/MediaBox [0 0 595.28 841.89]');
+    // Bild im PDF mit der Vorschau vergleichen (beide klein gerechnet, Grauwerte)
+    const jpeg = pdf.subarray(pdf.indexOf(Buffer.from([0xff, 0xd8])), pdf.lastIndexOf(Buffer.from([0xff, 0xd9])) + 2);
+    // dasselbe Blatt in echter Größe ohne Bedien-Knöpfe – so, wie es gedruckt wird
+    await page.evaluate(() => {
+      const host = document.createElement('div');
+      host.id = 'cmp-host';
+      // 3-fach wie im PDF: sonst wirkt der Text durch Kantenglättung fetter
+      host.style.cssText = 'position:absolute;left:0;top:0;z-index:99999;background:#fff;zoom:3';
+      const sheet = document.querySelector('#pv .sheet')!.cloneNode(true) as HTMLElement;
+      sheet.querySelectorAll('.blk-re').forEach((e) => e.remove());
+      host.appendChild(sheet);
+      document.body.appendChild(host);
+    });
+    const shot = await (await page.$('#cmp-host .sheet'))!.screenshot();
+    await page.evaluate(() => document.getElementById('cmp-host')!.remove());
+    const diff = await page.evaluate(
+      async ([a, b]) => {
+        const W = 76, H = 110;
+        const gray = async (src: string) => {
+          const img = new Image();
+          img.src = src;
+          await img.decode();
+          const c = document.createElement('canvas');
+          c.width = W;
+          c.height = H;
+          const ctx = c.getContext('2d')!;
+          ctx.drawImage(img, 0, 0, W, H);
+          const d = ctx.getImageData(0, 0, W, H).data;
+          return Array.from({ length: W * H }, (_, i) => (d[i * 4] + d[i * 4 + 1] + d[i * 4 + 2]) / 3);
+        };
+        const [x, y] = await Promise.all([gray(a), gray(b)]);
+        const mean = (f: (v: number, i: number) => number) => x.reduce((s, v, i) => s + f(v, i), 0) / x.length;
+        // zum Vergleich: Abstand zu einer leeren weißen Seite
+        return { diff: mean((v, i) => Math.abs(v - y[i])), blank: mean((v) => 255 - v) };
+      },
+      [`data:image/jpeg;base64,${jpeg.toString('base64')}`, `data:image/png;base64,${shot.toString('base64')}`] as const,
+    );
+    expect(diff.diff).toBeLessThan(diff.blank / 4);
+  });
+
   it('Neu mischen vergibt keine neue Nummer, erst das nächste Drucken', async () => {
     await page.click('#mix');
     await page.waitForTimeout(300);
@@ -197,6 +259,34 @@ describe('App-Ablauf', () => {
     await page.fill('#answer', 'Leider weiß ich das nicht.');
     await page.click('#make');
     expect(await page.textContent('#err')).toBe('Antwort konnte nicht gelesen werden. Bitte die ganze Antwort kopieren.');
+  });
+
+  it('Am Bildschirm lesen: Block für Block, Zeit läuft, Blatt wird gelesen', async () => {
+    await page.goto(base + '#/verlauf');
+    await page.waitForSelector('.sheet-item');
+    const href = (await page.$$eval('.sheet-item', (e) => e.map((a) => a.getAttribute('href'))))
+      .find((h) => h!.endsWith('/1'))!;
+    const id = href.split('/').pop();
+    await page.goto(base + href);
+    await page.click(`a[href="#/lesen?id=${id}"]`);
+    await page.waitForSelector('#rd-body h1');
+    expect(await page.textContent('#rd-body h1')).toBe('Silben');
+    const total = Number((await page.textContent('#rd-pos'))!.split('/')[1]);
+    expect(total).toBeGreaterThanOrEqual(5);
+    // erstes „Weiter“ startet die Zeit
+    await page.click('#rd-next');
+    expect(await page.textContent('#rd-pos')).toBe(`2 / ${total}`);
+    expect(await page.getAttribute('#rd-clock', 'aria-label')).toBe('Lesezeit anhalten');
+    await page.click('#rd-prev');
+    expect(await page.textContent('#rd-pos')).toBe(`1 / ${total}`);
+    for (let i = 1; i < total; i++) await page.click('#rd-next');
+    expect(await page.textContent('#rd-next')).toBe('Fertig');
+    expect(await page.textContent('#rd-body h1')).toContain('Für Eltern');
+    await page.clock.runFor(5 * 60 * 1000 + 2000);
+    await page.waitForSelector('#rd-clock.fertig');
+    await page.click('#rd-next');
+    await page.waitForSelector('#b-s');
+    await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
   });
 
   it('keine Fehler in der Konsole', () => {
