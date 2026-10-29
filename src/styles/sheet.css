@@ -161,3 +161,14 @@
 /* Silben farbig (B3): dunkles Blau / helleres Rot – auch schwarz-weiß gedruckt verschieden grau */
 .sheet .sy1, .lesen .sy1, .sy-demo .sy1 { color: #1D3F9E; }
 .sheet .sy2, .lesen .sy2, .sy-demo .sy2 { color: #E8473A; }
+
+/* Urkunde (B4): gleiche A4-Fläche wie ein Leseblatt */
+.sheet.urkunde { padding: 0; }
+.urkunde .uk-rand { flex: 1; margin: 4mm; border: 2.2mm double #7FC06D; border-radius: 8mm; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9mm; padding: 14mm; text-align: center; background: #FBFDF9; }
+.urkunde .uk-titel { font-size: 26mm; font-weight: 800; color: #2F6B3A; letter-spacing: .02em; }
+.urkunde .uk-raupe svg { width: 150mm; height: auto; display: block; }
+.urkunde .uk-text { font-size: 9mm; font-weight: 600; }
+.urkunde .uk-name { font-size: 16mm; font-weight: 800; color: #C2651F; min-height: 18mm; }
+.urkunde .uk-linie { display: inline-block; width: 110mm; border-bottom: .6mm solid #1F2421; }
+.urkunde .uk-toll { font-size: 12mm; font-weight: 800; color: #2F6B3A; }
+.urkunde .uk-fuss { width: 100%; display: flex; justify-content: space-between; font-size: 6mm; color: #4A524D; margin-top: auto; }

@@ -254,3 +254,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .st-row small { color: var(--muted); }
 
 .sy-demo { font-weight: 800; margin-left: auto; font-size: 18px; }
+
+/* Leseraupe und Urkunde (B4) */
+.raupe-svg { width: 100%; height: auto; display: block; }
+.uk-liste { display: flex; flex-wrap: wrap; gap: 8px; }

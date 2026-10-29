@@ -2,6 +2,8 @@ import { allSheets, dayKey, readingDays, stats, statusOf, streak, type SheetReco
 import { backButton, esc, formatDate } from '../app/ui';
 import { THEMES } from '../sheet/themes';
 import { getSettings } from '../app/state';
+import { raupenstand } from '../sheet/urkunde';
+import { raupenKarte } from '../app/raupe';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 const STATUS_LABEL = { erstellt: 'erstellt', gedruckt: 'gedruckt', gelesen: 'gelesen ✓' } as const;
@@ -42,6 +44,10 @@ export function renderVerlauf(root: HTMLElement): void {
       })
       .join('');
     const cfg = getSettings();
+    const stand = raupenstand(list);
+    const urkunden = stand.fertig.length
+      ? `<div class="uk-liste">${stand.fertig.map((f) => `<a class="pillbtn" href="#/urkunde?nr=${f.nr}">Urkunde ${f.nr}</a>`).join('')}</div>`
+      : '';
     root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>Verlauf</h1></div></div>
@@ -57,6 +63,7 @@ export function renderVerlauf(root: HTMLElement): void {
         ? `<div class="hint" id="st-info">Stolperwörter: <b>${cfg.stolperBesiegt}</b> besiegt · ${cfg.stolper.length} noch in Arbeit</div>`
         : ''
     }
+    ${raupenKarte(stand).replace('</section>', `${urkunden}</section>`)}
     <section class="card">
       <div class="row">
         <button class="iconbtn sm" id="prev" aria-label="Voriger Monat">‹</button>

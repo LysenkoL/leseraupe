@@ -4,6 +4,7 @@ import { launch, sheetPage, place, pdfPages } from './helpers/browser';
 import { renderSheet } from '../src/sheet/render';
 import { SAMPLE_SHEET } from '../src/core/sample';
 import { THEME_IDS } from '../src/sheet/themes';
+import { renderUrkunde } from '../src/sheet/urkunde';
 
 let browser: Browser;
 let page: Page;
@@ -45,6 +46,14 @@ describe('Druck mit „Silben farbig“ (B3)', () => {
       const r = await place(page, renderSheet({ ...SAMPLE_SHEET, theme, silbenFarbig: true }, { displayNumber: 3 }));
       expect(r.fits).toBe(true);
       expect(await pdfPages(page, r.html)).toBe(1);
+    });
+  }
+});
+
+describe('Urkunde (B4): genau eine A4-Seite', () => {
+  for (const name of ['Mia', 'Maximilian-Alexander', '']) {
+    it(`Urkunde ${name || 'ohne Namen'}`, async () => {
+      expect(await pdfPages(page, renderUrkunde({ name, nr: 3, datum: '2026-10-29T10:00:00.000Z', gesamt: 30 }))).toBe(1);
     });
   }
 });

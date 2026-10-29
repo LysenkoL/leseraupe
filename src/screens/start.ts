@@ -1,6 +1,8 @@
 import { unitById } from '../core/letters';
 import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { MAX_BLAETTER } from '../core/store';
+import { raupenstand, type Raupenstand } from '../sheet/urkunde';
+import { raupenKarte } from '../app/raupe';
 import { getSettings, setSettings } from '../app/state';
 import { esc, go, toast, GEAR_ICON } from '../app/ui';
 import { THEMES, THEME_IDS } from '../sheet/themes';
@@ -23,6 +25,7 @@ const RAUPE_MINI = `<svg viewBox="0 0 116 56" aria-hidden="true"><circle cx="14"
 
 export function renderStart(root: HTMLElement): void {
   let count = -1;
+  let stand: Raupenstand | null = null;
   const draw = (c = count) => {
     count = c;
     const s = getSettings();
@@ -57,6 +60,7 @@ export function renderStart(root: HTMLElement): void {
       <form class="name-row" id="name-form"><input id="child-name" autocomplete="off" maxlength="40" placeholder="z. B. Mia" aria-label="Name des Kindes" /><button class="btn green" type="submit">Speichern</button></form>
     </section>`
     }
+    ${stand && (stand.perlen || stand.fertig.length) ? raupenKarte(stand) : ''}
     <section class="card">
       <div class="row"><h2>Gelernte Buchstaben</h2><span class="hint">${s.letters.length} von 43 · neu: ${esc(neu ?? '–')}</span></div>
       ${lettersHtml(s)}
@@ -137,5 +141,10 @@ export function renderStart(root: HTMLElement): void {
     const off = onInstallChange(() => draw(count));
     window.addEventListener('hashchange', off, { once: true });
   }
-  allSheets().then((l) => draw(l.length)).catch(() => undefined);
+  allSheets()
+    .then((l) => {
+      stand = raupenstand(l);
+      draw(l.length);
+    })
+    .catch(() => undefined);
 }

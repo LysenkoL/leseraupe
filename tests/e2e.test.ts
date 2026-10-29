@@ -399,3 +399,43 @@ describe('A1: Update von der alten Version', () => {
     await ctx.close();
   });
 });
+
+describe('B4: volle Leseraupe → Urkunde', () => {
+  it('10 gelesene Blätter: Start zeigt Urkunde, Urkunde mit Namen', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.goto(base + 'icons/icon-192.png');
+    await p.evaluate(async (SAMPLE_SHEET) => {
+      localStorage.setItem('leseraupe.settings.v1', JSON.stringify({ letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'], childName: 'Mia' }));
+      const d = await new Promise<IDBDatabase>((res) => {
+        const r = indexedDB.open('leseraupe', 1);
+        r.onupgradeneeded = () => {
+          r.result.createObjectStore('sheets', { keyPath: 'id', autoIncrement: true }).createIndex('number', 'number', { unique: true });
+          r.result.createObjectStore('log', { keyPath: 'id', autoIncrement: true });
+        };
+        r.onsuccess = () => res(r.result);
+      });
+      const tx = d.transaction(['sheets'], 'readwrite');
+      for (let number = 1; number <= 10; number++) {
+        const at = new Date(2026, 9, number, 17).toISOString();
+        tx.objectStore('sheets').add({ number, createdAt: at, printedAt: at, reads: [{ at, minutes: 5 }], data: { ...SAMPLE_SHEET, number }, scale: 1 });
+      }
+      await new Promise((res) => (tx.oncomplete = res));
+      d.close();
+    }, SAMPLE_SHEET);
+    await p.goto(base);
+    await p.waitForSelector('#raupe');
+    expect(await p.textContent('#raupe .hint')).toContain('0 von 10');
+    await p.click('#raupe a[href="#/urkunde?nr=1"]');
+    await p.waitForSelector('#uk-pv .urkunde');
+    const text = await p.textContent('#uk-pv .urkunde');
+    expect(text).toContain('Mia');
+    expect(text).toContain('10 Leseblätter');
+    expect(text).toContain('10.10.2026');
+    await p.goto(base + '#/verlauf');
+    await p.waitForSelector('.uk-liste a');
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+});
