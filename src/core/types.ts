@@ -47,6 +47,8 @@ export interface SheetData {
   fragen: string[];
   /** Schwierigkeit 1–5 (B1); alte Blätter haben keine */
   stufe?: number;
+  /** Silben abwechselnd farbig (B3) */
+  silbenFarbig?: boolean;
   /** Herkunft: Wörterbuch oder Chat */
   source: 'dict' | 'chat';
 }

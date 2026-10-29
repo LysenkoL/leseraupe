@@ -157,3 +157,7 @@
 .q-words { font-size: calc(var(--fs) * 21px); }
 .q-words u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .sheet [data-edit] { cursor: pointer; }
+
+/* Silben farbig (B3): dunkles Blau / helleres Rot – auch schwarz-weiß gedruckt verschieden grau */
+.sheet .sy1, .lesen .sy1, .sy-demo .sy1 { color: #1D3F9E; }
+.sheet .sy2, .lesen .sy2, .sy-demo .sy2 { color: #E8473A; }

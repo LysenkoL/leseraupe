@@ -4,6 +4,7 @@ import { esc, go, toast } from '../app/ui';
 import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
 import type { SheetData } from '../core/types';
+import { lesetext } from '../sheet/render';
 
 interface Page {
   title: string;
@@ -15,8 +16,9 @@ interface Page {
 /** Blätter in Bildschirm-Seiten zerlegen – gleiche Reihenfolge wie auf dem Papier. */
 export function readingPages(d: SheetData): Page[] {
   const pages: Page[] = [];
-  const grid = (items: string[]) => items.map((w) => `<span>${esc(w)}</span>`).join('');
-  const lines = (items: string[]) => items.map((s) => `<p>${esc(s)}</p>`).join('');
+  const t = (s: string) => lesetext(s, d.silbenFarbig);
+  const grid = (items: string[]) => items.map((w) => `<span>${t(w)}</span>`).join('');
+  const lines = (items: string[]) => items.map((s) => `<p>${t(s)}</p>`).join('');
   if (d.blocks.silben && d.silben.length) pages.push({ title: 'Silben', html: grid(d.silben), kind: 'grid' });
   if (d.blocks.woerter && d.woerter.length) pages.push({ title: 'Wörter', html: grid(d.woerter), kind: 'grid' });
   if (d.blocks.kleine && d.kleine.length) pages.push({ title: 'Kleine Wörter', html: grid(d.kleine), kind: 'grid' });

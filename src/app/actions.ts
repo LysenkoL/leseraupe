@@ -20,6 +20,7 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
     seed,
     stufe: stufeFor(sheets.map((r) => r.data), s.letters),
     stolper: s.stolper,
+    silbenFarbig: s.silbenFarbig,
   };
 }
 

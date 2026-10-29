@@ -38,3 +38,13 @@ describe('Druck einer Serie (A6): jedes Blatt auf eigener A4-Seite', () => {
     expect(await pdfPages(page, html.join(''))).toBe(3);
   });
 });
+
+describe('Druck mit „Silben farbig“ (B3)', () => {
+  for (const theme of THEME_IDS) {
+    it(`Probeblatt ${theme}, Silben farbig: eine Seite`, async () => {
+      const r = await place(page, renderSheet({ ...SAMPLE_SHEET, theme, silbenFarbig: true }, { displayNumber: 3 }));
+      expect(r.fits).toBe(true);
+      expect(await pdfPages(page, r.html)).toBe(1);
+    });
+  }
+});

@@ -3,6 +3,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// Silbentrennung (B3) – dieselbe Funktion wie in der App
+import { silbiere, parseAusnahmen } from '../src/core/silben.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // Windows/git autocrlf: Zeilenenden vereinheitlichen
@@ -70,7 +72,18 @@ export function buildDict() {
     if (/\p{L}-\p{L}/u.test(s)) throw new Error(`Silbentrennstrich: ${s}`);
   }
 
-  return { woerter, verben, adjektive, saetze, geschichten };
+  // Silben für „Silben farbig“ (B3): zusammengesetzte Wörter über die Nomen/Adjektive des Wörterbuchs
+  const ausnahmenText = Q('silben-ausnahmen.txt');
+  const ausnahmen = parseAusnahmen(ausnahmenText);
+  const lexikon = new Set(woerter.filter((e) => ['Nomen', 'Adjektiv'].includes(e.typ) && e.w.length >= 3).map((e) => e.w.toLowerCase()));
+  for (const e of woerter) {
+    const s = silbiere(e.w, lexikon, ausnahmen);
+    if (s.join('') !== e.w) throw new Error(`Silben passen nicht: ${e.w}`);
+    if (s.length > 1) e.silben = s.join('|');
+  }
+  const silbenAusnahmen = lines(ausnahmenText);
+
+  return { woerter, verben, adjektive, saetze, geschichten, silbenAusnahmen };
 }
 
 const out = resolve(ROOT, 'src/data/woerterbuch.json');

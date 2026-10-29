@@ -68,6 +68,7 @@ export function renderStart(root: HTMLElement): void {
         <b id="bl-n">${s.blaetter}</b>
         <button class="iconbtn" data-bl="1" aria-label="Ein Blatt mehr" ${s.blaetter >= MAX_BLAETTER ? 'disabled' : ''}>+</button>
       </div>
+      <label class="toggle"><input type="checkbox" id="silben-farbig" ${s.silbenFarbig ? 'checked' : ''}/> Silben farbig <span class="sy-demo"><span class="sy1">Ma</span><span class="sy2">ma</span></span></label>
     </section>
     <section class="card">
       <div class="row"><h2>Thema</h2><a class="hint" href="#/thema">Vorschau ›</a></div>
@@ -100,6 +101,9 @@ export function renderStart(root: HTMLElement): void {
         draw(count);
       }),
     );
+    root.querySelector<HTMLInputElement>('#silben-farbig')!.addEventListener('change', (e) => {
+      setSettings({ ...getSettings(), silbenFarbig: (e.target as HTMLInputElement).checked });
+    });
     root.querySelectorAll<HTMLInputElement>('[data-block]').forEach((cb) =>
       cb.addEventListener('change', () => {
         const s2 = getSettings();

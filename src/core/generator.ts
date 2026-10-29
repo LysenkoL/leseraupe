@@ -39,6 +39,8 @@ export interface GenParams {
   stufe?: number;
   /** Stolperwörter des Kindes (B2): kommen öfter vor */
   stolper?: Stolper[];
+  /** Silben farbig (B3) */
+  silbenFarbig?: boolean;
 }
 
 /**
@@ -340,6 +342,7 @@ export function generateSheet(p: GenParams): Generated {
     childName: p.childName,
     blocks: { ...p.blocks },
     ...(p.stufe ? { stufe: p.stufe } : {}),
+    ...(p.silbenFarbig ? { silbenFarbig: true } : {}),
     silben,
     woerter,
     kleine,

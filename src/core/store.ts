@@ -16,6 +16,8 @@ export interface Settings {
   stolper: Stolper[];
   /** so viele Stolperwörter sind schon besiegt */
   stolperBesiegt: number;
+  /** Silben abwechselnd farbig (B3), Standard aus */
+  silbenFarbig: boolean;
   theme: ThemeId;
   randomTheme: boolean;
   blocks: Record<BlockId, boolean>;
@@ -33,6 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   blaetter: 1,
   stolper: [],
   stolperBesiegt: 0,
+  silbenFarbig: false,
   theme: 'wiese',
   randomTheme: false,
   blocks: { ...DEFAULT_BLOCKS },
@@ -55,6 +58,7 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   if (!Number.isInteger(s.blaetter) || s.blaetter < 1 || s.blaetter > MAX_BLAETTER) s.blaetter = 1;
   s.stolper = sanitizeStolper(s.stolper);
   if (!Number.isInteger(s.stolperBesiegt) || s.stolperBesiegt < 0) s.stolperBesiegt = 0;
+  s.silbenFarbig = s.silbenFarbig === true;
   if (!THEME_IDS.includes(s.theme)) s.theme = 'wiese';
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';

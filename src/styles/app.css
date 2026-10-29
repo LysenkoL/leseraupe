@@ -252,3 +252,5 @@ details.card > summary::-webkit-details-marker { display: none; }
 .st-row { display: flex; align-items: center; gap: 10px; }
 .st-row b { flex: 1; font-size: 18px; }
 .st-row small { color: var(--muted); }
+
+.sy-demo { font-weight: 800; margin-left: auto; font-size: 18px; }
