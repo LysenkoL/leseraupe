@@ -4,7 +4,7 @@ import { backButton, esc, go, toast } from '../app/ui';
 import { buildPrompt, parseChat, sheetFromChat, PARSE_ERROR } from '../core/chat';
 import { genParams } from '../app/actions';
 import { t } from '../app/i18n';
-import { NATIV, einfuegen, kopieren } from '../app/native';
+import { NATIV, SYSTEM_MELDET_KOPIERT, einfuegen, kopieren } from '../app/native';
 
 export function renderChat(root: HTMLElement): void {
   const s = getSettings();
@@ -45,7 +45,7 @@ export function renderChat(root: HTMLElement): void {
     try {
       if (NATIV) await kopieren(prompt);
       else await navigator.clipboard.writeText(prompt);
-      toast(t('chat.kopiert'));
+      if (!SYSTEM_MELDET_KOPIERT) toast(t('chat.kopiert'));
     } catch {
       const tmp = document.createElement('textarea');
       tmp.value = prompt;

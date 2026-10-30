@@ -21,6 +21,7 @@ import { loadProfile } from './core/store';
 import { initInstall } from './app/install';
 import { neueRoute } from './app/ui';
 import { PLAY } from './app/platform';
+import { statusleiste } from './app/native';
 import { initElternLinks } from './app/elterncheck';
 import { sprache } from './app/i18n';
 
@@ -38,6 +39,7 @@ function route(): void {
   const [path, query = ''] = raw.split('?');
   const params = new URLSearchParams(query);
   window.scrollTo(0, 0);
+  statusleiste(path === '/timer');
   // Neuinstallation: zuerst die Einführung
   if (path !== '/willkommen' && !loadProfile().onboarded) return renderWillkommen(app);
   const blatt = path.match(/^\/blatt\/(\d+)$/);

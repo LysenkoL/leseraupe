@@ -26,6 +26,10 @@ body {
 button, input, textarea, select { font: inherit; font-feature-settings: inherit; color: inherit; }
 button { cursor: pointer; }
 #app { min-height: 100%; }
+/* Unter der Statusleiste (Android-App randlos): fester Streifen in Bildschirmfarbe,
+   sonst scrollt der Inhalt unter Uhr und Symbole */
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: var(--oben); background: var(--bg); z-index: 50; pointer-events: none; }
+body:has(.screen.timer)::before { background: #2B3A67; }
 
 /* Statusleiste oben (Android-App randlos, iPhone-Startbildschirm): Inhalt beginnt darunter.
    --safe-area-inset-* setzt Capacitor in älteren WebViews, sonst gilt env(). */
