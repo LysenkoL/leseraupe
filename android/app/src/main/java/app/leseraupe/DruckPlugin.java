@@ -11,6 +11,8 @@ import android.print.PrintDocumentInfo;
 import android.print.PrintManager;
 import android.util.Base64;
 
+import androidx.lifecycle.Lifecycle;
+
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -52,6 +54,12 @@ public class DruckPlugin extends Plugin {
             .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
             .build();
         getActivity().runOnUiThread(() -> {
+            // Ist die App gerade nicht vorne (Display aus, App gewechselt), blockiert Android das Druckmenü
+            // ohne Meldung. Dann lieber ehrlich zurückmelden, die App bittet um einen neuen Tipp.
+            if (!getActivity().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                call.reject("App ist nicht auf dem Bildschirm", "NICHT_SICHTBAR");
+                return;
+            }
             PrintManager pm = (PrintManager) getActivity().getSystemService(Context.PRINT_SERVICE);
             pm.print(name, new PdfAdapter(datei, name, seiten), a4);
             call.resolve();

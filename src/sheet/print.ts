@@ -11,12 +11,12 @@ import { t } from '../app/i18n';
  */
 export async function printSheets(sheetsHtml: string[], name = 'Leseblatt'): Promise<void> {
   if (NATIV) {
-    toast(t('aktion.druckVorbereiten'));
     try {
       const pdf = await sheetsToPdf(sheetsHtml, name);
       await Druck.pdfDrucken({ pdf: toBase64(pdf.buffer as ArrayBuffer), name, seiten: sheetsHtml.length });
-    } catch {
-      toast(t('aktion.druckFehler'));
+    } catch (e) {
+      // App war gerade nicht auf dem Bildschirm (z. B. Display aus) – Android öffnet das Druckmenü dann nicht
+      toast(t((e as { code?: string }).code === 'NICHT_SICHTBAR' ? 'aktion.druckUnterbrochen' : 'aktion.druckFehler'), 4000);
     }
     return;
   }
@@ -28,6 +28,23 @@ export async function printSheets(sheetsHtml: string[], name = 'Leseblatt'): Pro
   }
   root.innerHTML = sheetsHtml.join('');
   window.print();
+}
+
+/**
+ * Druck-Knopf: sofort „Druck wird vorbereitet …“ und gesperrt, bis das Druckmenü offen ist –
+ * weitere Tipps starten keinen zweiten Auftrag.
+ */
+export async function mitDruckKnopf(btn: HTMLButtonElement, arbeit: () => Promise<void>): Promise<void> {
+  if (btn.disabled) return;
+  const text = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = t('aktion.druckVorbereiten');
+  try {
+    await arbeit();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = text;
+  }
 }
 
 export function printSheet(sheetHtml: string, name?: string): Promise<void> {
