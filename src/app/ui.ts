@@ -74,12 +74,13 @@ export function editDialog(
   });
 }
 
-export function confirmDialog(text: string, yes = t('ui.ja'), no = t('ui.abbrechen')): Promise<boolean> {
+/** gefaehrlich: „Ja“-Knopf rot (Löschen) */
+export function confirmDialog(text: string, yes = t('ui.ja'), no = t('ui.abbrechen'), gefaehrlich = false): Promise<boolean> {
   return new Promise((resolve) => {
     const wrap = document.createElement('div');
     wrap.className = 'modal-bg';
     wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><p>${esc(text)}</p>
-      <div class="btnrow two"><button class="btn ghost" data-x="no">${esc(no)}</button><button class="btn green" data-x="yes">${esc(yes)}</button></div></div>`;
+      <div class="btnrow two"><button class="btn ghost" data-x="no">${esc(no)}</button><button class="btn ${gefaehrlich ? 'danger' : 'green'}" data-x="yes">${esc(yes)}</button></div></div>`;
     document.body.appendChild(wrap);
     wrap.querySelector('[data-x="no"]')!.addEventListener('click', () => (wrap.remove(), resolve(false)));
     wrap.querySelector('[data-x="yes"]')!.addEventListener('click', () => (wrap.remove(), resolve(true)));
