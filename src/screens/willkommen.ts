@@ -10,6 +10,16 @@ const RAUPE = `<img src="icons/figur-400.png" alt="" width="200" height="200" />
 const STEPS = 4;
 
 /**
+ * Wischen auf der Einführung: links → weiter, rechts → zurück.
+ * Nur deutlich waagerechte Bewegungen zählen – ein Tipp auf einen Buchstaben bewegt den Finger kaum,
+ * senkrechtes Scrollen ist steiler. So geht Wischen überall, auch über dem Buchstabenraster.
+ */
+export function wischRichtung(dx: number, dy: number): 'weiter' | 'zurueck' | null {
+  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return null;
+  return dx < 0 ? 'weiter' : 'zurueck';
+}
+
+/**
  * Einführung beim ersten Start (A2): 4 Schritte, wischen oder „Weiter“, jederzeit „Überspringen“.
  * `back`: wohin es danach geht (wiederholt aus „Über die App“).
  */
@@ -87,19 +97,21 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
     });
     bindLetters(root, draw);
 
-    // Wischen: links → weiter, rechts → zurück (nicht über dem Buchstabenraster; über dem Namensfeld schon –
-    // es steht mitten im Bild, genau dort wischt man)
-    const area = root.querySelector<HTMLElement>('#onb-body')!;
-    let x0: number | null = null;
+    // Wischen auf dem ganzen Bildschirm der Einführung (auch über Buchstaben und Namensfeld)
+    const area = root.querySelector<HTMLElement>('.onb')!;
+    let start: { x: number; y: number } | null = null;
     area.addEventListener('pointerdown', (e) => {
-      x0 = (e.target as HTMLElement).closest('.letters') ? null : e.clientX;
+      start = { x: e.clientX, y: e.clientY };
+    });
+    area.addEventListener('pointercancel', () => {
+      start = null;
     });
     area.addEventListener('pointerup', (e) => {
-      if (x0 === null) return;
-      const dx = e.clientX - x0;
-      x0 = null;
-      if (dx < -60) next();
-      else if (dx > 60) prev();
+      if (!start) return;
+      const r = wischRichtung(e.clientX - start.x, e.clientY - start.y);
+      start = null;
+      if (r === 'weiter') next();
+      else if (r === 'zurueck') prev();
     });
   };
 

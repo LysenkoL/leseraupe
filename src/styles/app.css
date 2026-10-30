@@ -206,7 +206,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 .name-row .btn { min-height: 48px; }
 
 /* Einführung (A2) */
-.onb .onb-body { justify-content: center; text-align: center; touch-action: pan-y; }
+.onb { touch-action: pan-y; } /* waagerechtes Wischen bleibt bei der Einführung */
+.onb .onb-body { justify-content: center; text-align: center; }
 .onb .onb-body h1 { margin: 0; font-size: 26px; font-weight: 800; line-height: 1.2; color: var(--green); }
 .onb .onb-body p { margin: 0; font-size: 18px; line-height: 1.45; }
 .onb .onb-body .hint { font-size: 15px; }
