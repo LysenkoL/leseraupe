@@ -6,6 +6,14 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 
 export const NATIV = Capacitor.isNativePlatform();
 
+/** Android-Version aus der WebView (dort steht die echte, z. B. „Android 17“); 0 = unbekannt */
+export function androidVersion(ua = typeof navigator === 'undefined' ? '' : navigator.userAgent): number {
+  return Number(ua.match(/Android (\d+)/)?.[1] ?? 0);
+}
+
+/** Ab Android 13 meldet das System selbst „Kopiert“ – dann keine zweite Meldung der App */
+export const SYSTEM_MELDET_KOPIERT = NATIV && androidVersion() >= 13;
+
 /** Eigenes Plugin: android/app/src/main/java/app/leseraupe/DruckPlugin.java */
 export interface DruckPlugin {
   /** Seite der WebView (#print-root, print.css) über das Druckmenü drucken */
