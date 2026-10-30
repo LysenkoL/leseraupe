@@ -27,7 +27,8 @@ describe('B4: Leseraupe aus dem Verlauf', () => {
   it('Urkunde: Name oder Linie, Zahl der Blätter, Datum', () => {
     const mit = renderUrkunde({ name: 'Mia', nr: 1, datum: '2026-10-10T17:00:00.000Z', gesamt: 10 });
     expect(mit).toContain('Mia');
-    expect(mit).toContain('an <b>10</b> Tagen gelesen');
+    expect(mit).toContain('hat an 10 Tagen gelesen.');
+    expect(mit).toContain('<b>10</b><small>Lesetage</small>');
     expect(mit).toContain('10.10.2026');
     expect(renderUrkunde({ name: '', nr: 2, datum: '2026-10-20T17:00:00.000Z', gesamt: 20 })).toContain('uk-linie');
     expect(renderUrkunde({ name: '<b>x</b>', nr: 1, datum: '2026-10-10T17:00:00.000Z', gesamt: 10 })).toContain('&lt;b&gt;');

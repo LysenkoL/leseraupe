@@ -12,6 +12,8 @@ export default defineConfig({
   },
   plugins: [
     VitePWA({
+      // Android-App (VITE_TARGET=play): kein Service Worker, kein Manifest – die App kommt aus Google Play
+      disable: process.env.VITE_TARGET === 'play',
       registerType: 'autoUpdate',
       injectRegister: false,
       includeAssets: ['fonts/*.woff2', 'icons/*.png'],

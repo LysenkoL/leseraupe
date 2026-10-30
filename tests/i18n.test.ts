@@ -44,11 +44,14 @@ describe('B6: Sprache der Oberfläche', () => {
     expect(protokollText('etwas Unbekanntes')).toBe('etwas Unbekanntes');
   });
 
-  it('Leseblatt und Urkunde bleiben immer deutsch', () => {
+  it('Leseblatt bleibt immer deutsch, die Urkunde (für Kind und Familie) folgt der App-Sprache', () => {
     const blatt = renderSheet({ ...SAMPLE_SHEET, silbenFarbig: true }, { displayNumber: 4 });
     const urk = renderUrkunde({ name: 'Mia', nr: 1, datum: '2026-10-10T10:00:00.000Z', gesamt: 10 });
+    expect(urk).toContain('Urkunde');
     _setSpracheFuerTest('uk');
     expect(renderSheet({ ...SAMPLE_SHEET, silbenFarbig: true }, { displayNumber: 4 })).toBe(blatt);
-    expect(renderUrkunde({ name: 'Mia', nr: 1, datum: '2026-10-10T10:00:00.000Z', gesamt: 10 })).toBe(urk);
+    const uk = renderUrkunde({ name: 'Mia', nr: 1, datum: '2026-10-10T10:00:00.000Z', gesamt: 10 });
+    expect(uk).toContain('Грамота');
+    expect(uk).not.toContain('Urkunde');
   });
 });
