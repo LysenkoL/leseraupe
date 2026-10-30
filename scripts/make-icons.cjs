@@ -15,7 +15,8 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const figur = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'assets/icon/figur.png')).toString('base64');
+const bild = (f) => 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'assets/icon', f)).toString('base64');
+const QUELLE = { figur: bild('figur.png'), hell: bild('figur-hell.png') };
 
 /** art: 'quadrat' | 'kachel' | 'vorder' | 'hinter'; maß: Anteil der Figur (Begrenzungsrahmen) an der Größe oder Kreisradius */
 const AUSGABE = [
@@ -25,8 +26,8 @@ const AUSGABE = [
   ['public/icons/apple-touch-icon.png', 180, 'quadrat', { rahmen: 0.84 }],
   ['public/icons/favicon-48.png', 48, 'kachel', { rahmen: 0.92 }],
   ['assets/icon/play-store-512.png', 512, 'quadrat', { rahmen: 0.88 }],
-  // Figur ohne Hintergrund für die Einführung
-  ['public/icons/figur-400.png', 400, 'vorder', { rahmen: 0.98 }],
+  // Figur für helle Bildschirme (Einführung): ohne Lichtstriche, Rand ohne gelben Schimmer (figur-hell.png)
+  ['public/icons/figur-400.png', 400, 'vorder', { rahmen: 0.98, quelle: 'hell' }],
   ['assets/icon-only.png', 1024, 'quadrat', { rahmen: 0.88 }],
   ['assets/icon-foreground.png', 1024, 'vorder', { kreis: 0.28 }],
   ['assets/icon-background.png', 1024, 'hinter', {}],
@@ -37,6 +38,7 @@ const AUSGABE = [
   const p = await b.newPage();
   await p.setContent('<canvas id="c"></canvas>');
   for (const [datei, size, art, mass] of AUSGABE) {
+    const figur = QUELLE[mass.quelle ?? 'figur'];
     const url = await p.evaluate(
       async ({ figur, size, art, mass }) => {
         const img = new Image();

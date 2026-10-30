@@ -22,6 +22,14 @@ export function calendarHtml(year: number, month: number, days: Set<string>, tod
   return `<div class="cal">${t('verlauf.tage').split(',').map((w) => `<span class="cal-w">${w}</span>`).join('')}${cells}</div>`;
 }
 
+/** 1 Minute / 2 Minuten (uk: 1 хвилина, 2–4 хвилини, 5+ хвилин) */
+function minutenWort(n: number): string {
+  const z = n % 10, h = n % 100;
+  if (z === 1 && h !== 11) return t('verlauf.minute');
+  if (z >= 2 && z <= 4 && (h < 12 || h > 14)) return t('verlauf.minuten2');
+  return t('verlauf.minuten');
+}
+
 export function renderVerlauf(root: HTMLElement): void {
   const routeNr = aktuelleRoute();
   const now = new Date();
@@ -40,7 +48,7 @@ export function renderVerlauf(root: HTMLElement): void {
         return `<a class="sheet-item" href="#/blatt/${r.id}">
           <span class="si-n" style="background:${th.light};color:${th.main}">${r.number}</span>
           <span class="si-main"><b>${esc(r.data.geschichte?.titel || `${t('vorschau.blatt')} ${r.number}`)}</b>
-          <small>${formatDate(r.createdAt)}${r.data.newLetter ? ` · ${t('verlauf.neu', { b: esc(unitById(r.data.newLetter)?.label.replace('-', '') ?? r.data.newLetter) })}` : ''} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${t('verlauf.minGelesen', { n: r.reads.reduce((a, x) => a + x.minutes, 0) })}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
+          <small>${formatDate(r.createdAt)}${r.data.stufe ? ` · ${t('blatt.stufe', { n: r.data.stufe })}` : ''}${r.data.newLetter ? ` · ${t('verlauf.neu', { b: esc(unitById(r.data.newLetter)?.label.replace('-', '') ?? r.data.newLetter) })}` : ''} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${t('verlauf.minGelesen', { n: r.reads.reduce((a, x) => a + x.minutes, 0) })}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
           <span class="si-st st-${s}">${t(`status.${s}`)}</span></a>`;
       })
       .join('');
@@ -57,7 +65,7 @@ export function renderVerlauf(root: HTMLElement): void {
       <div class="tile"><b>${st.erstellt}</b><small>${t('status.erstellt')}</small></div>
       <div class="tile"><b>${st.gedruckt}</b><small>${t('status.gedruckt')}</small></div>
       <div class="tile${st.gelesen > 0 ? ' on' : ''}"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
-      <div class="tile"><b>${st.minuten}</b><small>${t('verlauf.minuten')}</small></div>
+      <div class="tile"><b>${st.minuten}</b><small>${minutenWort(st.minuten)}</small></div>
     </div>
     ${
       cfg.stolper.length || cfg.stolperBesiegt
@@ -71,7 +79,7 @@ export function renderVerlauf(root: HTMLElement): void {
         <h2>${t('verlauf.monate').split(',')[m]} ${y}</h2>
         <button class="iconbtn sm" id="next" aria-label="${t('verlauf.naechsterMonat')}">›</button>
       </div>
-      <div class="hint">${t('verlauf.lesetage', { n: monthDays, s: streak(days) })}</div>
+      <div class="hint">${t(monthDays === 1 ? 'verlauf.lesetag' : 'verlauf.lesetage', { n: monthDays, s: streak(days) })}</div>
       ${calendarHtml(y, m, days)}
     </section>
     <h2 class="section-h">${t('verlauf.blaetter')}</h2>

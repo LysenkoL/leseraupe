@@ -249,7 +249,9 @@ describe('App-Ablauf', () => {
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
     const log = await page.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
-    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
+    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min']));
+    // E wurde hinzugefügt und wieder entfernt: nur das Ergebnis zählt – also gar kein Eintrag
+    expect(log.filter((x) => x.startsWith('Buchstabe E'))).toEqual([]);
   });
 
   it('gespeichertes Blatt wird genau gleich wieder gedruckt', async () => {

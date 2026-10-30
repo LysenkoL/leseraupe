@@ -19,16 +19,48 @@ export function lettersHtml(s: Settings): string {
       <div class="hint">${t('buchst.hinweis')}</div>`;
 }
 
-/** Tippen auf einen Buchstaben: speichern, protokollieren, neu zeichnen. */
+/**
+ * Protokoll für Buchstaben: nicht jeder Tipp, sondern das Ergebnis. Beim ersten Tipp merken wir uns die
+ * Buchstaben von vorher; erst beim Verlassen des Bildschirms oder beim Erstellen eines Blatts
+ * wird verglichen – hin und her getippte Buchstaben tauchen dann gar nicht auf.
+ */
+// in localStorage: übersteht Neuladen und Neustart der App, bis der Bildschirm verlassen wird
+const MERK = 'leseraupe.buchstaben.vorher';
+function leseVorher(): Set<string> | null {
+  try {
+    const raw = localStorage.getItem(MERK);
+    return raw ? new Set(JSON.parse(raw) as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+function merkeVorher(v: string[] | null): void {
+  try {
+    if (v) localStorage.setItem(MERK, JSON.stringify(v));
+    else localStorage.removeItem(MERK);
+  } catch {
+    /* ohne Speicher: dann eben kein Protokolleintrag */
+  }
+}
+
+export async function buchstabenProtokollieren(): Promise<void> {
+  const alt = leseVorher();
+  if (!alt) return;
+  merkeVorher(null);
+  const jetzt = new Set(getSettings().letters);
+  const lbl = (id: string) => unitById(id)?.label ?? id;
+  for (const id of jetzt) if (!alt.has(id)) await log(`Buchstabe ${lbl(id)} hinzugefügt`);
+  for (const id of alt) if (!jetzt.has(id)) await log(`Buchstabe ${lbl(id)} entfernt`);
+}
+
+if (typeof window !== 'undefined') window.addEventListener('hashchange', () => void buchstabenProtokollieren());
+
+/** Tippen auf einen Buchstaben: speichern, neu zeichnen (Protokoll später, siehe oben). */
 export function bindLetters(root: HTMLElement, redraw: () => void): void {
   root.querySelectorAll<HTMLButtonElement>('[data-l]').forEach((b) =>
-    b.addEventListener('click', async () => {
-      const id = b.dataset.l!;
-      const r = toggleLetter(getSettings(), id);
-      setSettings(r.settings);
-      const lbl = unitById(id)!.label.replace('-', '');
-      if (r.added) await log(`Buchstabe ${lbl} hinzugefügt`);
-      if (r.removed) await log(`Buchstabe ${lbl} entfernt`);
+    b.addEventListener('click', () => {
+      if (!leseVorher()) merkeVorher(getSettings().letters);
+      setSettings(toggleLetter(getSettings(), b.dataset.l!).settings);
       redraw();
     }),
   );

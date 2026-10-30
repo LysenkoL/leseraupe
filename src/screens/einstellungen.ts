@@ -131,7 +131,9 @@ export function renderEinstellungen(root: HTMLElement): void {
     const name = `leseraupe-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
     // Handy: Teilen-Menü (z. B. Google Drive), sonst Download – Meldung nur, wenn nicht abgebrochen
     const r = await teileDatei(new File([JSON.stringify(b, null, 1)], name, { type: 'application/json' }));
-    if (r !== 'abgebrochen') toast(t('einst.sicherungGespeichert'));
+    // ehrlich melden: beim Download weiß die App nicht, ob die Datei wirklich gespeichert wurde
+    if (r === 'geteilt') toast(t('einst.sicherungGeteilt'));
+    else if (r === 'gespeichert') toast(t('einst.sicherungDownload'), 4000);
   });
 
   root.querySelector<HTMLInputElement>('#imp')!.addEventListener('change', async (e) => {

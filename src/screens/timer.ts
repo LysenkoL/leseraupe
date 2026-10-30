@@ -1,4 +1,4 @@
-import { RaupenMaler, REGENBOGEN } from '../sheet/raupenbild';
+import { RaupenMaler } from '../sheet/raupenbild';
 import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { esc, toast, aktuelleRoute, nochAktuell } from '../app/ui';
@@ -48,12 +48,12 @@ export function raupeSvg(n: number, zahl: number): string {
   // Welle kann über den Kopf hinausgehen: Rahmen an die Perlen anpassen
   const oben = Math.min(0, RAUPE_Y - amp - 18);
   const h = Math.max(86, RAUPE_Y + amp + 18) - oben;
-  // wie auf dem App-Icon: gelesene Minuten als Regenbogen-Perlen, Kopf mit Fühlern
+  // wie auf dem App-Icon: Kopf mit Fühlern, gelesene Minuten als goldene Perlen
   const m = new RaupenMaler();
   let s = '';
   pos.forEach(({ x, y }, i) => {
-    const farbe = REGENBOGEN[Math.min(REGENBOGEN.length - 1, Math.floor((i * REGENBOGEN.length) / zahl))];
-    s += i < n ? m.perle(x, y, r, farbe, undefined, 'voll') : m.leer(x, y, r, '#6B7AA6', 'none');
+    // Minuten-Perlen golden (die bunten Perlen gibt es für Lesetage) und vom Kopf aus gefüllt
+    s += i >= zahl - n ? m.perle(x, y, r, '#FFC93C', undefined, 'voll') : m.leer(x, y, r, '#6B7AA6', 'none');
   });
   s += m.kopf(400 - 40, 50, 26);
   return m.svg(`0 ${oben.toFixed(1)} 400 ${h.toFixed(1)}`, s, `aria-label="${n} von ${zahl} Perlen"`);

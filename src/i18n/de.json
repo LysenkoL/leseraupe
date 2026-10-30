@@ -124,8 +124,8 @@
   "timer.min": "{n} Min",
   "timer.weniger": "5 Minuten weniger",
   "timer.mehr": "5 Minuten mehr",
-  "timer.perleMinute": "Jede Minute bekommt die Raupe eine neue Perle",
-  "timer.perleN": "Alle {n} Minuten bekommt die Raupe eine neue Perle",
+  "timer.perleMinute": "Jede Minute wächst die Raupe ein Stück",
+  "timer.perleN": "Alle {n} Minuten wächst die Raupe ein Stück",
   "timer.start": "Start",
   "timer.neustart": "Zurücksetzen",
   "timer.papierNr": "Blatt {nr} auf Papier lesen",
@@ -178,7 +178,6 @@
   "einst.sicherungHinweis": "Alle Blätter, das Protokoll und die Einstellungen in einer Datei. Die Datei kann man z. B. in Google Drive ablegen.",
   "einst.sicherungSpeichern": "Sicherung speichern",
   "einst.sicherungLaden": "Sicherung laden …",
-  "einst.sicherungGespeichert": "Sicherung gespeichert",
   "einst.sicherungFrage": "Sicherung vom {datum} mit {n} Blättern laden? Die jetzigen Daten werden ersetzt.",
   "einst.laden": "Laden",
   "einst.sicherungGeladen": "Sicherung geladen",
@@ -257,5 +256,10 @@
   "thema.bauernhof": "Bauernhof",
   "thema.jahreszeit": "Jahreszeit",
   "thema.jetzt": "jetzt: {name}",
-  "thema.dinos": "Dinos"
+  "thema.dinos": "Dinos",
+  "verlauf.minute": "Minute",
+  "verlauf.lesetag": "{n} Lesetag · {s} in Folge",
+  "einst.sicherungGeteilt": "Sicherung übergeben",
+  "einst.sicherungDownload": "Download gestartet – die Datei liegt dann im Ordner „Downloads“.",
+  "verlauf.minuten2": "Minuten"
 }
