@@ -77,6 +77,8 @@ export const MAX_STUFE_ALPHABET = 10;
 export const ALPHABET_FAST = 38;
 /** C3: ab so vielen gelernten Einheiten gibt es lange Geschichten und die Regel für die neue Buchstabe wird lockerer */
 export const VIELE_BUCHSTABEN = 25;
+/** C3: ab so vielen gelernten Einheiten gibt es kurze Geschichten mit Handlung (8–11 Sätze) statt Vorlagen */
+export const MITTEL_BUCHSTABEN = 12;
 /** C3: über Stufe 5 braucht jede weitere Stufe so viele Blätter */
 export const BLAETTER_PRO_STUFE = 5;
 
@@ -98,19 +100,20 @@ export function neuAnteil(saetze: string[], unit: string): number {
  * kurze Wörter, wenig Zweisilber, kurze Sätze und eine kurze Geschichte.
  * Stufen 6–10 (C3) gibt es nur bei fast vollem Alphabet: längere Wörter (wortMin), mehr Mehrsilber,
  * längere Sätze und Geschichten bis 14 Sätze.
- * geschichteMax = Länge bei wenigen Buchstaben; geschichteViele = [min, max] ab VIELE_BUCHSTABEN.
+ * geschichteMax = Länge bei wenigen Buchstaben; geschichteMittel = [min, max] ab MITTEL_BUCHSTABEN;
+ * geschichteViele = [min, max] ab VIELE_BUCHSTABEN.
  */
-export const STUFEN: Record<number, { wortMax: number; wortMin?: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number; geschichteViele: [number, number] }> = {
-  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteViele: [8, 12] },
-  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteViele: [9, 12] },
-  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteViele: [10, 13] },
-  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteViele: [10, 14] },
-  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteViele: [11, 14] },
-  6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
-  7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
-  8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
-  9: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
-  10: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 8, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
+export const STUFEN: Record<number, { wortMax: number; wortMin?: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number; geschichteMittel: [number, number]; geschichteViele: [number, number] }> = {
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteMittel: [7, 11], geschichteViele: [8, 12] },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteMittel: [7, 11], geschichteViele: [9, 12] },
+  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteMittel: [8, 13], geschichteViele: [10, 13] },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [10, 14] },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [11, 14] },
+  6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [12, 14] },
+  7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [12, 14] },
+  8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [13, 14] },
+  9: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [13, 14] },
+  10: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 8, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [13, 14] },
 };
 
 /** C3: erlaubte Länge der Geschichte (Sätze) für Stufe und Zahl der gelernten Einheiten */
@@ -122,6 +125,7 @@ export function geschichteLaenge(stufe: number | undefined, anzahlBuchstaben: nu
     return [anzahlBuchstaben >= ALPHABET_FAST ? Math.max(lo, 10) : lo, hi];
   }
   if (minutes === 10) return [10, 13];
+  if (anzahlBuchstaben >= MITTEL_BUCHSTABEN) return st ? st.geschichteMittel : [8, 10];
   return [6, st ? st.geschichteMax : 8];
 }
 
@@ -330,6 +334,7 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   const n = st ? Math.min(COUNTS[p.minutes].geschichte, st.geschichteMax) : COUNTS[p.minutes].geschichte;
   // C3: bei vielen Buchstaben lange Geschichten (bis 14 Sätze, je nach Stufe)
   const viele = p.letters.length >= VIELE_BUCHSTABEN;
+  const mittel = p.letters.length >= MITTEL_BUCHSTABEN;
   const [lo, hi] = geschichteLaenge(p.stufe, p.letters.length, p.minutes);
   const lesbar = DICT.geschichten.filter((g) => v.has(g.titel) && g.saetze.every((s) => v.has(s)));
   // wie weit die Länge vom erlaubten Bereich weg ist (0 = passt)
@@ -369,6 +374,15 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
     const reich = fresh.filter((g) => richness(g) >= maxRich * 0.75 && richness(g) >= minRich);
     const mitNeu = reich.filter(neuOk);
     const cur = aeltesteVon(mitNeu.length ? mitNeu : reich) ?? reichste();
+    if (cur) return fertig(cur);
+  }
+  if (mittel) {
+    // C3: ab MITTEL_BUCHSTABEN eine fertige Geschichte mit Handlung, wenn eine passt (reichste zuerst);
+    // Vorlagen („X ist am Y“) nur, wenn keine passt
+    const reich = fresh.filter((g) => richness(g) >= Math.max(minRich, maxRich * 0.7));
+    const neuDa = (g: { saetze: string[] }) => !p.newLetter || g.saetze.some((x) => countUnit(x, p.newLetter!) > 0);
+    const mitNeu = reich.filter(neuOk);
+    const cur = aeltesteVon(mitNeu.length ? mitNeu : reich.filter(neuDa).length ? reich.filter(neuDa) : reich);
     if (cur) return fertig(cur);
   }
   const cur = aeltesteVon(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich && neuOk(g)));
