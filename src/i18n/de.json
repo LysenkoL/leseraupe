@@ -242,5 +242,11 @@
   "verlauf.neu": "neu: {b}",
   "eltern.titel": "Nur für Erwachsene",
   "eltern.frage": "Bitte rechnen: {a} + {b} = ?",
-  "eltern.falsch": "Leider falsch. Noch einmal?"
+  "eltern.falsch": "Leider falsch. Noch einmal?",
+  "update.suchen": "Nach Updates suchen",
+  "update.neu": "Neue Version gefunden – die App startet gleich neu.",
+  "update.aktuell": "Das ist die neueste Version.",
+  "update.offline": "Kein Internet – später noch einmal versuchen.",
+  "update.fehler": "Konnte nicht nachsehen. Bitte später noch einmal.",
+  "update.geladen": "Neue Version geladen ✓"
 }

@@ -1,4 +1,5 @@
-import { backButton } from '../app/ui';
+import { backButton, toast } from '../app/ui';
+import { pruefeUpdate } from '../app/update';
 import { t } from '../app/i18n';
 import { PLAY } from '../app/platform';
 
@@ -24,6 +25,7 @@ export function renderUeber(root: HTMLElement): void {
       <h2>Leseraupe</h2>
       <div>${t('ueber.text')}</div>
       <div class="hint">${t('ueber.version', { v: VERSION_TEXT })}</div>
+      ${PLAY ? '' : `<button class="btn ghost" id="upd">${t('update.suchen')}</button>`}
       <a class="btn ghost" href="#/willkommen?zurueck=%23%2Fueber">${t('ueber.einfuehrung')}</a>
     </section>
     <section class="card" id="datenschutz">
@@ -46,4 +48,11 @@ export function renderUeber(root: HTMLElement): void {
     </section>
   </div>
 </div>`;
+  root.querySelector<HTMLButtonElement>('#upd')?.addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    b.disabled = true;
+    const r = await pruefeUpdate();
+    toast(t(r === 'neu' ? 'update.neu' : r === 'aktuell' ? 'update.aktuell' : r === 'offline' ? 'update.offline' : 'update.fehler'));
+    if (r !== 'neu') b.disabled = false;
+  });
 }
