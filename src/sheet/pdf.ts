@@ -3,6 +3,7 @@
  * als Bild gerendert (SVG foreignObject → Canvas) und in ein A4-PDF gelegt –
  * gleiche Ränder (10 mm) und gleiche Maße wie @page in print.css.
  */
+import { NATIV, teileNativ } from '../app/native';
 
 const MM = 72 / 25.4; // PDF-Punkte je mm
 const A4 = { w: 210 * MM, h: 297 * MM };
@@ -194,6 +195,7 @@ export async function sharePdf(bytes: Uint8Array, filename: string): Promise<'ge
 /** Datei teilen (Teilen-Menü des Handys) oder herunterladen. */
 export async function teileDatei(file: File): Promise<'geteilt' | 'gespeichert' | 'abgebrochen'> {
   const filename = file.name;
+  if (NATIV) return teileNativ(file, toBase64(await file.arrayBuffer()));
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.share && nav.canShare?.({ files: [file] })) {
     try {
