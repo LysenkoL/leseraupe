@@ -31,6 +31,8 @@ export interface FertigeGeschichte {
   titel: string;
   saetze: string[];
   fragen: string[];
+  /** C3: braucht die ersten „ab“ Einheiten der Fibel-Reihenfolge (späteste Einheit) */
+  ab: number;
 }
 
 export interface Woerterbuch {

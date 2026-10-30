@@ -21,10 +21,12 @@ export interface History {
   /** Sätze und Geschichtentitel der letzten zwei Blätter */
   recentSentences: Set<string>;
   recentStories: Set<string>;
+  /** C3: Geschichtentitel → laufende Nummer des Blatts, auf dem sie zuletzt stand (am längsten unbenutzte zuerst) */
+  storySeq?: Map<string, number>;
   lastQuest: QuestKind | null;
 }
 
-export const emptyHistory = (): History => ({ wordSeq: new Map(), seq: 1, recentSentences: new Set(), recentStories: new Set(), lastQuest: null });
+export const emptyHistory = (): History => ({ wordSeq: new Map(), seq: 1, recentSentences: new Set(), recentStories: new Set(), storySeq: new Map(), lastQuest: null });
 
 export interface GenParams {
   letters: string[];
@@ -35,7 +37,7 @@ export interface GenParams {
   blocks: Record<BlockId, boolean>;
   history: History;
   seed: number;
-  /** Schwierigkeit 1–5 (B1): wie viele Blätter seit der letzten neuen Buchstabe; fehlt = ohne Stufen */
+  /** Schwierigkeit 1–5 (B1), bei fast vollem Alphabet bis 10 (C3); fehlt = ohne Stufen */
   stufe?: number;
   /** Stolperwörter des Kindes (B2): kommen öfter vor */
   stolper?: Stolper[];
@@ -67,7 +69,21 @@ function addStolper(woerter: string[], kleine: string[], v: Vocab, p: GenParams,
   return { woerter: w.sort(byLen), kleine: k.sort(byLen) };
 }
 
+/** Höchste Stufe, solange noch Buchstaben fehlen (B1) */
 export const MAX_STUFE = 5;
+/** C3: Höchste Stufe, wenn (fast) alle Buchstaben gelernt sind – das Lesen wird danach weiter schwerer */
+export const MAX_STUFE_ALPHABET = 10;
+/** C3: ab so vielen gelernten Einheiten (von 43) gilt das Alphabet als fast komplett; seltene wie Y, C, Qu dürfen fehlen */
+export const ALPHABET_FAST = 38;
+/** C3: ab so vielen gelernten Einheiten gibt es lange Geschichten und die Regel für die neue Buchstabe wird lockerer */
+export const VIELE_BUCHSTABEN = 25;
+/** C3: über Stufe 5 braucht jede weitere Stufe so viele Blätter */
+export const BLAETTER_PRO_STUFE = 5;
+
+/** Höchste erreichbare Stufe für diese Buchstaben */
+export function maxStufe(letters: string[]): number {
+  return letters.length >= ALPHABET_FAST ? MAX_STUFE_ALPHABET : MAX_STUFE;
+}
 
 /** Anteil der Wörter/Sätze, die die neue Buchstabe enthalten sollen (wenn das Wörterbuch so viele hat) */
 export const NEU_ANTEIL = 0.6;
@@ -80,14 +96,34 @@ export function neuAnteil(saetze: string[], unit: string): number {
 /**
  * Was eine Stufe bedeutet (B1). Stufe 1 = erstes Blatt nach einer neuen Buchstabe:
  * kurze Wörter, wenig Zweisilber, kurze Sätze und eine kurze Geschichte.
+ * Stufen 6–10 (C3) gibt es nur bei fast vollem Alphabet: längere Wörter (wortMin), mehr Mehrsilber,
+ * längere Sätze und Geschichten bis 14 Sätze.
+ * geschichteMax = Länge bei wenigen Buchstaben; geschichteViele = [min, max] ab VIELE_BUCHSTABEN.
  */
-export const STUFEN: Record<number, { wortMax: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number }> = {
-  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6 },
-  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7 },
-  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7 },
-  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8 },
-  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8 },
+export const STUFEN: Record<number, { wortMax: number; wortMin?: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number; geschichteViele: [number, number] }> = {
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteViele: [8, 12] },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteViele: [9, 12] },
+  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteViele: [10, 13] },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteViele: [10, 14] },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteViele: [11, 14] },
+  6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
+  7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
+  8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
+  9: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
+  10: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 8, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
 };
+
+/** C3: erlaubte Länge der Geschichte (Sätze) für Stufe und Zahl der gelernten Einheiten */
+export function geschichteLaenge(stufe: number | undefined, anzahlBuchstaben: number, minutes: Minutes = 5): [number, number] {
+  const st = stufe ? STUFEN[stufe] : null;
+  if (anzahlBuchstaben >= VIELE_BUCHSTABEN) {
+    const [lo, hi] = st ? st.geschichteViele : [10, 13];
+    // fast volles Alphabet: auch gleich nach einer neuen Buchstabe eine richtige Geschichte (10+ Sätze)
+    return [anzahlBuchstaben >= ALPHABET_FAST ? Math.max(lo, 10) : lo, hi];
+  }
+  if (minutes === 10) return [10, 13];
+  return [6, st ? st.geschichteMax : 8];
+}
 
 /** Wie ging das Lesen? (Eltern tippen es nach dem Lesen an, freiwillig) */
 export type Gefuehl = 'leicht' | 'geht' | 'schwer';
@@ -96,14 +132,26 @@ export type Gefuehl = 'leicht' | 'geht' | 'schwer';
  * Stufe für das nächste Blatt. Neue Buchstabe → wieder 1. Jedes Blatt mit denselben Buchstaben
  * (in Reihenfolge) verschiebt die Stufe: leicht +1, geht so ±0, schwer −1, ohne Angabe +1
  * (wie früher – wer nichts antippt, bekommt langsam schwerere Blätter). Immer 1 … MAX_STUFE.
+ * C3: Bei fast vollem Alphabet geht es über Stufe 5 hinaus bis MAX_STUFE_ALPHABET, aber langsamer:
+ * jede weitere Stufe braucht BLAETTER_PRO_STUFE Blätter („leicht“ oder ohne Angabe); „schwer“ = eine Stufe zurück.
  */
 export function stufeFor(saved: { letters: string[]; gefuehl?: Gefuehl }[], letters: string[]): number {
   const key = sortUnits(letters).join(',');
+  const max = maxStufe(letters);
   let stufe = 1;
+  let blaetter = 0;
   for (const d of saved) {
     if (sortUnits(d.letters).join(',') !== key) continue;
-    const delta = d.gefuehl === 'schwer' ? -1 : d.gefuehl === 'geht' ? 0 : 1;
-    stufe = Math.max(1, Math.min(MAX_STUFE, stufe + delta));
+    if (d.gefuehl === 'geht') continue;
+    if (d.gefuehl === 'schwer') {
+      stufe = Math.max(1, stufe - 1);
+      blaetter = 0;
+    } else if (stufe < MAX_STUFE) {
+      stufe++;
+    } else if (stufe < max && ++blaetter >= BLAETTER_PRO_STUFE) {
+      stufe++;
+      blaetter = 0;
+    }
   }
   return stufe;
 }
@@ -190,8 +238,7 @@ function pickFresh(cands: string[], n: number, h: History, rng: Rng, prefer: (w:
   return out;
 }
 
-function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): string[] {
-  const n = COUNTS[p.minutes].woerter;
+function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>, n = COUNTS[p.minutes].woerter): string[] {
   const small = new Set(v.kleine);
   const cands = v.words
     .filter((e) => e.typ !== 'kleines Wort' && !small.has(e.w) && !exclude.has(e.w) && e.len >= 2)
@@ -210,7 +257,11 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>): st
     if (!st) return pf(group, k);
     // Stufe: Länge begrenzen und Anteil der Mehrsilber steuern; reicht es nicht, wird gelockert
     const short = group.filter((w) => [...w].length <= st.wortMax);
-    const base = short.length >= k * 1.5 ? short : [...group].sort((a, b) => [...a].length - [...b].length);
+    // C3: hohe Stufen wollen längere Wörter (wortMin), aber nur wenn es genug davon gibt
+    const lang = st.wortMin ? short.filter((w) => [...w].length >= st.wortMin!) : short;
+    // zu wenige kurze Wörter? dann die kürzesten, die es gibt (nicht alle)
+    const kuerzeste = [...group].sort((a, b) => [...a].length - [...b].length).slice(0, Math.ceil(k * 1.5));
+    const base = lang.length >= k * 1.5 ? lang : short.length >= k * 1.5 ? short : kuerzeste;
     const multi = base.filter((w) => silbenZahl(w) >= 2);
     const one = base.filter((w) => silbenZahl(w) < 2);
     const km = Math.round(k * st.mehrsilbig);
@@ -277,24 +328,51 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
 function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; fragen: string[] } | null {
   const st = p.stufe ? STUFEN[p.stufe] : null;
   const n = st ? Math.min(COUNTS[p.minutes].geschichte, st.geschichteMax) : COUNTS[p.minutes].geschichte;
-  const [lo, base] = p.minutes === 5 ? [6, 8] : [10, 13];
-  const hi = st && p.minutes === 5 ? st.geschichteMax : base;
-  const curated = DICT.geschichten.filter(
-    (g) => g.saetze.length >= lo && g.saetze.length <= hi && v.has(g.titel) && g.saetze.every((s) => v.has(s)),
-  );
+  // C3: bei vielen Buchstaben lange Geschichten (bis 14 Sätze, je nach Stufe)
+  const viele = p.letters.length >= VIELE_BUCHSTABEN;
+  const [lo, hi] = geschichteLaenge(p.stufe, p.letters.length, p.minutes);
+  const lesbar = DICT.geschichten.filter((g) => v.has(g.titel) && g.saetze.every((s) => v.has(s)));
+  // wie weit die Länge vom erlaubten Bereich weg ist (0 = passt)
+  const abstand = (g: { saetze: string[] }) => Math.max(0, lo - g.saetze.length, g.saetze.length - hi);
+  const curated = lesbar.filter((g) => abstand(g) === 0);
   // reichhaltige Geschichten bevorzugen (viele verschiedene gelernte Einheiten)
   const richness = (g: { saetze: string[] }) => new Set(g.saetze.flatMap((x) => wordsOf(x).flatMap((w) => tokenizeWord(w).units))).size;
   const fresh = curated.filter((g) => !p.history.recentStories.has(g.titel));
   const maxRich = Math.max(0, ...fresh.map(richness));
-  // zu einfache Geschichte für viele gelernte Buchstaben? Dann lieber eine aus Vorlagen.
-  const minRich = Math.min(p.letters.length, 20) * 0.5;
-  // neue Buchstabe: nur Geschichten, in denen mindestens die Hälfte der Sätze sie enthält
-  const neuOk = (g: { saetze: string[] }) => !p.newLetter || neuAnteil(g.saetze, p.newLetter) >= NEU_ANTEIL - 0.1;
-  const cur = pick(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich && neuOk(g)), rng);
+  // zu einfache Geschichte für viele gelernte Buchstaben? Dann lieber eine aus Vorlagen (C3: ohne Obergrenze).
+  const minRich = p.letters.length * 0.5;
+  // neue Buchstabe: nur Geschichten, in denen mindestens die Hälfte der Sätze sie enthält;
+  // C3: bei vielen Buchstaben (die neuen sind dann oft selten, z. B. tz) reicht es, wenn sie vorkommt
+  const neuOk = (g: { saetze: string[] }) =>
+    !p.newLetter || (viele ? g.saetze.some((x) => countUnit(x, p.newLetter!) > 0) : neuAnteil(g.saetze, p.newLetter) >= NEU_ANTEIL - 0.1);
+  // C3: unter gleich guten die am längsten nicht gelesene
+  const seit = (g: { titel: string }) => p.history.storySeq?.get(g.titel) ?? -Infinity;
+  const aeltesteVon = <T extends { titel: string }>(list: T[]): T | undefined => {
+    const m = Math.min(...list.map(seit));
+    return pick(list.filter((g) => seit(g) === m), rng);
+  };
   const [fmin, fmax] = COUNTS[p.minutes].fragen;
-  if (cur && rng() < 0.75) {
-    return { g: { titel: cur.titel, saetze: [...cur.saetze] }, fragen: cur.fragen.slice(0, fmax) };
+  const fertig = (g: { titel: string; saetze: string[]; fragen: string[] }) => ({ g: { titel: g.titel, saetze: [...g.saetze] }, fragen: g.fragen.slice(0, fmax) });
+  // Ersatz: die reichste lesbare Geschichte, deren Länge am besten passt (nie eine zufällige);
+  // nicht gerade gelesen und reich genug geht vor der Länge
+  const nein = (b: boolean) => Number(b);
+  const reichste = () =>
+    [...lesbar].sort(
+      (a, b) =>
+        nein(p.history.recentStories.has(a.titel)) - nein(p.history.recentStories.has(b.titel)) ||
+        nein(richness(a) < minRich) - nein(richness(b) < minRich) ||
+        abstand(a) - abstand(b) ||
+        richness(b) - richness(a),
+    )[0];
+  if (viele) {
+    // C3: viele Buchstaben → immer eine fertige Geschichte (die Vorlagen sind dafür zu einfach)
+    const reich = fresh.filter((g) => richness(g) >= maxRich * 0.75 && richness(g) >= minRich);
+    const mitNeu = reich.filter(neuOk);
+    const cur = aeltesteVon(mitNeu.length ? mitNeu : reich) ?? reichste();
+    if (cur) return fertig(cur);
   }
+  const cur = aeltesteVon(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich && neuOk(g)));
+  if (cur && rng() < 0.75) return fertig(cur);
   const pl = pools(v, new Set());
   const neuPrefer = p.newLetter ? (w: string) => countUnit(w, p.newLetter!) > 0 : undefined;
   const score = (x: { saetze: string[] }) => (p.newLetter ? neuAnteil(x.saetze, p.newLetter) : 0) * 100 + x.saetze.length;
@@ -303,10 +381,10 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
     const st = templateStory(v, pl, rng, n, neuPrefer);
     if (st && !p.history.recentStories.has(st.titel) && (!best || score(st) > score(best))) best = st;
   }
-  if (!best && cur) return { g: { titel: cur.titel, saetze: [...cur.saetze] }, fragen: cur.fragen.slice(0, fmax) };
+  if (!best && cur) return fertig(cur);
   if (!best) {
-    const any = pick(curated, rng);
-    return any ? { g: { titel: any.titel, saetze: [...any.saetze] }, fragen: any.fragen.slice(0, fmax) } : null;
+    const any = reichste();
+    return any ? fertig(any) : null;
   }
   const fr = best.fragen.slice(0, fmax);
   return { g: { titel: best.titel, saetze: best.saetze }, fragen: fr.length >= fmin ? fr : best.fragen };
@@ -337,6 +415,10 @@ export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'w
   options.push({ kind: 'male', text: 'Male die Raupe an.' });
   const secret = makeGeheimwort(v, rng);
   if (secret) options.push(secret);
+  // C3: neben einer langen Geschichte nur Quests aus einer Zeile (Malen und Geheimwort brauchen viel Platz)
+  if ((sheet.geschichte?.saetze.length ?? 0) >= LANG_GESCHICHTE && options.some((o) => o.kind === 'finde' || o.kind === 'zaehle')) {
+    options.splice(0, options.length, ...options.filter((o) => o.kind === 'finde' || o.kind === 'zaehle'));
+  }
   const notLast = options.filter((o) => o.kind !== p.history.lastQuest);
   return pick(notLast.length ? notLast : options, rng)!;
 }
@@ -372,6 +454,12 @@ function makeGeheimwort(v: Vocab, rng: Rng): Quest | null {
   return null;
 }
 
+/** C3: ab so vielen Sätzen gilt eine Geschichte als lang; dann gibt es weniger Wörter und Sätze */
+export const LANG_GESCHICHTE = 12;
+export const LANG_WOERTER = 16;
+export const LANG_SAETZE = 7;
+export const LANG_SILBEN = 12;
+
 export interface Generated {
   sheet: SheetData;
   removed: Removed[];
@@ -383,29 +471,40 @@ export function generateSheet(p: GenParams): Generated {
   const v = new Vocab(known);
   const c = COUNTS[p.minutes];
 
-  const silben = makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng);
+  const alleSilben = makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng);
   const story = p.blocks.geschichte || p.blocks.fragen ? makeGeschichte(v, p, rng) : null;
+  // C3: lange Geschichte → etwas weniger Silben, Wörter und Sätze, damit sie ganz auf die Seite passt
+  // (nur beim heutigen Blattumfang; der alte 10-Minuten-Umfang war für lange Geschichten gebaut)
+  const lang = !!story && p.blocks.geschichte && p.minutes === 5 && story.g.saetze.length >= LANG_GESCHICHTE;
+  const silben = lang ? alleSilben.slice(0, LANG_SILBEN) : alleSilben;
   const { woerter, kleine } = (() => {
     const k = makeKleine(v, p, rng);
-    return addStolper(makeWoerter(v, p, rng, new Set(k)), k, v, p, rng);
+    return addStolper(makeWoerter(v, p, rng, new Set(k), lang ? LANG_WOERTER : c.woerter), k, v, p, rng);
   })();
 
   const avoid = new Set(story?.g.saetze ?? []);
-  const cands = [
-    ...DICT.saetze.filter((s) => v.has(s)),
-    ...templateSentences(v, pools(v), rng),
-  ];
+  const fertige = DICT.saetze.filter((s) => v.has(s));
+  const viele = p.letters.length >= VIELE_BUCHSTABEN;
+  // C3: bei vielen Buchstaben nur fertige Sätze – die Vorlagen ergeben zu einfache Sätze („Das ist Moritz.“)
+  const vorlagen = templateSentences(v, pools(v), rng);
+  const cands = viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen];
+  const len = (x: string) => wordsOf(x).length;
   // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
   let satzCands = cands;
-  if (p.stufe) {
+  // C3: viele Buchstaben → längere Sätze (ab 5–8 Wörtern, je nach Stufe), keine Obergrenze;
+  // gibt es davon zu wenige (z. B. ohne T), gelten die Grenzen der Stufe wie bisher
+  const minViele = Math.max(p.stufe ? STUFEN[p.stufe].satzMin : 6, (p.stufe ?? 3) <= 2 ? 5 : 6);
+  const lange = viele ? cands.filter((x) => len(x) >= minViele) : [];
+  if (lange.length >= c.saetze * 2) {
+    satzCands = lange;
+  } else if (p.stufe) {
     const st = STUFEN[p.stufe];
-    const len = (x: string) => wordsOf(x).length;
     const passend = cands.filter((x) => len(x) >= st.satzMin && len(x) <= st.satzWoerter);
     const kurz = cands.filter((x) => len(x) <= st.satzWoerter);
     if (passend.length >= c.saetze * 2) satzCands = passend;
     else if (kurz.length >= c.saetze * 2) satzCands = kurz;
   }
-  const saetze = chooseSentences(satzCands, c.saetze, p, rng, avoid);
+  const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid);
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
@@ -493,11 +592,14 @@ export function readingTexts(s: SheetData): string[] {
  * gelten als „gerade benutzt“, damit sich innerhalb der Serie nichts wiederholt.
  */
 export function withSerie(h: History, andere: SheetData[]): History {
-  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories) };
+  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories), storySeq: new Map(h.storySeq) };
   for (const d of andere) {
     for (const w of sheetWords(d)) out.wordSeq.set(w, h.seq - 1);
     for (const x of d.saetze) out.recentSentences.add(x);
-    if (d.geschichte) out.recentStories.add(d.geschichte.titel);
+    if (d.geschichte) {
+      out.recentStories.add(d.geschichte.titel);
+      out.storySeq!.set(d.geschichte.titel, h.seq - 1);
+    }
     if (d.quest) out.lastQuest = d.quest.kind;
   }
   return out;
@@ -508,7 +610,10 @@ export function historyFrom(sheets: { seq: number; data: SheetData }[], nextSeq:
   const h = emptyHistory();
   h.seq = nextSeq;
   const sorted = [...sheets].sort((a, b) => a.seq - b.seq);
-  for (const s of sorted) for (const w of sheetWords(s.data)) h.wordSeq.set(w, s.seq);
+  for (const s of sorted) {
+    for (const w of sheetWords(s.data)) h.wordSeq.set(w, s.seq);
+    if (s.data.geschichte) h.storySeq!.set(s.data.geschichte.titel, s.seq);
+  }
   for (const s of sorted.slice(-2)) {
     for (const x of s.data.saetze) h.recentSentences.add(x);
     if (s.data.geschichte) h.recentStories.add(s.data.geschichte.titel);
