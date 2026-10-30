@@ -52,7 +52,10 @@
 - Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
   ссылки на Claude/ChatGPT → внешний браузер; Sicherung и «PDF teilen» → Filesystem + Share.
 - Service worker / установка PWA — только для веб-версии: Android-сборку делать с `VITE_TARGET=play` (готово 29.10.2026: без SW, без кнопки установки, без подсказок про Chrome).
-- Иконка: гусеница из шапки листа.
+- [x] 30.10.2026 Иконка: радужная гусеница на карточке «Mama» (выбор владелицы проекта). Готовые файлы — `scripts/make-icons.cjs` из `assets/icon/figur.png`:
+  - Play Store 512×512 (квадрат, без скругления): `assets/icon/play-store-512.png`;
+  - Android adaptive для `npx @capacitor/assets generate`: `assets/icon-only.png`, `assets/icon-foreground.png` (фигура в круге 28 %), `assets/icon-background.png` (жёлтый фон);
+  - веб: `public/icons/icon-192/512.png` (кахель), `icon-maskable-512.png` (безопасная зона 40 %), `apple-touch-icon.png`, `favicon-48.png`.
 - `targetSdkVersion` 36 (требование Google Play для новых приложений с 31.08.2026).
 - Проверить на телефоне: печать через PrintManager (1/3/5 листов, отмена), PDF «Teilen», хранение после перезапуска и обновления.
 - Перенос данных из веб-версии: в браузере «Sicherung speichern» → в приложении «Sicherung laden» → сверить листы, журнал, Stolperwörter, бусины. Короткую инструкцию — в «Über die App».

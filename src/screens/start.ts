@@ -24,7 +24,8 @@ import { t, themaName } from '../app/i18n';
 
 const BLOCKS: BlockId[] = ['silben', 'woerter', 'kleine', 'saetze', 'geschichte', 'quest', 'fragen'];
 
-const RAUPE_MINI = `<svg viewBox="0 0 116 56" aria-hidden="true"><circle cx="14" cy="38" r="12" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="36" cy="34" r="13" fill="#9FD18F" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="60" cy="38" r="13" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="88" cy="28" r="18" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="82" cy="24" r="3" fill="#1F2421"/><circle cx="94" cy="24" r="3" fill="#1F2421"/><path d="M81 34 Q88 40 96 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+/** App-Icon als Logo oben links (gleiches Bild wie auf dem Startbildschirm des Handys) */
+const LOGO = `<img class="brand-logo" src="icons/icon-192.png" alt="" width="40" height="40" />`;
 
 export function renderStart(root: HTMLElement): void {
   const routeNr = aktuelleRoute();
@@ -50,7 +51,7 @@ export function renderStart(root: HTMLElement): void {
     root.innerHTML = `
 <div class="screen">
   <div class="topbar">
-    <div class="brand grow">${RAUPE_MINI}<span>Leseraupe</span></div>
+    <div class="brand grow">${LOGO}<span>Leseraupe</span></div>
     <a class="pillbtn" href="#/verlauf" style="display:flex;align-items:center;text-decoration:none">${t('start.verlauf')}${count >= 0 ? ` · ${count}` : ''}</a>
     <a class="iconbtn" href="#/einstellungen" aria-label="${t('start.einstellungen')}">${GEAR_ICON}</a>
   </div>
