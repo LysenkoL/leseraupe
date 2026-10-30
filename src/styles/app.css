@@ -312,9 +312,17 @@ details.card > summary::-webkit-details-marker { display: none; }
    die letzte Buchstabenreihe und die Legende, und man merkt nicht, dass man scrollen kann */
 .onb .bottom { position: static; }
 .onb .letters { gap: 5px; }
-.onb .lt { min-height: 40px; font-size: 16px; }
+.onb .lt { min-height: 36px; font-size: 16px; }
+/* „Zurück“ und „Weiter“ nebeneinander – so passt Schritt 3 ohne Scrollen auf ein Handy */
+.onb .btnrow { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.onb .btnrow.onb-zwei { grid-template-columns: 1fr 2fr; }
+.onb .btnrow .btn { min-height: 54px; }
+.onb .onb-body { gap: 10px; padding-top: 0; }
+.onb .onb-body .card { padding: 12px; }
 .toggle.disabled { opacity: .45; }
 .raupe-card.kompakt { padding: 10px 14px; gap: 4px; }
 .raupe-card.kompakt .raupe-svg { max-height: 56px; }
 .btnrow.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }
+/* Einführung: 7 Spalten bis 340px – eine Reihe weniger, damit „Weiter“ ohne Scrollen sichtbar ist */
+@media (min-width: 340px) { .onb .letters { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
