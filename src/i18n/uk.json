@@ -248,5 +248,13 @@
   "update.aktuell": "Це найновіша версія.",
   "update.offline": "Немає інтернету — спробуйте пізніше.",
   "update.fehler": "Не вдалося перевірити. Спробуйте пізніше.",
-  "update.geladen": "Нову версію завантажено ✓"
+  "update.geladen": "Нову версію завантажено ✓",
+  "thema.fruehling": "Весна",
+  "thema.sommer": "Літо",
+  "thema.herbst": "Осінь",
+  "thema.piraten": "Пірати",
+  "thema.burg": "Замок",
+  "thema.bauernhof": "Ферма",
+  "thema.jahreszeit": "Пора року",
+  "thema.jetzt": "зараз: {name}"
 }

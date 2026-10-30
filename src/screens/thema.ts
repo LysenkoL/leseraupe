@@ -1,6 +1,6 @@
 import { getSettings, setSettings } from '../app/state';
 import { backButton, go } from '../app/ui';
-import { THEMES, THEME_IDS, type ThemeId } from '../sheet/themes';
+import { THEMES, THEME_WAHL, themeAus, type ThemeId, type ThemeWahl } from '../sheet/themes';
 import { renderSheet } from '../sheet/render';
 import { SAMPLE_SHEET } from '../core/sample';
 import { loadFonts } from '../sheet/fit';
@@ -21,7 +21,7 @@ function headPreview(theme: ThemeId): string {
 }
 
 export function renderThema(root: HTMLElement): void {
-  let sel: ThemeId = getSettings().theme;
+  let sel: ThemeWahl = getSettings().theme;
   let random = getSettings().randomTheme;
   const draw = () => {
     root.innerHTML = `
@@ -29,12 +29,14 @@ export function renderThema(root: HTMLElement): void {
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('thema.titel')}</h1></div></div>
   <div class="content">
     <div class="hint">${t('thema.vorschau', { name: themaName(sel) })}</div>
-    <div class="card hp-big">${headPreview(sel)}</div>
+    <div class="card hp-big">${headPreview(themeAus(sel))}</div>
     <div class="theme-grid">
-      ${THEME_IDS.map(
-        (id) => `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[id].main}">
-          ${headPreview(id)}<span class="tc-name">${themaName(id)}</span>${id === sel ? `<span class="tc-sel">${t('thema.gewaehlt')}</span>` : ''}</button>`,
-      ).join('')}
+      ${THEME_WAHL.map((id) => {
+        const th = themeAus(id);
+        const jetzt = id === 'jahreszeit' ? `<small>${t('thema.jetzt', { name: themaName(th) })}</small>` : '';
+        return `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[th].main}" aria-pressed="${id === sel}">
+          ${headPreview(th)}<span class="tc-name">${themaName(id)}${jetzt}</span>${id === sel ? `<span class="tc-sel" aria-label="${t('thema.gewaehlt')}">✓</span>` : ''}</button>`;
+      }).join('')}
     </div>
     <label class="toggle"><input type="checkbox" id="rnd" ${random ? 'checked' : ''}/> ${t('thema.zufall')}</label>
   </div>
@@ -51,7 +53,7 @@ export function renderThema(root: HTMLElement): void {
     fit();
     root.querySelectorAll<HTMLButtonElement>('[data-t]').forEach((b) =>
       b.addEventListener('click', () => {
-        sel = b.dataset.t as ThemeId;
+        sel = b.dataset.t as ThemeWahl;
         draw();
       }),
     );

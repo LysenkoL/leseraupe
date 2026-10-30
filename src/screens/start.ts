@@ -5,7 +5,7 @@ import { raupenstand, type Raupenstand } from '../sheet/urkunde';
 import { raupenKarte } from '../app/raupe';
 import { getSettings, setSettings } from '../app/state';
 import { esc, go, toast, GEAR_ICON, aktuelleRoute, nochAktuell } from '../app/ui';
-import { THEMES, THEME_IDS } from '../sheet/themes';
+import { THEMES, THEME_WAHL, themeAus } from '../sheet/themes';
 import { allSheets } from '../core/db';
 import { createDraft } from '../app/actions';
 import { hatBlock, type BlockId } from '../core/types';
@@ -34,8 +34,8 @@ export function renderStart(root: HTMLElement): void {
     count = c;
     const s = getSettings();
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
-    const themeChips = THEME_IDS.map((id) => {
-      const th = THEMES[id];
+    const themeChips = THEME_WAHL.map((id) => {
+      const th = THEMES[themeAus(id)];
       const on = !s.randomTheme && s.theme === id ? ' on' : '';
       return `<button class="chip${on}" data-theme="${id}" style="background:${th.light};color:${th.main}">${themaName(id)}</button>`;
     }).join('');

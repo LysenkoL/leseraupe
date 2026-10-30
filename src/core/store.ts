@@ -1,8 +1,7 @@
 import { DEFAULT_BLOCKS, type BlockId } from './types';
 import { sortUnits, UNIT_IDS } from './letters';
 import { sanitizeStolper, type Stolper } from './stolper';
-import type { ThemeId } from '../sheet/themes';
-import { THEME_IDS } from '../sheet/themes';
+import { THEME_WAHL, type ThemeWahl } from '../sheet/themes';
 
 /** Einstellungen – nur lokal im localStorage. */
 export interface Settings {
@@ -18,7 +17,7 @@ export interface Settings {
   stolperBesiegt: number;
   /** Silben abwechselnd farbig (B3), Standard aus */
   silbenFarbig: boolean;
-  theme: ThemeId;
+  theme: ThemeWahl;
   randomTheme: boolean;
   blocks: Record<BlockId, boolean>;
   childName: string;
@@ -59,7 +58,9 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   s.stolper = sanitizeStolper(s.stolper);
   if (!Number.isInteger(s.stolperBesiegt) || s.stolperBesiegt < 0) s.stolperBesiegt = 0;
   s.silbenFarbig = s.silbenFarbig === true;
-  if (!THEME_IDS.includes(s.theme)) s.theme = 'wiese';
+  // „Winter“ ist jetzt Teil von „Jahreszeit“ (wechselt von selbst)
+  if ((s.theme as string) === 'winter') s.theme = 'jahreszeit';
+  if (!THEME_WAHL.includes(s.theme)) s.theme = 'wiese';
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';
   delete (s as Partial<{ aehnlichPair: unknown }>).aehnlichPair;
