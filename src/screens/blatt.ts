@@ -36,7 +36,7 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     const r = await getSheet(id);
     if (!r) return;
     await saveOnPrint(r.data, r.scale, id, true);
-    printSheet(renderSheet(r.data, { displayNumber: r.number, scale: r.scale }));
+    await printSheet(renderSheet(r.data, { displayNumber: r.number, scale: r.scale }), `Leseblatt-${r.number}`);
     draw();
   });
   root.querySelector<HTMLButtonElement>('#b-pdf')!.addEventListener('click', async (e) => {

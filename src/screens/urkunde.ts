@@ -32,7 +32,7 @@ export async function renderUrkundeScreen(root: HTMLElement, params: URLSearchPa
   </div>
 </div>`;
   await mountPreview(root.querySelector<HTMLElement>('#uk-pv')!, html, { fixedScale: 1 });
-  root.querySelector('#uk-print')!.addEventListener('click', () => printSheets([html]));
+  root.querySelector('#uk-print')!.addEventListener('click', () => printSheets([html], `Urkunde-${nr}`));
   root.querySelector('#uk-pdf')!.addEventListener('click', async () => {
     try {
       const name = `Urkunde-${nr}`;

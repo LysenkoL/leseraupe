@@ -192,8 +192,8 @@ export function renderVorschau(root: HTMLElement): void {
   });
 
   root.querySelector('#print')!.addEventListener('click', async () => {
-    const { html } = await saveAll(true);
-    printSheets(html);
+    const { html, nums } = await saveAll(true);
+    await printSheets(html, pdfName(nums));
     await draw();
   });
   root.querySelector<HTMLButtonElement>('#pdf')!.addEventListener('click', async (e) => {

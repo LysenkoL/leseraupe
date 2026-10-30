@@ -54,6 +54,8 @@
   "aktion.pdf": "Als PDF teilen",
   "aktion.pdfGespeichert": "{name}.pdf gespeichert",
   "aktion.pdfFehler": "PDF konnte nicht erstellt werden.",
+  "aktion.druckVorbereiten": "Druck wird vorbereitet …",
+  "aktion.druckFehler": "Drucken hat nicht geklappt. Bitte „Als PDF teilen“ versuchen.",
   "stolper.titel": "Wo hat dein Kind gestockt?",
   "stolper.sub": "Blatt {nr} · freiwillig",
   "stolper.hinweis": "Tippe die Wörter an, bei denen dein Kind gestockt hat. Sie kommen auf den nächsten Blättern öfter vor. Die App hört nicht zu – sie weiß nur, was du antippst. Wörter mit Punkt sind schon auf der Liste.",

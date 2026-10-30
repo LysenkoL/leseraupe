@@ -48,7 +48,7 @@
 - Android Studio установлена — найти SDK и встроенную JDK, настроить пути.
 - [x] 30.10.2026 Каркас: Capacitor 8, `android/`, App-Name Leseraupe, Package-ID `app.leseraupe`, targetSdk 36, versionName 1.0.0, иконки. Сборка: `npm run android` (= `build:play` + `cap sync`). Gradle 9.1, потому что JDK в Android Studio — 25.
 - Всё внутри приложения (код, шрифт Inter, словарь), работает без интернета.
-- `window.print` → нативная печать Android (PrintManager), лист ровно A4.
+- [x] 30.10.2026 Печать: в Android-приложении `window.print` заменён своим плагином `DruckPlugin.java` (PrintManager, бумага ISO A4). Печатается то же PDF, что и «Als PDF teilen»: каждый лист на своей странице A4, серия одним заданием. В эмуляторе проверено: 3 листа → 1/3 … 3/3, ISO A4.
 - Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
   ссылки на Claude/ChatGPT → внешний браузер; Sicherung и «PDF teilen» → Filesystem + Share.
 - Service worker / установка PWA — только для веб-версии: Android-сборку делать с `VITE_TARGET=play` (готово 29.10.2026: без SW, без кнопки установки, без подсказок про Chrome).
