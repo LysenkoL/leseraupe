@@ -1,3 +1,4 @@
+import { RaupenMaler, REGENBOGEN } from '../sheet/raupenbild';
 import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { esc, toast, aktuelleRoute, nochAktuell } from '../app/ui';
@@ -20,7 +21,7 @@ export function perlenSchritt(minutes: number): number {
 export const RAUPE_Y = 60;
 export function raupeLayout(zahl: number): { pos: { x: number; y: number }[]; amp: number } {
   const step = 35;
-  const start = 400 - 34 - 48; // erste Perle direkt hinter dem Kopf
+  const start = 400 - 40 - 48; // erste Perle direkt hinter dem Kopf
   const links = 18;
   const welle = (amp: number) => (x: number) => RAUPE_Y - amp * Math.sin(((start - x) * 2 * Math.PI) / 130);
   // entlang der Kurve gehen und Perlen im Abstand „step“ setzen
@@ -47,18 +48,15 @@ export function raupeSvg(n: number, zahl: number): string {
   // Welle kann über den Kopf hinausgehen: Rahmen an die Perlen anpassen
   const oben = Math.min(0, RAUPE_Y - amp - 18);
   const h = Math.max(86, RAUPE_Y + amp + 18) - oben;
+  // wie auf dem App-Icon: gelesene Minuten als Regenbogen-Perlen, Kopf mit Fühlern
+  const m = new RaupenMaler();
   let s = '';
   pos.forEach(({ x, y }, i) => {
-    const cx = x.toFixed(1);
-    const cy = y.toFixed(1);
-    s += i < n
-      ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#7FC06D" stroke="#BFE0B5" stroke-width="2.5"/>`
-      : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#6B7AA6" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+    const farbe = REGENBOGEN[Math.min(REGENBOGEN.length - 1, Math.floor((i * REGENBOGEN.length) / zahl))];
+    s += i < n ? m.perle(x, y, r, farbe, undefined, 'voll') : m.leer(x, y, r, '#6B7AA6', 'none');
   });
-  const hx = 400 - 34;
-  s += `<path d="M${hx - 10} 28 L${hx - 16} 12 M${hx + 10} 28 L${hx + 16} 12" stroke="#A9D99A" stroke-width="3" stroke-linecap="round"/><circle cx="${hx - 16}" cy="11" r="4" fill="#F2A65A"/><circle cx="${hx + 16}" cy="11" r="4" fill="#F2A65A"/>`;
-  s += `<circle cx="${hx}" cy="50" r="26" fill="#A3D78F" stroke="#C9EBBE" stroke-width="3"/><circle cx="${hx - 9}" cy="45" r="3.6" fill="#1F2421"/><circle cx="${hx + 9}" cy="45" r="3.6" fill="#1F2421"/><path d="M${hx - 11} 58 Q${hx} 66 ${hx + 11} 58" fill="none" stroke="#1F2421" stroke-width="3" stroke-linecap="round"/>`;
-  return `<svg viewBox="0 ${oben.toFixed(1)} 400 ${h.toFixed(1)}" aria-label="${n} von ${zahl} Perlen">${s}</svg>`;
+  s += m.kopf(400 - 40, 50, 26);
+  return m.svg(`0 ${oben.toFixed(1)} 400 ${h.toFixed(1)}`, s, `aria-label="${n} von ${zahl} Perlen"`);
 }
 
 /**

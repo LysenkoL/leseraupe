@@ -929,3 +929,13 @@ r Hut | ding sommer zirkus
 e Welle | ding sommer meer
 r Eimer | ding sommer
 e Muschel | ding sommer meer
+r Dino | tier dinos
+pl Dinos | tier dinos
+r Vulkan | ding dinos
+r Knochen | ding dinos
+r Farn | ding dinos zauberwald
+e Spur | ding dinos winter
+s Ei | essen dinos
+r Zahn | ding dinos
+e Höhle | ding dinos
+e Echse | tier dinos

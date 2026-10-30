@@ -210,6 +210,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .onb .onb-body .card { text-align: left; }
 .onb-art { display: flex; justify-content: center; }
 .onb-art svg { width: 200px; height: 96px; }
+.onb-art img { width: 180px; height: 180px; display: block; }
 .onb-steps { gap: 10px; align-items: flex-end; height: 96px; }
 .onb-steps span { width: 44px; border-radius: 12px; background: var(--green-2); color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; }
 .onb-steps span:nth-child(1) { height: 40px; opacity: .6; }

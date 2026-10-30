@@ -22,7 +22,7 @@
   "buchst.gelernt": "вивчено",
   "buchst.neu": "нова",
   "buchst.nochnicht": "ще ні",
-  "buchst.hinweis": "Порядок як у багатьох букварях · Натискання: ще ні → нова → вивчено → ще ні",
+  "buchst.hinweis": "Порядок як у багатьох букварях",
   "raupe.titel": "Моя гусінь-читайлик",
   "raupe.perlen": "{n} з {max} намистин",
   "raupe.hinweis": "Кожен день із читанням — це намистинка, навіть якщо читали той самий аркуш ще раз. За {max} намистин — грамота.",
@@ -256,5 +256,6 @@
   "thema.burg": "Замок",
   "thema.bauernhof": "Ферма",
   "thema.jahreszeit": "Пора року",
-  "thema.jetzt": "зараз: {name}"
+  "thema.jetzt": "зараз: {name}",
+  "thema.dinos": "Динозаври"
 }

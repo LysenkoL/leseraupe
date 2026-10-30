@@ -22,7 +22,7 @@
   "buchst.gelernt": "gelernt",
   "buchst.neu": "neu",
   "buchst.nochnicht": "noch nicht",
-  "buchst.hinweis": "Reihenfolge wie in vielen Fibeln · Tippen: noch nicht → neu → gelernt → noch nicht",
+  "buchst.hinweis": "Reihenfolge wie in vielen Fibeln",
   "raupe.titel": "Meine Leseraupe",
   "raupe.perlen": "{n} von {max} Perlen",
   "raupe.hinweis": "Jeder Tag mit Lesen ist eine Perle – auch wenn ihr ein Blatt nochmal lest. Bei {max} Perlen gibt es eine Urkunde.",
@@ -256,5 +256,6 @@
   "thema.burg": "Ritterburg",
   "thema.bauernhof": "Bauernhof",
   "thema.jahreszeit": "Jahreszeit",
-  "thema.jetzt": "jetzt: {name}"
+  "thema.jetzt": "jetzt: {name}",
+  "thema.dinos": "Dinos"
 }

@@ -25,6 +25,8 @@ const AUSGABE = [
   ['public/icons/apple-touch-icon.png', 180, 'quadrat', { rahmen: 0.84 }],
   ['public/icons/favicon-48.png', 48, 'kachel', { rahmen: 0.92 }],
   ['assets/icon/play-store-512.png', 512, 'quadrat', { rahmen: 0.88 }],
+  // Figur ohne Hintergrund für die Einführung
+  ['public/icons/figur-400.png', 400, 'vorder', { rahmen: 0.98 }],
   ['assets/icon-only.png', 1024, 'quadrat', { rahmen: 0.88 }],
   ['assets/icon-foreground.png', 1024, 'vorder', { kreis: 0.28 }],
   ['assets/icon-background.png', 1024, 'hinter', {}],

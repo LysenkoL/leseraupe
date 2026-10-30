@@ -1,15 +1,16 @@
+import { RaupenMaler } from './raupenbild';
 export type ThemeId =
   | 'wiese' | 'weltraum' | 'meer' | 'zirkus' | 'zauberwald'
   | 'fruehling' | 'sommer' | 'herbst' | 'winter'
-  | 'piraten' | 'burg' | 'bauernhof';
+  | 'piraten' | 'burg' | 'bauernhof' | 'dinos';
 
 /** Alle Themen, die ein Blatt haben kann (auch die vier Jahreszeiten) */
-export const THEME_IDS: ThemeId[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof'];
+export const THEME_IDS: ThemeId[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof', 'dinos'];
 
 /** „Jahreszeit“: wird beim Erstellen zur aktuellen Jahreszeit */
 export type ThemeWahl = ThemeId | 'jahreszeit';
 /** Was man auswählen kann – die Jahreszeiten nur zusammen */
-export const THEME_WAHL: ThemeWahl[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'jahreszeit', 'piraten', 'burg', 'bauernhof'];
+export const THEME_WAHL: ThemeWahl[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'jahreszeit', 'piraten', 'burg', 'bauernhof', 'dinos'];
 
 export function jahreszeit(d = new Date()): ThemeId {
   const m = d.getMonth(); // 0 = Januar
@@ -87,6 +88,11 @@ const knochen = (x: number, y: number) => {
   return `<g transform="translate(${x} ${y})" fill="#FFFFFF"><g transform="rotate(35)">${k}</g><g transform="rotate(-35)">${k}</g></g>`;
 };
 
+const pfote = (fill: string) =>
+  `<ellipse cx="50" cy="64" rx="22" ry="26" fill="${fill}"/><ellipse cx="26" cy="30" rx="9" ry="13" fill="${fill}" transform="rotate(-25 26 30)"/><ellipse cx="50" cy="20" rx="9" ry="13" fill="${fill}"/><ellipse cx="74" cy="30" rx="9" ry="13" fill="${fill}" transform="rotate(25 74 30)"/>`;
+const vulkan = `<path d="M8 92 L38 34 L62 34 L92 92Z" fill="#8B5E3C"/><path d="M38 34 L62 34 L57 44 L50 38 L43 46Z" fill="#E8762D"/><path d="M44 30 Q40 18 48 10 M56 30 Q62 18 56 8" stroke="#F2A65A" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="50" cy="6" r="5" fill="#9AA59E"/>`;
+const dinoEi = `<ellipse cx="50" cy="56" rx="30" ry="38" fill="#F7EBDD" stroke="#8B5E3C" stroke-width="3"/><circle cx="40" cy="44" r="6" fill="#A3D93B"/><circle cx="60" cy="62" r="7" fill="#A3D93B"/><circle cx="42" cy="74" r="5" fill="#A3D93B"/><path d="M22 52 L32 46 L40 56 L50 46 L60 56 L70 46 L78 52" fill="none" stroke="#8B5E3C" stroke-width="3" stroke-linejoin="round"/>`;
+
 const wave = (stroke: string, step: number) => {
   let d = `M0 14`;
   for (let x = 0; x + step * 2 <= 720; x += step * 2) d += ` Q${x + step / 2} 4 ${x + step} 14 T${x + step * 2} 14`;
@@ -139,7 +145,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     light: '#E3F2FA',
     border: '#BDE3F2',
     seg: ['#BDE3F2', '#8FCDE6'],
-    costume: `<path d="M149 43 L141 41 M184 43 L191 41" stroke="#1D5E80" stroke-width="3" stroke-linecap="round"/><rect x="149" y="37" width="35" height="17" rx="8" fill="#BDE3F2" fill-opacity="0.55" stroke="#1D5E80" stroke-width="2.5"/><path d="M166 38 L166 53" stroke="#1D5E80" stroke-width="2"/><path d="M184 49 L193 49 Q197 49 197 45 L197 12" fill="none" stroke="#E8896A" stroke-width="4" stroke-linecap="round"/><rect x="193" y="6" width="8" height="7" rx="2" fill="#1D5E80"/>`,
+    costume: `<g transform="rotate(12 167 49)"><path d="M146 48 L139 48 M188 48 L195 48" stroke="#1D5E80" stroke-width="3" stroke-linecap="round"/><rect x="146" y="37" width="42" height="23" rx="10" fill="#BDE3F2" fill-opacity="0.45" stroke="#1D5E80" stroke-width="2.5"/><path d="M167 38 L167 59" stroke="#1D5E80" stroke-width="2"/><path d="M188 52 L193 52 Q197 52 197 48 L197 14" fill="none" stroke="#E8896A" stroke-width="4" stroke-linecap="round"/><rect x="193" y="8" width="8" height="7" rx="2" fill="#1D5E80"/></g>`,
     headDeco: [fish('#F2A65A'), bubbles, fish('#8FCDE6', true)],
     footDeco: fish('#E8896A', true),
     strip: wave('#5FB3D6', 16),
@@ -207,7 +213,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     border: '#F8DFAE',
     seg: ['#FFE29A', '#8FCDE6'],
     // Sonnenhut und Sonnenbrille
-    costume: `<path d="M150 29 Q150 9 166 9 Q182 9 182 29 Z" fill="#F2C94C" stroke="#A35F00" stroke-width="2"/><path d="M150 22 Q166 18 182 22 L182 26 Q166 22 150 26 Z" fill="#D9534F"/><ellipse cx="166" cy="29" rx="31" ry="5.5" fill="#F2C94C" stroke="#A35F00" stroke-width="2"/><g fill="#1F2421"><rect x="148" y="40" width="16" height="11" rx="5"/><rect x="169" y="40" width="16" height="11" rx="5"/></g><path d="M163 44 L170 44 M148 43 L141 41 M185 43 L191 41" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/>`,
+    costume: `<path d="M150 29 Q150 9 166 9 Q182 9 182 29 Z" fill="#F2C94C" stroke="#A35F00" stroke-width="2"/><path d="M150 22 Q166 18 182 22 L182 26 Q166 22 150 26 Z" fill="#D9534F"/><ellipse cx="166" cy="29" rx="31" ry="5.5" fill="#F2C94C" stroke="#A35F00" stroke-width="2"/><g fill="#1F2421"><rect x="146" y="38" width="19" height="17" rx="7"/><rect x="171" y="43" width="17" height="17" rx="7"/></g><path d="M164 46 L172 50 M147 44 L140 42 M187 50 L193 48" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/>`,
     headDeco: [sun, eis, ball],
     footDeco: sun,
     strip: wave('#8FCDE6', 18) + row(12, (x) => `<circle cx="${x}" cy="20" r="2.2" fill="#F2C94C"/>`),
@@ -233,7 +239,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     border: '#DDD7CC',
     seg: ['#FFFFFF', '#E58A84'],
     // Piratenhut und Augenklappe
-    costume: `<path d="M143 37 L190 52" stroke="#1F2421" stroke-width="2"/><ellipse cx="176" cy="46.5" rx="7.5" ry="6.5" fill="#1F2421"/><path d="M134 33 Q132 16 144 20 Q150 6 166 8 Q182 6 188 20 Q200 16 198 33 Q166 24 134 33 Z" fill="#1F2421"/><path d="M136 32 Q166 23 196 32" fill="none" stroke="#F2C94C" stroke-width="2.5"/>${knochen(166, 20)}`,
+    costume: `<path d="M142 35 L193 58" stroke="#1F2421" stroke-width="2"/><ellipse cx="179" cy="51.5" rx="8.5" ry="10" fill="#1F2421"/><path d="M134 33 Q132 16 144 20 Q150 6 166 8 Q182 6 188 20 Q200 16 198 33 Q166 24 134 33 Z" fill="#1F2421"/><path d="M136 32 Q166 23 196 32" fill="none" stroke="#F2C94C" stroke-width="2.5"/>${knochen(166, 20)}`,
     headDeco: [ship, truhe, anker],
     footDeco: anker,
     strip: wave('#7A8A99', 18) + row(10, (x) => `<path d="M${x - 4} 16 l8 8 m0 -8 l-8 8" stroke="#D9534F" stroke-width="2.5" stroke-linecap="round"/>`),
@@ -264,32 +270,50 @@ export const THEMES: Record<ThemeId, Theme> = {
     footDeco: sonnenblume,
     strip: `<path d="M0 10 L720 10 M0 18 L720 18" stroke="#C9A06A" stroke-width="2.5"/>` + row(24, (x) => `<path d="M${x} 4 L${x} 23" stroke="#A87B2A" stroke-width="3" stroke-linecap="round"/>`),
   },
+  dinos: {
+    id: 'dinos',
+    name: 'Dinos',
+    main: '#3F6E12',
+    light: '#F1F8E3',
+    border: '#D7EBB5',
+    seg: ['#D7EBB5', '#A3D93B'],
+    // Dino-Zacken auf dem Kopf
+    costume: [-152, -122, -92, -62, -32]
+      .map((w) => {
+        const a = (w * Math.PI) / 180;
+        const p = (r: number, d = 0) => `${(166 + r * Math.cos(a + d)).toFixed(1)} ${(50 + r * Math.sin(a + d)).toFixed(1)}`;
+        return `<path d="M${p(23, -0.2)} L${p(40)} L${p(23, 0.2)} Z" fill="#F2A65A" stroke="#A84D12" stroke-width="2" stroke-linejoin="round"/>`;
+      })
+      .join(''),
+    headDeco: [vulkan, pfote('#7A9A3A'), dinoEi],
+    footDeco: dinoEi,
+    strip: row(14, (x, i) => `<g transform="translate(${x - 8} ${i % 2 ? 2 : 6}) scale(0.17)">${pfote(i % 2 ? '#A3D93B' : '#7A9A3A')}</g>`),
+  },
 };
 
-/** Raupe mit Kostüm, Segmentfarben aus dem Thema. */
+/** Raupe mit Kostüm: glänzende Perlen in den Themenfarben und der Kopf vom App-Icon (ohne Fühler). */
 export function raupeSvg(theme: Theme, cls = ''): string {
   const [a, b] = theme.seg;
-  const s = theme.main;
-  return `<svg class="${cls}" viewBox="0 -10 210 100" aria-hidden="true">
-<circle cx="22" cy="62" r="18" fill="${a}" stroke="${s}" stroke-width="2.5"/>
-<circle cx="54" cy="56" r="20" fill="${b}" stroke="${s}" stroke-width="2.5"/>
-<circle cx="90" cy="62" r="20" fill="${a}" stroke="${s}" stroke-width="2.5"/>
-<circle cx="126" cy="56" r="20" fill="${b}" stroke="${s}" stroke-width="2.5"/>
-<circle cx="166" cy="50" r="26" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/>
-<circle cx="158" cy="46" r="4" fill="#1F2421"/><circle cx="176" cy="46" r="4" fill="#1F2421"/>
-<path d="M156 60 Q166 68 178 60" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/>
-${theme.costume}</svg>`;
+  const m = new RaupenMaler();
+  const perlen = m.perle(22, 62, 18, a) + m.perle(54, 56, 20, b) + m.perle(90, 62, 20, a) + m.perle(126, 56, 20, b);
+  return m.svg('0 -10 210 100', `${perlen}${m.kopfOhneFuehler(166, 50, 27)}${theme.costume}`, `class="${cls}" aria-hidden="true"`);
 }
 
-/** Raupe nur als Umriss (für das Quest „Male!“). */
+/**
+ * Raupe nur als Umriss (für das Quest „Male!“) – Gesicht wie beim Icon-Kopf.
+ * Augen und Mund sind #FEFEFE, nicht #FFFFFF: am Bildschirm werden nur die weißen Flächen ausgemalt.
+ */
 export function raupeOutlineSvg(theme: Theme): string {
   const s = '#1F2421';
   return `<svg class="quest-male" viewBox="0 -10 210 100" aria-hidden="true">
 <g fill="#FFFFFF" stroke="${s}" stroke-width="2">
-<circle cx="22" cy="62" r="18"/><circle cx="54" cy="56" r="20"/><circle cx="90" cy="62" r="20"/><circle cx="126" cy="56" r="20"/><circle cx="166" cy="50" r="26"/>
+<circle cx="22" cy="62" r="18"/><circle cx="54" cy="56" r="20"/><circle cx="90" cy="62" r="20"/><circle cx="126" cy="56" r="20"/><ellipse cx="166" cy="50" rx="28.5" ry="26"/>
 </g>
-<circle cx="158" cy="46" r="3.5" fill="${s}"/><circle cx="176" cy="46" r="3.5" fill="${s}"/>
-<path d="M156 60 Q166 68 178 60" fill="none" stroke="${s}" stroke-width="2" stroke-linecap="round"/>
+<g fill="#FEFEFE" stroke="${s}" stroke-width="1.6"><ellipse cx="155.7" cy="46.4" rx="7.3" ry="8.3"/><ellipse cx="179.2" cy="51.5" rx="6" ry="8.2"/></g>
+<ellipse cx="157.2" cy="47.8" rx="4.4" ry="5.3" fill="${s}"/><ellipse cx="180.4" cy="52.8" rx="3.8" ry="5.1" fill="${s}"/>
+<circle cx="158.8" cy="45.6" r="1.6" fill="#FEFEFE"/><circle cx="181.8" cy="50.6" r="1.4" fill="#FEFEFE"/>
+<path d="M150 37 Q155 33 161 36 M174 41 Q179 38 184 41" fill="none" stroke="${s}" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M160 58 Q166.5 61 173 58 Q172 67 166.5 67 Q161 67 160 58 Z" fill="#FEFEFE" stroke="${s}" stroke-width="1.6" stroke-linejoin="round"/>
 <g fill="#FFFFFF" stroke="${s}" stroke-width="2">${theme.costume.replace(/fill="[^"]*"/g, 'fill="#FFFFFF"').replace(/stroke="[^"]*"/g, `stroke="${s}"`)}</g>
 </svg>`;
 }
