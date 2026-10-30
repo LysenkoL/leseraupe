@@ -135,8 +135,9 @@
 /* Anleitung ist für Eltern (enthält oft noch nicht gelernte Buchstaben): klein und grau */
 .q-text { font-size: calc(var(--fs) * 14px); color: var(--muted); font-weight: 500; flex: 1 1 60mm; }
 .q-box { width: 11mm; height: 11mm; border: 2px solid var(--ink); border-radius: 2mm; flex: none; }
+.q-gw { display: flex; align-items: center; gap: 4mm; flex: none; white-space: nowrap; }
 .q-secret { display: flex; gap: 1.6mm; }
-.q-secret span { width: 8.5mm; height: 10mm; border-bottom: 2px solid var(--ink); }
+.q-secret span { width: 9mm; height: 10mm; border: 2px solid var(--ink); border-radius: 1.5mm; }
 .quest-male { width: 60mm; height: 28mm; flex: none; }
 .blk-quest .blk-re { top: -4.5mm; right: 2mm; }
 

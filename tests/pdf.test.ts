@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { jpegsToPdf } from '../src/sheet/pdf';
+import { jpegsToPdf, pdfName } from '../src/sheet/pdf';
 
 /** Kleinstes „JPEG“ reicht für den Aufbau der Datei */
 const fake = (n: number) => ({ jpeg: new Uint8Array([0xff, 0xd8, n, 0xff, 0xd9]), px: { w: 10, h: 14 }, wMm: 190, hMm: 276 });
 
 describe('PDF (A4, A6)', () => {
+  it('Dateiname: Bereich nur ohne Lücke', () => {
+    expect(pdfName([7])).toBe('Leseblatt-7');
+    expect(pdfName([5, 6, 7])).toBe('Leseblaetter-5-7');
+    expect(pdfName([5, 8, 6])).toBe('Leseblaetter-5-6-8');
+  });
+
   it('mehrere Blätter: eine Seite je Blatt, gültige Querverweise', () => {
     const pdf = Buffer.from(jpegsToPdf([fake(1), fake(2), fake(3)], 'Leseblätter 7–9'));
     const text = pdf.toString('latin1');

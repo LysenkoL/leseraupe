@@ -121,7 +121,8 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
     let extra = '';
     if (q.kind === 'zaehle') extra = `<span class="q-box"></span>`;
     if (q.kind === 'geheimwort' && q.target) {
-      extra = `<span class="q-words">${(q.words ?? []).map((w) => `<u>${esc(w)}</u>`).join(' · ')}</span><span class="q-secret">${[...q.target].map(() => '<span></span>').join('')}</span>`;
+      // Wörter und Kästchen bleiben zusammen in einer Zeile
+      extra = `<span class="q-gw"><span class="q-words">${(q.words ?? []).map((w) => `<u>${esc(w)}</u>`).join(' · ')}</span><span class="q-secret">${[...q.target].map(() => '<span></span>').join('')}</span></span>`;
     }
     const male = q.kind === 'male' ? raupeOutlineSvg(t) : '';
     blocks.push(

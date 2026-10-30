@@ -3,7 +3,7 @@ import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem,
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { printSheets } from '../sheet/print';
-import { sharePdf, sheetsToPdf } from '../sheet/pdf';
+import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
 import { checkText, unitById } from '../core/letters';
@@ -100,6 +100,8 @@ export function renderVorschau(root: HTMLElement): void {
     drawNav();
     const h = await header(d);
     root.querySelector('#pv-title')!.textContent = h.title;
+    // in einer Serie eindeutig: nur dieses Blatt wird als gelesen markiert
+    root.querySelector('#read')!.textContent = t('vorschau.gelesenNr', { nr: h.nr });
     root.querySelector('#pv-sub')!.textContent = h.sub;
     const rm = root.querySelector<HTMLElement>('#pv-removed')!;
     rm.innerHTML = d.removed.length
@@ -199,8 +201,8 @@ export function renderVorschau(root: HTMLElement): void {
     btn.disabled = true;
     try {
       // Nummern vergeben, aber erst ins Protokoll, wenn das PDF wirklich geteilt/gespeichert ist
-      const { html, first, last, nums } = await saveAll('none');
-      const name = first === last ? `Leseblatt-${first}` : `Leseblaetter-${first}-${last}`;
+      const { html, nums } = await saveAll('none');
+      const name = pdfName(nums);
       const pdf = await sheetsToPdf(html, name.replace('-', ' '));
       if (!(await elternCheck())) return;
       const r = await sharePdf(pdf, `${name}.pdf`);

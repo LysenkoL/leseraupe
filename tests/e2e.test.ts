@@ -443,7 +443,9 @@ describe('App-Ablauf', () => {
     await page.reload();
     await page.waitForSelector('#t-digits');
     expect(await page.textContent('#t-digits')).toBe('20:00');
+    expect(await page.isDisabled('#t-reset')).toBe(true);
     await page.click('#t-start');
+    expect(await page.isDisabled('#t-reset')).toBe(false);
     expect(await page.isHidden('#t-wahl')).toBe(true);
     await page.click('#t-reset');
     await page.click('[data-tmin="5"]');
