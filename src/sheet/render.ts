@@ -1,6 +1,6 @@
 import { t as tr } from '../app/i18n';
 import type { BlockId, SheetData } from '../core/types';
-import { unitById } from '../core/letters';
+import { UNIT_IDS, unitById } from '../core/letters';
 import { esc } from '../core/html';
 import { silbenVon } from '../core/dict';
 import { THEMES, raupeSvg, raupeOutlineSvg, decoSvg } from './themes';
@@ -43,6 +43,25 @@ function grid(items: string[], cls: string, edit: string | null, farbig?: boolea
   return `<div class="sh-grid ${cls}" style="--colw:${colW(items)}">${items.map((w, i) => `<span${editAttr(edit, i)}>${lesetext(w, farbig)}</span>`).join('')}</div>`;
 }
 
+/** Breite der Buchstabenspalte im Kopf (190 mm − Deko 26 mm − Raupe 46 mm − Lücken), mit Reserve */
+const KOPF_BREITE_MM = 112;
+
+/** Geschätzte Breite eines Buchstabenkreises in mm – lieber etwas zu breit (gemessen in Chromium). */
+function kreisBreite(circle: string, neu: boolean): number {
+  const w = circle.length > 2 ? 2.2 * circle.length + 4.8 : /[MWmw]/.test(circle) ? 10.8 : 8.7;
+  return w + (neu ? 0.5 : 0);
+}
+
+/**
+ * C1: Passen alle Buchstabenkreise nicht in eine Zeile, zeigt der Kopf nur noch
+ * „N Buchstaben“ (bzw. „Alle Buchstaben“) und den neuen Buchstaben.
+ */
+export function kopfKompakt(letters: string[], newLetter: string | null): boolean {
+  const units = letters.map((id) => unitById(id)).filter((u) => !!u);
+  const breite = units.reduce((sum, u) => sum + kreisBreite(u.circle, u.id === newLetter), 0) + 1.3 * Math.max(0, units.length - 1);
+  return breite > KOPF_BREITE_MM;
+}
+
 function blockHead(n: number, title: string, id: BlockId, interactive: boolean): string {
   const re = interactive ? `<button class="blk-re" type="button" data-reroll="${id}" aria-label="${tr('vorschau.blockMischen')}">↻</button>` : '';
   return `<div class="blk-h"><span class="blk-n">${n}</span><h2>${esc(title)}</h2>${re}</div>`;
@@ -53,15 +72,18 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
   const interactive = !!opt.interactive;
   const nr = opt.displayNumber;
 
-  const letters = d.letters
-    .map((id) => {
-      const u = unitById(id);
-      if (!u) return '';
-      const wide = u.circle.length > 2 ? ' wide' : '';
-      const neu = id === d.newLetter ? ' neu' : '';
-      return `<span class="sh-l${wide}${neu}">${esc(u.circle)}</span>`;
-    })
-    .join('');
+  const kreis = (id: string) => {
+    const u = unitById(id);
+    if (!u) return '';
+    const wide = u.circle.length > 2 ? ' wide' : '';
+    const neu = id === d.newLetter ? ' neu' : '';
+    return `<span class="sh-l${wide}${neu}">${esc(u.circle)}</span>`;
+  };
+  // Blatt immer deutsch, auch bei ukrainischer Oberfläche
+  const anzahl = d.letters.length >= UNIT_IDS.length ? 'Alle Buchstaben' : `${d.letters.length} Buchstaben`;
+  const letters = kopfKompakt(d.letters, d.newLetter)
+    ? `<span class="sh-l sh-anzahl">${anzahl}</span>${d.newLetter && d.letters.includes(d.newLetter) ? kreis(d.newLetter) : ''}`
+    : d.letters.map(kreis).join('');
 
   const head = `
 <header class="sh-head">

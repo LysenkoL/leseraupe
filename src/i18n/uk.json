@@ -100,6 +100,8 @@
   "start.erstBuchstaben": "Спочатку позначте вивчені літери.",
   "block.aehnlich": "Схожі літери",
   "blatt.titel": "Аркуш {nr} · {thema}",
+  "blatt.buchstaben": "Літер: {n}",
+  "blatt.alleBuchstaben": "Усі літери",
   "blatt.neu": "нова: {b}",
   "blatt.stufe": "Рівень {n}",
   "blatt.gelesenToast": "Аркуш {nr}: прочитано ✓",

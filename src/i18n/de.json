@@ -100,6 +100,8 @@
   "start.erstBuchstaben": "Bitte zuerst gelernte Buchstaben antippen.",
   "block.aehnlich": "Ähnliche Buchstaben",
   "blatt.titel": "Blatt {nr} · {thema}",
+  "blatt.buchstaben": "{n} Buchstaben",
+  "blatt.alleBuchstaben": "Alle Buchstaben",
   "blatt.neu": "neu: {b}",
   "blatt.stufe": "Stufe {n}",
   "blatt.gelesenToast": "Blatt {nr}: gelesen ✓",
