@@ -310,6 +310,23 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     }
   });
 
+  it('mittlere Buchstabenzahl (T O M L A I S + E N R U H D B Ei Au F W G Ch): Stufe ≥ 3 eine fertige Geschichte mit 8+ Sätzen, keine Vorlage', () => {
+    const MITTE = ['t', 'o', 'm', 'l', 'a', 'i', 's', 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w', 'g', 'ch'];
+    for (const letters of [MITTE, [...MITTE, 'k', 'p', 'z', 'ie', 'sch']]) {
+      for (const stufe of [3, 4, 5]) {
+        for (const neu of [letters[letters.length - 1], 'w', null]) {
+          for (const d of serie(letters, stufe, 6, neu)) {
+            const g = d.geschichte!;
+            const quelle = DICT.geschichten.find((x) => x.titel === g.titel);
+            expect(quelle?.saetze, `${stufe} ${g.titel}`).toEqual(g.saetze);
+            expect(g.saetze.length, g.titel).toBeGreaterThanOrEqual(8);
+            assertOnlyKnown(d, letters);
+          }
+        }
+      }
+    }
+  });
+
   it('höhere Stufe bei allen Buchstaben: längere Geschichten, Wörter und Sätze', () => {
     const mess = (stufe: number) => {
       const ds = serie(UNIT_IDS, stufe, 10);
