@@ -100,7 +100,7 @@ function urkundeBild(nr: number): string {
   // Konfetti am Rand (nicht über Text und Raupe)
   const r = zufall(nr * 97 + 13);
   // nur am Rand, und unten frei für Nummer, Datum und Unterschrift
-  const frei = (x: number, y: number) => (x < 24 || x > W - 24 || y < 15) && y < 240;
+  const frei = (x: number, y: number) => (x < 24 || x > W - 24 || y < 15) && y < 246;
   let k = 0;
   for (let i = 0; i < 400 && k < 46; i++) {
     const x = 11 + r() * (W - 22);
@@ -122,16 +122,17 @@ function urkundeBild(nr: number): string {
   const bx = 95;
   const by = 128;
   const br = 62;
+  // symmetrischer Bogen: erste Perle bei 200°, Kopf bei 340° – beide auf gleicher Höhe
+  const schritt = 140 / PERLEN_JE_RAUPE;
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
-    const a = ((200 + (i * 120) / (PERLEN_JE_RAUPE - 1)) * Math.PI) / 180;
+    const a = ((200 + i * schritt) * Math.PI) / 180;
     s += m.perle(bx + br * Math.cos(a), by + br * Math.sin(a), 7.2, REGENBOGEN[i]);
   }
-  // Kopf direkt hinter der roten Perle, auf demselben Bogen
-  const ka = (333 * Math.PI) / 180;
+  const ka = (340 * Math.PI) / 180;
   s += m.kopf(bx + br * Math.cos(ka), by + br * Math.sin(ka), 10.5);
   // Medaille
   const mx = 95;
-  const my = 186;
+  const my = 180;
   s += `<path d="M${mx - 10} ${my + 8} L${mx - 17} ${my + 34} L${mx - 10} ${my + 30} L${mx - 6} ${my + 37} L${mx - 1} ${my + 12} Z" fill="#3A86FF"/><path d="M${mx + 10} ${my + 8} L${mx + 17} ${my + 34} L${mx + 10} ${my + 30} L${mx + 6} ${my + 37} L${mx + 1} ${my + 12} Z" fill="#E63950"/>`;
   let zacken = '';
   for (let i = 0; i < 28; i++) {
@@ -153,14 +154,11 @@ export function renderUrkunde(u: { name: string; nr: number; datum: string; gesa
   return `<div class="sheet urkunde">
   ${urkundeBild(u.nr)}
   <div class="uk-titel">${esc(t('urk.titel'))}</div>
-  <div class="uk-voll">${esc(t('urk.voll', { n: PERLEN_JE_RAUPE }))}</div>
+  <div class="uk-voll">${esc(t('urk.voll', { n: PERLEN_JE_RAUPE })).replace('\n', '<br>')}</div>
   <div class="uk-name${[...u.name].length > 11 ? ' lang' : ''}">${u.name ? `<span class="uk-stern">★</span>${esc(u.name)}<span class="uk-stern">★</span>` : '<span class="uk-linie"></span>'}</div>
   <div class="uk-medaille"><b>${u.gesamt}</b><small>${esc(t('urk.tage'))}</small></div>
   <div class="uk-text">${esc(t('urk.gelesen', { n: u.gesamt }))}</div>
   <div class="uk-toll">${esc(t('urk.toll'))}</div>
-  <div class="uk-fuss">
-    <div class="uk-info">${esc(t('urk.raupe', { nr: u.nr }))}<br>${d}</div>
-    <div class="uk-unterschrift"><span></span>${esc(t('urk.unterschrift'))}</div>
-  </div>
+  <div class="uk-fuss">${esc(t('urk.raupe', { nr: u.nr }))} · ${d}</div>
 </div>`;
 }

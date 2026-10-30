@@ -266,10 +266,9 @@
   "lesen.naechstes": "Nächstes Blatt →",
   "lesen.rest": "Noch {n} Min Lesezeit",
   "urk.titel": "Urkunde",
-  "urk.voll": "Die Leseraupe hat alle {n} Perlen!",
+  "urk.voll": "Die Leseraupe\nhat alle {n} Perlen!",
   "urk.tage": "Lesetage",
   "urk.gelesen": "hat an {n} Tagen gelesen.",
   "urk.toll": "Super gemacht!",
-  "urk.raupe": "Leseraupe Nr. {nr}",
-  "urk.unterschrift": "Unterschrift"
+  "urk.raupe": "Leseraupe Nr. {nr}"
 }
