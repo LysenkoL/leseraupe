@@ -52,6 +52,28 @@ describe('App-Ablauf', () => {
     expect(await page.$('.onb')).toBeNull();
   });
 
+  it('Einführung: durch alle vier Schritte wischen, auch über dem Namensfeld', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 693 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-next');
+    const wisch = async (y: number) => {
+      await p.mouse.move(300, y);
+      await p.mouse.down();
+      await p.mouse.move(200, y, { steps: 4 });
+      await p.mouse.move(80, y, { steps: 4 });
+      await p.mouse.up();
+    };
+    for (let i = 1; i <= 3; i++) {
+      await wisch(150);
+      await p.waitForFunction((n) => document.querySelectorAll('.onb-dots i')[n]?.classList.contains('on'), i);
+    }
+    const box = (await (await p.$('#onb-name'))!.boundingBox())!;
+    await wisch(box.y + box.height / 2);
+    await p.waitForSelector('#create');
+    await ctx.close();
+  });
+
   it('nächster Start: sofort die Startseite; Einführung wieder aus „Über die App“', async () => {
     await page.reload();
     await page.waitForSelector('#create');

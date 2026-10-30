@@ -219,7 +219,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 .onb-dots { display: flex; gap: 8px; }
 .onb-dots i { width: 10px; height: 10px; border-radius: 5px; background: var(--line); }
 .onb-dots i.on { width: 26px; background: var(--green); }
-.onb-input { width: 100%; min-height: 56px; border-radius: 14px; border: 1.5px solid #CCD3CE; padding: 0 16px; font-size: 20px; background: #fff; text-align: center; }
+.onb-input { touch-action: pan-y; /* waagerechtes Wischen bleibt bei der Einführung */
+   width: 100%; min-height: 56px; border-radius: 14px; border: 1.5px solid #CCD3CE; padding: 0 16px; font-size: 20px; background: #fff; text-align: center; }
 
 /* Am Bildschirm lesen (A4) */
 .lesen .rd-pos { text-align: center; color: var(--muted); font-weight: 700; }
