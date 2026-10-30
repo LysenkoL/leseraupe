@@ -24,8 +24,9 @@ const LETTER_SETS: [string, string[]][] = [
   ['alle 43', UNIT_IDS],
 ];
 
-function sheetFor(letters: string[], minutes: 5 | 10, theme: (typeof THEME_IDS)[number], seed = 5): SheetData {
+function sheetFor(letters: string[], minutes: 5 | 10, theme: (typeof THEME_IDS)[number], seed = 5, stufe?: number): SheetData {
   return generateSheet({
+    stufe,
     letters,
     newLetter: letters[letters.length - 1],
     minutes,
@@ -113,6 +114,20 @@ describe('Generierte Blätter: genau eine A4-Seite', () => {
         const d = sheetFor(letters, 10, 'zirkus', 3);
         d.quest = quest === 'male' ? { kind: 'male', text: 'Male die Raupe an.' } : { kind: 'geheimwort', text: 'Schreibe die ersten Buchstaben in die Kästchen:', target: 'OMA', words: ['Oma', 'Mais', 'Ast'] };
         const { html } = await fitted(d);
+        expect(await pdfPages(page, html)).toBe(1);
+      });
+    }
+  }
+});
+
+describe('C3: lange Geschichten bei allen Buchstaben passen ganz aufs Blatt', () => {
+  for (const stufe of [5, 8, 10]) {
+    for (const seed of [1, 2, 3]) {
+      it(`alle 43, Stufe ${stufe}, Seed ${seed}: eine Seite, Geschichte nicht gekürzt`, async () => {
+        const d = sheetFor(UNIT_IDS, 5, THEME_IDS[seed % THEME_IDS.length], seed, stufe);
+        expect(d.geschichte!.saetze.length).toBeGreaterThanOrEqual(10);
+        const { html, data } = await fitted(d);
+        expect(data.geschichte!.saetze).toEqual(d.geschichte!.saetze);
         expect(await pdfPages(page, html)).toBe(1);
       });
     }

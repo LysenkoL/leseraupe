@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
+import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, MAX_STUFE_ALPHABET, BLAETTER_PRO_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
+import { DICT } from '../src/core/dict';
 import { DEFAULT_BLOCKS, type SheetData, type BlockId } from '../src/core/types';
-import { checkText, countUnit, UNIT_IDS, wordsOf } from '../src/core/letters';
+import { checkText, countUnit, tokenizeWord, UNIT_IDS, wordsOf } from '../src/core/letters';
 import { mulberry32, shuffle } from '../src/core/random';
 
 const START = ['t', 'o', 'm', 'l', 'a', 'i', 's'];
@@ -258,5 +259,99 @@ describe('Neue Buchstabe im Mittelpunkt (Review 29.10.)', () => {
       }
     }
     throw new Error('kein Finde-Quest erzeugt');
+  });
+});
+
+describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
+  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const reichtum = (g: { saetze: string[] }) => new Set(g.saetze.flatMap((x) => wordsOf(x).flatMap((w) => tokenizeWord(w).units))).size;
+  /** Mehrere Blätter hintereinander (mit Verlauf), wie in der App */
+  const serie = (letters: string[], stufe: number, n = 8, newLetter: string | null = letters[letters.length - 1]) => {
+    const done: { seq: number; data: SheetData }[] = [];
+    for (let i = 0; i < n; i++) {
+      const h = historyFrom(done, i + 1);
+      done.push({ seq: i + 1, data: generateSheet(params(letters, { seed: 300 + i, stufe, history: h, newLetter })).sheet });
+    }
+    return done.map((d) => d.data);
+  };
+
+  it('„Reichtum“ der Geschichte (verschiedene Einheiten) wächst mit der Zahl der Buchstaben', () => {
+    const mengen = [START, [...START, 'e', 'n', 'r', 'u', 'ei', 'h', 'd', 'b'], UNIT_IDS.slice(0, 31), UNIT_IDS.slice(0, 39), UNIT_IDS];
+    const werte = mengen.map((letters) => avg(serie(letters, 5).map((d) => reichtum(d.geschichte!))));
+    for (let i = 1; i < werte.length; i++) expect(werte[i], werte.join(' / ')).toBeGreaterThan(werte[i - 1]);
+  });
+
+  it('alle Buchstaben, ab Stufe 5: zusammenhängende Geschichte mit 10+ Sätzen, nie eine einfache', () => {
+    for (const stufe of [5, 6, 8, 10]) {
+      for (const neu of ['tz', 'ß', null]) {
+        for (const d of serie(UNIT_IDS, stufe, 8, neu)) {
+          const g = d.geschichte!;
+          expect(g.saetze.length, `${stufe} ${g.titel}`).toBeGreaterThanOrEqual(10);
+          // eine fertige Geschichte aus dem Wörterbuch (keine Vorlage), ganz und in Reihenfolge
+          const quelle = DICT.geschichten.find((x) => x.titel === g.titel);
+          expect(quelle?.saetze, g.titel).toEqual(g.saetze);
+          expect(reichtum(g), g.titel).toBeGreaterThanOrEqual(25);
+          expect(d.fragen.length).toBeGreaterThanOrEqual(3);
+        }
+      }
+    }
+  });
+
+  it('höhere Stufe bei allen Buchstaben: längere Geschichten, Wörter und Sätze', () => {
+    const mess = (stufe: number) => {
+      const ds = serie(UNIT_IDS, stufe, 10);
+      return {
+        g: avg(ds.map((d) => d.geschichte!.saetze.length)),
+        w: avg(ds.flatMap((d) => d.woerter.map((w) => [...w].length))),
+        s: avg(ds.flatMap((d) => d.saetze.map((x) => wordsOf(x).length))),
+      };
+    };
+    const s5 = mess(5);
+    const s10 = mess(10);
+    expect(s10.g).toBeGreaterThan(s5.g);
+    expect(s10.g).toBeGreaterThanOrEqual(13);
+    expect(s10.w).toBeGreaterThan(s5.w);
+    expect(s10.s).toBeGreaterThan(s5.s);
+  });
+
+  it('nichts Ungelerntes auf dem Blatt – auch bei langen Geschichten und hohen Stufen', () => {
+    for (const letters of [UNIT_IDS.slice(0, 31), UNIT_IDS.slice(0, 39), UNIT_IDS, UNIT_IDS.filter((u) => !['y', 'c', 'qu', 'x'].includes(u))]) {
+      for (const stufe of [1, 5, 8, 10]) {
+        for (const d of serie(letters, stufe, 4)) assertOnlyKnown(d, letters);
+      }
+    }
+  });
+
+  it('Geschichten wiederholen sich erst, wenn alle passenden gelesen sind', () => {
+    const titel = serie(UNIT_IDS, 10, 8, null).map((d) => d.geschichte!.titel);
+    expect(new Set(titel).size).toBe(titel.length);
+  });
+
+  it('Stufen 6–10 nur bei (fast) vollem Alphabet, langsamer als bis Stufe 5', () => {
+    const blatt = (letters: string[], gefuehl?: 'leicht' | 'geht' | 'schwer') => ({ letters, gefuehl });
+    const n = (k: number, letters: string[]) => Array.from({ length: k }, () => blatt(letters));
+    // wenige Buchstaben: höchstens Stufe 5
+    expect(stufeFor(n(40, START), START)).toBe(MAX_STUFE);
+    // alle Buchstaben: nach 4 Blättern Stufe 5, dann je BLAETTER_PRO_STUFE Blätter eine Stufe mehr
+    expect(stufeFor(n(4, UNIT_IDS), UNIT_IDS)).toBe(5);
+    expect(stufeFor(n(4 + BLAETTER_PRO_STUFE - 1, UNIT_IDS), UNIT_IDS)).toBe(5);
+    expect(stufeFor(n(4 + BLAETTER_PRO_STUFE, UNIT_IDS), UNIT_IDS)).toBe(6);
+    expect(stufeFor(n(100, UNIT_IDS), UNIT_IDS)).toBe(MAX_STUFE_ALPHABET);
+    // seltene Buchstaben dürfen fehlen
+    const fast = UNIT_IDS.filter((u) => !['y', 'c', 'qu'].includes(u));
+    expect(stufeFor(n(100, fast), fast)).toBe(MAX_STUFE_ALPHABET);
+    // „schwer“ = eine Stufe zurück, „geht“ = bleibt
+    const zehn = n(100, UNIT_IDS);
+    expect(stufeFor([...zehn, blatt(UNIT_IDS, 'schwer')], UNIT_IDS)).toBe(MAX_STUFE_ALPHABET - 1);
+    expect(stufeFor([...zehn, blatt(UNIT_IDS, 'geht')], UNIT_IDS)).toBe(MAX_STUFE_ALPHABET);
+  });
+
+  it('Wörterbuch: lange Geschichten für viele Buchstaben, mit Fragen', () => {
+    const lang = DICT.geschichten.filter((g) => g.saetze.length >= 10);
+    expect(lang.length).toBeGreaterThanOrEqual(35);
+    for (const g of lang) expect(g.fragen.length, g.titel).toBeGreaterThanOrEqual(4);
+    // genug lange Geschichten für jede Stufe des vollen Alphabets
+    expect(lang.filter((g) => g.ab === 43 && g.saetze.length >= 13).length).toBeGreaterThanOrEqual(8);
+    expect(lang.filter((g) => g.ab <= 31).length).toBeGreaterThanOrEqual(10);
   });
 });
