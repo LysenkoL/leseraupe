@@ -11,15 +11,20 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const crlf = (txt) => txt.replace(/\r\n?/g, '\n');
 const Q = (f) => crlf(readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8'));
 const lines = (txt) => txt.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
-const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'winter']);
+const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof']);
 
 export function buildDict() {
   const woerter = [];
   const seen = new Set();
   const add = (w, typ, extra = {}) => {
-    if (seen.has(w)) return;
-    seen.add(w);
     const tags = extra.tags ?? [];
+    if (seen.has(w)) {
+      // doppelt (z. B. im Themen-Block): nur weitere Themen ergänzen
+      const e = woerter.find((x) => x.w === w);
+      for (const t of tags) if (THEMES.has(t) && !e.themen.includes(t)) e.themen.push(t);
+      return;
+    }
+    seen.add(w);
     woerter.push({ w, typ, len: [...w].length, themen: tags.filter((t) => THEMES.has(t)), ...extra, tags: tags.filter((t) => !THEMES.has(t)) });
   };
 

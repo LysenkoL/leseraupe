@@ -14,7 +14,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      includeAssets: ['fonts/*.woff2', 'icons/*.png', 'icons/*.svg'],
+      includeAssets: ['fonts/*.woff2', 'icons/*.png'],
       manifest: {
         // eigene id: nicht mit anderen Apps auf lysenkol.github.io verwechseln
         id: '/leseraupe/',

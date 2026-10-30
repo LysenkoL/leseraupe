@@ -248,5 +248,13 @@
   "update.aktuell": "Das ist die neueste Version.",
   "update.offline": "Kein Internet – später noch einmal versuchen.",
   "update.fehler": "Konnte nicht nachsehen. Bitte später noch einmal.",
-  "update.geladen": "Neue Version geladen ✓"
+  "update.geladen": "Neue Version geladen ✓",
+  "thema.fruehling": "Frühling",
+  "thema.sommer": "Sommer",
+  "thema.herbst": "Herbst",
+  "thema.piraten": "Piraten",
+  "thema.burg": "Ritterburg",
+  "thema.bauernhof": "Bauernhof",
+  "thema.jahreszeit": "Jahreszeit",
+  "thema.jetzt": "jetzt: {name}"
 }

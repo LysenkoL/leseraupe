@@ -853,3 +853,79 @@ e Libelle | tier wiese
 r Marienkäfer | tier wiese
 r Grashüpfer | tier wiese
 r Regenwurm | tier wiese
+
+# --- Themen (Mehrfachnennung ergänzt nur das Thema) ---
+r Hahn | tier bauernhof
+s Huhn | tier bauernhof
+e Kuh | tier bauernhof
+s Schaf | tier bauernhof
+s Pferd | tier bauernhof burg
+r Esel | tier bauernhof
+e Ziege | tier bauernhof
+s Schwein | tier bauernhof
+e Ente | tier bauernhof
+e Gans | tier bauernhof
+r Traktor | ding bauernhof
+r Stall | ding bauernhof
+s Heu | ding bauernhof
+r Hof | ding bauernhof
+e Milch | trinken bauernhof
+s Ei | essen bauernhof
+e Möhre | essen bauernhof
+r Bauer | person bauernhof
+s Schiff | ding piraten meer
+r Schatz | ding piraten
+e Insel | ding piraten meer
+r Anker | ding piraten meer
+s Segel | ding piraten
+e Kiste | ding piraten
+e Karte | ding piraten
+s Gold | ding piraten burg
+r Papagei | tier piraten
+r Pirat | person piraten
+s Boot | ding piraten meer
+s Seil | ding piraten zirkus
+r Ritter | person burg
+e Burg | ding burg
+r Turm | ding burg
+r König | person burg
+e Königin | person burg
+r Prinz | person burg
+e Prinzessin | person burg
+s Schild | ding burg
+r Drache | tier burg
+e Krone | ding burg
+s Tor | ding burg
+e Mauer | ding burg
+e Fahne | ding burg zirkus
+s Blatt | ding herbst
+s Laub | ding herbst
+r Apfel | essen herbst
+e Nuss | essen herbst
+e Kastanie | ding herbst
+r Pilz | ding herbst zauberwald
+r Regen | ding herbst fruehling
+r Wind | ding herbst
+r Kürbis | essen herbst
+r Igel | tier herbst
+r Nebel | ding herbst
+e Blume | ding fruehling wiese
+e Tulpe | ding fruehling
+e Biene | tier fruehling wiese
+r Vogel | tier fruehling
+s Nest | ding fruehling
+r Hase | tier fruehling wiese
+s Küken | tier fruehling bauernhof
+s Gras | ding fruehling wiese
+r Wurm | tier fruehling
+r Käfer | tier fruehling wiese
+e Sonne | ding sommer fruehling
+s Eis | essen sommer
+r Sand | ding sommer meer
+r Ball | ding sommer
+r Strand | ding sommer meer
+e Melone | essen sommer
+r Hut | ding sommer zirkus
+e Welle | ding sommer meer
+r Eimer | ding sommer
+e Muschel | ding sommer meer

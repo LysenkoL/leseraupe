@@ -2,7 +2,7 @@ import { activeKind, FIRST_KIND_ID, loadProfile, saveSettings, type Settings } f
 import { useKind } from '../core/db';
 import type { SheetData } from '../core/types';
 import type { Removed } from '../core/generator';
-import { THEME_IDS, type ThemeId } from '../sheet/themes';
+import { THEME_IDS, THEME_WAHL, themeAus, type ThemeId } from '../sheet/themes';
 
 /** Aktuelles (noch nicht unbedingt gespeichertes) Blatt in der Vorschau */
 export interface Draft {
@@ -110,16 +110,17 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 /** Thema für ein neues Blatt: fest gewählt oder „jeden Tag ein anderes“. */
 export function themeForToday(): ThemeId {
-  if (!settings.randomTheme) return settings.theme;
+  if (!settings.randomTheme) return themeAus(settings.theme);
   try {
     const raw = readKey(RANDOM_KEY);
     const last = raw ? (JSON.parse(raw) as { date: string; theme: ThemeId }) : null;
     if (last && last.date === today() && THEME_IDS.includes(last.theme)) return last.theme;
-    const choices = THEME_IDS.filter((t) => t !== last?.theme);
+    // Zufall: unter den wählbaren, die Jahreszeit ist die aktuelle
+    const choices = THEME_WAHL.map((w) => themeAus(w)).filter((t) => t !== last?.theme);
     const theme = choices[Math.floor(Math.random() * choices.length)];
     localStorage.setItem(RANDOM_KEY, JSON.stringify({ date: today(), theme }));
     return theme;
   } catch {
-    return settings.theme;
+    return themeAus(settings.theme);
   }
 }
