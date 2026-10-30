@@ -127,7 +127,7 @@ body:has(.screen.timer)::before { background: #2B3A67; }
 .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 20px; }
 
 /* Dialoge */
-.modal-bg { position: fixed; inset: 0; background: rgba(20, 30, 24, .45); display: flex; align-items: flex-end; justify-content: center; z-index: 60; padding: 16px; }
+.modal-bg { position: fixed; inset: 0; background: rgba(20, 30, 24, .45); display: flex; align-items: flex-end; justify-content: center; z-index: 60; padding: 16px 16px calc(16px + var(--unten)); }
 .modal { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
 .modal h2 { margin: 0; font-size: 18px; font-weight: 800; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
@@ -352,3 +352,5 @@ details.card > summary::-webkit-details-marker { display: none; }
 .name-card { position: relative; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
+/* „Über die App“: ruhigere Zeilenenden bei längeren Texten */
+.ueber .card > div { text-wrap: pretty; }

@@ -18,7 +18,7 @@ export function feedbackMailto(): string {
 /** „Über die App“ (A3) – alles ohne Internet lesbar, nur das Senden der Mail braucht es. */
 export function renderUeber(root: HTMLElement): void {
   root.innerHTML = `
-<div class="screen">
+<div class="screen ueber">
   <div class="topbar">${backButton('#/einstellungen')}<div class="grow"><h1>${t('ueber.titel')}</h1></div></div>
   <div class="content">
     <section class="card">
