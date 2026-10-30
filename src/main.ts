@@ -2,7 +2,7 @@ import './styles/fonts.css';
 import './styles/app.css';
 import './styles/sheet.css';
 import './styles/print.css';
-import { registerSW } from 'virtual:pwa-register';
+import { initUpdate } from './app/update';
 import { renderStart } from './screens/start';
 import { renderVorschau } from './screens/vorschau';
 import { renderTimer } from './screens/timer';
@@ -24,24 +24,7 @@ import { PLAY } from './app/platform';
 import { initElternLinks } from './app/elterncheck';
 import { sprache } from './app/i18n';
 
-// Neue Version wird beim Start mit Internet automatisch geladen:
-// beim Öffnen, beim Zurückkehren in die App und stündlich nach Updates sehen.
-if (!PLAY) {
-  registerSW({
-    immediate: true,
-    onRegisteredSW(_url, reg) {
-      if (!reg) return;
-      const check = () => {
-        if (navigator.onLine) reg.update().catch(() => undefined);
-      };
-      check();
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') check();
-      });
-      setInterval(check, 60 * 60 * 1000);
-    },
-  });
-}
+if (!PLAY) initUpdate();
 
 initInstall();
 initElternLinks();
