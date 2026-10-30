@@ -55,6 +55,8 @@ export function zeitplan(e: Erinnerung, text: { title: string; body: string }): 
       channelId: KANAL,
       smallIcon: 'ic_stat_raupe',
       iconColor: '#2F6B3A',
+      // ohne das öffnet das Plugin die Einstellung „Wecker und Erinnerungen“ – wir wollen bewusst nicht minutengenau
+      isExactNotification: false,
       // Android zählt Sonntag = 1, Montag = 2 … Samstag = 7
       schedule: { on: { weekday: (d % 7) + 1, hour, minute }, allowWhileIdle: true },
     }));

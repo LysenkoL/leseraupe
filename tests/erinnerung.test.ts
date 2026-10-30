@@ -49,6 +49,8 @@ describe('Zeitplan der Erinnerung', () => {
       { weekday: 6, hour: 7, minute: 5 },
     ]);
     expect(liste.every((n) => n.title === TEXT.title && n.body === TEXT.body && n.channelId === 'lesezeit')).toBe(true);
+    // nie exakte Alarme: sonst öffnet Android die Einstellung „Wecker und Erinnerungen“
+    expect(liste.every((n) => n.isExactNotification === false)).toBe(true);
   });
 
   it('Samstag und Sonntag, Mitternacht und 23:59', async () => {
