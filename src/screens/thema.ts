@@ -5,9 +5,10 @@ import { renderSheet } from '../sheet/render';
 import { SAMPLE_SHEET } from '../core/sample';
 import { loadFonts } from '../sheet/fit';
 import { t, themaName } from '../app/i18n';
+import { nextNumber } from '../core/db';
 
 /** Kopfzeile eines Themas als verkleinerte Vorschau (echtes Blatt, oben abgeschnitten). */
-function headPreview(theme: ThemeId): string {
+function headPreview(theme: ThemeId, nr: number): string {
   const s = getSettings();
   const data = {
     ...SAMPLE_SHEET,
@@ -17,25 +18,27 @@ function headPreview(theme: ThemeId): string {
     childName: s.childName,
     blocks: { silben: false, woerter: false, kleine: false, aehnlich: false, saetze: false, geschichte: false, quest: false, fragen: false },
   };
-  return `<div class="hp"><div class="hp-in">${renderSheet(data, { displayNumber: 15 })}</div></div>`;
+  return `<div class="hp"><div class="hp-in">${renderSheet(data, { displayNumber: nr })}</div></div>`;
 }
 
 export function renderThema(root: HTMLElement): void {
   let sel: ThemeWahl = getSettings().theme;
   let random = getSettings().randomTheme;
+  // Vorschau mit der Nummer, die das nächste Blatt bekommt (nicht eine Beispielnummer)
+  let nr = 1;
   const draw = () => {
     root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('thema.titel')}</h1></div></div>
   <div class="content">
     <div class="hint">${t('thema.vorschau', { name: themaName(sel) })}</div>
-    <div class="card hp-big">${headPreview(themeAus(sel))}</div>
+    <div class="card hp-big">${headPreview(themeAus(sel), nr)}</div>
     <div class="theme-grid">
       ${THEME_WAHL.map((id) => {
         const th = themeAus(id);
         const jetzt = id === 'jahreszeit' ? `<small>${t('thema.jetzt', { name: themaName(th) })}</small>` : '';
         return `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[th].main}" aria-pressed="${id === sel}">
-          ${headPreview(th)}<span class="tc-name">${themaName(id)}${jetzt}</span>${id === sel ? `<span class="tc-sel" aria-label="${t('thema.gewaehlt')}">✓</span>` : ''}</button>`;
+          ${headPreview(th, nr)}<span class="tc-name">${themaName(id)}${jetzt}</span>${id === sel ? `<span class="tc-sel" aria-label="${t('thema.gewaehlt')}">✓</span>` : ''}</button>`;
       }).join('')}
     </div>
     <label class="toggle"><input type="checkbox" id="rnd" ${random ? 'checked' : ''}/> ${t('thema.zufall')}</label>
@@ -64,4 +67,12 @@ export function renderThema(root: HTMLElement): void {
     });
   };
   draw();
+  nextNumber()
+    .then((n) => {
+      if (n !== nr && root.querySelector('.theme-grid')) {
+        nr = n;
+        draw();
+      }
+    })
+    .catch(() => undefined);
 }

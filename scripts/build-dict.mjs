@@ -11,7 +11,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const crlf = (txt) => txt.replace(/\r\n?/g, '\n');
 const Q = (f) => crlf(readFileSync(resolve(ROOT, 'src/data/quelle', f), 'utf8'));
 const lines = (txt) => txt.split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
-const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof']);
+const THEMES = new Set(['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof', 'dinos']);
 
 export function buildDict() {
   const woerter = [];

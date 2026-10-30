@@ -4,7 +4,8 @@ import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { setOnboarded } from '../core/store';
 import { t } from '../app/i18n';
 
-const RAUPE = `<svg viewBox="0 0 116 56" aria-hidden="true"><circle cx="14" cy="38" r="12" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="36" cy="34" r="13" fill="#9FD18F" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="60" cy="38" r="13" fill="#BFE0B5" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="88" cy="28" r="18" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="82" cy="24" r="3" fill="#1F2421"/><circle cx="94" cy="24" r="3" fill="#1F2421"/><path d="M81 34 Q88 40 96 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+/** dieselbe Raupe wie auf dem App-Icon */
+const RAUPE = `<img src="icons/figur-400.png" alt="" width="200" height="200" />`;
 
 const STEPS = 4;
 

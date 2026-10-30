@@ -1,15 +1,15 @@
 export type ThemeId =
   | 'wiese' | 'weltraum' | 'meer' | 'zirkus' | 'zauberwald'
   | 'fruehling' | 'sommer' | 'herbst' | 'winter'
-  | 'piraten' | 'burg' | 'bauernhof';
+  | 'piraten' | 'burg' | 'bauernhof' | 'dinos';
 
 /** Alle Themen, die ein Blatt haben kann (auch die vier Jahreszeiten) */
-export const THEME_IDS: ThemeId[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof'];
+export const THEME_IDS: ThemeId[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'fruehling', 'sommer', 'herbst', 'winter', 'piraten', 'burg', 'bauernhof', 'dinos'];
 
 /** „Jahreszeit“: wird beim Erstellen zur aktuellen Jahreszeit */
 export type ThemeWahl = ThemeId | 'jahreszeit';
 /** Was man auswählen kann – die Jahreszeiten nur zusammen */
-export const THEME_WAHL: ThemeWahl[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'jahreszeit', 'piraten', 'burg', 'bauernhof'];
+export const THEME_WAHL: ThemeWahl[] = ['wiese', 'weltraum', 'meer', 'zirkus', 'zauberwald', 'jahreszeit', 'piraten', 'burg', 'bauernhof', 'dinos'];
 
 export function jahreszeit(d = new Date()): ThemeId {
   const m = d.getMonth(); // 0 = Januar
@@ -86,6 +86,11 @@ const knochen = (x: number, y: number) => {
   const k = `<rect x="-8" y="-1.6" width="16" height="3.2" rx="1.6"/><circle cx="-8" cy="-1.6" r="2"/><circle cx="-8" cy="1.6" r="2"/><circle cx="8" cy="-1.6" r="2"/><circle cx="8" cy="1.6" r="2"/>`;
   return `<g transform="translate(${x} ${y})" fill="#FFFFFF"><g transform="rotate(35)">${k}</g><g transform="rotate(-35)">${k}</g></g>`;
 };
+
+const pfote = (fill: string) =>
+  `<ellipse cx="50" cy="64" rx="22" ry="26" fill="${fill}"/><ellipse cx="26" cy="30" rx="9" ry="13" fill="${fill}" transform="rotate(-25 26 30)"/><ellipse cx="50" cy="20" rx="9" ry="13" fill="${fill}"/><ellipse cx="74" cy="30" rx="9" ry="13" fill="${fill}" transform="rotate(25 74 30)"/>`;
+const vulkan = `<path d="M8 92 L38 34 L62 34 L92 92Z" fill="#8B5E3C"/><path d="M38 34 L62 34 L57 44 L50 38 L43 46Z" fill="#E8762D"/><path d="M44 30 Q40 18 48 10 M56 30 Q62 18 56 8" stroke="#F2A65A" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="50" cy="6" r="5" fill="#9AA59E"/>`;
+const dinoEi = `<ellipse cx="50" cy="56" rx="30" ry="38" fill="#F7EBDD" stroke="#8B5E3C" stroke-width="3"/><circle cx="40" cy="44" r="6" fill="#A3D93B"/><circle cx="60" cy="62" r="7" fill="#A3D93B"/><circle cx="42" cy="74" r="5" fill="#A3D93B"/><path d="M22 52 L32 46 L40 56 L50 46 L60 56 L70 46 L78 52" fill="none" stroke="#8B5E3C" stroke-width="3" stroke-linejoin="round"/>`;
 
 const wave = (stroke: string, step: number) => {
   let d = `M0 14`;
@@ -263,6 +268,25 @@ export const THEMES: Record<ThemeId, Theme> = {
     headDeco: [scheune, sonnenblume, moehre],
     footDeco: sonnenblume,
     strip: `<path d="M0 10 L720 10 M0 18 L720 18" stroke="#C9A06A" stroke-width="2.5"/>` + row(24, (x) => `<path d="M${x} 4 L${x} 23" stroke="#A87B2A" stroke-width="3" stroke-linecap="round"/>`),
+  },
+  dinos: {
+    id: 'dinos',
+    name: 'Dinos',
+    main: '#3F6E12',
+    light: '#F1F8E3',
+    border: '#D7EBB5',
+    seg: ['#D7EBB5', '#A3D93B'],
+    // Dino-Zacken auf dem Kopf
+    costume: [-152, -122, -92, -62, -32]
+      .map((w) => {
+        const a = (w * Math.PI) / 180;
+        const p = (r: number, d = 0) => `${(166 + r * Math.cos(a + d)).toFixed(1)} ${(50 + r * Math.sin(a + d)).toFixed(1)}`;
+        return `<path d="M${p(23, -0.2)} L${p(40)} L${p(23, 0.2)} Z" fill="#F2A65A" stroke="#A84D12" stroke-width="2" stroke-linejoin="round"/>`;
+      })
+      .join(''),
+    headDeco: [vulkan, pfote('#7A9A3A'), dinoEi],
+    footDeco: dinoEi,
+    strip: row(14, (x, i) => `<g transform="translate(${x - 8} ${i % 2 ? 2 : 6}) scale(0.17)">${pfote(i % 2 ? '#A3D93B' : '#7A9A3A')}</g>`),
   },
 };
 

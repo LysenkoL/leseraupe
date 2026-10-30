@@ -1,3 +1,4 @@
+import { RaupenMaler, REGENBOGEN } from './raupenbild';
 import { esc } from '../core/html';
 
 /** So viele Perlen hat eine volle Raupe (B4) */
@@ -39,22 +40,19 @@ export function raupenstand(sheets: { reads: { at: string }[] }[]): Raupenstand 
 
 /** Raupe mit Perlen: volle Perlen grün, leere gestrichelt */
 export function perlenRaupeSvg(voll: number, cls = ''): string {
-  // etwas kleiner und mit Luft dazwischen – auf schmalen Handys kleben sie sonst aneinander
+  // Raupe wie auf dem App-Icon: gelesene Tage als Regenbogen-Perlen, offene gestrichelt
+  const m = new RaupenMaler();
   const r = 13;
   const gap = 7;
   const w = PERLEN_JE_RAUPE * (2 * r + gap) + 66;
   let s = '';
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
     const cx = r + 3 + i * (2 * r + gap);
-    const cy = i % 2 ? 52 : 58;
-    s += i < voll
-      ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${i % 2 ? '#9FD18F' : '#BFE0B5'}" stroke="#2F6B3A" stroke-width="2.5"/>`
-      : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#9AA8A0" stroke-width="2" stroke-dasharray="5 4"/>`;
+    const cy = i % 2 ? 54 : 60;
+    s += i < voll ? m.perle(cx, cy, r, REGENBOGEN[i], undefined, 'voll') : m.leer(cx, cy, r);
   }
-  const hx = w - 32;
-  s += `<path d="M${hx - 9} 26 L${hx - 15} 10 M${hx + 9} 26 L${hx + 15} 10" stroke="#2F6B3A" stroke-width="2.5" stroke-linecap="round"/><circle cx="${hx - 15}" cy="9" r="4" fill="#F2A65A"/><circle cx="${hx + 15}" cy="9" r="4" fill="#F2A65A"/>`;
-  s += `<circle cx="${hx}" cy="48" r="24" fill="#7FC06D" stroke="#2F6B3A" stroke-width="2.5"/><circle cx="${hx - 8}" cy="44" r="3.4" fill="#1F2421"/><circle cx="${hx + 8}" cy="44" r="3.4" fill="#1F2421"/><path d="M${hx - 10} 55 Q${hx} 63 ${hx + 10} 55" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round"/>`;
-  return `<svg class="${cls}" viewBox="0 0 ${w} 80" role="img" aria-label="${voll} von ${PERLEN_JE_RAUPE} Perlen">${s}</svg>`;
+  s += m.kopf(w - 32, 50, 24);
+  return m.svg(`0 0 ${w} 80`, s, `class="${cls}" role="img" aria-label="${voll} von ${PERLEN_JE_RAUPE} Perlen"`);
 }
 
 /**

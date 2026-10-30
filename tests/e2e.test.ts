@@ -236,7 +236,7 @@ describe('App-Ablauf', () => {
     await page.clock.runFor(5 * 60 * 1000 + 2000);
     await page.waitForSelector('.t-toll');
     expect(await page.textContent('.t-toll')).toBe('Toll gelesen!');
-    expect(await page.$$eval('#t-raupe circle[fill="#7FC06D"]', (e) => e.length)).toBe(5);
+    expect(await page.$$eval('#t-raupe circle.voll', (e) => e.length)).toBe(5);
   });
 
   it('Verlauf: Zahlen stimmen mit dem Protokoll überein', async () => {
