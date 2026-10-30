@@ -75,8 +75,11 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
       await setGefuehl(id, b.dataset.g as 'leicht' | 'geht' | 'schwer');
     }),
   );
-  root.querySelector('#st-skip')!.addEventListener('click', () => go(back));
+  const skip = root.querySelector<HTMLButtonElement>('#st-skip')!;
+  skip.addEventListener('click', () => go(back));
   ok.addEventListener('click', async () => {
+    // nur einmal speichern, auch wenn doppelt getippt wird
+    ok.disabled = skip.disabled = true;
     const s = getSettings();
     const r = updateStolper(s.stolper, words, [...tapped]);
     setSettings({ ...s, stolper: r.list });

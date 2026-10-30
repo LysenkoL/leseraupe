@@ -376,6 +376,38 @@ describe('App-Ablauf', () => {
     await page.evaluate(() => document.getElementById('qs-test')!.remove());
   });
 
+  it('Quest am Bildschirm: Wort in der Geschichte antippen, Stand bleibt beim Zurückblättern', async () => {
+    const run = (stand: string) => `(async () => {
+      const m = await import('/leseraupe/src/screens/questspiel.ts');
+      const sample = (await import('/leseraupe/src/core/sample.ts')).SAMPLE_SHEET;
+      const d = { ...sample, geschichte: { titel: 'T', saetze: ['Ali ist da.', 'Alis Lolli ist toll.', 'Mimi isst Alis Lolli.'] }, quest: { kind: 'zaehle', text: 'Wie oft …', target: 'Alis' } };
+      document.getElementById('qs-test')?.remove();
+      const host = document.createElement('div');
+      host.id = 'qs-test';
+      host.innerHTML = m.questSpielHtml(d.quest, d);
+      document.body.appendChild(host);
+      window.__qs = ${stand};
+      m.questSpielAktiv(host, window.__qs);
+    })()`;
+    await page.evaluate(run('{ ok: [] }'));
+    expect(await page.textContent('#qs-test .qs-zahl')).toBe('0 / 2');
+    // „Ali“ ist nicht „Alis“
+    await page.click('#qs-test .qs-t >> text="Ali"');
+    expect(await page.$$eval('#qs-test .qs-t.ok', (e) => e.length)).toBe(0);
+    const ja = await page.$$('#qs-test .qs-t[data-ja="1"]');
+    expect(ja.length).toBe(2);
+    await ja[0].click();
+    expect(await page.textContent('#qs-test .qs-zahl')).toBe('1 / 2');
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(false);
+    // neu aufgebaut (Seite zurück und wieder vor): gefundenes Wort bleibt markiert
+    await page.evaluate(run('window.__qs'));
+    expect(await page.textContent('#qs-test .qs-zahl')).toBe('1 / 2');
+    await page.click('#qs-test .qs-t[data-ja="1"]:not(.ok)');
+    expect(await page.textContent('#qs-test .qs-zahl')).toBe('2 / 2');
+    expect(await page.isVisible('#qs-test .qs-done')).toBe(true);
+    await page.evaluate(() => document.getElementById('qs-test')!.remove());
+  });
+
   it('A6: 3 Blätter auf einmal – blättern, alle zusammen drucken, Nummern der Reihe nach', async () => {
     await page.goto(base);
     await page.waitForSelector('#create');
