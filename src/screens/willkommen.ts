@@ -87,11 +87,12 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
     });
     bindLetters(root, draw);
 
-    // Wischen: links → weiter, rechts → zurück (nicht über dem Buchstabenraster)
+    // Wischen: links → weiter, rechts → zurück (nicht über dem Buchstabenraster; über dem Namensfeld schon –
+    // es steht mitten im Bild, genau dort wischt man)
     const area = root.querySelector<HTMLElement>('#onb-body')!;
     let x0: number | null = null;
     area.addEventListener('pointerdown', (e) => {
-      x0 = (e.target as HTMLElement).closest('.letters, input') ? null : e.clientX;
+      x0 = (e.target as HTMLElement).closest('.letters') ? null : e.clientX;
     });
     area.addEventListener('pointerup', (e) => {
       if (x0 === null) return;

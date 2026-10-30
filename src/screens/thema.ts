@@ -37,8 +37,10 @@ export function renderThema(root: HTMLElement): void {
       ${THEME_WAHL.map((id) => {
         const th = themeAus(id);
         const jetzt = id === 'jahreszeit' ? `<small>${t('thema.jetzt', { name: themaName(th) })}</small>` : '';
-        return `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[th].main}" aria-pressed="${id === sel}">
-          ${headPreview(th, nr)}<span class="tc-name">${themaName(id)}${jetzt}</span>${id === sel ? `<span class="tc-sel" aria-label="${t('thema.gewaehlt')}">✓</span>` : ''}</button>`;
+        // bei „Zufall“ ist keine Karte gewählt – die markierte ist dann nur die Vorschau
+        const gewaehlt = id === sel && !random;
+        return `<button class="theme-card${id === sel ? ' on' : ''}" data-t="${id}" style="--main:${THEMES[th].main}" aria-pressed="${gewaehlt}">
+          ${headPreview(th, nr)}<span class="tc-name">${themaName(id)}${jetzt}</span>${gewaehlt ? `<span class="tc-sel" aria-label="${t('thema.gewaehlt')}">✓</span>` : ''}</button>`;
       }).join('')}
     </div>
     <label class="toggle"><input type="checkbox" id="rnd" ${random ? 'checked' : ''}/> ${t('thema.zufall')}</label>
@@ -57,10 +59,15 @@ export function renderThema(root: HTMLElement): void {
     root.querySelectorAll<HTMLButtonElement>('[data-t]').forEach((b) =>
       b.addEventListener('click', () => {
         sel = b.dataset.t as ThemeWahl;
+        // eine Karte wählen heißt: dieses Thema, nicht mehr jeden Tag ein anderes
+        random = false;
         draw();
       }),
     );
-    root.querySelector<HTMLInputElement>('#rnd')!.addEventListener('change', (e) => (random = (e.target as HTMLInputElement).checked));
+    root.querySelector<HTMLInputElement>('#rnd')!.addEventListener('change', (e) => {
+      random = (e.target as HTMLInputElement).checked;
+      draw();
+    });
     root.querySelector('#ok')!.addEventListener('click', () => {
       setSettings({ ...getSettings(), theme: sel, randomTheme: random });
       go('#/');

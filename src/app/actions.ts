@@ -1,3 +1,4 @@
+import { buchstabenProtokollieren } from './lettergrid';
 import { getSerie, getSettings, setSerie, setSerieItem, themeForToday, type Draft } from './state';
 import { generateSheet, historyFrom, MAX_STUFE, stufeFor, withSerie, type GenParams } from '../core/generator';
 import { allSheets, nextNumber, saveOnPrint } from '../core/db';
@@ -38,6 +39,8 @@ const toDraft = (p: GenParams): Draft => {
  * Jedes weitere Blatt eine Stufe schwerer (B1), keine Wiederholungen innerhalb der Serie.
  */
 export async function createDraft(anzahl = getSettings().blaetter): Promise<void> {
+  // geänderte Buchstaben zuerst ins Protokoll – vor „Blatt N erstellt“
+  await buchstabenProtokollieren();
   const base = await genParams();
   const items: Draft[] = [];
   for (let i = 0; i < anzahl; i++) {

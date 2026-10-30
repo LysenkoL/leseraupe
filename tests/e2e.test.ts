@@ -52,6 +52,28 @@ describe('App-Ablauf', () => {
     expect(await page.$('.onb')).toBeNull();
   });
 
+  it('Einführung: durch alle vier Schritte wischen, auch über dem Namensfeld', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 693 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-next');
+    const wisch = async (y: number) => {
+      await p.mouse.move(300, y);
+      await p.mouse.down();
+      await p.mouse.move(200, y, { steps: 4 });
+      await p.mouse.move(80, y, { steps: 4 });
+      await p.mouse.up();
+    };
+    for (let i = 1; i <= 3; i++) {
+      await wisch(150);
+      await p.waitForFunction((n) => document.querySelectorAll('.onb-dots i')[n]?.classList.contains('on'), i);
+    }
+    const box = (await (await p.$('#onb-name'))!.boundingBox())!;
+    await wisch(box.y + box.height / 2);
+    await p.waitForSelector('#create');
+    await ctx.close();
+  });
+
   it('nächster Start: sofort die Startseite; Einführung wieder aus „Über die App“', async () => {
     await page.reload();
     await page.waitForSelector('#create');
@@ -249,7 +271,9 @@ describe('App-Ablauf', () => {
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
     const log = await page.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
-    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min', 'Buchstabe E hinzugefügt']));
+    expect(log).toEqual(expect.arrayContaining(['Blatt 1 erstellt', 'Blatt 1 zum Drucken geschickt', 'Blatt 2 erstellt', 'Blatt 2 gelesen, 5 Min']));
+    // E wurde hinzugefügt und wieder entfernt: nur das Ergebnis zählt – also gar kein Eintrag
+    expect(log.filter((x) => x.startsWith('Buchstabe E'))).toEqual([]);
   });
 
   it('gespeichertes Blatt wird genau gleich wieder gedruckt', async () => {
@@ -331,6 +355,66 @@ describe('App-Ablauf', () => {
     await page.click('#st-skip');
     await page.waitForSelector('#b-s');
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
+  });
+
+  it('Am Bildschirm lesen: am Ende „Noch einmal lesen“ oder in der Serie „Nächstes Blatt“, Restzeit läuft mit', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-skip');
+    await p.click('#onb-skip');
+    await p.waitForSelector('#create');
+    await p.click('[data-bl="1"]');
+    await p.click('#create');
+    await p.waitForSelector('#pv-nav b');
+    const nr1 = Number((await p.textContent('#pv-title'))!.match(/Blatt (\d+)/)![1]);
+    await p.click('#screen');
+    await p.waitForSelector('#rd-next');
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    expect(await p.textContent('.rd-rest')).toMatch(/Noch \d+ Min Lesezeit/);
+    expect(await p.textContent('#rd-more')).toContain('Noch einmal lesen');
+    // dasselbe Blatt von vorn
+    await p.click('#rd-more');
+    expect(await p.textContent('#rd-pos')).toMatch(/^1 \//);
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    // nächstes Blatt der Serie: Restzeit wird mitgenommen
+    await p.click('#rd-blatt');
+    await p.waitForFunction(() => location.hash.startsWith('#/lesen?rest='));
+    await p.waitForFunction(() => document.querySelector('#rd-pos')?.textContent?.startsWith('1 /'));
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    // letztes Blatt der Serie: kein „Nächstes Blatt“ mehr
+    expect(await p.$('#rd-blatt')).toBeNull();
+    await p.goto(base + '#/protokoll');
+    await p.waitForSelector('.log-row');
+    const log = await p.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
+    expect(log.some((x) => x?.startsWith(`Blatt ${nr1} gelesen`))).toBe(true);
+    await ctx.close();
+  });
+
+  it('Gestaltung: Karte wählen schaltet „Zufall“ aus, „Zufall“ nimmt das Häkchen weg; Namenskarte lässt sich schließen', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-skip');
+    await p.click('#onb-skip');
+    await p.waitForSelector('#create');
+    // Name leer lassen und die Karte wegklicken – bleibt weg
+    await p.click('#name-x');
+    expect(await p.$('#name-form')).toBeNull();
+    await p.reload();
+    await p.waitForSelector('#create');
+    expect(await p.$('#name-form')).toBeNull();
+    await p.goto(base + '#/thema');
+    await p.waitForSelector('.theme-grid');
+    await p.check('#rnd');
+    await p.waitForFunction(() => !document.querySelector('.tc-sel'));
+    await p.click('[data-t="meer"]');
+    await p.waitForSelector('[data-t="meer"] .tc-sel');
+    expect(await p.isChecked('#rnd')).toBe(false);
+    await p.click('#ok');
+    await p.waitForSelector('#create');
+    expect(await p.getAttribute('[data-theme="meer"]', 'class')).toContain('on');
+    await ctx.close();
   });
 
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
