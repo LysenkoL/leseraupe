@@ -122,14 +122,18 @@ function urkundeBild(nr: number): string {
   const bx = 95;
   const by = 128;
   const br = 62;
-  // symmetrischer Bogen: erste Perle bei 200°, Kopf bei 340° – beide auf gleicher Höhe
-  const schritt = 140 / PERLEN_JE_RAUPE;
+  // symmetrischer Bogen: erste Perle bei 200°, Kopf bei 340° – beide auf gleicher Höhe.
+  // Perlen etwas enger, damit zwischen roter Perle und Kopf Platz für den Fühler bleibt
+  const schritt = 13.4;
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
     const a = ((200 + i * schritt) * Math.PI) / 180;
     s += m.perle(bx + br * Math.cos(a), by + br * Math.sin(a), 7.2, REGENBOGEN[i]);
   }
+  // Kopf leicht nach rechts geneigt: so zeigt der rote Fühler nicht auf die rote Perle
   const ka = (340 * Math.PI) / 180;
-  s += m.kopf(bx + br * Math.cos(ka), by + br * Math.sin(ka), 10.5);
+  const kx = n1(bx + br * Math.cos(ka));
+  const ky = n1(by + br * Math.sin(ka));
+  s += `<g transform="rotate(22 ${kx} ${ky})">${m.kopf(kx, ky, 10.5)}</g>`;
   // Medaille
   const mx = 95;
   const my = 168;
@@ -137,7 +141,8 @@ function urkundeBild(nr: number): string {
   const mk = R / 20;
   const band = (sg: number, farbe: string) =>
     `<path d="M${n1(mx + sg * 10 * mk)} ${n1(my + 8 * mk)} L${n1(mx + sg * 17 * mk)} ${n1(my + 34 * mk)} L${n1(mx + sg * 10 * mk)} ${n1(my + 30 * mk)} L${n1(mx + sg * 6 * mk)} ${n1(my + 37 * mk)} L${n1(mx + sg * 1 * mk)} ${n1(my + 12 * mk)} Z" fill="${farbe}"/>`;
-  s += band(-1, '#3A86FF') + band(1, '#E63950');
+  // Bänder grün und lila (nicht blau-rot: keine Flaggenfarben)
+  s += band(-1, '#2FB344') + band(1, '#8338EC');
   let zacken = '';
   for (let i = 0; i < 30; i++) {
     const a = (i / 30) * Math.PI * 2;
