@@ -3,7 +3,9 @@
  * als Bild gerendert (SVG foreignObject → Canvas) und in ein A4-PDF gelegt –
  * gleiche Ränder (10 mm) und gleiche Maße wie @page in print.css.
  */
-import { NATIV, teileNativ } from '../app/native';
+import { Druck, NATIV, teileNativ } from '../app/native';
+import { druckBereich } from './print';
+import { t } from '../app/i18n';
 
 const MM = 72 / 25.4; // PDF-Punkte je mm
 const A4 = { w: 210 * MM, h: 297 * MM };
@@ -169,6 +171,15 @@ export function pdfName(nums: number[]): string {
 }
 
 export async function sheetsToPdf(sheetsHtml: string[], title?: string): Promise<Uint8Array> {
+  if (NATIV) {
+    // Android-App: das Bild-Verfahren unten dauert auf dem Handy 4–13 s je Blatt.
+    // Android schreibt die Seite (print.css) direkt als PDF – Text bleibt Text, unter 1 s.
+    await druckBereich(sheetsHtml);
+    const { pdf } = await Druck.seiteAlsPdf({ name: title ?? 'Leseblatt' }).catch((e: { code?: string }) => {
+      throw e.code === 'BESCHAEFTIGT' ? new Error(t('aktion.druckLaeuft')) : e;
+    });
+    return Uint8Array.from(atob(pdf), (c) => c.charCodeAt(0));
+  }
   const pages: PdfPage[] = [];
   for (const html of sheetsHtml) {
     const canvas = await sheetToCanvas(html);

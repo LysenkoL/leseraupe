@@ -1,22 +1,36 @@
 import { NATIV, Druck } from '../app/native';
-import { sheetsToPdf, toBase64 } from './pdf';
 import { toast } from '../app/ui';
 import { t } from '../app/i18n';
 
 /**
- * Druckt Blätter in einem Auftrag: sie werden in #print-root gelegt, der Rest der App
- * ist beim Drucken unsichtbar. Jedes Blatt beginnt auf einer neuen A4-Seite (print.css).
- * In der Android-App geht window.print() nicht: dort wird dasselbe A4-PDF wie bei
- * „Als PDF teilen“ erzeugt und über das Druckmenü von Android gedruckt.
+ * Legt die Blätter in #print-root: beim Drucken ist nur dieser Bereich sichtbar (print.css),
+ * jedes Blatt beginnt auf einer neuen A4-Seite. Wartet, bis alle Bilder (Dekorationen) geladen sind.
+ */
+export async function druckBereich(sheetsHtml: string[]): Promise<void> {
+  let root = document.getElementById('print-root');
+  if (!root) {
+    root = document.createElement('div');
+    root.id = 'print-root';
+    document.body.appendChild(root);
+  }
+  root.innerHTML = sheetsHtml.join('');
+  await Promise.all(Array.from(root.querySelectorAll('img'), (img) => img.decode().catch(() => undefined)));
+  await document.fonts.ready;
+}
+
+/**
+ * Druckt Blätter in einem Auftrag. In der Android-App geht window.print() nicht:
+ * dort druckt Android dieselbe Seite über das eigene Druckmenü (Papier A4 voreingestellt).
  */
 export async function printSheets(sheetsHtml: string[], name = 'Leseblatt'): Promise<void> {
   if (NATIV) {
     try {
-      const pdf = await sheetsToPdf(sheetsHtml, name);
-      await Druck.pdfDrucken({ pdf: toBase64(pdf.buffer as ArrayBuffer), name, seiten: sheetsHtml.length });
+      await druckBereich(sheetsHtml);
+      await Druck.seiteDrucken({ name });
     } catch (e) {
       // App war gerade nicht auf dem Bildschirm (z. B. Display aus) – Android öffnet das Druckmenü dann nicht
-      toast(t((e as { code?: string }).code === 'NICHT_SICHTBAR' ? 'aktion.druckUnterbrochen' : 'aktion.druckFehler'), 4000);
+      const code = (e as { code?: string }).code;
+      toast(t(code === 'NICHT_SICHTBAR' ? 'aktion.druckUnterbrochen' : code === 'BESCHAEFTIGT' ? 'aktion.druckLaeuft' : 'aktion.druckFehler'), 4000);
     }
     return;
   }

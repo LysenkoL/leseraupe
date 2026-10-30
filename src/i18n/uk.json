@@ -56,6 +56,7 @@
   "aktion.pdfFehler": "Не вдалося створити PDF.",
   "aktion.druckVorbereiten": "Готуємо друк …",
   "aktion.druckUnterbrochen": "Друк перервано (екран вимкнувся). Натисніть ще раз.",
+  "aktion.druckLaeuft": "Друк ще триває. Зачекайте трохи.",
   "aktion.druckFehler": "Не вдалося надрукувати. Спробуйте «Поділитися PDF».",
   "stolper.titel": "Де дитина запнулася?",
   "stolper.sub": "Аркуш {nr} · за бажанням",

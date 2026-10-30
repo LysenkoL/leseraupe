@@ -8,7 +8,10 @@ export const NATIV = Capacitor.isNativePlatform();
 
 /** Eigenes Plugin: android/app/src/main/java/app/leseraupe/DruckPlugin.java */
 export interface DruckPlugin {
-  pdfDrucken(o: { pdf: string; name: string; seiten: number }): Promise<void>;
+  /** Seite der WebView (#print-root, print.css) über das Druckmenü drucken */
+  seiteDrucken(o: { name: string }): Promise<void>;
+  /** dieselbe Seite als A4-PDF, Base64 */
+  seiteAlsPdf(o: { name: string }): Promise<{ pdf: string }>;
 }
 export const Druck = registerPlugin<DruckPlugin>('Druck');
 
