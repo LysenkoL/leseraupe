@@ -1,7 +1,7 @@
 import { getDraft, getSettings, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { confirmDialog, esc, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
-import { questSpielAktiv, questSpielHtml } from './questspiel';
+import { neuerQuestStand, questSpielAktiv, questSpielHtml } from './questspiel';
 import { createCountdown, recordRead } from '../app/lesezeit';
 import { stolperLink } from './stolper';
 import type { SheetData } from '../core/types';
@@ -164,6 +164,9 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   // am Ende angehalten (nicht von Hand): beim Zurückblättern läuft die Zeit weiter
   let amEndeAngehalten = false;
 
+  // Quest-Fortschritt bleibt, wenn man zur Geschichte zurückblättert
+  const questStand = neuerQuestStand();
+
   const draw = () => {
     const p = pages[idx];
     const last = idx === pages.length - 1;
@@ -181,7 +184,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     body.innerHTML = `<h1>${esc(p.title)}</h1><div class="rd-${p.kind}">${p.html}</div>${ende}`;
     body.scrollTop = 0;
     if (p.kind === 'lines') fitLines(body);
-    if (p.kind === 'quest') questSpielAktiv(body);
+    if (p.kind === 'quest') questSpielAktiv(body, questStand);
     (root.querySelector('#rd-prev') as HTMLButtonElement).disabled = idx === 0;
     root.querySelector('#rd-next')!.textContent = last ? t('lesen.fertigOk') : t('timer.weiter');
     root.querySelector('#rd-more')?.addEventListener('click', () => {

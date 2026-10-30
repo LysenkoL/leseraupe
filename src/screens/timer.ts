@@ -27,6 +27,10 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   const name = getSettings().childName;
 
   const back = sheetId ? `#/blatt/${sheetId}` : draft ? '#/vorschau' : '#/';
+  // Timer ist fürs Lesen auf Papier – sagen, was gelesen wird, und den Weg zum Bildschirm zeigen
+  const nr = sheetId ? null : draft?.data.number;
+  const lesenLink = sheetId ? `#/lesen?id=${sheetId}` : draft ? '#/lesen' : '';
+  const papier = nr ? t('timer.papierNr', { nr }) : t('timer.papier');
   const nrLabel = sheetId ? '' : draft?.data.number ? t('timer.blattNr', { nr: draft.data.number }) : '';
 
   root.innerHTML = `
@@ -34,6 +38,7 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   <div class="topbar"><a class="iconbtn dark" href="${back}" aria-label="${t('ui.schliessen')}">✕</a><div class="grow tcenter" id="t-top">${esc(nrLabel)}${t('timer.lesezeit')}</div><span style="width:44px"></span></div>
   <div class="t-main">
     <div class="t-hello">${name ? t('timer.halloName', { name: esc(name) }) : t('timer.hallo')}</div>
+    ${lesenLink ? `<div class="t-papier">${esc(papier)} · <a href="${lesenLink}">${t('vorschau.bildschirm')}</a></div>` : ''}
     <div class="t-digits" id="t-digits" aria-live="off">00:00</div>
     <div class="t-sub" id="t-sub">${t('timer.uebrig', { n: minutes })}</div>
     <div class="t-wahl" id="t-wahl">

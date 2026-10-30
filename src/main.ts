@@ -94,5 +94,32 @@ function route(): void {
   }
 }
 
+/**
+ * Doppel-Tipp-Schutz: Ist der neue Bildschirm noch nicht fertig (langsames Handy), landet ein
+ * zweiter Finger-Tipp sonst auf einem Knopf, der gerade erst unter dem Finger erschienen ist.
+ * Finger-Tipps kurz nach dem Wechsel und während der Bildschirm noch aufgebaut wird zählen nicht.
+ */
+let wechsel = -Infinity;
+let ruhigAb = 0;
+new MutationObserver((records) => {
+  const jetzt = performance.now();
+  // nur neu eingefügte Elemente zählen – eine laufende Uhr (nur Text) nicht
+  const aufbau = records.some((r) => [...r.addedNodes].some((n) => n.nodeType === Node.ELEMENT_NODE));
+  if (aufbau && jetzt - wechsel < 2000) ruhigAb = Math.max(ruhigAb, jetzt + 250);
+}).observe(app, { childList: true, subtree: true });
+document.addEventListener(
+  'click',
+  (e) => {
+    if ((e as PointerEvent).pointerType === 'touch' && e.timeStamp < ruhigAb) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  true,
+);
+window.addEventListener('hashchange', () => {
+  wechsel = performance.now();
+  ruhigAb = wechsel + 400;
+});
 window.addEventListener('hashchange', route);
 route();
