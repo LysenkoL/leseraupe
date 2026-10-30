@@ -163,13 +163,14 @@ details.card > summary::-webkit-details-marker { display: none; }
 .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .tile { background: #fff; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .tile b { font-size: 24px; font-weight: 800; }
-.tile small { font-size: 12px; color: var(--muted); }
+.tile small { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.2; }
 .tile.on { background: var(--green); color: #fff; }
 .tile.on small { color: #DDEEDD; }
 .iconbtn.sm { width: 40px; height: 40px; background: var(--grey); font-size: 22px; }
 .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
 .cal-w { font-size: 12px; color: var(--muted); font-weight: 700; padding: 2px 0; }
-.cal-d { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px; }
+/* niedrige Zeilen: der ganze Monat passt über die Knöpfe unten, ohne Scrollen */
+.cal-d { width: 34px; height: 34px; justify-self: center; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px; }
 .cal-d.read { background: #7FC06D; color: #fff; font-weight: 800; }
 .cal-d.today { outline: 2px solid var(--orange); outline-offset: -2px; }
 .section-h { margin: 4px 0 0; font-size: 16px; font-weight: 800; }
