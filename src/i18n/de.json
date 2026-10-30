@@ -152,6 +152,7 @@
   "status.gedruckt": "zum Drucken",
   "status.gelesen": "gelesen ✓",
   "verlauf.gelesen": "gelesen",
+  "verlauf.gedruckt": "gedruckt",
   "verlauf.minuten": "Minuten",
   "verlauf.minGelesen": "{n} Min gelesen",
   "verlauf.stolper": "Stolperwörter: {b} besiegt · {n} noch in Arbeit",

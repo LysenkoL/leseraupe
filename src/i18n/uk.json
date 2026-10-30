@@ -152,6 +152,7 @@
   "status.gedruckt": "на друк",
   "status.gelesen": "прочитано ✓",
   "verlauf.gelesen": "прочитано",
+  "verlauf.gedruckt": "надруковано",
   "verlauf.minuten": "хвилин",
   "verlauf.minGelesen": "прочитано {n} хв",
   "verlauf.stolper": "Слова із запинкою: подолано {b} · ще в роботі {n}",

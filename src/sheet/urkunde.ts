@@ -42,18 +42,21 @@ export function raupenstand(sheets: { reads: { at: string }[] }[]): Raupenstand 
 /** Raupe mit Perlen: volle Perlen grün, leere gestrichelt */
 export function perlenRaupeSvg(voll: number, cls = ''): string {
   // Raupe wie auf dem App-Icon: gelesene Tage als Regenbogen-Perlen (vom Kopf aus), offene gestrichelt
+  // Perlen dicht an dicht in einem sanften Bogen, die letzte stößt an den Kopf
   const m = new RaupenMaler();
-  const r = 13;
-  const gap = 7;
-  const w = PERLEN_JE_RAUPE * (2 * r + gap) + 66;
+  const r = 16;
+  const schritt = 2 * r + 5;
+  const kopfR = 26;
+  const kopfX = r + 3 + (PERLEN_JE_RAUPE - 1) * schritt + r + 18;
+  const w = kopfX + 37;
   let s = '';
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
-    const cx = r + 3 + i * (2 * r + gap);
-    const cy = i % 2 ? 54 : 60;
+    const cx = r + 3 + i * schritt;
+    const cy = 60 - 5 * Math.sin((Math.PI * i) / (PERLEN_JE_RAUPE - 1));
     // die Raupe wächst vom Kopf aus: die Perle direkt hinter dem Kopf kommt zuerst
     s += i >= PERLEN_JE_RAUPE - voll ? m.perle(cx, cy, r, REGENBOGEN[i], undefined, 'voll') : m.leer(cx, cy, r);
   }
-  s += m.kopf(w - 36, 50, 24);
+  s += m.kopf(kopfX, 50, kopfR);
   return m.svg(`0 0 ${w} 80`, s, `class="${cls}" role="img" aria-label="${voll} von ${PERLEN_JE_RAUPE} Perlen"`);
 }
 
