@@ -159,6 +159,14 @@ export function jpegsToPdf(pages: PdfPage[], title = 'Leseblatt'): Uint8Array {
 }
 
 /** Blätter (HTML wie für den Druck) → ein PDF, jedes Blatt auf eigener A4-Seite */
+/** Dateiname fürs PDF: „5-7“ nur, wenn die Nummern lückenlos sind, sonst „5-6-8“ */
+export function pdfName(nums: number[]): string {
+  const n = [...nums].sort((a, b) => a - b);
+  if (n.length === 1) return `Leseblatt-${n[0]}`;
+  const lueckenlos = n.every((x, i) => i === 0 || x === n[i - 1] + 1);
+  return `Leseblaetter-${lueckenlos ? `${n[0]}-${n[n.length - 1]}` : n.join('-')}`;
+}
+
 export async function sheetsToPdf(sheetsHtml: string[], title?: string): Promise<Uint8Array> {
   const pages: PdfPage[] = [];
   for (const html of sheetsHtml) {

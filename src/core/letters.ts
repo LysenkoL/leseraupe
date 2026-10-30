@@ -81,6 +81,12 @@ export function tokenizeWord(word: string): Tokenized {
         continue;
       }
     }
+    // „ai“ klingt wie „ei“ (Mais, Hai): erst lesbar, wenn Ei gelernt ist
+    if (w.startsWith('ai', i)) {
+      units.push('ei');
+      i += 2;
+      continue;
+    }
     const di = DIGRAPHS.find((t) => w.startsWith(t, i));
     if (di) {
       units.push(di);

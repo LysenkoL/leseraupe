@@ -5,7 +5,7 @@
 Tim ist im Tal.
 Mia ist im Tal.
 Tim isst Salat.
-Mia isst Mais.
+Mia isst Salami.
 Oma malt Tim.
 Oma malt Mia.
 Toll, Oma!
@@ -29,7 +29,7 @@ Toll, Tilo!
 # Lotta und Olli
 Lotta ist im Tal.
 Im Tal ist Olli.
-Olli isst Mais.
+Olli isst Salami.
 Lotta isst Salat.
 Lotta malt Olli.
 Olli malt Lotta.
@@ -44,7 +44,7 @@ Das Lama ist im Tal.
 Das Lama ist alt.
 Tom mag das Lama.
 Tom malt das Lama.
-Das Lama isst Mais.
+Das Lama isst Salat.
 Das Lama ist satt.
 Toll, Lama!
 ? Wo ist das Lama?
@@ -57,7 +57,7 @@ Oma ist im Saal.
 Mama malt Oma.
 Oma malt Mama.
 Lisa ist mit Tom im Saal.
-Lisa isst Mais.
+Lisa isst Salami.
 Tom isst Salat.
 Alle malen.
 Mama malt so toll!
@@ -384,7 +384,7 @@ Toll im Moos!
 # Salat
 Lisa ist im Saal.
 Lisa isst Salat.
-Lisa isst Mais.
+Lisa isst Tomaten.
 Lisa isst Salami.
 Lisa ist satt.
 So satt ist Lisa!

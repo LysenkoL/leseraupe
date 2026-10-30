@@ -22,6 +22,8 @@ describe('Zerlegung in Einheiten', () => {
   const cases: [string, string[]][] = [
     ['Schule', ['sch', 'u', 'l', 'e']],
     ['Eis', ['ei', 's']],
+    // „ai“ klingt wie „ei“
+    ['Mais', ['m', 'ei', 's']],
     ['Tisch', ['t', 'i', 'sch']],
     ['Sport', ['sp', 'o', 'r', 't']],
     ['Stern', ['st', 'e', 'r', 'n']],
@@ -55,7 +57,7 @@ describe('Zerlegung in Einheiten', () => {
 describe('Filter: nur gelernte Buchstaben', () => {
   it('Startbuchstaben T O M L A I S', () => {
     for (const w of ['Mama', 'Oma', 'Tom', 'Salat', 'Toast', 'ist', 'Mast', 'Lasso', 'Atlas', 'isst']) expect(isAllowed(w, START), w).toBe(true);
-    for (const w of ['Tisch', 'Eis', 'Sport', 'Stall', 'Opa', 'Lupe', 'Mia?']) {
+    for (const w of ['Tisch', 'Eis', 'Mais', 'Sport', 'Stall', 'Opa', 'Lupe', 'Mia?']) {
       if (w === 'Mia?') expect(isAllowed(w, START)).toBe(true);
       else expect(isAllowed(w, START), w).toBe(false);
     }

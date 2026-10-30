@@ -100,7 +100,7 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   <div class="bottom dark">
     <div class="btnrow two">
       <button class="btn primary big" id="t-start">${t('timer.start')}</button>
-      <button class="btn outline big" id="t-reset">${t('timer.neustart')}</button>
+      <button class="btn outline big" id="t-reset" disabled>${t('timer.neustart')}</button>
     </div>
     <div class="t-foot">${t('timer.fuss')}</div>
   </div>
@@ -161,11 +161,15 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
     } else {
       cd.start();
       wahl.hidden = true;
+      resetBtn.disabled = false;
       startBtn.textContent = t('timer.pause');
     }
   });
-  root.querySelector('#t-reset')!.addEventListener('click', () => {
+  // Zurücksetzen erst, wenn die Zeit schon einmal lief
+  const resetBtn = root.querySelector<HTMLButtonElement>('#t-reset')!;
+  resetBtn.addEventListener('click', () => {
     cd.reset();
+    resetBtn.disabled = true;
     wahl.hidden = false;
     startBtn.textContent = t('timer.start');
     root.querySelector('#t-sub')!.textContent = t('timer.uebrig', { n: minutes });

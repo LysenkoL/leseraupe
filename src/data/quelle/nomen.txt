@@ -807,7 +807,6 @@ s Sportfest | ding
 r Sport | ding
 s Tor | ding
 r Pokal | ding
-e Medaille | ding
 s Rennen | ding
 e Fahrt | ding
 e Reise | ding
