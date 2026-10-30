@@ -4,6 +4,7 @@ import { backButton, esc, go, toast } from '../app/ui';
 import { buildPrompt, parseChat, sheetFromChat, PARSE_ERROR } from '../core/chat';
 import { genParams } from '../app/actions';
 import { t } from '../app/i18n';
+import { NATIV, einfuegen, kopieren } from '../app/native';
 
 export function renderChat(root: HTMLElement): void {
   const s = getSettings();
@@ -42,7 +43,8 @@ export function renderChat(root: HTMLElement): void {
 
   root.querySelector('#copy')!.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(prompt);
+      if (NATIV) await kopieren(prompt);
+      else await navigator.clipboard.writeText(prompt);
       toast(t('chat.kopiert'));
     } catch {
       const tmp = document.createElement('textarea');
@@ -56,7 +58,7 @@ export function renderChat(root: HTMLElement): void {
   });
   root.querySelector('#paste')!.addEventListener('click', async () => {
     try {
-      ta.value = await navigator.clipboard.readText();
+      ta.value = NATIV ? await einfuegen() : await navigator.clipboard.readText();
     } catch {
       toast(t('chat.langTippen'));
     }

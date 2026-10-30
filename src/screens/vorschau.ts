@@ -2,7 +2,7 @@ import { elternCheck } from '../app/elterncheck';
 import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
-import { printSheets } from '../sheet/print';
+import { mitDruckKnopf, printSheets } from '../sheet/print';
 import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
@@ -191,11 +191,13 @@ export function renderVorschau(root: HTMLElement): void {
     if (ed) edit(ed.dataset.edit!);
   });
 
-  root.querySelector('#print')!.addEventListener('click', async () => {
-    const { html } = await saveAll(true);
-    printSheets(html);
-    await draw();
-  });
+  root.querySelector<HTMLButtonElement>('#print')!.addEventListener('click', (e) =>
+    mitDruckKnopf(e.currentTarget as HTMLButtonElement, async () => {
+      const { html, nums } = await saveAll(true);
+      await printSheets(html, pdfName(nums));
+      await draw();
+    }),
+  );
   root.querySelector<HTMLButtonElement>('#pdf')!.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     btn.disabled = true;

@@ -4,8 +4,12 @@ import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
-export default defineConfig({
-  base: '/leseraupe/',
+// Android-App: npm run build:play (= --mode play, setzt VITE_TARGET=play aus .env.play)
+const play = (mode: string) => mode === 'play' || process.env.VITE_TARGET === 'play';
+
+export default defineConfig(({ mode }) => ({
+  // Android-App: Dateien liegen im App-Ordner, nicht unter /leseraupe/ auf GitHub Pages
+  base: play(mode) ? './' : '/leseraupe/',
   define: {
     __BUILD__: JSON.stringify(new Date().toISOString().slice(0, 16).replace('T', ' ')),
     __VERSION__: JSON.stringify(pkg.version),
@@ -13,7 +17,7 @@ export default defineConfig({
   plugins: [
     VitePWA({
       // Android-App (VITE_TARGET=play): kein Service Worker, kein Manifest – die App kommt aus Google Play
-      disable: process.env.VITE_TARGET === 'play',
+      disable: play(mode),
       registerType: 'autoUpdate',
       injectRegister: false,
       includeAssets: ['fonts/*.woff2', 'icons/*.png'],
@@ -48,4 +52,4 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     testTimeout: 120000,
   },
-});
+}));

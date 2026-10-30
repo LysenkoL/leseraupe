@@ -12,7 +12,7 @@
 | Страна аккаунта | Deutschland |
 | Доход | нет, приложение бесплатное, без рекламы (адрес публично не показывается) |
 | Технология | Capacitor: веб-приложение целиком внутри APK/AAB, без сайта, офлайн |
-| Package-ID | `de.appsbylena.leseraupe` — **изменить потом нельзя**; если не хочется имени в ID, решить до создания приложения в Play Console (например, `de.leseraupe.app`) |
+| Package-ID | `app.leseraupe` (решено 30.10.2026) — **изменить потом нельзя**; виден только в ссылке на Play и в настройках телефона |
 | Целевая аудитория в Play | **Решено 29.10.2026: смешанная — дети 6–8 лет и взрослые (правила Families).** Причина: режим «Am Bildschirm lesen», гусеница и таймер обращены к ребёнку — честнее смешанная аудитория (6–8 + взрослые) с правилами Families. Нет рекламы, аккаунтов, сбора данных и SDK → требования выполнимы. Нужен ли parental gate (перед ссылками наружу, PDF, чатом) — проверить по анкете в Play Console |
 | Категория | Bildung |
 | Страны: закрытый тест | Deutschland + Ukraine (+ где живут тестеры) |
@@ -33,7 +33,7 @@
 - [x] 29.10.2026 Решение: в первую публикацию входят блоки A и B из `docs/IDEEN.md` (кроме раздела «Позже»)
 - [x] 29.10.2026 Блок A из `docs/IDEEN.md` (A1–A6)
 - [x] 29.10.2026 Блок B из `docs/IDEEN.md` (B1–B4, B6)
-- [ ] Упаковка Capacitor (задача ниже)
+- [x] 30.10.2026 Упаковка Capacitor (задача ниже; осталось проверить на своём телефоне)
 - [ ] B5 «Lesezeit!»-уведомления (нужна Android-версия)
 - [ ] Тест APK на своём телефоне, **первым делом печать**
 - [ ] Google Group тестеров + 15–20 тестеров с Android
@@ -46,11 +46,13 @@
 ## Задача: упаковка Capacitor
 
 - Android Studio установлена — найти SDK и встроенную JDK, настроить пути.
-- App-Name: Leseraupe, Package-ID: `de.appsbylena.leseraupe`.
+- [x] 30.10.2026 Каркас: Capacitor 8, `android/`, App-Name Leseraupe, Package-ID `app.leseraupe`, targetSdk 36, versionName 1.0.0, иконки. Сборка: `npm run android` (= `build:play` + `cap sync`). Gradle 9.1, потому что JDK в Android Studio — 25.
 - Всё внутри приложения (код, шрифт Inter, словарь), работает без интернета.
-- `window.print` → нативная печать Android (PrintManager), лист ровно A4.
-- Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
-  ссылки на Claude/ChatGPT → внешний браузер; Sicherung и «PDF teilen» → Filesystem + Share.
+- [x] 30.10.2026 Печать: в Android-приложении `window.print` заменён своим плагином `DruckPlugin.java`: Android печатает саму страницу WebView (`createPrintDocumentAdapter`, тот же `print.css`, что в браузере) — каждый лист на своей странице A4, бумага ISO A4, серия одним заданием, текст векторный. «Als PDF teilen» в приложении — так же, без диалога (`android/.../android/print/PdfAusWebView.java`). Первый вариант (лист → картинка → PDF) на телефоне занимал 13 с на 1 лист и 22 с на 3 листа; теперь в эмуляторе окно печати через 0,5 с, PDF за 0,2 с. Кнопка «Drucken» сразу показывает «Druck wird vorbereitet …», повторные нажатия не создают второе задание; если экран погас — сообщение «Drucken wurde unterbrochen …»; второй печати одновременно WebView не умеет — сообщение «Es wird gerade noch gedruckt …».
+- [x] 30.10.2026 «Als PDF teilen», Urkunde и «Sicherung speichern» в приложении: файл в кэш (Filesystem) → системное меню «Teilen» (Share). «Sicherung laden» — системный выбор файла (проверено: открывается).
+- [x] 30.10.2026 Экран не гаснет при чтении и в таймере (keep-awake, проверено флагом KEEP_SCREEN_ON), вибрация в конце таймера (Haptics), копирование/вставка промпта (Clipboard). Отступ сверху под строку состояния (Android 15+ рисует приложение под ней).
+- [x] 30.10.2026 Ссылки (почта, Claude/ChatGPT, privacy) после родительской проверки открываются вне приложения: Capacitor сам отдаёт внешние адреса браузеру, mailto — почтовому приложению (проверено в эмуляторе: Chrome, Gmail).
+- [x] 30.10.2026 «Über die App» (только Android): раздел «Daten aus der Web-Version übernehmen» (DE/UK).
 - Service worker / установка PWA — только для веб-версии: Android-сборку делать с `VITE_TARGET=play` (готово 29.10.2026: без SW, без кнопки установки, без подсказок про Chrome).
 - [x] 30.10.2026 Иконка: радужная гусеница на карточке «Mama» (выбор владелицы проекта). Готовые файлы — `scripts/make-icons.cjs` из `assets/icon/figur.png`:
   - Play Store 512×512 (квадрат, без скругления): `assets/icon/play-store-512.png`;
@@ -59,8 +61,8 @@
 - `targetSdkVersion` 36 (требование Google Play для новых приложений с 31.08.2026).
 - Проверить на телефоне: печать через PrintManager (1/3/5 листов, отмена), PDF «Teilen», хранение после перезапуска и обновления.
 - Перенос данных из веб-версии: в браузере «Sicherung speichern» → в приложении «Sicherung laden» → сверить листы, журнал, Stolperwörter, бусины. Короткую инструкцию — в «Über die App».
-- Результат: debug-APK для телефона; подписанный `.aab` (versionCode 1, versionName 1.0.0).
-- Ключ подписи: создать, объяснить, где лежит и что сохранить в резервную копию. **Ключ и пароли — НЕ в git.**
+- [x] 30.10.2026 Результат: debug-APK собирается; подписанный `.aab` собирается и проверен (versionCode 1, versionName 1.0.0 из `package.json`). Пошагово для Windows — `docs/ANDROID.md`.
+- [x] 30.10.2026 Ключ подписи: инструкция в `docs/ANDROID.md` (ключ загрузки вне проекта, `android/key.properties` в `.gitignore`, что сохранить в резервную копию). Создаёт владелица сама. **Ключ и пароли — НЕ в git.**
 
 ## Обновления после публикации
 

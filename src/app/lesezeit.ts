@@ -1,6 +1,7 @@
 import { addRead } from '../core/db';
 import { getSerie, type Draft } from './state';
 import { saveSerieBis } from './actions';
+import { NATIV, vibrieren, wachHalten } from './native';
 
 /**
  * Countdown für die Lesezeit – gemeinsam für den Vollbild-Timer und „Am Bildschirm lesen“:
@@ -24,9 +25,14 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
   let done = false;
   let timer = 0;
   let wake: WakeLockSentinel | null = null;
+  let wachFrei: (() => void) | null = null;
   let audio: AudioContext | null = null;
 
   const lockScreen = async () => {
+    if (NATIV) {
+      wachFrei ??= wachHalten();
+      return;
+    }
     try {
       if ('wakeLock' in navigator && document.visibilityState === 'visible') wake = await navigator.wakeLock.request('screen');
     } catch {
@@ -36,6 +42,8 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
   const unlockScreen = () => {
     wake?.release().catch(() => undefined);
     wake = null;
+    wachFrei?.();
+    wachFrei = null;
   };
   const onVis = () => {
     if (document.visibilityState === 'visible' && running) lockScreen();
@@ -71,7 +79,8 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
     on.tick(0);
     chime();
     try {
-      navigator.vibrate?.([300, 150, 300, 150, 500]);
+      if (NATIV) vibrieren().catch(() => undefined);
+      else navigator.vibrate?.([300, 150, 300, 150, 500]);
     } catch {
       /* keine Vibration */
     }

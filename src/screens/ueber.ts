@@ -28,6 +28,16 @@ export function renderUeber(root: HTMLElement): void {
       ${PLAY ? '' : `<button class="btn ghost" id="upd">${t('update.suchen')}</button>`}
       <a class="btn ghost" href="#/willkommen?zurueck=%23%2Fueber">${t('ueber.einfuehrung')}</a>
     </section>
+    ${
+      PLAY
+        ? `<section class="card" id="umzug">
+      <h2>${t('ueber.umzug')}</h2>
+      <div>${t('ueber.umzug1')}</div>
+      <div>${t('ueber.umzug2')}</div>
+      <div class="hint">${t('ueber.umzug3')}</div>
+    </section>`
+        : ''
+    }
     <section class="card" id="datenschutz">
       <h2>${t('ueber.datenschutz')}</h2>
       <div>${t('ueber.ds1')}</div>

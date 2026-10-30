@@ -2,7 +2,7 @@ import { elternCheck } from '../app/elterncheck';
 import { addRead, getSheet, saveOnPrint, statusOf } from '../core/db';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
-import { printSheet } from '../sheet/print';
+import { mitDruckKnopf, printSheet } from '../sheet/print';
 import { sharePdf, sheetToPdf } from '../sheet/pdf';
 import { backButton, formatDate, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { getSettings } from '../app/state';
@@ -32,13 +32,15 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     return r;
   };
   draw();
-  root.querySelector('#b-print')!.addEventListener('click', async () => {
-    const r = await getSheet(id);
-    if (!r) return;
-    await saveOnPrint(r.data, r.scale, id, true);
-    printSheet(renderSheet(r.data, { displayNumber: r.number, scale: r.scale }));
-    draw();
-  });
+  root.querySelector<HTMLButtonElement>('#b-print')!.addEventListener('click', (e) =>
+    mitDruckKnopf(e.currentTarget as HTMLButtonElement, async () => {
+      const r = await getSheet(id);
+      if (!r) return;
+      await saveOnPrint(r.data, r.scale, id, true);
+      await printSheet(renderSheet(r.data, { displayNumber: r.number, scale: r.scale }), `Leseblatt-${r.number}`);
+      draw();
+    }),
+  );
   root.querySelector<HTMLButtonElement>('#b-pdf')!.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     const r = await getSheet(id);

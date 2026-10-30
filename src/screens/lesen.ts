@@ -7,6 +7,7 @@ import { stolperLink } from './stolper';
 import type { SheetData } from '../core/types';
 import { lesetext } from '../sheet/render';
 import { t } from '../app/i18n';
+import { NATIV, wachHalten } from '../app/native';
 
 interface Page {
   title: string;
@@ -127,7 +128,12 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
 
   // Bildschirm bleibt an, sobald das Lesen geöffnet ist – nicht erst mit der Zeit
   let wake: WakeLockSentinel | null = null;
+  let wachFrei: (() => void) | null = null;
   const lock = async () => {
+    if (NATIV) {
+      if (!left) wachFrei ??= wachHalten();
+      return;
+    }
     try {
       if ('wakeLock' in navigator && document.visibilityState === 'visible' && !left) wake = await navigator.wakeLock.request('screen');
     } catch {
@@ -343,6 +349,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
       left = true;
       cd.dispose();
       wake?.release().catch(() => undefined);
+      wachFrei?.();
       document.removeEventListener('visibilitychange', onVis);
       document.removeEventListener('keydown', onKey);
       window.removeEventListener('popstate', onPop);

@@ -3,6 +3,9 @@
  * als Bild gerendert (SVG foreignObject → Canvas) und in ein A4-PDF gelegt –
  * gleiche Ränder (10 mm) und gleiche Maße wie @page in print.css.
  */
+import { Druck, NATIV, teileNativ } from '../app/native';
+import { druckBereich } from './print';
+import { t } from '../app/i18n';
 
 const MM = 72 / 25.4; // PDF-Punkte je mm
 const A4 = { w: 210 * MM, h: 297 * MM };
@@ -12,7 +15,7 @@ const PIXEL_RATIO = 3;
 
 let cssCache: Promise<string> | null = null;
 
-function toBase64(buf: ArrayBuffer): string {
+export function toBase64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
   let s = '';
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
@@ -168,6 +171,15 @@ export function pdfName(nums: number[]): string {
 }
 
 export async function sheetsToPdf(sheetsHtml: string[], title?: string): Promise<Uint8Array> {
+  if (NATIV) {
+    // Android-App: das Bild-Verfahren unten dauert auf dem Handy 4–13 s je Blatt.
+    // Android schreibt die Seite (print.css) direkt als PDF – Text bleibt Text, unter 1 s.
+    await druckBereich(sheetsHtml);
+    const { pdf } = await Druck.seiteAlsPdf({ name: title ?? 'Leseblatt' }).catch((e: { code?: string }) => {
+      throw e.code === 'BESCHAEFTIGT' ? new Error(t('aktion.druckLaeuft')) : e;
+    });
+    return Uint8Array.from(atob(pdf), (c) => c.charCodeAt(0));
+  }
   const pages: PdfPage[] = [];
   for (const html of sheetsHtml) {
     const canvas = await sheetToCanvas(html);
@@ -194,6 +206,7 @@ export async function sharePdf(bytes: Uint8Array, filename: string): Promise<'ge
 /** Datei teilen (Teilen-Menü des Handys) oder herunterladen. */
 export async function teileDatei(file: File): Promise<'geteilt' | 'gespeichert' | 'abgebrochen'> {
   const filename = file.name;
+  if (NATIV) return teileNativ(file, toBase64(await file.arrayBuffer()));
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.share && nav.canShare?.({ files: [file] })) {
     try {
