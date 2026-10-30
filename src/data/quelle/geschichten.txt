@@ -1,5 +1,5 @@
 # Mini-Geschichten: "# Titel", dann Sätze, "? Frage" für Eltern. Leerzeile trennt.
-# Kurze Geschichten (5 Min) haben 6–8 Sätze, lange (10 Min) 10–13.
+# Kurze Geschichten haben 6–8 Sätze, lange 10–14 (C3: werden bei vielen Buchstaben und hohen Stufen gewählt).
 
 # Im Tal
 Tim ist im Tal.
@@ -582,3 +582,614 @@ Uli rennt mit.
 ? Wo sind Tom und Uli?
 ? Was machen sie im Tunnel?
 ? Wie klingt das?
+
+# Lange Geschichten (C3), Teil 1: nur häufige Buchstaben (ohne Umlaute, J, Z, P, Sp/St am Anfang, V, ß, ng, ck, tz)
+
+# Der rote Drachen
+Lena und Ben sind auf der Wiese.
+Ben hat einen roten Drachen.
+Es ist sehr windig.
+Der Drachen fliegt hoch in den Himmel.
+„Halt ihn fest!“, ruft Lena.
+Doch auf einmal ist die Schnur los.
+Der Drachen fliegt allein weiter.
+Er landet in einem hohen Baum.
+Ben ist traurig.
+Lena holt den Bauer Hannes, und er hat eine Leiter.
+Bauer Hannes holt den Drachen aus dem Baum.
+„Danke!“, ruft Ben und lacht.
+? Wer hat einen Drachen?
+? Warum fliegt der Drachen allein weiter?
+? Wo landet der Drachen?
+? Wer hilft Ben?
+
+# Das Nest im Garten
+Oma hat einen Garten mit einem alten Baum.
+Im Baum ist ein Nest.
+Eine Amsel baut das Nest aus Gras und Moos.
+Mia sieht die Amsel am Morgen und am Abend.
+Bald liegen drei kleine Eier im Nest.
+„Wir bleiben leise“, sagt Oma.
+Die Amsel liegt warm auf den Eiern.
+Eines Morgens sind die Eier offen.
+Drei kleine Amseln sind da.
+Sie machen den Schnabel weit auf und rufen laut.
+Die Amsel holt Futter, immer wieder.
+Mia lacht: „Das ist die beste Familie im Garten!“
+? Wo ist das Nest?
+? Wie viele Eier liegen im Nest?
+? Warum bleiben Mia und Oma leise?
+? Was holt die Amsel für die kleinen Vögel?
+
+# Ein Hut und ein Schal
+Im Garten liegt Schnee.
+Tim und Lisa bauen einen Schneemann.
+Erst rollen sie eine runde Kugel.
+Dann rollen sie noch eine Kugel und noch eine.
+Er bekommt auch Arme aus Bambus.
+Als Nase hat er eine Karotte.
+„Er hat noch keinen Hut“, sagt Lisa.
+Tim holt einen alten Hut aus dem Haus.
+Lisa holt noch einen Schal.
+Nun ist der Schneemann fertig.
+Am Abend kommt Mama in den Garten.
+„Der sieht aus wie Onkel Bernd!“, ruft Mama.
+Alle lachen laut.
+? Was bauen Tim und Lisa?
+? Was ist die Nase vom Schneemann?
+? Was holen Tim und Lisa aus dem Haus?
+? Was sagt Mama am Abend?
+
+# Wo ist Wuschel?
+Wuschel ist ein kleiner Hund mit weichem Fell.
+Am Morgen ist Wuschel nicht in seinem Korb.
+Rosa sucht ihn im Haus.
+Er ist nicht unter dem Tisch und nicht im Bett.
+Rosa sucht im Garten, doch da ist er auch nicht.
+„Wuschel, wo bist du?“, ruft Rosa.
+Dann bellt es leise hinter dem Haus.
+Rosa schaut nach.
+Wuschel liegt im Gras neben einem Igel.
+Der Igel ist klein und rund.
+Wuschel bellt nicht, er sieht den Igel nur an.
+„Na, ihr beiden!“, lacht Rosa.
+? Wer ist Wuschel?
+? Wo sucht Rosa?
+? Wo findet Rosa Wuschel?
+? Wer liegt neben Wuschel?
+
+# Beeren und Kuchen
+Oma Hilde will einen Kuchen machen.
+Sie braucht noch Beeren.
+Lukas und Ella nehmen einen Korb mit.
+Sie gehen hinaus an den Waldrand.
+Dort finden sie rote und blaue Beeren.
+Lukas isst mehr Beeren, als er in den Korb legt.
+„Lukas, so haben wir nachher keine Beeren!“, ruft Ella.
+Lukas lacht und hat einen blauen Mund.
+Nun sammeln sie schnell weiter.
+Bald ist der Korb schwer.
+Oma Hilde macht den Kuchen fertig.
+Am Abend essen alle Kuchen mit Sahne.
+? Was will Oma Hilde machen?
+? Was braucht sie dafür?
+? Warum hat Lukas einen blauen Mund?
+? Was essen alle am Abend?
+
+# Die Muschel
+Mama, Ben und Emil fahren an das Meer.
+Der Sand ist warm und weich.
+Emil baut eine Burg aus Sand.
+Ben sucht Muscheln am Ufer.
+Da findet er eine rosa Muschel.
+„Halte sie an dein Ohr“, sagt Mama.
+Ben legt die Muschel an sein Ohr.
+„Da rauscht das Meer!“, ruft er.
+Emil will die Muschel auch haben.
+„Komm, wir suchen dir auch eine“, sagt Ben.
+Am Abend haben beide eine Muschel.
+Und Emils Burg aus Sand holt sich das Meer.
+? Wo sind Mama, Ben und Emil?
+? Was baut Emil?
+? Was hört Ben in der Muschel?
+? Was passiert mit der Burg?
+
+# Lange Geschichten (C3), Teil 2: Buchstaben der Fibel bis K (ohne Sp/St am Anfang, Pf, Qu, X, V, Y, C, ß, ng, ck, tz)
+
+# Wo ist Brummi?
+Paul hat einen alten Kuschelbär, sein Name ist Brummi.
+Brummi ist immer bei Paul, auch im Bett.
+Am Sonntag fährt die Familie in den Park.
+Paul tobt mit Papa auf der Wiese.
+Brummi liegt die ganze Zeit auf der Bank.
+Am Abend ist Paul müde und will schlafen.
+„Wo ist Brummi?“, ruft er.
+Papa fährt mit Paul noch einmal in den Park.
+Da sehen sie Brummi auf der Bank, unter einem Blatt.
+Ein Hund schnuppert an ihm.
+Paul nimmt Brummi fest in den Arm.
+„Nie wieder lasse ich dich allein!“
+? Wie heißt der Kuschelbär von Paul?
+? Wo bleibt Brummi liegen?
+? Warum fahren Paul und Papa noch einmal in den Park?
+? Wo finden sie Brummi?
+
+# Ein Brief für Oma
+Heute hat Oma Geburtstag.
+Lea will ihr einen Brief schreiben.
+Sie holt Papier und bunte Farben.
+Erst malt sie eine Torte mit Kerzen.
+Dann schreibt sie: Liebe Oma, ich habe dich lieb!
+Papa hilft ihr bei den schweren Wörtern.
+Lea legt den Brief in einen Umschlag.
+Dann laufen sie zur Post.
+„Kommt der Brief heute noch an?“, fragt Lea.
+„Nein, erst morgen“, sagt Papa.
+Am nächsten Tag ruft Oma an.
+„Was für ein schöner Brief!“, ruft sie. „Der kommt an meine Wand.“
+? Warum schreibt Lea einen Brief?
+? Was malt Lea?
+? Wer hilft Lea?
+? Was sagt Oma am Telefon?
+
+# Der kleine Bär im Winter
+Im Wald wohnt ein kleiner Bär.
+Es ist Herbst, die Blätter werden bunt.
+Mama Bär sagt: „Bald kommt der Winter. Dann schlafen wir in der Höhle.“
+Doch der kleine Bär ist gar nicht müde.
+Er will den Schnee sehen!
+Also schleicht er heimlich aus der Höhle.
+Im Wald liegt schon Schnee.
+Der kleine Bär rollt im Schnee herum.
+Dann wird es kalt, sehr kalt.
+Seine Nase ist rot, seine Ohren frieren.
+„Nun bin ich doch müde“, denkt er.
+Er läuft heim in die Höhle.
+Dort kuschelt er sich an Mama Bär und schläft ein.
+? Wo wohnt der kleine Bär?
+? Was will der kleine Bär sehen?
+? Wie fühlt er sich im Schnee?
+? Wo schläft er am Ende?
+
+# Die Kiste im Sand
+Jonas und Mila sind mit Opa am Meer.
+Sie graben ein Loch im Sand.
+Auf einmal ist da etwas Hartes.
+Es ist eine alte Kiste aus Holz!
+„Ob da Gold drin ist?“, fragt Mila.
+Opa hilft, die Kiste aus dem Loch zu heben.
+Die Kiste ist schwer und nass.
+Jonas macht die Kiste auf.
+Drin ist kein Gold, nur Sand und eine Flasche.
+In der Flasche ist ein Zettel.
+Auf dem Zettel ist eine Karte gemalt.
+„Eine Karte!“, ruft Jonas. „Wir suchen weiter!“
+Opa lacht: „Aber erst nach dem Essen.“
+? Wo sind Jonas und Mila?
+? Was finden sie im Sand?
+? Was ist in der Kiste?
+? Was wollen die Kinder nach dem Essen machen?
+
+# Ein Zelt im Zimmer
+Heute regnet es den ganzen Tag.
+Lina und Jan wissen nicht, was sie tun sollen.
+Da hat Jan eine Idee.
+„Wir bauen ein Zelt!“
+Sie holen Kissen und Tücher.
+Die Tücher legen sie über den Tisch.
+Unter dem Tisch ist nun ein Zelt.
+Drin ist es dunkel und gemütlich.
+Lina holt eine Lampe und ein Buch.
+Jan holt Kekse aus der Küche.
+Dann liest Lina ein Märchen.
+Als Mama kommt, schlafen beide schon im Zelt.
+? Warum bleiben Lina und Jan im Haus?
+? Was bauen sie?
+? Was holen sie in das Zelt?
+? Was sieht Mama am Ende?
+
+# Opas Kürbis
+Opa hat im Garten einen Kürbis.
+Den ganzen Sommer wächst er.
+Im Herbst ist er rund und schwer.
+Er ist so schwer, dass Opa ihn nicht heben kann.
+„Wir helfen dir!“, rufen Ida und Tom.
+Zu dritt rollen sie den Kürbis zum Haus.
+Oma macht eine Suppe aus dem Kürbis.
+Ida und Tom schneiden ein Gesicht in die Schale.
+Der Kürbis bekommt zwei Augen, eine Nase und einen Mund mit Zähnen.
+Am Abend kommt eine Kerze in den Kürbis.
+Nun leuchtet das Gesicht im Dunkeln.
+Tom ruft: „Hu, der sieht gefährlich aus!“
+Doch Ida lacht: „Der ist lieb, er will nur Suppe.“
+? Wo wächst der Kürbis?
+? Wer hilft Opa?
+? Was macht Oma aus dem Kürbis?
+? Was kommt am Abend in den Kürbis?
+
+# Ein neuer Freund
+Ole wohnt mit seiner Familie in einem neuen Haus.
+Er kennt hier noch niemand.
+In der Pause bleibt er allein am Rand.
+Da kommt ein Mädchen mit einem Ball.
+„Ich bin Jule. Kommst du mit auf die Wiese?“
+Ole sagt: „Ja, gern!“
+Auf der Wiese rennen alle hinter dem Ball her.
+Ole trifft das Tor.
+„Super!“, rufen die anderen Kinder.
+Nach der Schule laufen Jule und Ole zusammen heim.
+Jule wohnt nur drei Häuser weiter.
+„Bis morgen!“, ruft Ole. Er freut sich auf die Schule.
+? Warum ist Ole allein?
+? Wer kommt zu Ole?
+? Was machen die Kinder auf der Wiese?
+? Wo wohnt Jule?
+
+# Der Kater auf dem Baum
+Der Kater Moro ist auf einen hohen Baum geklettert.
+Nun kommt er nicht mehr herunter.
+„Miau, miau!“, ruft er.
+Anna holt Papa.
+Papa holt eine Leiter, aber sie ist zu kurz.
+„Wir rufen die Feuerwehr!“, sagt Anna.
+Bald kommt ein rotes Auto mit Blaulicht.
+Eine Feuerwehrfrau holt eine hohe Leiter.
+Sie klettert ganz nach oben.
+Moro faucht erst, dann lässt er sich holen.
+Unten nimmt Anna ihn in die Arme.
+„Danke!“, ruft Anna, und die Feuerwehrfrau winkt.
+? Wo ist der Kater Moro?
+? Warum hilft die Leiter von Papa nicht?
+? Wen ruft Anna?
+? Wer holt Moro vom Baum?
+
+# Lange Geschichten (C3), Teil 3: fast alle Buchstaben (ohne ß, ng, ck, tz)
+
+# Ein Esel im Garten
+Am Sonntag steht ein Esel vor dem Gartenzaun.
+Er ist grau und hat riesige Ohren.
+„Wo kommst du denn her?“, fragt Frida.
+Der Esel frisst die Blumen von Mama.
+„Nein, nicht die Tulpen!“, ruft Frida.
+Sie holt einen Apfel aus der Küche.
+Der Esel mag den Apfel lieber als die Tulpen.
+Frida und ihr Bruder Max führen den Esel auf die Wiese.
+Dann ruft Papa den Bauern vom Hof am Wald an.
+„Ja, das ist unser Esel Pünktchen“, sagt der Bauer.
+„Er ist durch den Zaun ausgebüxt.“
+Am Nachmittag holt er Pünktchen ab.
+Zum Dank dürfen Frida und Max morgen auf dem Hof reiten.
+? Was steht vor dem Gartenzaun?
+? Was frisst der Esel?
+? Was holt Frida aus der Küche?
+? Wem gehört der Esel?
+
+# Der kleine Zauberer
+Leon hat einen Zauberstab und einen schwarzen Hut.
+Heute will er seiner Schwester Pia etwas vorzaubern.
+„Simsalabim!“, ruft er und hebt den Stab.
+Aus dem Hut soll ein Hase kommen.
+Doch im Hut ist nur ein alter Schuh von Papa.
+Pia lacht. „Das ist Quatsch!“
+Leon versucht es noch einmal.
+„Abrakadabra!“
+Diesmal kommt aus dem Hut ein Hase aus Stoff.
+„Wie hast du das gemacht?“, fragt Pia staunend.
+„Ein Zauberer verrät das nie!“, sagt Leon.
+Doch Pia hat den Hasen vorher unter dem Tisch gesehen.
+Sie lächelt und sagt nichts.
+? Was hat Leon?
+? Was kommt beim ersten Mal aus dem Hut?
+? Was kommt beim zweiten Mal aus dem Hut?
+? Was weiß Pia?
+
+# Die Reise zum Mond
+Ida baut aus einem Karton eine Rakete.
+Sie malt Sterne und Planeten darauf.
+Dann klettert sie hinein und macht die Klappe zu.
+„Drei, zwei, eins, Start!“, ruft sie.
+In ihrer Fantasie fliegt die Rakete hoch über die Wolken.
+Sie fliegt vorbei an Sternen und an einem roten Planeten.
+Dann landet Ida auf dem Mond.
+Der Mond ist grau und voller Krater.
+Da kommt ein kleines grünes Wesen.
+„Hallo, ich bin Pixo“, sagt es. „Willst du mit mir spielen?“
+Ida und Pixo hüpfen über die Krater, so hoch wie nie.
+Da ruft Mama: „Ida, Abendessen!“
+„Tschüss, Pixo!“, ruft Ida und fliegt schnell nach Hause.
+? Woraus baut Ida eine Rakete?
+? Wohin fliegt Ida?
+? Wen trifft sie auf dem Mond?
+? Wer ruft Ida nach Hause?
+
+# Pepe hat Schnupfen
+Heute ist Zirkus in der Stadt.
+Felix und Oma haben Karten für die erste Reihe.
+Doch dann kommt der Direktor in die Manege.
+„Unser lustiger Pepe hat Schnupfen. Er kann heute nicht auftreten.“
+Die Kinder rufen: „Oh nein!“
+Da hat Oma eine Idee, und sie flüstert Felix etwas ins Ohr.
+Felix steht auf und geht in die Manege.
+Er macht Quatsch: Er fällt absichtlich hin.
+Er zieht eine lustige Grimasse und tanzt wie ein Huhn.
+Alle Kinder lachen und klatschen.
+Der Direktor schenkt Felix eine rote Nase wie die von Pepe.
+„Heute bist du unser Pepe!“, sagt er.
+Felix strahlt über das ganze Gesicht.
+? Wo sind Felix und Oma?
+? Warum kann Pepe nicht kommen?
+? Was macht Felix in der Manege?
+? Was bekommt Felix vom Direktor?
+
+# Die vergessliche Hexe
+Die Hexe Kunigunde wohnt in einem schiefen Haus im Wald.
+Sie ist nett, aber sehr vergesslich.
+Heute will sie für ihren Kater Pfeffer einen Kuchen zaubern.
+Sie holt ihr Zauberbuch und ihren Besen.
+Doch wo ist der Zauberspruch für Kuchen?
+„Ich hab es! Hokuspokus, Fidibus!“
+Puff! Auf dem Tisch steht eine Torte aus Steinen.
+„Oje, das war der falsche Spruch!“
+Kater Pfeffer schüttelt den Kopf.
+Er holt das Buch und zeigt mit der Pfote auf eine Seite.
+Kunigunde liest vor: „Simsalabim, Kuchen her!“
+Nun steht ein Apfelkuchen auf dem Tisch, und er duftet herrlich.
+? Wo wohnt die Hexe?
+? Was will sie zaubern?
+? Was ist beim ersten Mal auf dem Tisch?
+? Wer hilft der Hexe?
+
+# Der Dino im Museum
+Die Klasse von Frau Peters macht einen Ausflug ins Museum.
+Dort stehen riesige Knochen von Dinosauriern.
+Ein Dino ist so hoch wie ein Haus.
+„Der hat bestimmt viel gefressen!“, sagt Emil.
+Frau Peters erklärt: „Das war ein Pflanzenfresser. Er hat nur Blätter gegessen.“
+Emil möchte den Dino gern einmal anfassen.
+Doch das ist verboten.
+Auf einmal hört Emil ein lautes Brummen.
+Hat der Dino geknurrt?
+Emil hält die Luft an.
+Dann sieht er seinen Freund Jonas hinter dem Dino hervorkommen.
+„Das war nur mein Bauch“, lacht Jonas. „Ich will mein Mittagessen!“
+Da lachen alle, auch Frau Peters.
+? Wohin macht die Klasse einen Ausflug?
+? Was hat der große Dino gegessen?
+? Was hört Emil?
+? Wer hat das Brummen gemacht?
+
+# Opas Brille
+Opa sucht seine Brille.
+„Ohne Brille kann ich die Post nicht lesen.“
+Marie hilft ihm suchen.
+Sie schauen unter dem Sofa und im Bad.
+Sie schauen im Kühlschrank und sogar im Garten.
+Die Brille ist nicht da.
+Opa ist schon ganz verzweifelt.
+Da kommt Oma vom Einkaufen nach Hause.
+Sie sieht Opa an und muss lachen.
+„Was ist so lustig?“, fragt Opa.
+„Deine Brille ist auf deiner Stirn!“
+Opa fasst an seinen Kopf, und da ist die Brille wirklich.
+Nun lachen alle drei.
+? Was sucht Opa?
+? Wo suchen Marie und Opa?
+? Wer findet die Brille?
+? Wo ist die Brille?
+
+# Das Baumhaus
+Papa und Vera bauen ein Baumhaus im alten Apfelbaum.
+Sie brauchen Bretter, Nägel und einen Hammer.
+Papa sägt, und Vera hält die Bretter fest.
+Nach drei Tagen ist das Baumhaus fertig.
+Es hat ein Dach, ein kleines Fenster und eine Leiter aus Seil.
+Vera malt ein Schild: Kein Zutritt für Erwachsene!
+Papa lacht: „Und wer darf hinein?“
+„Nur Kinder und Eichhörnchen!“, sagt Vera.
+Am Abend will Vera im Baumhaus schlafen.
+Sie nimmt ihr Kissen und eine Lampe mit.
+Doch als es dunkel wird, raschelt es im Baum.
+Vera klettert schnell herunter.
+„Das war bestimmt nur ein Eichhörnchen“, sagt Papa.
+„Morgen schlafe ich oben“, sagt Vera. „Aber heute bei dir.“
+? Wo bauen Papa und Vera das Baumhaus?
+? Was malt Vera auf das Schild?
+? Wer darf in das Baumhaus?
+? Warum schläft Vera doch nicht im Baumhaus?
+
+# Lange Geschichten (C3), Teil 4: alle Buchstaben
+
+# Leo und die Laterne
+Heute ist der Laternenumzug, und Leo freut sich schon den ganzen Tag.
+Seine Laterne ist ein Mond mit gelben Sternen.
+Als es dunkel wird, zündet Mama die Kerze an.
+Mit vielen anderen Kindern gehen sie singend durch die Straßen.
+Plötzlich kommt ein starker Windstoß.
+Leos Laterne wackelt hin und her und fängt Feuer!
+Leo erschrickt und lässt sie fallen.
+Ein Vater tritt schnell auf die Flammen, und das Feuer ist aus.
+Doch die Laterne ist kaputt, nur ein schwarzer Rest ist übrig.
+Leo fängt an zu weinen.
+Da kommt ein Mädchen zu ihm, es heißt Ronja.
+„Komm, wir tragen meine Laterne zusammen“, sagt sie.
+So gehen Leo und Ronja gemeinsam weiter, und Leo singt wieder mit.
+? Wie sieht Leos Laterne aus?
+? Was passiert mit der Laterne?
+? Wer hilft Leo?
+? Was machen Leo und Ronja am Ende?
+
+# Eine Überraschung für Papa
+Bald hat Papa Geburtstag, und Jakob und Lotte planen eine Überraschung.
+Sie wollen ihm ganz allein einen Kuchen backen.
+Oma hilft ein bisschen, aber nur ein bisschen.
+Lotte rührt Butter, Zucker und Eier zusammen.
+Jakob gibt Mehl dazu, und plötzlich ist die ganze Küche weiß.
+„Jetzt siehst du aus wie ein Gespenst!“, kichert Lotte.
+Der Kuchen kommt in den Ofen, und bald riecht es im ganzen Haus herrlich.
+Dann kommt der schwierigste Teil: Papa darf nichts merken.
+Als er nach Hause kommt, schieben ihn die Kinder schnell ins Wohnzimmer.
+„Was ist denn hier los?“, fragt Papa.
+„Gar nichts!“, rufen beide und lachen.
+Am nächsten Morgen steht der Kuchen mit vielen Kerzen auf dem Tisch.
+Papa staunt: „Den habt ihr ganz allein gebacken?“
+„Fast allein“, sagt Jakob, und Oma zwinkert.
+? Was wollen Jakob und Lotte für Papa machen?
+? Warum ist die Küche weiß?
+? Was darf Papa nicht merken?
+? Wer hat ein bisschen geholfen?
+
+# Stachel sucht ein Bett
+Im Garten von Familie Berg wohnt ein kleiner Igel namens Stachel.
+Es ist Herbst, und die Nächte werden kalt.
+Stachel muss bald einen Platz für seinen Winterschlaf finden.
+Zuerst kriecht er unter einen Busch, aber dort ist es zu nass.
+Dann probiert er einen alten Blumentopf, doch der ist viel zu eng.
+Stachel ist müde und hungrig.
+Da sieht ihn Greta durch das Fenster.
+„Mama, schau mal, da ist ein Igel!“, ruft sie.
+Greta und Mama machen aus Ästen und Laub einen Haufen in der Ecke vom Garten.
+Daneben stellen sie eine Schale mit Wasser und etwas Katzenfutter.
+In der Nacht schnuppert Stachel an dem Haufen.
+Er frisst sich satt und kriecht dann tief in das warme Laub.
+Dort schläft er bis zum Frühling.
+? Was sucht der Igel Stachel?
+? Warum passt der Blumentopf nicht?
+? Was bauen Greta und Mama?
+? Wie lange schläft Stachel?
+
+# Der Wackelzahn
+Schon seit einer Woche wackelt Nikos Zahn.
+Beim Essen tut es ein bisschen weh, und Niko kaut nur noch links.
+„Zieh doch einfach dran!“, sagt seine große Schwester Merle.
+Doch Niko traut sich nicht.
+Am Nachmittag spielt Niko mit Merle Fußball im Hof.
+Der Ball fliegt hoch, und Niko springt mit dem Kopf dagegen.
+Plötzlich schmeckt er etwas Komisches im Mund.
+Er spuckt aus, und da liegt sein Zahn im Gras!
+„Du hast eine Lücke!“, lacht Merle.
+Niko schaut in den Spiegel und grinst.
+Am Abend legt er den Zahn unter sein Kissen.
+Am nächsten Morgen liegen dort eine kleine Münze und ein Zettel.
+Darauf steht in winziger Schrift: Danke für den Zahn! Deine Zahnfee.
+? Warum kaut Niko nur links?
+? Wie verliert Niko seinen Zahn?
+? Wohin legt Niko den Zahn?
+? Was findet er am nächsten Morgen?
+
+# Kapitän Kuddel
+Kapitän Kuddel segelt mit seinem Schiff über das weite Meer.
+Auf seiner Schulter sitzt der Papagei Lora.
+Eines Tages sieht Kuddel durch sein Fernrohr eine kleine Insel.
+„Land in Sicht!“, ruft er.
+Die Piraten rudern mit einem Boot an den Strand.
+Auf der Insel wachsen Palmen, und überall liegen Kokosnüsse.
+Kuddel hat eine alte Karte mit einem roten Kreuz.
+„Dort ist der Schatz vergraben!“, sagt er und zeigt auf einen großen Felsen.
+Die Piraten graben und graben, bis ihnen der Rücken wehtut.
+Endlich stoßen sie auf eine Kiste.
+Doch in der Kiste ist kein Gold, sondern nur ein Stapel Bücher.
+Lora krächzt: „Lesen ist Gold! Lesen ist Gold!“
+Kuddel lacht und nimmt die Bücher mit an Bord.
+Seitdem liest er seinen Piraten jeden Abend eine Geschichte vor.
+? Wer sitzt auf der Schulter von Kapitän Kuddel?
+? Was sieht Kuddel durch das Fernrohr?
+? Was ist in der Kiste?
+? Was macht Kuddel jetzt jeden Abend?
+
+# Das Iglu
+In der Nacht hat es so viel geschneit wie noch nie.
+Am Morgen ist alles weiß, und die Schule fällt aus.
+Hanna und ihr Freund Ali ziehen dicke Jacken, Mützen und Handschuhe an.
+„Wir bauen ein Iglu!“, sagt Ali.
+Mit einem Eimer machen sie viele Blöcke aus Schnee.
+Block für Block setzen sie aufeinander, immer im Kreis.
+Das ist schwerer, als sie dachten.
+Zweimal stürzt die Mauer ein, und die beiden müssen von vorn anfangen.
+Doch sie geben nicht auf.
+Am Nachmittag ist das Iglu endlich fertig.
+Hanna und Ali kriechen hinein und setzen sich auf ein Kissen.
+Drinnen ist es still, und es ist gar nicht so kalt.
+Da bringt Hannas Mama zwei Becher mit heißem Kakao.
+„Das ist das schönste Haus der Welt“, sagt Hanna.
+? Warum fällt die Schule aus?
+? Was bauen Hanna und Ali?
+? Was passiert zweimal mit der Mauer?
+? Was bringt Hannas Mama?
+
+# Ohne Stützräder
+Finn wünscht sich schon lange, ohne Stützräder Fahrrad zu fahren.
+Am Samstag schraubt Papa die kleinen Räder ab.
+Finn setzt den Helm auf und steigt auf sein Rad.
+Papa hält den Sattel fest und läuft neben ihm her.
+„Nicht loslassen!“, ruft Finn.
+„Ich halte dich“, sagt Papa.
+Sie fahren den ganzen Weg bis zum Spielplatz.
+Dort dreht Finn sich um und sieht, dass Papa weit hinten steht.
+Er ist ganz allein gefahren!
+Vor Schreck wackelt der Lenker, und Finn landet im weichen Gras.
+Doch er lacht und steigt sofort wieder auf.
+Am Abend fährt Finn stolz zu Oma, ganz ohne Hilfe.
+Oma klatscht in die Hände: „Du bist ja schon ein richtiger Radprofi!“
+? Was wünscht sich Finn?
+? Wer hält den Sattel fest?
+? Was merkt Finn am Spielplatz?
+? Zu wem fährt Finn am Abend?
+
+# Pieps und der Käse
+Hinter dem Küchenschrank wohnt eine kleine Maus namens Pieps.
+Jede Nacht schleicht sie in die Küche und sucht nach Krümeln.
+Heute riecht sie etwas ganz Besonderes: Käse!
+Der Käse liegt auf dem Tisch, unter einer Glocke aus Glas.
+Pieps klettert am Tischbein hoch und schnuppert an dem Glas.
+Doch die Glocke ist zu schwer, sie kann sie nicht heben.
+Da hat Pieps eine Idee.
+Sie holt ihre Freundin Krümel und ihren Bruder Zacki.
+Zu dritt schieben sie die Glocke ein Stück zur Seite.
+Gerade als sie den ersten Bissen nehmen, geht das Licht an.
+In der Tür steht Lisa im Schlafanzug.
+Die drei Mäuse erstarren vor Schreck.
+Doch Lisa lächelt nur, bricht ein Stück Käse ab und legt es auf den Boden.
+„Gute Nacht, ihr Mäuse“, flüstert sie.
+? Wo wohnt Pieps?
+? Was riecht Pieps in der Küche?
+? Wer hilft Pieps?
+? Was macht Lisa, als sie die Mäuse sieht?
+
+# Ritter Kunibert
+Ritter Kunibert wohnt in einer alten Burg auf einem Berg.
+Er hat eine glänzende Rüstung, aber er hat vor fast allem Angst.
+Eines Tages kommt ein Bauer zur Burg gelaufen.
+„Hilfe! Ein Drache sitzt in unserem Dorf auf dem Marktplatz!“
+Kunibert zittert, doch er reitet mit seinem Pferd ins Dorf.
+Dort sitzt wirklich ein riesiger grüner Drache.
+Aber der Drache weint dicke Tränen.
+„Warum weinst du?“, fragt Kunibert vorsichtig.
+„Alle laufen weg, wenn sie mich sehen“, schluchzt der Drache. „Dabei will ich nur Freunde.“
+Kunibert steigt vom Pferd und reicht dem Drachen die Hand.
+Die Kinder aus dem Dorf kommen langsam näher.
+Bald rutschen sie auf dem Schwanz des Drachen und lachen.
+Am Abend zündet der Drache mit seinem Feuer ein großes Lagerfeuer an.
+Seitdem hat Ritter Kunibert keine Angst mehr vor Drachen.
+? Wo wohnt Ritter Kunibert?
+? Wovor hat Kunibert Angst?
+? Warum weint der Drache?
+? Was machen die Kinder mit dem Drachen?
+
+# Das große Spiel
+Am Samstag spielt Emmas Mannschaft gegen die Blauen Haie.
+Emma ist die Torhüterin, und sie ist sehr aufgeregt.
+Ihr Bauch kribbelt, und ihre Hände sind ganz kalt.
+Die Blauen Haie sind schnell und schießen oft aufs Tor.
+Doch Emma fängt jeden Ball.
+Kurz vor der Pause schießt Emmas Freundin Selin ein Tor.
+Alle jubeln und springen in die Luft.
+Nach der Pause wird es spannend.
+Ein Spieler der Haie läuft ganz allein auf Emma zu.
+Er schießt fest, doch Emma wirft sich in die Ecke und hält den Ball.
+Dann pfeift der Schiedsrichter ab: Emmas Mannschaft hat gewonnen!
+Auf dem Heimweg isst Emma ein Eis mit drei Kugeln.
+„Morgen bin ich bestimmt müde“, sagt sie, „aber heute bin ich glücklich.“
+? Gegen wen spielt Emmas Mannschaft?
+? Was macht Emma in der Mannschaft?
+? Wer schießt das erste Tor?
+? Was isst Emma auf dem Heimweg?
