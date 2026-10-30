@@ -457,7 +457,7 @@ function makeGeheimwort(v: Vocab, rng: Rng): Quest | null {
 /** C3: ab so vielen Sätzen gilt eine Geschichte als lang; dann gibt es weniger Wörter und Sätze */
 export const LANG_GESCHICHTE = 12;
 export const LANG_WOERTER = 16;
-export const LANG_SAETZE = 5;
+export const LANG_SAETZE = 7;
 export const LANG_SILBEN = 12;
 
 export interface Generated {
