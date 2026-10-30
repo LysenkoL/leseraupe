@@ -123,17 +123,14 @@ function urkundeBild(nr: number): string {
   const by = 128;
   const br = 62;
   // symmetrischer Bogen: erste Perle bei 200°, Kopf bei 340° – beide auf gleicher Höhe.
-  // Perlen etwas enger, damit zwischen roter Perle und Kopf Platz für den Fühler bleibt
-  const schritt = 13.4;
+  // Regenbogen hier umgekehrt (rot hinten, lila am Kopf): so liegt der rote Fühler nicht auf einer roten Perle.
+  const schritt = 140 / PERLEN_JE_RAUPE;
   for (let i = 0; i < PERLEN_JE_RAUPE; i++) {
     const a = ((200 + i * schritt) * Math.PI) / 180;
-    s += m.perle(bx + br * Math.cos(a), by + br * Math.sin(a), 7.2, REGENBOGEN[i]);
+    s += m.perle(bx + br * Math.cos(a), by + br * Math.sin(a), 7.2, REGENBOGEN[PERLEN_JE_RAUPE - 1 - i]);
   }
-  // Kopf leicht nach rechts geneigt: so zeigt der rote Fühler nicht auf die rote Perle
   const ka = (340 * Math.PI) / 180;
-  const kx = n1(bx + br * Math.cos(ka));
-  const ky = n1(by + br * Math.sin(ka));
-  s += `<g transform="rotate(22 ${kx} ${ky})">${m.kopf(kx, ky, 10.5)}</g>`;
+  s += m.kopf(bx + br * Math.cos(ka), by + br * Math.sin(ka), 10.5);
   // Medaille
   const mx = 95;
   const my = 168;
