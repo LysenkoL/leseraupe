@@ -132,14 +132,18 @@ function urkundeBild(nr: number): string {
   s += m.kopf(bx + br * Math.cos(ka), by + br * Math.sin(ka), 10.5);
   // Medaille
   const mx = 95;
-  const my = 180;
-  s += `<path d="M${mx - 10} ${my + 8} L${mx - 17} ${my + 34} L${mx - 10} ${my + 30} L${mx - 6} ${my + 37} L${mx - 1} ${my + 12} Z" fill="#3A86FF"/><path d="M${mx + 10} ${my + 8} L${mx + 17} ${my + 34} L${mx + 10} ${my + 30} L${mx + 6} ${my + 37} L${mx + 1} ${my + 12} Z" fill="#E63950"/>`;
+  const my = 168;
+  const R = 24; // Radius der Medaille
+  const mk = R / 20;
+  const band = (sg: number, farbe: string) =>
+    `<path d="M${n1(mx + sg * 10 * mk)} ${n1(my + 8 * mk)} L${n1(mx + sg * 17 * mk)} ${n1(my + 34 * mk)} L${n1(mx + sg * 10 * mk)} ${n1(my + 30 * mk)} L${n1(mx + sg * 6 * mk)} ${n1(my + 37 * mk)} L${n1(mx + sg * 1 * mk)} ${n1(my + 12 * mk)} Z" fill="${farbe}"/>`;
+  s += band(-1, '#3A86FF') + band(1, '#E63950');
   let zacken = '';
-  for (let i = 0; i < 28; i++) {
-    const a = (i / 28) * Math.PI * 2;
-    zacken += `<circle cx="${n1(mx + 20 * Math.cos(a))}" cy="${n1(my + 20 * Math.sin(a))}" r="2.6"/>`;
+  for (let i = 0; i < 30; i++) {
+    const a = (i / 30) * Math.PI * 2;
+    zacken += `<circle cx="${n1(mx + R * Math.cos(a))}" cy="${n1(my + R * Math.sin(a))}" r="3"/>`;
   }
-  s += `<g fill="#F2B21F">${zacken}</g><circle cx="${mx}" cy="${my}" r="20" fill="url(#ukGold)" stroke="#C98A1A" stroke-width="0.8"/><circle cx="${mx}" cy="${my}" r="15.5" fill="none" stroke="#FFF4B0" stroke-width="0.7" stroke-dasharray="1.2 1"/>`;
+  s += `<g fill="#F2B21F">${zacken}</g><circle cx="${mx}" cy="${my}" r="${R}" fill="url(#ukGold)" stroke="#C98A1A" stroke-width="0.8"/><circle cx="${mx}" cy="${my}" r="${R - 5}" fill="none" stroke="#FFF4B0" stroke-width="0.7" stroke-dasharray="1.2 1"/>`;
   return m.svg(`0 0 ${W} ${H}`, s, 'class="uk-bild" aria-hidden="true"');
 }
 
