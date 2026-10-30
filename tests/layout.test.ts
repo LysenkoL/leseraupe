@@ -133,3 +133,50 @@ describe('C3: lange Geschichten bei allen Buchstaben passen ganz aufs Blatt', ()
     }
   }
 });
+
+describe('C1: Buchstaben im Kopf immer in einer Zeile', () => {
+  /** Zeilen der Buchstabenkreise und ihre Texte */
+  async function kopf(letters: string[]): Promise<{ zeilen: number; texte: string[]; neu: string[] }> {
+    await page.evaluate((h) => (document.getElementById('host')!.innerHTML = h), renderSheet(sheetFor(letters, 5, 'wiese'), { displayNumber: 3 }));
+    return page.evaluate(() => {
+      const chips = [...document.querySelectorAll<HTMLElement>('#host .sh-letters .sh-l')];
+      return {
+        zeilen: new Set(chips.map((c) => Math.round(c.getBoundingClientRect().top))).size,
+        texte: chips.map((c) => c.textContent!),
+        neu: chips.filter((c) => c.classList.contains('neu')).map((c) => c.textContent!),
+      };
+    });
+  }
+
+  it('T O M L A I S: alle Kreise wie bisher', async () => {
+    const k = await kopf(START);
+    expect(k.zeilen).toBe(1);
+    expect(k.texte).toHaveLength(7);
+    expect(k.neu).toEqual(['Ss']);
+  });
+
+  it('20 Einheiten: „20 Buchstaben“ und der neue Buchstabe', async () => {
+    const k = await kopf(LETTER_SETS[1][1]);
+    expect(k.zeilen).toBe(1);
+    expect(k.texte).toHaveLength(2);
+    expect(k.texte[0]).toBe('20 Buchstaben');
+    expect(k.neu).toHaveLength(1);
+  });
+
+  it('alle 43: „Alle Buchstaben“ und tz', async () => {
+    const k = await kopf(UNIT_IDS);
+    expect(k.zeilen).toBe(1);
+    expect(k.texte).toEqual(['Alle Buchstaben', 'tz']);
+    expect(k.neu).toEqual(['tz']);
+  });
+
+  it('jede Anzahl in Fibel-Reihenfolge und vom Start aus: nie zwei Zeilen', async () => {
+    const vomStart = [...START, ...UNIT_IDS.filter((u) => !START.includes(u))];
+    for (const reihe of [UNIT_IDS, vomStart]) {
+      for (let n = 1; n <= reihe.length; n++) {
+        const k = await kopf(reihe.slice(0, n));
+        expect(k.zeilen, `${n} Buchstaben`).toBe(1);
+      }
+    }
+  });
+});

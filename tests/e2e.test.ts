@@ -739,4 +739,42 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     expect(errors).toEqual([]);
     await ctx.close();
   });
+
+  it('C2: „Alle auswählen“ in der Einführung, einmal die Frage, Blätter nur mit Lesetexten', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.goto(base);
+    await p.click('#onb-next');
+    await p.click('#onb-next');
+    await p.waitForSelector('.onb [data-alle]');
+    await p.click('.onb [data-alle]');
+    await p.waitForSelector('.modal');
+    expect(await p.textContent('.modal p')).toContain('kennt schon alle Buchstaben');
+    expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
+    expect(await p.textContent('.onb .lt.neu')).toBe('-tz');
+    expect(await p.$eval('.onb [data-alle]', (b) => (b as HTMLButtonElement).disabled)).toBe(true);
+    await p.click('.modal [data-x="yes"]');
+    await p.click('#onb-next');
+    await p.click('#onb-next');
+    await p.waitForSelector('#create');
+    const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
+    expect([await an('silben'), await an('kleine'), await an('woerter'), await an('saetze'), await an('geschichte')]).toEqual([false, false, true, true, true]);
+    // Buchstaben ab- und wieder anwählen: keine zweite Frage
+    await p.click('[data-l="tz"]');
+    await p.click('[data-l="tz"]');
+    await p.waitForFunction(() => document.querySelector('[data-l="tz"]')?.className.includes('lt '));
+    await p.click('[data-l="tz"]');
+    await p.waitForFunction(() => document.querySelector('[data-l="tz"]')?.className.includes('neu'));
+    expect(await p.$('.modal')).toBeNull();
+    // Blatt: kompakter Kopf, Vorschau-Zeile kurz
+    await p.click('#create');
+    await p.waitForSelector('#pv .sheet');
+    expect(await p.$$eval('#pv .sh-letters .sh-l', (e) => e.map((x) => x.textContent))).toEqual(['Alle Buchstaben', 'tz']);
+    expect(await p.textContent('#pv-sub')).toMatch(/^Alle Buchstaben · neu: tz/);
+    expect(await p.$('#pv .blk-silben')).toBeNull();
+    expect(await p.$('#pv .blk-kleine')).toBeNull();
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
 });

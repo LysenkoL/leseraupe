@@ -6,7 +6,28 @@ import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/d
 import { activeKind, loadProfile, saveProfile } from '../core/store';
 import { canInstall, install, isStandalone } from '../app/install';
 import { PLAY } from '../app/platform';
-import { setSprache, t } from '../app/i18n';
+import { setSprache, t, type Key } from '../app/i18n';
+import { NATIV } from '../app/native';
+import { erinnerungAnwenden, ladeErinnerung, speichereErinnerung, type Erinnerung } from '../app/erinnerung';
+
+/** B5: nur in der Android-App */
+function erinnerungKarte(e: Erinnerung): string {
+  return `<section class="card" id="erinnerung">
+      <h2>${t('erinn.ueberschrift')}</h2>
+      <label class="toggle"><input type="checkbox" id="er-an" ${e.an ? 'checked' : ''}/> ${t('erinn.an')}</label>
+      <div id="er-details" ${e.an ? '' : 'hidden'}>
+        <label class="field">${t('erinn.zeit')}
+          <input type="time" id="er-zeit" value="${e.zeit}" required />
+        </label>
+        <div class="field">${t('erinn.tage')}
+          <div class="seg tage">${[1, 2, 3, 4, 5, 6, 7]
+            .map((d) => `<button type="button" data-er-tag="${d}" class="${e.tage.includes(d) ? 'on' : ''}" aria-pressed="${e.tage.includes(d)}">${t(`erinn.tag${d}` as Key)}</button>`)
+            .join('')}</div>
+        </div>
+      </div>
+      <div class="hint" id="er-meldung" aria-live="polite">${t('erinn.hinweis')}</div>
+    </section>`;
+}
 
 export function renderEinstellungen(root: HTMLElement): void {
   const s = getSettings();
@@ -32,6 +53,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       </label>
       <div class="hint">${t('einst.spracheHinweis')}</div>
     </section>
+    ${NATIV ? erinnerungKarte(ladeErinnerung()) : ''}
     <section class="card" id="stolper">
       <div class="row"><h2>${t('einst.stolper')}</h2><span class="hint">${t('einst.besiegt', { n: s.stolperBesiegt })}</span></div>
       ${
@@ -99,8 +121,12 @@ export function renderEinstellungen(root: HTMLElement): void {
   root.querySelector<HTMLSelectElement>('#sprache')!.addEventListener('change', (e) => {
     const v = (e.target as HTMLSelectElement).value;
     setSprache(v === 'de' || v === 'uk' ? v : null);
+    // Text der Erinnerung in der neuen Sprache
+    if (NATIV && ladeErinnerung().an) erinnerungAnwenden(ladeErinnerung(), false).catch(() => undefined);
     renderEinstellungen(root);
   });
+
+  if (NATIV) erinnerungVerbinden(root);
 
   // Name wird beim Tippen gespeichert (kurz verzögert) und beim Verlassen des Feldes
   const nameInput = root.querySelector<HTMLInputElement>('#name')!;
@@ -154,4 +180,52 @@ export function renderEinstellungen(root: HTMLElement): void {
       toast(t('einst.dateiFehler'));
     }
   });
+}
+
+function erinnerungVerbinden(root: HTMLElement): void {
+  const an = root.querySelector<HTMLInputElement>('#er-an')!;
+  const details = root.querySelector<HTMLElement>('#er-details')!;
+  const zeit = root.querySelector<HTMLInputElement>('#er-zeit')!;
+  const meldung = root.querySelector<HTMLElement>('#er-meldung')!;
+  const tagKnoepfe = [...root.querySelectorAll<HTMLButtonElement>('[data-er-tag]')];
+  // nacheinander planen, auch wenn schnell hintereinander getippt wird
+  let kette = Promise.resolve();
+
+  const ausFormular = (): Erinnerung => ({
+    an: an.checked,
+    zeit: zeit.value || ladeErinnerung().zeit,
+    tage: tagKnoepfe.filter((b) => b.classList.contains('on')).map((b) => Number(b.dataset.erTag)),
+  });
+
+  const anwenden = (fragen: boolean, meldungNachher?: string) => {
+    const e = ausFormular();
+    speichereErinnerung(e);
+    details.hidden = !e.an;
+    kette = kette.then(async () => {
+      const r = await erinnerungAnwenden(e, fragen).catch(() => 'verweigert' as const);
+      if (r === 'verweigert' && e.an) {
+        // ehrlich: ohne Erlaubnis kommt keine Erinnerung – Schalter wieder aus
+        an.checked = false;
+        details.hidden = true;
+        speichereErinnerung({ ...e, an: false });
+        meldung.textContent = t('erinn.verweigert');
+        return;
+      }
+      meldung.textContent = e.an && !e.tage.length ? t('erinn.keineTage') : t('erinn.hinweis');
+      if (meldungNachher) toast(meldungNachher);
+    });
+  };
+
+  an.addEventListener('change', () => anwenden(an.checked, an.checked ? t('erinn.gespeichert') : t('erinn.aus')));
+  zeit.addEventListener('change', () => {
+    if (zeit.value) anwenden(false, t('erinn.gespeichert'));
+  });
+  tagKnoepfe.forEach((b) =>
+    b.addEventListener('click', () => {
+      const on = !b.classList.contains('on');
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+      anwenden(false);
+    }),
+  );
 }
