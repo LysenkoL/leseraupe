@@ -1,5 +1,5 @@
 import type { Minutes, SheetData } from './types';
-import { UNITS, checkText, sortUnits, unitById } from './letters';
+import { checkText, sortUnits, unitById } from './letters';
 import { COUNTS, makeQuest, makeSilben, type GenParams, type Removed } from './generator';
 import { Vocab } from './vocab';
 import { mulberry32 } from './random';
@@ -139,4 +139,3 @@ export function sheetFromChat(answer: ChatJson, p: GenParams): { sheet: SheetDat
   return { sheet, removed };
 }
 
-export const ALL_UNIT_LABELS = UNITS.map((u) => u.label);
