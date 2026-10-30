@@ -261,5 +261,8 @@
   "verlauf.minuten2": "хвилини",
   "verlauf.lesetag": "днів читання: {n} · поспіль: {s}",
   "einst.sicherungGeteilt": "Копію передано",
-  "einst.sicherungDownload": "Завантаження почалося — файл буде в папці «Завантаження»."
+  "einst.sicherungDownload": "Завантаження почалося — файл буде в папці «Завантаження».",
+  "lesen.nochmal": "↻ Прочитати ще раз",
+  "lesen.naechstes": "Наступний аркуш →",
+  "lesen.rest": "Ще {n} хв читання"
 }

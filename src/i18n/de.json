@@ -261,5 +261,8 @@
   "verlauf.lesetag": "{n} Lesetag · {s} in Folge",
   "einst.sicherungGeteilt": "Sicherung übergeben",
   "einst.sicherungDownload": "Download gestartet – die Datei liegt dann im Ordner „Downloads“.",
-  "verlauf.minuten2": "Minuten"
+  "verlauf.minuten2": "Minuten",
+  "lesen.nochmal": "↻ Noch einmal lesen",
+  "lesen.naechstes": "Nächstes Blatt →",
+  "lesen.rest": "Noch {n} Min Lesezeit"
 }

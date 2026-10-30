@@ -357,6 +357,40 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
   });
 
+  it('Am Bildschirm lesen: am Ende „Noch einmal lesen“ oder in der Serie „Nächstes Blatt“, Restzeit läuft mit', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-skip');
+    await p.click('#onb-skip');
+    await p.waitForSelector('#create');
+    await p.click('[data-bl="1"]');
+    await p.click('#create');
+    await p.waitForSelector('#pv-nav b');
+    const nr1 = Number((await p.textContent('#pv-title'))!.match(/Blatt (\d+)/)![1]);
+    await p.click('#screen');
+    await p.waitForSelector('#rd-next');
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    expect(await p.textContent('.rd-rest')).toMatch(/Noch \d+ Min Lesezeit/);
+    expect(await p.textContent('#rd-more')).toContain('Noch einmal lesen');
+    // dasselbe Blatt von vorn
+    await p.click('#rd-more');
+    expect(await p.textContent('#rd-pos')).toMatch(/^1 \//);
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    // nächstes Blatt der Serie: Restzeit wird mitgenommen
+    await p.click('#rd-blatt');
+    await p.waitForFunction(() => location.hash.startsWith('#/lesen?rest='));
+    await p.waitForFunction(() => document.querySelector('#rd-pos')?.textContent?.startsWith('1 /'));
+    while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
+    // letztes Blatt der Serie: kein „Nächstes Blatt“ mehr
+    expect(await p.$('#rd-blatt')).toBeNull();
+    await p.goto(base + '#/protokoll');
+    await p.waitForSelector('.log-row');
+    const log = await p.$$eval('.log-row b', (e) => e.map((x) => x.textContent));
+    expect(log.some((x) => x?.startsWith(`Blatt ${nr1} gelesen`))).toBe(true);
+    await ctx.close();
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {

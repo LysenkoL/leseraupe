@@ -1,4 +1,4 @@
-import { getDraft, getSettings, setSettings } from '../app/state';
+import { getDraft, getSerie, getSettings, setSerieIndex, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { confirmDialog, esc, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { neuerQuestStand, questSpielAktiv, questSpielHtml } from './questspiel';
@@ -65,7 +65,8 @@ export function fitLines(container: HTMLElement, minPx = 22): void {
 /**
  * „Am Bildschirm lesen“ (A4): das Blatt Block für Block in großer Schrift,
  * wischen oder „Weiter“, die Lesezeit läuft ab dem Öffnen. Bildschirm bleibt an.
- * Auf der letzten Seite hält die Zeit an: „Fertig ✓“ speichert die Lesung, „Weiterlesen“ lässt sie weiterlaufen.
+ * Auf der letzten Seite hält die Zeit an: „Fertig ✓“ speichert die Lesung, „Noch einmal lesen“ fängt dasselbe
+ * Blatt von vorn an (Zeit läuft weiter), „Nächstes Blatt“ geht in einer Serie zum nächsten Blatt.
  */
 export async function renderLesen(root: HTMLElement, params: URLSearchParams): Promise<void> {
   const sheetId = params.get('id') ? Number(params.get('id')) : null;
@@ -79,8 +80,13 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     return;
   }
   const back = sheetId ? `#/blatt/${sheetId}` : '#/vorschau';
-  // Lesezeit wie zuletzt im Timer gewählt (A6), nicht der Umfang des Blatts
+  // Lesezeit wie zuletzt im Timer gewählt (A6), nicht der Umfang des Blatts.
+  // „Nächstes Blatt“ aus einer Serie bringt die Restzeit mit (?rest=Sekunden), die Uhr läuft dann weiter.
   const minutes = getSettings().minutes;
+  const rest = Number(params.get('rest')) || 0;
+  const gesamt = rest > 0 ? Math.min(rest, minutes * 60) : minutes * 60;
+  const serie = draft ? getSerie() : null;
+  const hatNaechstes = !!serie && serie.idx < serie.items.length - 1;
   let farbig = !!data.silbenFarbig;
   let pages = readingPages(data);
   if (!pages.length) {
@@ -136,13 +142,13 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
 
   let readId: number | null = null;
   let gespeichert = false;
-  const cd = createCountdown(minutes * 60, {
+  const cd = createCountdown(gesamt, {
     tick: showTime,
     done: async () => {
       clockBtn.textContent = t('lesen.toll');
       clockBtn.classList.add('fertig');
       try {
-        const r = await recordRead(sheetId, draft, minutes);
+        const r = await recordRead(sheetId, draft, Math.max(1, Math.round(gesamt / 60)));
         if (r) {
           readId = r.id;
           gespeichert = true;
@@ -160,7 +166,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     clockBtn.setAttribute('aria-label', cd.running ? t('lesen.anhalten') : t('lesen.starten'));
   };
 
-  const gestartet = () => cd.running || cd.done || cd.remaining < minutes * 60;
+  const gestartet = () => cd.running || cd.done || cd.remaining < gesamt;
   // am Ende angehalten (nicht von Hand): beim Zurückblättern läuft die Zeit weiter
   let amEndeAngehalten = false;
 
@@ -178,7 +184,14 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     }
     const ende = last
       ? `<div class="rd-end">${name ? t('lesen.endeName', { name: esc(name) }) : t('lesen.ende')}</div>
-         ${!cd.done && gestartet() ? `<button class="btn ghost" id="rd-more">▶ ${t('lesen.weiterlesen')}</button>` : ''}
+         ${
+           !cd.done && gestartet()
+             ? `<p class="rd-rest">${t('lesen.rest', { n: Math.max(1, Math.ceil(cd.remaining / 60)) })}</p>
+         <div class="rd-mehr"><button class="btn ghost" id="rd-more">${t('lesen.nochmal')}</button>${
+           hatNaechstes ? `<button class="btn green" id="rd-blatt">${t('lesen.naechstes')}</button>` : ''
+         }</div>`
+             : ''
+         }
          <p class="qs-hint">${t('lesen.stolperHinweis')}</p>`
       : '';
     body.innerHTML = `<h1>${esc(p.title)}</h1><div class="rd-${p.kind}">${p.html}</div>${ende}`;
@@ -194,6 +207,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
       idx = 0;
       draw();
     });
+    root.querySelector('#rd-blatt')?.addEventListener('click', naechstesBlatt);
   };
 
   const leave = (to: string) => {
@@ -206,7 +220,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     if (readId) return leave(stolperLink(readId, back));
     if (!gestartet()) return leave(back);
     cd.pause();
-    const sec = minutes * 60 - cd.remaining;
+    const sec = gesamt - cd.remaining;
     const min = Math.max(1, Math.round(sec / 60));
     try {
       const r = await recordRead(sheetId, draft, min);
@@ -219,6 +233,23 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
       toast(t('lesung.fehler'));
     }
     leave(back);
+  };
+
+  /** Serie: dieses Blatt mit der bisherigen Zeit speichern, dann das nächste – die Restzeit läuft weiter */
+  const naechstesBlatt = async () => {
+    if (!serie) return;
+    cd.pause();
+    const min = Math.max(1, Math.round((gesamt - cd.remaining) / 60));
+    const restSek = Math.ceil(cd.remaining);
+    try {
+      const r = await recordRead(sheetId, draft, min);
+      if (r) toast(t('blatt.gelesenToast', { nr: r.number }));
+    } catch {
+      toast(t('lesung.fehler'));
+    }
+    gespeichert = true;
+    setSerieIndex(serie.idx + 1);
+    leave(`#/lesen?rest=${restSek}`);
   };
 
   const next = () => {
@@ -301,7 +332,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   };
   window.addEventListener('resize', onResize);
 
-  showTime(minutes * 60);
+  showTime(gesamt);
   // Lesezeit läuft ab dem Öffnen (Pause oben rechts) – eine klare Regel statt „ab dem ersten Weiter“
   cd.start();
   syncClock();

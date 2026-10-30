@@ -285,7 +285,9 @@ details.card > summary::-webkit-details-marker { display: none; }
 /* Am Bildschirm lesen: Wörter/Silben als Karten, Sätze je eine Zeile */
 .rd-grid .rd-card { background: #F1F5F1; border-radius: 14px; padding: 4px 18px; }
 .rd-lines p { white-space: nowrap; }
-.rd-body #rd-more { margin: 10px auto 0; display: flex; }
+.rd-rest { text-align: center; color: var(--muted); font-weight: 600; margin: 12px 0 6px; }
+.rd-mehr { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.rd-mehr .btn { flex: 1 1 140px; max-width: 260px; }
 
 /* Quest am Bildschirm – kleine Spiele */
 .qs-hint { font-size: 15px; color: var(--muted); margin: 0 0 12px; text-align: center; }
