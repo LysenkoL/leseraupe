@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
 
+// Version für Google Play: versionName kommt aus package.json (auch in „Über die App“ zu sehen),
+// versionCode bei JEDEM neuen Upload in Play um 1 erhöhen.
+def packageJson = new groovy.json.JsonSlurper().parse(rootProject.file('../package.json'))
+
+// Signaturschlüssel für das .aab: Angaben in android/key.properties (nie ins Repo, siehe docs/ANDROID.md)
+def keyPropsFile = rootProject.file('key.properties')
+def keyProps = new Properties()
+if (keyPropsFile.exists()) {
+    keyPropsFile.withInputStream { keyProps.load(it) }
+}
+
 android {
     namespace = "app.leseraupe"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -8,7 +19,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0.0"
+        versionName packageJson.version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +27,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keyPropsFile.exists()) {
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
+            if (keyPropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
