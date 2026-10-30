@@ -49,7 +49,7 @@ export function renderUeber(root: HTMLElement): void {
     </section>
     <section class="card">
       <h2>${t('ueber.kontakt')}</h2>
-      <div>${t('ueber.kontaktText')} <a href="mailto:${KONTAKT}" data-eltern>${KONTAKT}</a></div>
+      <div>${t('ueber.kontaktText')}<br /><a href="mailto:${KONTAKT}" data-eltern>${KONTAKT}</a></div>
       <a class="btn green" id="feedback" data-eltern href="${feedbackMailto()}">${t('ueber.feedback')}</a>
     </section>
     <section class="card">
