@@ -145,7 +145,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     light: '#E3F2FA',
     border: '#BDE3F2',
     seg: ['#BDE3F2', '#8FCDE6'],
-    costume: `<path d="M146 45 L139 43 M188 50 L194 48" stroke="#1D5E80" stroke-width="3" stroke-linecap="round"/><rect x="146" y="36" width="42" height="25" rx="10" fill="#BDE3F2" fill-opacity="0.45" stroke="#1D5E80" stroke-width="2.5"/><path d="M167 37 L167 60" stroke="#1D5E80" stroke-width="2"/><path d="M188 54 L194 54 Q198 54 198 50 L198 12" fill="none" stroke="#E8896A" stroke-width="4" stroke-linecap="round"/><rect x="193" y="6" width="8" height="7" rx="2" fill="#1D5E80"/>`,
+    costume: `<g transform="rotate(12 167 49)"><path d="M146 48 L139 48 M188 48 L195 48" stroke="#1D5E80" stroke-width="3" stroke-linecap="round"/><rect x="146" y="37" width="42" height="23" rx="10" fill="#BDE3F2" fill-opacity="0.45" stroke="#1D5E80" stroke-width="2.5"/><path d="M167 38 L167 59" stroke="#1D5E80" stroke-width="2"/><path d="M188 52 L193 52 Q197 52 197 48 L197 14" fill="none" stroke="#E8896A" stroke-width="4" stroke-linecap="round"/><rect x="193" y="8" width="8" height="7" rx="2" fill="#1D5E80"/></g>`,
     headDeco: [fish('#F2A65A'), bubbles, fish('#8FCDE6', true)],
     footDeco: fish('#E8896A', true),
     strip: wave('#5FB3D6', 16),
