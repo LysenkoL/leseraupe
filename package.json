@@ -8,9 +8,13 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "dict": "node scripts/build-dict.mjs"
+    "dict": "node scripts/build-dict.mjs",
+    "build:play": "tsc --noEmit && vite build --mode play",
+    "android": "npm run build:play && cap sync android"
   },
   "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0",
     "@types/node": "^22.20.5",
     "fake-indexeddb": "^6.2.6",
     "fontkit": "^2.0.4",
@@ -20,5 +24,9 @@
     "vite": "^8.3.5",
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
   }
 }

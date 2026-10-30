@@ -12,7 +12,7 @@
 | Страна аккаунта | Deutschland |
 | Доход | нет, приложение бесплатное, без рекламы (адрес публично не показывается) |
 | Технология | Capacitor: веб-приложение целиком внутри APK/AAB, без сайта, офлайн |
-| Package-ID | `de.appsbylena.leseraupe` — **изменить потом нельзя**; если не хочется имени в ID, решить до создания приложения в Play Console (например, `de.leseraupe.app`) |
+| Package-ID | `app.leseraupe` (решено 30.10.2026) — **изменить потом нельзя**; виден только в ссылке на Play и в настройках телефона |
 | Целевая аудитория в Play | **Решено 29.10.2026: смешанная — дети 6–8 лет и взрослые (правила Families).** Причина: режим «Am Bildschirm lesen», гусеница и таймер обращены к ребёнку — честнее смешанная аудитория (6–8 + взрослые) с правилами Families. Нет рекламы, аккаунтов, сбора данных и SDK → требования выполнимы. Нужен ли parental gate (перед ссылками наружу, PDF, чатом) — проверить по анкете в Play Console |
 | Категория | Bildung |
 | Страны: закрытый тест | Deutschland + Ukraine (+ где живут тестеры) |
@@ -46,7 +46,7 @@
 ## Задача: упаковка Capacitor
 
 - Android Studio установлена — найти SDK и встроенную JDK, настроить пути.
-- App-Name: Leseraupe, Package-ID: `de.appsbylena.leseraupe`.
+- [x] 30.10.2026 Каркас: Capacitor 8, `android/`, App-Name Leseraupe, Package-ID `app.leseraupe`, targetSdk 36, versionName 1.0.0, иконки. Сборка: `npm run android` (= `build:play` + `cap sync`). Gradle 9.1, потому что JDK в Android Studio — 25.
 - Всё внутри приложения (код, шрифт Inter, словарь), работает без интернета.
 - `window.print` → нативная печать Android (PrintManager), лист ровно A4.
 - Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
