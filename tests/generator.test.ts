@@ -281,8 +281,8 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     for (let i = 1; i < werte.length; i++) expect(werte[i], werte.join(' / ')).toBeGreaterThan(werte[i - 1]);
   });
 
-  it('alle Buchstaben, ab Stufe 5: zusammenhängende Geschichte mit 10+ Sätzen, nie eine einfache', () => {
-    for (const stufe of [5, 6, 8, 10]) {
+  it('alle Buchstaben, jede Stufe: zusammenhängende Geschichte mit 10+ Sätzen, nie eine einfache', () => {
+    for (const stufe of [1, 2, 3, 5, 6, 8, 10]) {
       for (const neu of ['tz', 'ß', null]) {
         for (const d of serie(UNIT_IDS, stufe, 8, neu)) {
           const g = d.geschichte!;
@@ -292,6 +292,19 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
           expect(quelle?.saetze, g.titel).toEqual(g.saetze);
           expect(reichtum(g), g.titel).toBeGreaterThanOrEqual(25);
           expect(d.fragen.length).toBeGreaterThanOrEqual(3);
+        }
+      }
+    }
+  });
+
+  it('viele Buchstaben: Sätze nur aus dem Wörterbuch (keine Vorlagen wie „Das ist Moritz.“), mindestens 5 Wörter', () => {
+    for (const letters of [UNIT_IDS.slice(0, 39), UNIT_IDS]) {
+      for (const stufe of [1, 3, 5, 10]) {
+        for (const d of serie(letters, stufe, 6)) {
+          for (const x of d.saetze) {
+            expect(DICT.saetze, x).toContain(x);
+            expect(wordsOf(x).length, x).toBeGreaterThanOrEqual(5);
+          }
         }
       }
     }
@@ -351,7 +364,8 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     expect(lang.length).toBeGreaterThanOrEqual(35);
     for (const g of lang) expect(g.fragen.length, g.titel).toBeGreaterThanOrEqual(4);
     // genug lange Geschichten für jede Stufe des vollen Alphabets
-    expect(lang.filter((g) => g.ab === 43 && g.saetze.length >= 13).length).toBeGreaterThanOrEqual(8);
+    expect(lang.filter((g) => g.ab === 43 && g.saetze.length >= 13).length).toBeGreaterThanOrEqual(20);
+    expect(lang.filter((g) => g.ab <= 39).length).toBeGreaterThanOrEqual(30);
     expect(lang.filter((g) => g.ab <= 31).length).toBeGreaterThanOrEqual(10);
   });
 });

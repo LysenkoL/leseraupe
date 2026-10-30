@@ -101,22 +101,26 @@ export function neuAnteil(saetze: string[], unit: string): number {
  * geschichteMax = Länge bei wenigen Buchstaben; geschichteViele = [min, max] ab VIELE_BUCHSTABEN.
  */
 export const STUFEN: Record<number, { wortMax: number; wortMin?: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number; geschichteViele: [number, number] }> = {
-  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteViele: [6, 9] },
-  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteViele: [7, 10] },
-  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteViele: [8, 12] },
-  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteViele: [10, 13] },
-  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteViele: [10, 13] },
-  6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [11, 14] },
-  7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [11, 14] },
-  8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
-  9: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteViele: [8, 12] },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteViele: [9, 12] },
+  3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteViele: [10, 13] },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteViele: [10, 14] },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteViele: [11, 14] },
+  6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
+  7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteViele: [12, 14] },
+  8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
+  9: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
   10: { wortMax: 99, wortMin: 6, mehrsilbig: 0.9, satzMin: 8, satzWoerter: 99, geschichteMax: 8, geschichteViele: [13, 14] },
 };
 
 /** C3: erlaubte Länge der Geschichte (Sätze) für Stufe und Zahl der gelernten Einheiten */
 export function geschichteLaenge(stufe: number | undefined, anzahlBuchstaben: number, minutes: Minutes = 5): [number, number] {
   const st = stufe ? STUFEN[stufe] : null;
-  if (anzahlBuchstaben >= VIELE_BUCHSTABEN) return st ? st.geschichteViele : [10, 13];
+  if (anzahlBuchstaben >= VIELE_BUCHSTABEN) {
+    const [lo, hi] = st ? st.geschichteViele : [10, 13];
+    // fast volles Alphabet: auch gleich nach einer neuen Buchstabe eine richtige Geschichte (10+ Sätze)
+    return [anzahlBuchstaben >= ALPHABET_FAST ? Math.max(lo, 10) : lo, hi];
+  }
   if (minutes === 10) return [10, 13];
   return [6, st ? st.geschichteMax : 8];
 }
@@ -255,7 +259,9 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>, n =
     const short = group.filter((w) => [...w].length <= st.wortMax);
     // C3: hohe Stufen wollen längere Wörter (wortMin), aber nur wenn es genug davon gibt
     const lang = st.wortMin ? short.filter((w) => [...w].length >= st.wortMin!) : short;
-    const base = lang.length >= k * 1.5 ? lang : short.length >= k * 1.5 ? short : [...group].sort((a, b) => [...a].length - [...b].length);
+    // zu wenige kurze Wörter? dann die kürzesten, die es gibt (nicht alle)
+    const kuerzeste = [...group].sort((a, b) => [...a].length - [...b].length).slice(0, Math.ceil(k * 1.5));
+    const base = lang.length >= k * 1.5 ? lang : short.length >= k * 1.5 ? short : kuerzeste;
     const multi = base.filter((w) => silbenZahl(w) >= 2);
     const one = base.filter((w) => silbenZahl(w) < 2);
     const km = Math.round(k * st.mehrsilbig);
@@ -477,15 +483,22 @@ export function generateSheet(p: GenParams): Generated {
   })();
 
   const avoid = new Set(story?.g.saetze ?? []);
-  const cands = [
-    ...DICT.saetze.filter((s) => v.has(s)),
-    ...templateSentences(v, pools(v), rng),
-  ];
+  const fertige = DICT.saetze.filter((s) => v.has(s));
+  const viele = p.letters.length >= VIELE_BUCHSTABEN;
+  // C3: bei vielen Buchstaben nur fertige Sätze – die Vorlagen ergeben zu einfache Sätze („Das ist Moritz.“)
+  const vorlagen = templateSentences(v, pools(v), rng);
+  const cands = viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen];
+  const len = (x: string) => wordsOf(x).length;
   // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
   let satzCands = cands;
-  if (p.stufe) {
+  // C3: viele Buchstaben → längere Sätze (ab 5–8 Wörtern, je nach Stufe), keine Obergrenze;
+  // gibt es davon zu wenige (z. B. ohne T), gelten die Grenzen der Stufe wie bisher
+  const minViele = Math.max(p.stufe ? STUFEN[p.stufe].satzMin : 6, (p.stufe ?? 3) <= 2 ? 5 : 6);
+  const lange = viele ? cands.filter((x) => len(x) >= minViele) : [];
+  if (lange.length >= c.saetze * 2) {
+    satzCands = lange;
+  } else if (p.stufe) {
     const st = STUFEN[p.stufe];
-    const len = (x: string) => wordsOf(x).length;
     const passend = cands.filter((x) => len(x) >= st.satzMin && len(x) <= st.satzWoerter);
     const kurz = cands.filter((x) => len(x) <= st.satzWoerter);
     if (passend.length >= c.saetze * 2) satzCands = passend;
