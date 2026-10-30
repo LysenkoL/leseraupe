@@ -27,7 +27,10 @@ button, input, textarea, select { font: inherit; font-feature-settings: inherit;
 button { cursor: pointer; }
 #app { min-height: 100%; }
 
-.screen { min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; }
+/* Statusleiste oben (Android-App randlos, iPhone-Startbildschirm): Inhalt beginnt darunter.
+   --safe-area-inset-* setzt Capacitor in älteren WebViews, sonst gilt env(). */
+:root { --oben: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); --unten: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)); }
+.screen { min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; padding-top: var(--oben); }
 .topbar { display: flex; align-items: center; gap: 12px; padding: 16px 16px 10px; }
 .topbar h1 { margin: 0; font-size: 21px; font-weight: 800; line-height: 1.15; }
 .topbar .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
@@ -79,7 +82,7 @@ button { cursor: pointer; }
 .toggle input:checked { background: var(--green); }
 .toggle input:checked::after { left: 21px; }
 
-.bottom { position: sticky; bottom: 0; padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); background: var(--bg); display: flex; flex-direction: column; gap: 8px; }
+.bottom { position: sticky; bottom: 0; padding: 12px 16px calc(14px + var(--unten)); background: var(--bg); display: flex; flex-direction: column; gap: 8px; }
 .btn {
   min-height: 52px; border-radius: 16px; border: 1.5px solid transparent; font-weight: 800; font-size: 17px; padding: 0 14px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
@@ -339,7 +342,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .btnrow.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }
 /* Gestaltung: Vorschau bleibt oben stehen, während man durch die Karten scrollt */
-.hp-big { position: sticky; top: 0; z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
+.hp-big { position: sticky; top: var(--oben); z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
 .name-card { position: relative; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }

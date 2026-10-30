@@ -26,9 +26,12 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
+    "@capacitor-community/keep-awake": "^8.0.1",
     "@capacitor/android": "^8.6.0",
+    "@capacitor/clipboard": "^8.0.1",
     "@capacitor/core": "^8.6.0",
     "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/haptics": "^8.0.2",
     "@capacitor/share": "^8.0.3"
   }
 }

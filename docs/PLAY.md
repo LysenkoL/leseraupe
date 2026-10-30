@@ -50,8 +50,8 @@
 - Всё внутри приложения (код, шрифт Inter, словарь), работает без интернета.
 - [x] 30.10.2026 Печать: в Android-приложении `window.print` заменён своим плагином `DruckPlugin.java` (PrintManager, бумага ISO A4). Печатается то же PDF, что и «Als PDF teilen»: каждый лист на своей странице A4, серия одним заданием. В эмуляторе проверено: 3 листа → 1/3 … 3/3, ISO A4.
 - [x] 30.10.2026 «Als PDF teilen», Urkunde и «Sicherung speichern» в приложении: файл в кэш (Filesystem) → системное меню «Teilen» (Share). «Sicherung laden» — системный выбор файла (проверено: открывается).
-- Wake Lock → keep-awake; vibrate → Haptics; копирование промпта → Clipboard;
-  ссылки на Claude/ChatGPT → внешний браузер; Sicherung и «PDF teilen» → Filesystem + Share.
+- [x] 30.10.2026 Экран не гаснет при чтении и в таймере (keep-awake, проверено флагом KEEP_SCREEN_ON), вибрация в конце таймера (Haptics), копирование/вставка промпта (Clipboard). Отступ сверху под строку состояния (Android 15+ рисует приложение под ней).
+- Ссылки (почта, Claude/ChatGPT, privacy) → внешний браузер.
 - Service worker / установка PWA — только для веб-версии: Android-сборку делать с `VITE_TARGET=play` (готово 29.10.2026: без SW, без кнопки установки, без подсказок про Chrome).
 - [x] 30.10.2026 Иконка: радужная гусеница на карточке «Mama» (выбор владелицы проекта). Готовые файлы — `scripts/make-icons.cjs` из `assets/icon/figur.png`:
   - Play Store 512×512 (квадрат, без скругления): `assets/icon/play-store-512.png`;
