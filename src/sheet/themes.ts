@@ -81,6 +81,12 @@ const scheune = `<path d="M10 46 L50 14 L90 46 L90 92 L10 92Z" fill="#B03A2E"/><
 const sonnenblume = `<path d="M50 50 L50 96" stroke="#5E9B4E" stroke-width="5"/><g fill="#F2C94C">${Array.from({ length: 10 }, (_, i) => `<ellipse cx="50" cy="20" rx="8" ry="15" transform="rotate(${i * 36} 50 40)"/>`).join('')}</g><circle cx="50" cy="40" r="13" fill="#7A4A1A"/>`;
 const moehre = `<path d="M50 94 L34 34 Q50 24 66 34Z" fill="#F2A65A"/><path d="M42 50 L50 50 M44 62 L54 62 M46 74 L52 74" stroke="#D9853A" stroke-width="3"/><path d="M50 30 Q40 10 30 8 M50 30 Q50 8 50 4 M50 30 Q60 10 70 8" stroke="#7FC06D" stroke-width="5" fill="none" stroke-linecap="round"/>`;
 
+/** zwei gekreuzte Knochen (Piratenhut) – kein Totenkopf */
+const knochen = (x: number, y: number) => {
+  const k = `<rect x="-8" y="-1.6" width="16" height="3.2" rx="1.6"/><circle cx="-8" cy="-1.6" r="2"/><circle cx="-8" cy="1.6" r="2"/><circle cx="8" cy="-1.6" r="2"/><circle cx="8" cy="1.6" r="2"/>`;
+  return `<g transform="translate(${x} ${y})" fill="#FFFFFF"><g transform="rotate(35)">${k}</g><g transform="rotate(-35)">${k}</g></g>`;
+};
+
 const wave = (stroke: string, step: number) => {
   let d = `M0 14`;
   for (let x = 0; x + step * 2 <= 720; x += step * 2) d += ` Q${x + step / 2} 4 ${x + step} 14 T${x + step * 2} 14`;
@@ -227,7 +233,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     border: '#DDD7CC',
     seg: ['#FFFFFF', '#E58A84'],
     // Piratenhut und Augenklappe
-    costume: `<path d="M146 32 L190 50" stroke="#1F2421" stroke-width="2"/><ellipse cx="176" cy="46.5" rx="7.5" ry="6.5" fill="#1F2421"/><path d="M137 31 Q148 4 166 13 Q184 4 195 31 Q166 22 137 31 Z" fill="#1F2421"/><path d="M139 30 Q166 21 193 30" fill="none" stroke="#F2C94C" stroke-width="2.5"/><circle cx="166" cy="19" r="4.5" fill="#F2C94C"/>`,
+    costume: `<path d="M143 37 L190 52" stroke="#1F2421" stroke-width="2"/><ellipse cx="176" cy="46.5" rx="7.5" ry="6.5" fill="#1F2421"/><path d="M134 33 Q132 16 144 20 Q150 6 166 8 Q182 6 188 20 Q200 16 198 33 Q166 24 134 33 Z" fill="#1F2421"/><path d="M136 32 Q166 23 196 32" fill="none" stroke="#F2C94C" stroke-width="2.5"/>${knochen(166, 20)}`,
     headDeco: [ship, truhe, anker],
     footDeco: anker,
     strip: wave('#7A8A99', 18) + row(10, (x) => `<path d="M${x - 4} 16 l8 8 m0 -8 l-8 8" stroke="#D9534F" stroke-width="2.5" stroke-linecap="round"/>`),
