@@ -1,12 +1,12 @@
 import { elternCheck } from '../app/elterncheck';
 import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
-import { renderSheet } from '../sheet/render';
+import { kopfKompakt, renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { mitDruckKnopf, printSheets } from '../sheet/print';
 import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
-import { checkText, unitById } from '../core/letters';
+import { checkText, unitById, UNIT_IDS } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
 import { backButton, editDialog, esc, go, toast } from '../app/ui';
 import { trimOnce } from '../app/fitflow';
@@ -32,7 +32,12 @@ export function renderVorschau(root: HTMLElement): void {
 
   const header = async (d: Draft) => {
     const nr = await nrFor(getSerie()!.idx);
-    const letters = d.data.letters.map((id) => unitById(id)?.label.replace('-', '') ?? id).join(' ');
+    // C1: bei vielen Buchstaben kurz „36 Buchstaben“ statt der ganzen Liste (wie im Blattkopf)
+    const letters = !kopfKompakt(d.data.letters, d.data.newLetter)
+      ? d.data.letters.map((id) => unitById(id)?.label.replace('-', '') ?? id).join(' ')
+      : d.data.letters.length >= UNIT_IDS.length
+        ? t('blatt.alleBuchstaben')
+        : t('blatt.buchstaben', { n: d.data.letters.length });
     const neu = d.data.newLetter ? ` · ${t('blatt.neu', { b: unitById(d.data.newLetter)?.label.replace('-', '') ?? '' })}` : '';
     return { nr, title: t('blatt.titel', { nr, thema: themaName(d.data.theme) }), sub: `${letters}${neu}${d.data.stufe ? ` · ${t('blatt.stufe', { n: d.data.stufe })}` : ''}` };
   };
