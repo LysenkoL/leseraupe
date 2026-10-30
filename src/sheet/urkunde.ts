@@ -51,7 +51,7 @@ export function perlenRaupeSvg(voll: number, cls = ''): string {
     const cy = i % 2 ? 54 : 60;
     s += i < voll ? m.perle(cx, cy, r, REGENBOGEN[i], undefined, 'voll') : m.leer(cx, cy, r);
   }
-  s += m.kopf(w - 32, 50, 24);
+  s += m.kopf(w - 36, 50, 24);
   return m.svg(`0 0 ${w} 80`, s, `class="${cls}" role="img" aria-label="${voll} von ${PERLEN_JE_RAUPE} Perlen"`);
 }
 
