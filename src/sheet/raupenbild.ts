@@ -4,10 +4,13 @@
  */
 
 import KOPF from './raupenkopf.png?inline';
+import KOPF_OHNE from './raupenkopf-ohne.png?inline';
 
 export const KONTUR = '#1B2033';
 /** Maße des Kopf-Bildes: Größe, Kopfmitte und Kopfradius in Bildpunkten */
 const KOPF_BILD = { w: 168, h: 200, mx: 75.7, my: 131.1, r: 72 };
+/** derselbe Kopf ohne Fühler – für die Blätter, dort trägt die Raupe Hut, Krone, Helm … */
+const KOPF_OHNE_BILD = { w: 173, h: 160, mx: 86.3, my: 79.8, r: 82 };
 /** vom Schwanz zum Kopf, wie auf dem Icon (lila … rot) */
 export const REGENBOGEN = ['#8338EC', '#5B5BF0', '#3A86FF', '#2EC4F0', '#22C3A6', '#3BC14A', '#A3D93B', '#FFD23F', '#FF9F1C', '#FF4D6D'];
 
@@ -62,6 +65,12 @@ export class RaupenMaler {
   kopf(x: number, y: number, r: number): string {
     const k = r / KOPF_BILD.r;
     return `<image href="${KOPF}" x="${f(x - KOPF_BILD.mx * k)}" y="${f(y - KOPF_BILD.my * k)}" width="${f(KOPF_BILD.w * k)}" height="${f(KOPF_BILD.h * k)}"/>`;
+  }
+
+  /** Kopf ohne Fühler (Themen-Blätter mit Kopfbedeckung) */
+  kopfOhneFuehler(x: number, y: number, r: number): string {
+    const k = r / KOPF_OHNE_BILD.r;
+    return `<image href="${KOPF_OHNE}" x="${f(x - KOPF_OHNE_BILD.mx * k)}" y="${f(y - KOPF_OHNE_BILD.my * k)}" width="${f(KOPF_OHNE_BILD.w * k)}" height="${f(KOPF_OHNE_BILD.h * k)}"/>`;
   }
 
   svg(viewBox: string, inhalt: string, attrs = ''): string {
