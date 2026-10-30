@@ -54,8 +54,10 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
   </div>
   <div class="content onb-body" id="onb-body">${body()}</div>
   <div class="bottom">
-    <button class="btn primary big" id="onb-next">${last ? t('onb.los') : t('timer.weiter')}</button>
-    ${step > 0 ? `<button class="btn ghost" id="onb-prev">${t('ui.zurueck')}</button>` : ''}
+    <div class="btnrow${step > 0 ? ' onb-zwei' : ''}">
+      ${step > 0 ? `<button class="btn ghost" id="onb-prev">${t('ui.zurueck')}</button>` : ''}
+      <button class="btn primary big" id="onb-next">${last ? t('onb.los') : t('timer.weiter')}</button>
+    </div>
   </div>
 </div>`;
 

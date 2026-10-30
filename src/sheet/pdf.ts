@@ -188,11 +188,16 @@ export function sheetToPdf(sheetHtml: string, title?: string): Promise<Uint8Arra
  * geht das nicht, wird die Datei heruntergeladen.
  */
 export async function sharePdf(bytes: Uint8Array, filename: string): Promise<'geteilt' | 'gespeichert' | 'abgebrochen'> {
-  const file = new File([bytes as BlobPart], filename, { type: 'application/pdf' });
+  return teileDatei(new File([bytes as BlobPart], filename, { type: 'application/pdf' }));
+}
+
+/** Datei teilen (Teilen-Menü des Handys) oder herunterladen. */
+export async function teileDatei(file: File): Promise<'geteilt' | 'gespeichert' | 'abgebrochen'> {
+  const filename = file.name;
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.share && nav.canShare?.({ files: [file] })) {
     try {
-      await nav.share({ files: [file], title: filename.replace(/\.pdf$/, '') });
+      await nav.share({ files: [file], title: filename.replace(/\.\w+$/, '') });
       return 'geteilt';
     } catch (e) {
       if ((e as Error).name === 'AbortError') return 'abgebrochen';

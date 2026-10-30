@@ -1,6 +1,7 @@
 import { STOLPER_FREI } from '../core/stolper';
 import { getSettings, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
+import { teileDatei } from '../sheet/pdf';
 import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/db';
 import { activeKind, loadProfile, saveProfile } from '../core/store';
 import { canInstall, install, isStandalone } from '../app/install';
@@ -38,9 +39,9 @@ export function renderEinstellungen(root: HTMLElement): void {
           ? `<div class="st-list">${s.stolper
               .map(
                 (x, i) =>
-                  `<div class="st-row${x.ok >= STOLPER_FREI ? ' bereit' : ''}"><b>${esc(x.w)}</b><small>${t('einst.fluessig', { n: x.ok })}${
+                  `<div class="st-row${x.ok >= STOLPER_FREI ? ' bereit' : ''}"><div class="st-wort"><b>${esc(x.w)}</b><small>${t('einst.fluessig', { n: x.ok })}${
                     x.ok >= STOLPER_FREI ? ` · ${t('einst.bereit')}` : ''
-                  }</small><button class="pillbtn" data-st-kann="${i}">${t('einst.kannEs')}</button><button class="pillbtn" data-st-del="${i}" aria-label="${t('einst.entfernen')}">✕</button></div>`,
+                  }</small></div><button class="pillbtn kann" data-st-kann="${i}">${t('einst.kannEs')}</button><button class="pillbtn" data-st-del="${i}" aria-label="${t('einst.entfernen')}">✕</button></div>`,
               )
               .join('')}</div>
       <button class="btn ghost" id="st-all">${t('einst.alleLoeschen')}</button>`
@@ -76,8 +77,10 @@ export function renderEinstellungen(root: HTMLElement): void {
       if (!w) return;
       setSettings({ ...cur, stolper: cur.stolper.filter((_, j) => j !== i), stolperBesiegt: cur.stolperBesiegt + 1 });
       await log(`Besiegt: ${w}`);
-      toast(t('stolper.besiegt', { w }));
-      renderEinstellungen(root);
+      toast(`⭐ ${t('stolper.besiegt', { w })}`);
+      // kleiner Sieg: Zeile leuchtet kurz grün, dann verschwindet sie
+      b.closest('.st-row')?.classList.add('sieg');
+      setTimeout(() => renderEinstellungen(root), 450);
     }),
   );
   root.querySelectorAll<HTMLButtonElement>('[data-st-del]').forEach((b) =>
@@ -88,7 +91,7 @@ export function renderEinstellungen(root: HTMLElement): void {
     }),
   );
   root.querySelector('#st-all')?.addEventListener('click', async () => {
-    if (!(await confirmDialog(t('einst.stolperFrage'), t('einst.loeschen')))) return;
+    if (!(await confirmDialog(t('einst.stolperFrage'), t('einst.loeschen'), undefined, true))) return;
     setSettings({ ...getSettings(), stolper: [] });
     renderEinstellungen(root);
   });
@@ -125,15 +128,10 @@ export function renderEinstellungen(root: HTMLElement): void {
 
   root.querySelector('#exp')!.addEventListener('click', async () => {
     const b = await exportBackup(loadProfile());
-    const blob = new Blob([JSON.stringify(b, null, 1)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `leseraupe-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-    toast(t('einst.sicherungGespeichert'));
+    const name = `leseraupe-sicherung-${new Date().toISOString().slice(0, 10)}.json`;
+    // Handy: Teilen-Menü (z. B. Google Drive), sonst Download – Meldung nur, wenn nicht abgebrochen
+    const r = await teileDatei(new File([JSON.stringify(b, null, 1)], name, { type: 'application/json' }));
+    if (r !== 'abgebrochen') toast(t('einst.sicherungGespeichert'));
   });
 
   root.querySelector<HTMLInputElement>('#imp')!.addEventListener('change', async (e) => {
