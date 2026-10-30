@@ -3,17 +3,39 @@ import { toast } from '../app/ui';
 import { t } from '../app/i18n';
 
 /**
- * Legt die Blätter in #print-root: beim Drucken ist nur dieser Bereich sichtbar (print.css),
- * jedes Blatt beginnt auf einer neuen A4-Seite. Wartet, bis alle Bilder (Dekorationen) geladen sind.
+ * Eigene IDs für die Druck-Kopie (Farbverläufe der Perlen, Masken der Urkunde). Sonst zeigt url(#…)
+ * auf dieselbe ID in der Vorschau – die ist beim Drucken versteckt, und Perlen/Rahmen kommen weiß heraus.
  */
-export async function druckBereich(sheetsHtml: string[]): Promise<void> {
+export function eigeneIds(html: string): string {
+  const ids = new Set(Array.from(html.matchAll(/\sid="([^"]+)"/g), (m) => m[1]));
+  let out = html;
+  for (const id of ids) {
+    out = out
+      .replaceAll(` id="${id}"`, ` id="druck-${id}"`)
+      .replaceAll(`url(#${id})`, `url(#druck-${id})`)
+      .replaceAll(`href="#${id}"`, `href="#druck-${id}"`);
+  }
+  return out;
+}
+
+/**
+ * Legt die Blätter in #print-root: beim Drucken ist nur dieser Bereich sichtbar (print.css),
+ * jedes Blatt beginnt auf einer neuen A4-Seite.
+ */
+function fuelleDruckBereich(sheetsHtml: string[]): HTMLElement {
   let root = document.getElementById('print-root');
   if (!root) {
     root = document.createElement('div');
     root.id = 'print-root';
     document.body.appendChild(root);
   }
-  root.innerHTML = sheetsHtml.join('');
+  root.innerHTML = eigeneIds(sheetsHtml.join(''));
+  return root;
+}
+
+/** wie oben, und wartet, bis alle Bilder (Dekorationen) geladen sind – für die Android-App */
+export async function druckBereich(sheetsHtml: string[]): Promise<void> {
+  const root = fuelleDruckBereich(sheetsHtml);
   await Promise.all(Array.from(root.querySelectorAll('img'), (img) => img.decode().catch(() => undefined)));
   await document.fonts.ready;
 }
@@ -34,13 +56,7 @@ export async function printSheets(sheetsHtml: string[], name = 'Leseblatt'): Pro
     }
     return;
   }
-  let root = document.getElementById('print-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'print-root';
-    document.body.appendChild(root);
-  }
-  root.innerHTML = sheetsHtml.join('');
+  fuelleDruckBereich(sheetsHtml);
   window.print();
 }
 
