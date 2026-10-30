@@ -14,6 +14,54 @@ export function perlenSchritt(minutes: number): number {
 }
 
 /**
+ * Perlen bleiben immer gleich groß. Passen sie nicht in eine Reihe, windet sich die Raupe
+ * stärker (größere Welle) statt kleiner zu werden. Perle 0 ist das Schwanzende.
+ */
+export const RAUPE_Y = 60;
+export function raupeLayout(zahl: number): { pos: { x: number; y: number }[]; amp: number } {
+  const step = 35;
+  const start = 400 - 34 - 48; // erste Perle direkt hinter dem Kopf
+  const links = 18;
+  const welle = (amp: number) => (x: number) => RAUPE_Y - amp * Math.sin(((start - x) * 2 * Math.PI) / 130);
+  // entlang der Kurve gehen und Perlen im Abstand „step“ setzen
+  const setzen = (amp: number) => {
+    const y = welle(amp);
+    const pos = [{ x: start, y: y(start) }];
+    let x = start;
+    while (pos.length < zahl && x > links) {
+      x -= 0.5;
+      const p = pos[pos.length - 1];
+      if (Math.hypot(p.x - x, p.y - y(x)) >= step) pos.push({ x, y: y(x) });
+    }
+    return pos;
+  };
+  let amp = 5;
+  let pos = setzen(amp);
+  while (pos.length < zahl && amp < 60) pos = setzen((amp += 1));
+  return { pos: pos.reverse(), amp };
+}
+
+export function raupeSvg(n: number, zahl: number): string {
+  const r = 15;
+  const { pos, amp } = raupeLayout(zahl);
+  // Welle kann über den Kopf hinausgehen: Rahmen an die Perlen anpassen
+  const oben = Math.min(0, RAUPE_Y - amp - 18);
+  const h = Math.max(86, RAUPE_Y + amp + 18) - oben;
+  let s = '';
+  pos.forEach(({ x, y }, i) => {
+    const cx = x.toFixed(1);
+    const cy = y.toFixed(1);
+    s += i < n
+      ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#7FC06D" stroke="#BFE0B5" stroke-width="2.5"/>`
+      : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#6B7AA6" stroke-width="2.5" stroke-dasharray="5 4"/>`;
+  });
+  const hx = 400 - 34;
+  s += `<path d="M${hx - 10} 28 L${hx - 16} 12 M${hx + 10} 28 L${hx + 16} 12" stroke="#A9D99A" stroke-width="3" stroke-linecap="round"/><circle cx="${hx - 16}" cy="11" r="4" fill="#F2A65A"/><circle cx="${hx + 16}" cy="11" r="4" fill="#F2A65A"/>`;
+  s += `<circle cx="${hx}" cy="50" r="26" fill="#A3D78F" stroke="#C9EBBE" stroke-width="3"/><circle cx="${hx - 9}" cy="45" r="3.6" fill="#1F2421"/><circle cx="${hx + 9}" cy="45" r="3.6" fill="#1F2421"/><path d="M${hx - 11} 58 Q${hx} 66 ${hx + 11} 58" fill="none" stroke="#1F2421" stroke-width="3" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 ${oben.toFixed(1)} 400 ${h.toFixed(1)}" aria-label="${n} von ${zahl} Perlen">${s}</svg>`;
+}
+
+/**
  * Vollbild-Timer: Wake Lock, Perlen, Ton + Vibration am Ende.
  * Die Zeit wählt man vor dem Start (A6), unabhängig vom Blatt; sie wird gemerkt.
  */
@@ -63,20 +111,7 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
   const raupe = root.querySelector<HTMLElement>('#t-raupe')!;
 
   const perlen = (n: number) => {
-    const r = 15;
-    const gap = 4;
-    const w = perlenZahl * (2 * r + gap) + 70;
-    let s = '';
-    for (let i = 0; i < perlenZahl; i++) {
-      const cx = r + 4 + i * (2 * r + gap);
-      s += i < n
-        ? `<circle cx="${cx}" cy="56" r="${r}" fill="#7FC06D" stroke="#BFE0B5" stroke-width="2.5"/>`
-        : `<circle cx="${cx}" cy="56" r="${r}" fill="none" stroke="#6B7AA6" stroke-width="2.5" stroke-dasharray="5 4"/>`;
-    }
-    const hx = w - 34;
-    s += `<path d="M${hx - 10} 28 L${hx - 16} 12 M${hx + 10} 28 L${hx + 16} 12" stroke="#A9D99A" stroke-width="3" stroke-linecap="round"/><circle cx="${hx - 16}" cy="11" r="4" fill="#F2A65A"/><circle cx="${hx + 16}" cy="11" r="4" fill="#F2A65A"/>`;
-    s += `<circle cx="${hx}" cy="50" r="26" fill="#A3D78F" stroke="#C9EBBE" stroke-width="3"/><circle cx="${hx - 9}" cy="45" r="3.6" fill="#1F2421"/><circle cx="${hx + 9}" cy="45" r="3.6" fill="#1F2421"/><path d="M${hx - 11} 58 Q${hx} 66 ${hx + 11} 58" fill="none" stroke="#1F2421" stroke-width="3" stroke-linecap="round"/>`;
-    raupe.innerHTML = `<svg viewBox="0 0 ${w} 86" aria-label="${n} von ${perlenZahl} Perlen">${s}</svg>`;
+    raupe.innerHTML = raupeSvg(n, perlenZahl);
   };
 
   const show = (remaining: number) => {
