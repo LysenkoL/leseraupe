@@ -391,6 +391,32 @@ describe('App-Ablauf', () => {
     await ctx.close();
   });
 
+  it('Gestaltung: Karte wählen schaltet „Zufall“ aus, „Zufall“ nimmt das Häkchen weg; Namenskarte lässt sich schließen', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.waitForSelector('#onb-skip');
+    await p.click('#onb-skip');
+    await p.waitForSelector('#create');
+    // Name leer lassen und die Karte wegklicken – bleibt weg
+    await p.click('#name-x');
+    expect(await p.$('#name-form')).toBeNull();
+    await p.reload();
+    await p.waitForSelector('#create');
+    expect(await p.$('#name-form')).toBeNull();
+    await p.goto(base + '#/thema');
+    await p.waitForSelector('.theme-grid');
+    await p.check('#rnd');
+    await p.waitForFunction(() => !document.querySelector('.tc-sel'));
+    await p.click('[data-t="meer"]');
+    await p.waitForSelector('[data-t="meer"] .tc-sel');
+    expect(await p.isChecked('#rnd')).toBe(false);
+    await p.click('#ok');
+    await p.waitForSelector('#create');
+    expect(await p.getAttribute('[data-theme="meer"]', 'class')).toContain('on');
+    await ctx.close();
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {

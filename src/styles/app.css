@@ -316,8 +316,9 @@ details.card > summary::-webkit-details-marker { display: none; }
 .qs-male svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; }
 .qs-male .qs-fill { cursor: pointer; }
 
-/* schmale Telefone: weniger Spalten im Buchstabenraster, damit die Tasten groß genug bleiben */
-@media (max-width: 360px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+/* sehr schmale Telefone: weniger Spalten im Buchstabenraster, damit die Tasten groß genug bleiben.
+   Bis 340px überall 7 Spalten – Einführung und Startseite sehen gleich aus. */
+@media (max-width: 339px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 @media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
@@ -337,5 +338,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 .raupe-card.kompakt .raupe-svg { max-height: 56px; }
 .btnrow.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }
-/* Einführung: 7 Spalten bis 340px – eine Reihe weniger, damit „Weiter“ ohne Scrollen sichtbar ist */
-@media (min-width: 340px) { .onb .letters { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
+/* Gestaltung: Vorschau bleibt oben stehen, während man durch die Karten scrollt */
+.hp-big { position: sticky; top: 0; z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
+.name-card { position: relative; }
+.name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
+.pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }

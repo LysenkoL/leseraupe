@@ -13,6 +13,15 @@ import { canInstall, install, isStandalone, onInstallChange } from '../app/insta
 
 /** Installieren-Hinweis auf der Startseite: schmal, mit ✕ dauerhaft ausblendbar (bleibt in den Einstellungen) */
 const STRIP_KEY = 'leseraupe.installStrip.hidden';
+/** Namenskarte weggeklickt (Name soll leer bleiben – das Kind schreibt ihn selbst) */
+const NAME_KEY = 'leseraupe.nameKarte.hidden';
+const nameKarteVersteckt = () => {
+  try {
+    return localStorage.getItem(NAME_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
 function stripVersteckt(): boolean {
   try {
     return localStorage.getItem(STRIP_KEY) === '1';
@@ -62,9 +71,9 @@ export function renderStart(root: HTMLElement): void {
         : ''
     }
     ${
-      s.childName
+      s.childName || nameKarteVersteckt()
         ? ''
-        : `<section class="card"><h2>${t('start.nameTitel')}</h2>
+        : `<section class="card name-card"><button class="card-x" id="name-x" aria-label="${t('ui.schliessen')}">✕</button><h2>${t('start.nameTitel')}</h2>
       <div class="hint">${t('start.nameHinweis')}</div>
       <form class="name-row" id="name-form"><input id="child-name" autocomplete="off" maxlength="40" placeholder="${t('start.namePlatzhalter')}" aria-label="${t('start.nameTitel')}" /><button class="btn green" type="submit">${t('start.speichern')}</button></form>
     </section>`
@@ -84,7 +93,7 @@ export function renderStart(root: HTMLElement): void {
       <label class="toggle"><input type="checkbox" id="silben-farbig" ${s.silbenFarbig ? 'checked' : ''}/> ${t('start.silbenFarbig')} <span class="sy-demo"><span class="sy1">Ma</span><span class="sy2">ma</span></span></label>
     </section>
     <section class="card">
-      <div class="row"><h2>${t('start.thema')}</h2><a class="hint" href="#/thema">${t('start.themaVorschau')}</a></div>
+      <div class="row"><h2>${t('start.thema')}</h2><a class="pillbtn vorschau" href="#/thema">${t('start.themaVorschau')}</a></div>
       <div class="chips">${themeChips}<button class="chip${s.randomTheme ? ' on' : ''}" data-theme="zufall" style="color:#3D4A56">${t('start.zufall')}</button></div>
     </section>
     <details class="card">
@@ -130,6 +139,14 @@ export function renderStart(root: HTMLElement): void {
       if (!name) return;
       setSettings({ ...getSettings(), childName: name });
       toast(t('start.nameGespeichert'));
+      draw(count);
+    });
+    root.querySelector('#name-x')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(NAME_KEY, '1');
+      } catch {
+        /* dann eben nur bis zum Neuladen */
+      }
       draw(count);
     });
     root.querySelector('#install-x')?.addEventListener('click', () => {
