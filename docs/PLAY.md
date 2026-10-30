@@ -21,6 +21,7 @@
 | Datenschutz | статическая страница https://lysenkol.github.io/leseraupe/privacy.html (`public/privacy.html`, DE/UK/EN), ссылка в Play и в «Über die App»; в тексте только контактная почта, без имени и адреса |
 | Веб-версия | остаётся на GitHub Pages для личного использования |
 | Данные | только на устройстве, ничего не собираем → «Datensicherheit: keine Daten erhoben» |
+| Разрешения Android | INTERNET, VIBRATE, POST_NOTIFICATIONS (B5, спрашивается только при включении напоминания), RECEIVE_BOOT_COMPLETED + WAKE_LOCK (напоминание после перезагрузки). **SCHEDULE_EXACT_ALARM убрано** (решено 30.10.2026): напоминание неточное → в Play не нужна декларация «Exact alarms» |
 
 ## Статус
 
@@ -34,7 +35,7 @@
 - [x] 29.10.2026 Блок A из `docs/IDEEN.md` (A1–A6)
 - [x] 29.10.2026 Блок B из `docs/IDEEN.md` (B1–B4, B6)
 - [x] 30.10.2026 Упаковка Capacitor (задача ниже; осталось проверить на своём телефоне)
-- [ ] B5 «Lesezeit!»-уведомления (нужна Android-версия)
+- [x] 30.10.2026 B5 «Lesezeit!»-уведомления: проверено в эмуляторе (приходит в выбранный день и время, после перезагрузки тоже, выключение снимает всё)
 - [x] 30.10.2026 Тест APK на своём телефоне (Samsung, Android 17, немецкий интерфейс): печать 1/3 листа быстро, исправлены онбординг, Verlauf, строка состояния, «Скопировано», цветные бусины при печати
 - [ ] Google Group тестеров + 15–20 тестеров с Android
 - [x] 29.10.2026 Страница Datenschutz: `public/privacy.html` на GitHub Pages
