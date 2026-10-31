@@ -68,6 +68,8 @@ export function fitLines(container: HTMLElement, minPx = 22): void {
  * wischen oder „Weiter“, die Lesezeit läuft ab dem Öffnen. Bildschirm bleibt an.
  * Auf der letzten Seite hält die Zeit an: „Fertig ✓“ speichert die Lesung, „Noch einmal lesen“ fängt dasselbe
  * Blatt von vorn an (Zeit läuft weiter), „Nächstes Blatt“ geht in einer Serie zum nächsten Blatt.
+ * Ist die Zeit um, wird noch nichts gespeichert (ein liegengelassenes Handy liest nicht): erst „Fertig ✓“
+ * oder Schließen speichert die volle Zeit.
  */
 export async function renderLesen(root: HTMLElement, params: URLSearchParams): Promise<void> {
   const sheetId = params.get('id') ? Number(params.get('id')) : null;
@@ -146,23 +148,12 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   document.addEventListener('visibilitychange', onVis);
   lock();
 
-  let readId: number | null = null;
   let gespeichert = false;
   const cd = createCountdown(gesamt, {
     tick: showTime,
-    done: async () => {
-      clockBtn.textContent = t('lesen.toll');
+    done: () => {
+      clockBtn.textContent = t('lesen.zeitUm');
       clockBtn.classList.add('fertig');
-      try {
-        const r = await recordRead(sheetId, draft, Math.max(1, Math.round(gesamt / 60)));
-        if (r) {
-          readId = r.id;
-          gespeichert = true;
-          toast(t('blatt.gelesenToast', { nr: r.number }));
-        }
-      } catch {
-        toast(t('lesung.fehler'));
-      }
     },
   });
 
@@ -223,7 +214,6 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
 
   /** „Fertig ✓“: Lesung mit der tatsächlichen Zeit speichern, dann „Wo hat es gestockt?“ */
   const finish = async () => {
-    if (readId) return leave(stolperLink(readId, back));
     if (!gestartet()) return leave(back);
     cd.pause();
     const sec = gesamt - cd.remaining;
@@ -281,14 +271,27 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     if (gespeichert || !gestartet() || cd.done) return true;
     return confirmDialog(t('lesen.beenden'), t('lesen.beendenJa'), t('lesen.weiterlesen'));
   };
+  /** Schließen: war die Zeit schon um, zählt die Lesung trotzdem (volle Zeit) */
+  const schliessen = async () => {
+    if (cd.done && !gespeichert) {
+      gespeichert = true;
+      try {
+        const r = await recordRead(sheetId, draft, Math.max(1, Math.round(gesamt / 60)));
+        if (r) toast(t('blatt.gelesenToast', { nr: r.number }));
+      } catch {
+        toast(t('lesung.fehler'));
+      }
+    }
+    leave(back);
+  };
   root.querySelector('#rd-close')!.addEventListener('click', async () => {
-    if (await darfGehen()) leave(back);
+    if (await darfGehen()) await schliessen();
   });
   // Android-Zurück: ein eigener Verlaufseintrag fängt den ersten Schritt zurück ab
   history.pushState({ lesen: true }, '', location.href);
   const onPop = async () => {
     if (left) return;
-    if (await darfGehen()) leave(back);
+    if (await darfGehen()) await schliessen();
     else history.pushState({ lesen: true }, '', location.href);
   };
   window.addEventListener('popstate', onPop);

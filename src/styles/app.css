@@ -135,6 +135,16 @@ body:has(.screen.timer)::before { background: #2B3A67; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
 .modal-input { border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 12px; font-size: 20px; font-weight: 600; min-height: 50px; }
 .modal-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
+/* B4: volle Raupe feiern – mittig, Raupe groß, kurz aufspringen */
+.feier-bg { align-items: center; }
+.feier { text-align: center; align-items: center; animation: feier-auf .45s cubic-bezier(.2, 1.4, .4, 1) both; }
+.feier .raupe-svg { width: 100%; max-width: 380px; height: auto; }
+.feier h2 { font-size: 30px; }
+.feier .feier-satz { font-size: 22px; font-weight: 700; font-feature-settings: 'cv05' 1, 'cv11' 1; }
+.feier .btnrow { width: 100%; }
+@keyframes feier-auf { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .feier { animation: none; } }
+.pv-fehlt { padding: 6px 16px 0; }
 a.iconbtn { text-decoration: none; }
 details.card > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
 details.card > summary::after { content: '▾'; color: var(--muted); }

@@ -39,6 +39,12 @@ export function raupenstand(sheets: { reads: { at: string }[] }[]): Raupenstand 
   return { perlen: tage.length % PERLEN_JE_RAUPE, fertig };
 }
 
+/** Hat die Lesung von `at` gerade die letzte Perle einer Raupe gebracht? Dann die Nummer dieser Raupe. */
+export function geradeVoll(stand: Raupenstand, at: string): number | null {
+  const neu = stand.fertig[stand.fertig.length - 1];
+  return neu && stand.perlen === 0 && neu.datum === at ? neu.nr : null;
+}
+
 /** Raupe mit Perlen: volle Perlen grün, leere gestrichelt */
 export function perlenRaupeSvg(voll: number, cls = ''): string {
   // Raupe wie auf dem App-Icon: gelesene Tage als Regenbogen-Perlen (vom Kopf aus), offene gestrichelt

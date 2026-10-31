@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PERLEN_JE_RAUPE, raupenstand, renderUrkunde } from '../src/sheet/urkunde';
+import { geradeVoll, PERLEN_JE_RAUPE, raupenstand, renderUrkunde } from '../src/sheet/urkunde';
 
 const blatt = (...tage: number[]) => ({ reads: tage.map((t) => ({ at: `2026-10-${String(t).padStart(2, '0')}T17:00:00.000Z` })) });
 
@@ -22,6 +22,17 @@ describe('B4: Leseraupe aus dem Verlauf', () => {
       [2, 20, '2026-10-20'],
     ]);
     expect(PERLEN_JE_RAUPE).toBe(10);
+  });
+
+  it('Fest nur für die Lesung, die die 10. Perle bringt – nicht für eine zweite am selben Tag', () => {
+    const zehn = Array.from({ length: 10 }, (_, i) => blatt(i + 1));
+    expect(geradeVoll(raupenstand(zehn), '2026-10-10T17:00:00.000Z')).toBe(1);
+    // zweite Lesung am 10. Tag: keine neue Perle, kein zweites Fest
+    const zweite = [...zehn, { reads: [{ at: '2026-10-10T18:00:00.000Z' }] }];
+    expect(geradeVoll(raupenstand(zweite), '2026-10-10T18:00:00.000Z')).toBeNull();
+    // 9 Perlen oder 11 Perlen: nichts
+    expect(geradeVoll(raupenstand(zehn.slice(0, 9)), '2026-10-09T17:00:00.000Z')).toBeNull();
+    expect(geradeVoll(raupenstand([...zehn, blatt(11)]), '2026-10-11T17:00:00.000Z')).toBeNull();
   });
 
   it('Urkunde: Name oder Linie, Zahl der Blätter, Datum', () => {

@@ -701,6 +701,48 @@ describe('A1: Update von der alten Version', () => {
   });
 });
 
+/** Blätter direkt in die Datenbank legen: je Blatt die Zeitpunkte der Lesungen */
+async function seed(p: Page, reads: string[][]): Promise<void> {
+  await p.evaluate(
+    async ({ SAMPLE_SHEET, reads }) => {
+      localStorage.setItem('leseraupe.settings.v1', JSON.stringify({ letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'], childName: 'Mia', minutes: 5 }));
+      const d = await new Promise<IDBDatabase>((res) => {
+        const r = indexedDB.open('leseraupe', 1);
+        r.onupgradeneeded = () => {
+          r.result.createObjectStore('sheets', { keyPath: 'id', autoIncrement: true }).createIndex('number', 'number', { unique: true });
+          r.result.createObjectStore('log', { keyPath: 'id', autoIncrement: true });
+        };
+        r.onsuccess = () => res(r.result);
+      });
+      const tx = d.transaction(['sheets'], 'readwrite');
+      reads.forEach((ats, i) => {
+        const at = new Date(2025, 0, 1, 9).toISOString();
+        tx.objectStore('sheets').add({ number: i + 1, createdAt: at, printedAt: null, reads: ats.map((a) => ({ at: a, minutes: 5 })), data: { ...SAMPLE_SHEET, number: i + 1 }, scale: 1 });
+      });
+      await new Promise((res) => (tx.oncomplete = res));
+      d.close();
+    },
+    { SAMPLE_SHEET, reads },
+  );
+}
+
+/** Minuten aller Lesungen von Blatt 1 */
+async function lesungen(p: Page): Promise<number[]> {
+  return p.evaluate(
+    () =>
+      new Promise<number[]>((res) => {
+        const r = indexedDB.open('leseraupe');
+        r.onsuccess = () => {
+          const g = r.result.transaction('sheets').objectStore('sheets').get(1);
+          g.onsuccess = () => {
+            res(g.result.reads.map((x: { minutes: number }) => x.minutes));
+            r.result.close();
+          };
+        };
+      }),
+  );
+}
+
 describe('B4: volle Leseraupe → Urkunde', () => {
   it('10 gelesene Blätter: Start zeigt Urkunde, Urkunde mit Namen', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -736,6 +778,50 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     expect(text).toContain('10.10.2026');
     await p.goto(base + '#/verlauf');
     await p.waitForSelector('.uk-liste a');
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
+  it('10. Perle: großes Fest über dem nächsten Bildschirm, von dort zur Urkunde', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.goto(base + 'icons/icon-192.png');
+    await seed(p, Array.from({ length: 10 }, (_, i) => (i < 9 ? [new Date(2025, 0, i + 1, 17).toISOString()] : [])));
+    await p.goto(base + '#/blatt/10');
+    await p.click('#b-read');
+    await p.waitForSelector('.feier');
+    expect(await p.textContent('.feier h2')).toBe('Super, Mia!');
+    expect(await p.textContent('.feier')).toContain('Deine Leseraupe ist fertig!');
+    await p.click('.feier [data-x="urkunde"]');
+    await p.waitForSelector('#uk-pv .urkunde');
+    expect(await p.$('.feier')).toBeNull();
+    // zweite Lesung am selben Tag: keine neue Perle, kein zweites Fest
+    await p.goto(base + '#/blatt/10');
+    await p.click('#b-read');
+    await p.waitForSelector('#st-skip');
+    expect(await p.$('.feier')).toBeNull();
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
+  it('Am Bildschirm lesen: Zeit um speichert noch nicht – erst Schließen speichert die volle Zeit', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.clock.install();
+    await p.goto(base + 'icons/icon-192.png');
+    await seed(p, [[]]);
+    await p.goto(base + '#/lesen?id=1');
+    await p.waitForSelector('#rd-body h1');
+    await p.clock.runFor(5 * 60 * 1000 + 2000);
+    await p.waitForFunction(() => document.querySelector('#rd-clock')?.textContent === 'Zeit ist um ✓');
+    expect(await lesungen(p)).toEqual([]);
+    // weiterlesen geht noch; ✕ fragt nicht mehr nach und speichert 5 Min
+    await p.click('#rd-next');
+    await p.click('#rd-close');
+    await p.waitForFunction(() => location.hash === '#/blatt/1');
+    expect(await lesungen(p)).toEqual([5]);
     expect(errors).toEqual([]);
     await ctx.close();
   });
