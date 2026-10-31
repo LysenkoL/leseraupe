@@ -299,8 +299,12 @@ function makeKleine(v: Vocab, p: GenParams, rng: Rng): string[] {
   return pickFresh(v.kleine, n, p.history, rng, prefer, NEU_ANTEIL).sort((a, b) => [...a].length - [...b].length);
 }
 
-/** Satzauswahl: zuerst Sätze mit dem neuen Buchstaben, verschiedene Satzanfänge. */
-function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avoid: Set<string>): string[] {
+/**
+ * Satzauswahl: zuerst Sätze mit dem neuen Buchstaben, verschiedene Satzanfänge.
+ * Reichen die frischen Sätze der Stufe nicht, kommen frische aus `reserve` (die längsten zuerst) –
+ * erst dann Wiederholungen. Sonst stand bei wenigen Buchstaben und hoher Stufe alle paar Tage dasselbe da.
+ */
+function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avoid: Set<string>, reserve: string[] = []): string[] {
   const pool = shuffle(
     [...new Set(cands)].filter((s) => !avoid.has(s) && !p.history.recentSentences.has(s)),
     rng,
@@ -329,7 +333,12 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
     if (out.length >= n) break;
     tryAdd(s);
   }
-  for (const s of [...pool, ...old]) {
+  const inCands = new Set(cands);
+  const frischReserve = shuffle(
+    [...new Set(reserve)].filter((s) => !inCands.has(s) && !avoid.has(s) && !p.history.recentSentences.has(s)),
+    rng,
+  ).sort((a, b) => wordsOf(b).length - wordsOf(a).length);
+  for (const s of [...pool, ...frischReserve, ...old]) {
     if (out.length >= n) break;
     if (!out.includes(s)) out.push(s);
   }
@@ -536,7 +545,7 @@ export function generateSheet(p: GenParams): Generated {
     if (passend.length >= c.saetze * 2) satzCands = passend;
     else if (kurz.length >= c.saetze * 2) satzCands = kurz;
   }
-  const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid);
+  const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid, cands);
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);

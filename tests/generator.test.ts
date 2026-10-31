@@ -343,9 +343,17 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     return DICT.geschichten.filter((g) => [g.titel, ...g.saetze].every((x) => checkText(x, known).ok));
   };
 
-  it('typische Reihen: mindestens 8 Geschichten mit Handlung (13 Buchstaben: 3), damit sich Wochen nicht wiederholen', () => {
+  it('typische Reihen: mindestens 10 Geschichten mit Handlung (ab 18 Buchstaben 16), damit sich Wochen nicht wiederholen', () => {
     for (const [n, letters] of Object.entries(TYPISCH)) {
-      expect(lesbar(letters).filter((g) => g.handlung).length, `${n} Buchstaben`).toBeGreaterThanOrEqual(n === '13' ? 3 : 8);
+      expect(lesbar(letters).filter((g) => g.handlung).length, `${n} Buchstaben`).toBeGreaterThanOrEqual(Number(n) >= 18 ? 16 : 10);
+    }
+  });
+
+  it('frühe Stufen: genug längere Sätze (ab 5 Wörtern), damit hohe Stufen nicht alle paar Tage dieselben zeigen', () => {
+    for (const n of ['13', '15', '18']) {
+      const known = new Set(TYPISCH[n]);
+      const lang = DICT.saetze.filter((s) => wordsOf(s).length >= 5 && checkText(s, known).ok);
+      expect(lang.length, `${n} Buchstaben`).toBeGreaterThanOrEqual(25);
     }
   });
 
