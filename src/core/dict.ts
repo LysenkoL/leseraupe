@@ -33,6 +33,8 @@ export interface FertigeGeschichte {
   fragen: string[];
   /** C3: braucht die ersten „ab“ Einheiten der Fibel-Reihenfolge (späteste Einheit) */
   ab: number;
+  /** C3: Geschichte mit richtiger Handlung (nicht nur „X ist im Y“) */
+  handlung?: true;
 }
 
 export interface Woerterbuch {
