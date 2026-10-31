@@ -851,7 +851,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.click('.modal [data-x="yes"]');
     await p.click('.onb [data-alle]');
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(0);
-    expect(await p.textContent('.onb [data-alle]')).toBe('Alle auswählen');
+    expect(await p.innerText('.onb [data-alle]')).toBe('Alle auswählen');
     await p.click('#onb-next');
     await p.click('#onb-next');
     await p.waitForSelector('#create');
@@ -884,7 +884,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
     expect(await p.$('.onb .lt.neu')).toBeNull();
     // jetzt umgekehrt: „Alle abwählen“
-    expect(await p.textContent('.onb [data-alle]')).toBe('Alle abwählen');
+    expect(await p.innerText('.onb [data-alle]')).toBe('Alle abwählen');
     await p.click('.modal [data-x="yes"]');
     await p.click('#onb-next');
     await p.click('#onb-next');

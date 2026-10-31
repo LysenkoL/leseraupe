@@ -16,8 +16,9 @@ export function renderBlatt(root: HTMLElement, id: number): void {
   root.innerHTML = `<div class="screen"><div class="topbar">${backButton('#/verlauf')}<div class="grow"><h1 id="b-t">${t('vorschau.blatt')}</h1><div class="sub" id="b-s"></div></div></div>
   <div class="preview-wrap" id="b-pv"></div>
   <div class="bottom">
-    <div class="btnrow"><button class="btn ghost" id="b-read">${t('vorschau.gelesen')}</button><button class="btn green" id="b-print">${t('blatt.nochmal')}</button><button class="btn primary" id="b-timer">${t('vorschau.timer')}</button></div>
-    <div class="btnrow two"><button class="btn ghost" id="b-pdf">${t('aktion.pdf')}</button><a class="btn ghost" href="#/lesen?id=${id}">${t('vorschau.bildschirm')}</a></div>
+    <!-- wie in der Vorschau: zwei Hauptwege groß, der Rest kleiner darunter -->
+    <div class="btnrow two"><button class="btn green" id="b-print">${t('blatt.nochmal')}</button><a class="btn primary" href="#/lesen?id=${id}">${t('vorschau.bildschirm')}</a></div>
+    <div class="btnrow four"><button class="btn ghost sm" id="b-timer">${t('vorschau.timer')}</button><button class="btn ghost sm" id="b-pdf">${t('aktion.pdf')}</button><button class="btn ghost sm" id="b-read">${t('vorschau.gelesen')}</button></div>
   </div></div>`;
   const draw = async () => {
     const r = await getSheet(id);

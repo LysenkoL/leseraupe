@@ -18,7 +18,7 @@ export function lettersHtml(s: Settings): string {
   }).join('');
   return `<div class="letters">${letters}</div>
       <div class="legend-row"><div class="legend"><span><i style="background:#9FD18F"></i>${t('buchst.gelernt')}</span><span><i style="background:#F2A65A"></i>${t('buchst.neu')}</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>${t('buchst.nochnicht')}</span></div>
-        <button class="pillbtn alle-btn" type="button" data-alle="${alle(s) ? 'ab' : 'an'}">${t(alle(s) ? 'buchst.keine' : 'buchst.alle')}</button></div>
+        <button class="pillbtn alle-btn" type="button" data-alle="${alle(s) ? 'ab' : 'an'}"><span class="alle-an">${t('buchst.alle')}</span><span class="alle-ab">${t('buchst.keine')}</span></button></div>
       <div class="hint">${t('buchst.hinweis')}</div>`;
 }
 

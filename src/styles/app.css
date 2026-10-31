@@ -63,6 +63,11 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
 .legend-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* „Alle auswählen“ / „Alle abwählen“: beide Texte übereinander, sichtbar nur einer – so ist der Knopf
+   immer so breit wie der längere und springt beim Umschalten nicht in die nächste Zeile */
+.alle-btn { display: inline-grid; margin-left: auto; }
+.alle-btn > span { grid-area: 1 / 1; }
+.alle-btn[data-alle="an"] .alle-ab, .alle-btn[data-alle="ab"] .alle-an { visibility: hidden; }
 
 .letters { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .lt {
@@ -361,6 +366,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 .raupe-card.kompakt { padding: 10px 14px; gap: 4px; }
 .raupe-card.kompakt .raupe-svg { max-height: 56px; }
 .btnrow.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* ungerade Zahl: der letzte Knopf über die ganze Breite */
+.btnrow.four > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 .btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }
 /* Gestaltung: Vorschau bleibt oben stehen, während man durch die Karten scrollt */
 .hp-big { position: sticky; top: var(--oben); z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
