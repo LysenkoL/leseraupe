@@ -54,5 +54,7 @@ export async function pruefeUpdate(): Promise<'neu' | 'aktuell' | 'offline' | 'f
   } catch {
     return 'fehler';
   }
+  // wartet eine neue Version (alter Service Worker ohne skipWaiting): anstoßen – die App lädt dann neu
+  reg.waiting?.postMessage({ type: 'SKIP_WAITING' });
   return reg.installing || reg.waiting ? 'neu' : 'aktuell';
 }
