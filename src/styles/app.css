@@ -408,3 +408,5 @@ a.iconbtn { text-decoration: none; }
 .seg.three button { font-size: 15px; }
 /* schon erledigt (heute gelesen): grün statt grau */
 .btn.ghost.erledigt { color: var(--green); border-color: #9FD18F; background: #F1F8EE; }
+/* Einführung: alles mittig, auch die Hinweise (die allgemeine Regel oben setzt sonst Blocksatz) */
+.onb .hint { text-align: center; }
