@@ -5,7 +5,7 @@ import { THEMES } from '../sheet/themes';
 import { getSettings } from '../app/state';
 import { raupenstand } from '../sheet/urkunde';
 import { raupenKarte } from '../app/raupe';
-import { t, themaName } from '../app/i18n';
+import { sprache, t, themaName, type Key } from '../app/i18n';
 
 
 export function calendarHtml(year: number, month: number, days: Set<string>, today = new Date()): string {
@@ -23,11 +23,11 @@ export function calendarHtml(year: number, month: number, days: Set<string>, tod
 }
 
 /** 1 Minute / 2 Minuten (uk: 1 хвилина, 2–4 хвилини, 5+ хвилин) */
-function minutenWort(n: number): string {
+/** Wort zur Zahl in der richtigen Form: Deutsch 1 / viele, Ukrainisch 1 / 2–4 / 5+ */
+function zahlWort(n: number, key: 'verlauf.kGelesen' | 'verlauf.kFolge' | 'verlauf.kMinuten'): string {
   const z = n % 10, h = n % 100;
-  if (z === 1 && h !== 11) return t('verlauf.minute');
-  if (z >= 2 && z <= 4 && (h < 12 || h > 14)) return t('verlauf.minuten2');
-  return t('verlauf.minuten');
+  const form = sprache() === 'uk' ? (z === 1 && h !== 11 ? 1 : z >= 2 && z <= 4 && (h < 12 || h > 14) ? 2 : 5) : n === 1 ? 1 : 5;
+  return t(`${key}${form}` as Key);
 }
 
 export function renderVerlauf(root: HTMLElement): void {
@@ -40,7 +40,7 @@ export function renderVerlauf(root: HTMLElement): void {
   const draw = () => {
     const st = stats(list);
     const days = readingDays(list);
-    const monthDays = [...days].filter((d) => d.startsWith(`${y}-${String(m + 1).padStart(2, '0')}`)).length;
+    const folge = streak(days);
     const items = list
       .map((r) => {
         const s = statusOf(r);
@@ -61,11 +61,11 @@ export function renderVerlauf(root: HTMLElement): void {
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('verlauf.titel')}</h1></div></div>
   <div class="content">
+    <!-- nur, was über das Lesen etwas sagt; „gedruckt“ hieße nur „Drucken getippt“ -->
     <div class="tiles">
-      <div class="tile"><b>${st.erstellt}</b><small>${t('status.erstellt')}</small></div>
-      <div class="tile"><b>${st.gedruckt}</b><small>${t('verlauf.gedruckt')}</small></div>
-      <div class="tile${st.gelesen > 0 ? ' on' : ''}"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
-      <div class="tile"><b>${st.minuten}</b><small>${minutenWort(st.minuten)}</small></div>
+      <div class="tile lesen"><b>${st.gelesen}</b><small>${zahlWort(st.gelesen, 'verlauf.kGelesen')}</small></div>
+      <div class="tile lesen"><b>${folge ? '🔥 ' : ''}${folge}</b><small>${zahlWort(folge, 'verlauf.kFolge')}</small></div>
+      <div class="tile lesen"><b>${st.minuten}</b><small>${zahlWort(st.minuten, 'verlauf.kMinuten')}</small></div>
     </div>
     ${
       cfg.stolper.length || cfg.stolperBesiegt
@@ -79,13 +79,12 @@ export function renderVerlauf(root: HTMLElement): void {
         <h2>${t('verlauf.monate').split(',')[m]} ${y}</h2>
         <button class="iconbtn sm" id="next" aria-label="${t('verlauf.naechsterMonat')}">›</button>
       </div>
-      <div class="hint">${t(monthDays === 1 ? 'verlauf.lesetag' : 'verlauf.lesetage', { n: monthDays, s: streak(days) })}</div>
       ${calendarHtml(y, m, days)}
     </section>
     <h2 class="section-h">${t('verlauf.blaetter')}</h2>
     <div class="list">${items || `<div class="empty">${t('verlauf.leer')}</div>`}</div>
   </div>
-  <div class="bottom"><div class="btnrow two"><a class="btn ghost" href="#/protokoll">${t('protokoll.titel')}</a><a class="btn ghost" href="#/einstellungen">${t('verlauf.sicherung')}</a></div></div>
+  <div class="bottom"><div class="btnrow two"><a class="btn ghost" href="#/protokoll">${t('protokoll.titel')}</a><a class="btn ghost" href="#/einstellungen?zu=sicherung">${t('verlauf.sicherung')}</a></div></div>
 </div>`;
     root.querySelector('#prev')!.addEventListener('click', () => {
       m--;

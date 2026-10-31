@@ -282,9 +282,10 @@ describe('App-Ablauf', () => {
   it('Verlauf: Zahlen stimmen mit dem Protokoll überein', async () => {
     await page.goto(base + '#/verlauf');
     await page.waitForSelector('.tile');
-    const tiles = await page.$$eval('.tile b', (e) => e.map((x) => Number(x.textContent)));
+    const tiles = await page.$$eval('.tile b', (e) => e.map((x) => Number(x.textContent!.replace('🔥', ''))));
     // Blatt 1 gedruckt, Blatt 2 nur gelesen (Timer)
-    expect(tiles).toEqual([2, 1, 1, 5]);
+    // Blätter gelesen, Tage in Folge, Minuten
+    expect(tiles).toEqual([1, 1, 5]);
     expect(await page.$$eval('.cal-d.read', (e) => e.length)).toBe(1);
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
@@ -371,8 +372,11 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => document.querySelector('[data-g="schwer"]')?.getAttribute('aria-pressed') === 'true');
     await page.waitForSelector('#st-skip');
     await page.click('#st-skip');
-    await page.waitForSelector('#b-s');
+    // danach in den Verlauf, nicht zurück aufs Blatt (sonst wieder „Gelesen ✓“ – ein Kreis)
+    await page.waitForFunction(() => location.hash === '#/verlauf');
+    await page.goto(base + href);
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
+    expect(await page.textContent('#b-read')).toBe('Heute gelesen ✓');
   });
 
   it('Am Bildschirm lesen: am Ende „Noch einmal lesen“ oder in der Serie „Nächstes Blatt“, Restzeit läuft mit', async () => {
@@ -566,7 +570,7 @@ describe('App-Ablauf', () => {
     await page.click(`.st-w[data-w="${w2}"]`);
     expect(await page.textContent('#st-ok')).toBe('Fertig · 2 Wörter');
     await page.click('#st-ok');
-    await page.waitForSelector('#b-s');
+    await page.waitForFunction(() => location.hash === '#/verlauf');
     await page.goto(base + '#/einstellungen');
     await page.waitForSelector('#stolper');
     expect(await page.$$eval('.st-row b', (e) => e.map((x) => x.textContent))).toEqual([w1, w2]);
@@ -595,7 +599,7 @@ describe('App-Ablauf', () => {
     await page.waitForSelector('.sheet-item');
     await page.click('.sheet-item');
     await page.waitForSelector('#b-pv .sheet');
-    expect(await page.textContent('#b-read')).toBe('Прочитано ✓');
+    expect(await page.textContent('#b-read')).toMatch(/^(Сьогодні п|П)рочитано ✓$/);
     expect(await page.$eval('#b-pv .sheet', (e) => e.outerHTML)).toBe(blattDe);
     // zurück: wie das Telefon (hier Englisch → Deutsch)
     await page.goto(base + '#/einstellungen');
@@ -743,6 +747,23 @@ async function lesungen(p: Page): Promise<number[]> {
   );
 }
 
+describe('Verlauf', () => {
+  it('„Sicherung“ springt in den Einstellungen gleich zur Sicherung', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 780 } });
+    const p = await ctx.newPage();
+    await p.goto(base + 'icons/icon-192.png');
+    await p.evaluate(() => localStorage.setItem('leseraupe.settings.v1', JSON.stringify({ letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'] })));
+    await p.goto(base + '#/verlauf');
+    await p.click('a[href="#/einstellungen?zu=sicherung"]');
+    await p.waitForSelector('#sicherung.ziel');
+    await p.waitForFunction(() => {
+      const r = document.querySelector('#sicherung')!.getBoundingClientRect();
+      return r.top >= 0 && r.bottom <= innerHeight;
+    });
+    await ctx.close();
+  });
+});
+
 describe('Druck', () => {
   it('Streifen unter der Statusleiste kommt nicht mit aufs Papier (lag sonst über „Ich lese!“)', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -813,6 +834,9 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     // zweite Lesung am selben Tag: keine neue Perle, kein zweites Fest
     await p.goto(base + '#/blatt/10');
     await p.click('#b-read');
+    // heute schon gelesen: erst nachfragen
+    await p.waitForSelector('.modal');
+    await p.click('.modal [data-x="yes"]');
     await p.waitForSelector('#st-skip');
     expect(await p.$('.feier')).toBeNull();
     expect(errors).toEqual([]);
@@ -879,7 +903,8 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.waitForSelector('.onb [data-alle]');
     await p.click('.onb [data-alle]');
     await p.waitForSelector('.modal');
-    expect(await p.textContent('.modal p')).toContain('kennt schon alle Buchstaben');
+    expect(await p.textContent('.modal h2')).toBe('Alle Buchstaben gewählt');
+    expect(await p.textContent('.modal')).toContain('Kennt dein Kind schon alle Buchstaben');
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
     // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
     expect(await p.$('.onb .lt.neu')).toBeNull();

@@ -17,6 +17,9 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
   const id = Number(params.get('id'));
   const backRaw = params.get('zurueck') ?? '';
   const back = backRaw.startsWith('#/') ? backRaw : '#/';
+  // danach nicht zurück aufs Blatt (dort stünde wieder „Gelesen ✓“ – man drehte sich im Kreis):
+  // vom gespeicherten Blatt in den Verlauf, aus der Vorschau auf die Startseite
+  const weiter = back.startsWith('#/blatt/') ? '#/verlauf' : back === '#/vorschau' ? '#/' : back;
   const routeNr = aktuelleRoute();
   const rec = id ? await getSheet(id) : undefined;
   if (!nochAktuell(routeNr)) return;
@@ -76,7 +79,7 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
     }),
   );
   const skip = root.querySelector<HTMLButtonElement>('#st-skip')!;
-  skip.addEventListener('click', () => go(back));
+  skip.addEventListener('click', () => go(weiter));
   ok.addEventListener('click', async () => {
     // nur einmal speichern, auch wenn doppelt getippt wird
     ok.disabled = skip.disabled = true;
@@ -86,6 +89,6 @@ export async function renderStolper(root: HTMLElement, params: URLSearchParams):
     if (tapped.size) await log(`Stolperwörter: ${[...tapped].join(', ')}`);
     // nichts verschwindet von selbst – nur ein Hinweis, die Eltern entscheiden
     if (r.bereit.length) toast(t('stolper.bereit', { w: r.bereit.join(', ') }), 5000);
-    go(back);
+    go(weiter);
   });
 }

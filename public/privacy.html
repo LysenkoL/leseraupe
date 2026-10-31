@@ -6,7 +6,11 @@
 <title>Leseraupe – Datenschutz / Конфіденційність / Privacy</title>
 <style>
   :root { color-scheme: light; }
-  body { margin: 0; background: #F4F8F2; color: #1F2421; font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  /* dieselbe Schrift wie in der App (Inter, lokal) – mit der Systemschrift sahen Deutsch, Ukrainisch und Englisch verschieden aus */
+  @font-face { font-family: 'Inter Seite'; src: url('fonts/Inter-Medium.woff2') format('woff2'); font-weight: 400 500; font-display: swap; }
+  @font-face { font-family: 'Inter Seite'; src: url('fonts/Inter-SemiBold.woff2') format('woff2'); font-weight: 600 700; font-display: swap; }
+  @font-face { font-family: 'Inter Seite'; src: url('fonts/Inter-ExtraBold.woff2') format('woff2'); font-weight: 800 900; font-display: swap; }
+  body { margin: 0; background: #F4F8F2; color: #1F2421; font: 16px/1.55 'Inter Seite', system-ui, -apple-system, "Segoe UI", sans-serif; }
   main { max-width: 680px; margin: 0 auto; padding: 24px 16px 48px; }
   h1 { color: #2F6B3A; font-size: 26px; margin: 0 0 4px; }
   h2 { font-size: 20px; margin: 32px 0 8px; }

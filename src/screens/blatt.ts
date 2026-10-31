@@ -1,10 +1,10 @@
 import { elternCheck } from '../app/elterncheck';
-import { getSheet, saveOnPrint, statusOf } from '../core/db';
+import { dayKey, getSheet, saveOnPrint, statusOf } from '../core/db';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { mitDruckKnopf, printSheet } from '../sheet/print';
 import { sharePdf, sheetToPdf } from '../sheet/pdf';
-import { backButton, formatDate, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
+import { backButton, confirmDialog, formatDate, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { getSettings } from '../app/state';
 import { stolperLink } from './stolper';
 import { lesungSpeichern } from '../app/lesezeit';
@@ -30,6 +30,11 @@ export function renderBlatt(root: HTMLElement, id: number): void {
     root.querySelector('#b-t')!.textContent = t('blatt.titel', { nr: r.number, thema: themaName(r.data.theme) });
     const reads = r.reads.length ? ` · ${t('blatt.gelesenAm', { daten: r.reads.map((x) => formatDate(x.at)).join(', ') })}` : '';
     root.querySelector('#b-s')!.textContent = `${formatDate(r.createdAt)} · ${t(`status.${statusOf(r)}`)}${reads}`;
+    // heute schon gelesen: der Knopf sagt es (und fragt vor einer zweiten Lesung)
+    const heute = r.reads.some((x) => dayKey(new Date(x.at)) === dayKey(new Date()));
+    const lesenBtn = root.querySelector<HTMLButtonElement>('#b-read')!;
+    lesenBtn.textContent = t(heute ? 'blatt.heuteGelesen' : 'vorschau.gelesen');
+    lesenBtn.classList.toggle('erledigt', heute);
     await mountPreview(root.querySelector('#b-pv')!, renderSheet(r.data, { displayNumber: r.number, scale: r.scale }), { fixedScale: r.scale });
     return r;
   };
@@ -65,6 +70,8 @@ export function renderBlatt(root: HTMLElement, id: number): void {
   root.querySelector('#b-read')!.addEventListener('click', async () => {
     const r = await getSheet(id);
     if (!r) return;
+    const heute = r.reads.some((x) => dayKey(new Date(x.at)) === dayKey(new Date()));
+    if (heute && !(await confirmDialog(t('blatt.nochmalGelesen'), t('blatt.nochmalGelesenJa')))) return;
     await lesungSpeichern(id, getSettings().minutes, true);
     toast(t('blatt.gelesenToast', { nr: r.number }));
     go(stolperLink(id, `#/blatt/${id}`));

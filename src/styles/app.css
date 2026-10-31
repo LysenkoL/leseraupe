@@ -109,6 +109,7 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .btn:disabled { opacity: .5; }
 .btnrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .btnrow.two { grid-template-columns: 1fr 1fr; }
+.btnrow.eins { grid-template-columns: 1fr; }
 
 /* Vorschau */
 .preview-wrap { background: #E6EBE8; padding: 14px 12px; flex: 1; overflow: auto; }
@@ -140,6 +141,8 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .modal { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
 .modal h2 { margin: 0; font-size: 18px; font-weight: 800; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
+/* längere Erklärungen im Fenster: Blocksatz, mit Silbentrennung (nur Oberfläche, nie auf dem Leseblatt) – sonst große Lücken */
+.modal h2 + p, .modal p + p { text-align: justify; hyphens: auto; text-wrap: pretty; }
 .modal-input { border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 12px; font-size: 20px; font-weight: 600; min-height: 50px; }
 .modal-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
 /* B4: volle Raupe feiern – mittig, Raupe groß, kurz aufspringen */
@@ -153,15 +156,14 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 @media (prefers-reduced-motion: reduce) { .feier { animation: none; } }
 .pv-fehlt { padding: 6px 16px 0; }
 a.iconbtn { text-decoration: none; }
-details.card > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
-details.card > summary::after { content: '▾'; color: var(--muted); }
-details.card[open] > summary::after { content: '▴'; }
-details.card > summary::-webkit-details-marker { display: none; }
-.blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
-.toggle.small { font-size: 14px; gap: 8px; }
-.toggle.small input { width: 38px; height: 24px; }
-.toggle.small input::after { width: 18px; height: 18px; }
-.toggle.small input:checked::after { left: 17px; }
+.blk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed #CCD3CE; background: #fff; color: #8A938D; font-weight: 700; font-size: 14px; cursor: pointer; }
+/* das Kästchen liegt unsichtbar über dem ganzen Plättchen: Tippen irgendwo schaltet um */
+.blk-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.blk-chip:has(input:checked) { border: 2px solid var(--green); background: #E7F3E3; color: var(--green); }
+.blk-chip:has(input:checked) span::before { content: '✓ '; }
+.blk-chip:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+.blk-chip.disabled { opacity: 0.45; }
 
 /* Timer */
 .screen.timer { background: #2B3A67; color: #fff; max-width: none; }
@@ -183,12 +185,11 @@ details.card > summary::-webkit-details-marker { display: none; }
 .t-foot { text-align: center; font-size: 13px; color: #A9B3D6; }
 
 /* Verlauf */
-.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .tile { background: #fff; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .tile b { font-size: 24px; font-weight: 800; }
-.tile small { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.2; }
-.tile.on { background: var(--green); color: #fff; }
-.tile.on small { color: #DDEEDD; }
+.tile small { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.2; white-space: pre-line; }
+.tile.lesen b { color: var(--green); }
 .iconbtn.sm { width: 40px; height: 40px; background: var(--grey); font-size: 22px; }
 .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
 .cal-w { font-size: 12px; color: var(--muted); font-weight: 700; padding: 2px 0; }
@@ -375,7 +376,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
 /* „Über die App“: Blocksatz ohne Silbentrennung – etwas kleinere Schrift, damit keine großen Lücken entstehen */
-.ueber .card > div { text-align: justify; text-wrap: pretty; font-size: 16px; line-height: 1.5; }
+.ueber .card > div { text-align: justify; hyphens: auto; text-wrap: pretty; font-size: 16px; line-height: 1.5; }
 /* B5: Wochentage der Erinnerung */
 .seg.tage { grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .seg.tage button { min-height: 44px; padding: 0; font-size: 14px; }
@@ -383,3 +384,27 @@ details.card > summary::-webkit-details-marker { display: none; }
 
 /* Erinnerung: Zeile nur, wenn es etwas zu sagen gibt (z. B. kein Tag gewählt) */
 #er-meldung:empty { display: none; }
+
+/* Karte, zu der ein Link springt (z. B. Sicherung aus dem Verlauf): kurz grün umrandet */
+.card.ziel { animation: ziel-leuchten 2.4s ease-out; }
+@keyframes ziel-leuchten { 0%, 40% { box-shadow: 0 0 0 3px var(--green); } 100% { box-shadow: 0 0 0 3px transparent; } }
+@media (prefers-reduced-motion: reduce) { .card.ziel { animation: none; box-shadow: 0 0 0 3px var(--green); } }
+
+
+/* ---------- Einheitlicher Stil ----------
+   Knöpfe: Text immer mittig. Zweizeiliger Knopf: Titel, darunter grau, was drin ist. */
+.btn.zweizeilig { flex-direction: column; gap: 2px; padding: 10px 14px; }
+.btn.zweizeilig small { font-size: 13px; font-weight: 500; color: var(--muted); }
+/* Karten-Überschriften: ein Stil – auch Felder, deren Beschriftung die Überschrift der Karte ist (Name, Sprache) */
+.card > label.field:first-child { font-size: 16px; font-weight: 800; gap: 10px; }
+/* Erklärtexte (mehrzeilig) überall im Blocksatz mit Silbentrennung – nur Oberfläche, nie auf dem Leseblatt */
+.card > .hint, .content > .hint { text-align: justify; hyphens: auto; text-wrap: pretty; }
+/* Links im Text: grün wie die App (sonst Blau des Systems) */
+.card a:not(.btn):not(.pillbtn):not(.chip) { color: var(--green); }
+/* leere „Gespeichert“-Zeile nimmt keinen Platz ein */
+.saved-hint:empty { display: none; }
+/* drei gleich breite Knöpfe (Leicht / Geht so / Schwer): längere Wörter passen auch auf schmalen Handys */
+.seg button { padding: 0 4px; }
+.seg.three button { font-size: 15px; }
+/* schon erledigt (heute gelesen): grün statt grau */
+.btn.ghost.erledigt { color: var(--green); border-color: #9FD18F; background: #F1F8EE; }

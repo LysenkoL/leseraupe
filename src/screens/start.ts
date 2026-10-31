@@ -53,7 +53,8 @@ export function renderStart(root: HTMLElement): void {
       (id) => {
         // Elternfragen gehören zur Geschichte: ohne Geschichte keine Fragen
         const aus = id === 'fragen' && !s.blocks.geschichte;
-        return `<label class="toggle small${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/> ${t(`block.${id}`)}</label>`;
+        // Plättchen wie bei der Gestaltung: an = grün mit Häkchen, aus = blass gestrichelt
+        return `<label class="blk-chip${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/><span>${t(`block.${id}`)}</span></label>`;
       },
     ).join('');
 
@@ -96,10 +97,10 @@ export function renderStart(root: HTMLElement): void {
       <div class="row"><h2>${t('start.thema')}</h2><a class="pillbtn vorschau" href="#/thema">${t('start.themaVorschau')}</a></div>
       <div class="chips">${themeChips}<button class="chip${s.randomTheme ? ' on' : ''}" data-theme="zufall" style="color:#3D4A56">${t('start.zufall')}</button></div>
     </section>
-    <details class="card">
-      <summary><h2 style="display:inline">${t('start.bloecke')}</h2></summary>
-      <div class="blocks">${blocks}</div>
-    </details>
+    <section class="card">
+      <h2>${t('start.bloecke')}</h2>
+      <div class="blk-chips">${blocks}</div>
+    </section>
   </div>
   <div class="bottom">
     <button class="btn primary big" id="create">${s.blaetter > 1 ? t('start.erstellenN', { n: s.blaetter }) : t('start.erstellen1')}</button>
