@@ -108,6 +108,8 @@ describe('App-Ablauf', () => {
     for (let i = 0; i < 4; i++) await page.click('#onb-next');
     await page.waitForSelector('#create');
     expect(await page.evaluate(() => location.hash)).toBe('#/');
+    // der nächste Test beginnt auf „Über die App“
+    await page.goto(base + '#/ueber');
   });
 
   it('Über die App: Datenschutz, Kontakt, Feedback mit Version', async () => {
