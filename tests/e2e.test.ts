@@ -282,9 +282,10 @@ describe('App-Ablauf', () => {
   it('Verlauf: Zahlen stimmen mit dem Protokoll überein', async () => {
     await page.goto(base + '#/verlauf');
     await page.waitForSelector('.tile');
-    const tiles = await page.$$eval('.tile b', (e) => e.map((x) => Number(x.textContent)));
+    const tiles = await page.$$eval('.tile b', (e) => e.map((x) => Number(x.textContent!.replace('🔥', ''))));
     // Blatt 1 gedruckt, Blatt 2 nur gelesen (Timer)
-    expect(tiles).toEqual([2, 1, 1, 5]);
+    // Blätter gelesen, Tage in Folge, Minuten
+    expect(tiles).toEqual([1, 1, 5]);
     expect(await page.$$eval('.cal-d.read', (e) => e.length)).toBe(1);
     await page.goto(base + '#/protokoll');
     await page.waitForSelector('.log-row');
