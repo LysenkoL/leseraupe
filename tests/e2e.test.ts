@@ -102,6 +102,14 @@ describe('App-Ablauf', () => {
     await page.waitForSelector('.onb');
     await page.click('#onb-skip');
     await page.waitForFunction(() => location.hash === '#/ueber');
+    // ganz durchgesehen: nach „Los geht’s“ auf die Startseite, nicht wieder zu „Über die App“
+    await page.click('a[href^="#/willkommen"]');
+    await page.waitForSelector('.onb');
+    for (let i = 0; i < 4; i++) await page.click('#onb-next');
+    await page.waitForSelector('#create');
+    expect(await page.evaluate(() => location.hash)).toBe('#/');
+    // der nächste Test beginnt auf „Über die App“
+    await page.goto(base + '#/ueber');
   });
 
   it('Über die App: Datenschutz, Kontakt, Feedback mit Version', async () => {
