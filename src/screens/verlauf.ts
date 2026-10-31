@@ -64,8 +64,8 @@ export function renderVerlauf(root: HTMLElement): void {
     <div class="tiles">
       <div class="tile"><b>${st.erstellt}</b><small>${t('status.erstellt')}</small></div>
       <div class="tile"><b>${st.gedruckt}</b><small>${t('verlauf.gedruckt')}</small></div>
-      <div class="tile${st.gelesen > 0 ? ' on' : ''}"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
-      <div class="tile"><b>${st.minuten}</b><small>${minutenWort(st.minuten)}</small></div>
+      <div class="tile lesen"><b>${st.gelesen}</b><small>${t('verlauf.gelesen')}</small></div>
+      <div class="tile lesen"><b>${st.minuten}</b><small>${minutenWort(st.minuten)}</small></div>
     </div>
     ${
       cfg.stolper.length || cfg.stolperBesiegt

@@ -156,15 +156,14 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 @media (prefers-reduced-motion: reduce) { .feier { animation: none; } }
 .pv-fehlt { padding: 6px 16px 0; }
 a.iconbtn { text-decoration: none; }
-details.card > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
-details.card > summary::after { content: '▾'; color: var(--muted); }
-details.card[open] > summary::after { content: '▴'; }
-details.card > summary::-webkit-details-marker { display: none; }
-.blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
-.toggle.small { font-size: 14px; gap: 8px; }
-.toggle.small input { width: 38px; height: 24px; }
-.toggle.small input::after { width: 18px; height: 18px; }
-.toggle.small input:checked::after { left: 17px; }
+.blk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed #CCD3CE; background: #fff; color: #8A938D; font-weight: 700; font-size: 14px; cursor: pointer; }
+/* das Kästchen liegt unsichtbar über dem ganzen Plättchen: Tippen irgendwo schaltet um */
+.blk-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.blk-chip:has(input:checked) { border: 2px solid var(--green); background: #E7F3E3; color: var(--green); }
+.blk-chip:has(input:checked) span::before { content: '✓ '; }
+.blk-chip:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+.blk-chip.disabled { opacity: 0.45; }
 
 /* Timer */
 .screen.timer { background: #2B3A67; color: #fff; max-width: none; }
@@ -190,8 +189,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .tile { background: #fff; border-radius: 16px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .tile b { font-size: 24px; font-weight: 800; }
 .tile small { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.2; }
-.tile.on { background: var(--green); color: #fff; }
-.tile.on small { color: #DDEEDD; }
+.tile.lesen b { color: var(--green); }
 .iconbtn.sm { width: 40px; height: 40px; background: var(--grey); font-size: 22px; }
 .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; }
 .cal-w { font-size: 12px; color: var(--muted); font-weight: 700; padding: 2px 0; }
