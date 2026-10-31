@@ -141,6 +141,8 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .modal { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
 .modal h2 { margin: 0; font-size: 18px; font-weight: 800; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
+/* längere Erklärungen im Fenster: Blocksatz, mit Silbentrennung (nur Oberfläche, nie auf dem Leseblatt) – sonst große Lücken */
+.modal h2 + p, .modal p + p { text-align: justify; hyphens: auto; text-wrap: pretty; }
 .modal-input { border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 12px; font-size: 20px; font-weight: 600; min-height: 50px; }
 .modal-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
 /* B4: volle Raupe feiern – mittig, Raupe groß, kurz aufspringen */
