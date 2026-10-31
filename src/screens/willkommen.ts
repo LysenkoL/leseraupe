@@ -21,14 +21,15 @@ export function wischRichtung(dx: number, dy: number): 'weiter' | 'zurueck' | nu
 
 /**
  * Einführung beim ersten Start (A2): 4 Schritte, wischen oder „Weiter“, jederzeit „Überspringen“.
- * `back`: wohin es danach geht (wiederholt aus „Über die App“).
+ * `back`: wohin „Überspringen“ führt (wiederholt aus „Über die App“: dorthin zurück).
+ * Wer bis „Los geht’s“ durchgeht, landet auf der Startseite – dort geht es ja los.
  */
 export function renderWillkommen(root: HTMLElement, back = '#/'): void {
   let step = 0;
 
-  const finish = () => {
+  const finish = (ziel = back) => {
     setOnboarded();
-    go(back);
+    go(ziel);
   };
 
   const body = (): string => {
@@ -78,7 +79,7 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
     };
     const next = () => {
       saveName();
-      if (step === STEPS - 1) return finish();
+      if (step === STEPS - 1) return finish('#/');
       step++;
       draw();
     };
@@ -89,7 +90,7 @@ export function renderWillkommen(root: HTMLElement, back = '#/'): void {
       draw();
     };
 
-    root.querySelector('#onb-skip')?.addEventListener('click', finish);
+    root.querySelector('#onb-skip')?.addEventListener('click', () => finish());
     root.querySelector('#onb-next')!.addEventListener('click', next);
     root.querySelector('#onb-prev')?.addEventListener('click', prev);
     root.querySelector<HTMLInputElement>('#onb-name')?.addEventListener('keydown', (e) => {
