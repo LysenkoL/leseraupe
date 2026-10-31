@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { loadSettings, saveSettings, toggleLetter, DEFAULT_SETTINGS, alleWaehlen, alleFrageFaellig, nurLesetexte } from '../src/core/store';
+import { loadSettings, saveSettings, toggleLetter, DEFAULT_SETTINGS, alleWaehlen, alleAbwaehlen, alleFrageFaellig, nurLesetexte } from '../src/core/store';
 import { UNIT_IDS } from '../src/core/letters';
 
 class MemStorage {
@@ -61,6 +61,16 @@ describe('C2: Alle auswählen', () => {
     const ohneM = { ...s, letters: UNIT_IDS.filter((id) => id !== 'm'), newLetter: 'tz' };
     expect(alleWaehlen(ohneM).newLetter).toBeNull();
     expect(alleWaehlen(s)).toBe(s);
+  });
+
+  it('„Alle abwählen“: keine Buchstaben, Frage wieder offen, Silben und kleine Wörter wieder an', () => {
+    const alle = nurLesetexte({ ...alleWaehlen(DEFAULT_SETTINGS), alleGefragt: true });
+    const leer = alleAbwaehlen(alle);
+    expect(leer.letters).toEqual([]);
+    expect(leer.newLetter).toBeNull();
+    expect(leer.alleGefragt).toBe(false);
+    expect([leer.blocks.silben, leer.blocks.kleine]).toEqual([true, true]);
+    expect(alleAbwaehlen(leer)).toBe(leer);
   });
 
   it('Frage nur, wenn alle gewählt und noch nicht gefragt; bleibt nach Neustart gemerkt', () => {

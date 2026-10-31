@@ -171,6 +171,17 @@ export function alleWaehlen(s: Settings): Settings {
   return { ...s, letters: [...UNIT_IDS], newLetter: null };
 }
 
+/**
+ * Gegenstück zu „Alle auswählen“ (z. B. versehentlich getippt): keine Buchstaben mehr. Die Frage
+ * „nur noch Lesetexte?“ kommt beim nächsten Mal wieder, und hatte sie Silben und kleine Wörter
+ * ausgeschaltet, sind diese wieder an.
+ */
+export function alleAbwaehlen(s: Settings): Settings {
+  if (!s.letters.length) return s;
+  const blocks = s.alleGefragt ? { ...s.blocks, silben: true, kleine: true } : s.blocks;
+  return { ...s, letters: [], newLetter: null, alleGefragt: false, blocks };
+}
+
 /** Alle Buchstaben gelernt und die Frage noch nicht gestellt? */
 export function alleFrageFaellig(s: Settings): boolean {
   return !s.alleGefragt && s.letters.length >= UNIT_IDS.length;

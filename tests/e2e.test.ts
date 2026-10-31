@@ -840,6 +840,35 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await ctx.close();
   });
 
+  it('„Alle abwählen“ macht „Alle auswählen“ rückgängig, Silben und kleine Wörter wieder an', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.goto(base);
+    await p.click('#onb-next');
+    await p.click('#onb-next');
+    await p.click('.onb [data-alle]');
+    await p.click('.modal [data-x="yes"]');
+    await p.click('.onb [data-alle]');
+    expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(0);
+    expect(await p.textContent('.onb [data-alle]')).toBe('Alle auswählen');
+    await p.click('#onb-next');
+    await p.click('#onb-next');
+    await p.waitForSelector('#create');
+    const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
+    expect([await an('silben'), await an('kleine')]).toEqual([true, true]);
+    // ohne Buchstaben kein Blatt, nur ein Hinweis
+    await p.click('#create');
+    await p.waitForSelector('.toast');
+    expect(await p.evaluate(() => location.hash)).not.toBe('#/vorschau');
+    // nochmal alle: die Frage kommt wieder
+    await p.click('[data-alle]');
+    await p.waitForSelector('.modal');
+    await p.click('.modal [data-x="no"]');
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
   it('C2: „Alle auswählen“ in der Einführung, einmal die Frage, Blätter nur mit Lesetexten', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const p = await ctx.newPage();
@@ -854,7 +883,8 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
     // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
     expect(await p.$('.onb .lt.neu')).toBeNull();
-    expect(await p.$eval('.onb [data-alle]', (b) => (b as HTMLButtonElement).disabled)).toBe(true);
+    // jetzt umgekehrt: „Alle abwählen“
+    expect(await p.textContent('.onb [data-alle]')).toBe('Alle abwählen');
     await p.click('.modal [data-x="yes"]');
     await p.click('#onb-next');
     await p.click('#onb-next');
