@@ -62,8 +62,12 @@ export function buildDict() {
   const saetze = [...new Set(lines(Q('saetze.txt')))];
 
   const geschichten = [];
+  // C3: Geschichten in Abschnitten mit „(C3)“ im Kopf haben eine richtige Handlung (Problem und Lösung)
+  let handlung = false;
   for (const block of Q('geschichten.txt').split(/\n\s*\n/)) {
     const ls = block.split('\n').map((l) => l.trim()).filter(Boolean);
+    const kopf = ls.find((l) => /^# (Mini|Kurze|Lange)/.test(l));
+    if (kopf) handlung = kopf.includes('(C3)');
     const t = ls.find((l) => l.startsWith('# ') && !/^# (Mini|Kurze|Lange)/.test(l));
     if (!t) continue;
     const titel = t.slice(2).trim();
@@ -73,6 +77,7 @@ export function buildDict() {
       titel,
       saetze: body.filter((l) => !l.startsWith('?')),
       fragen: body.filter((l) => l.startsWith('?')).map((l) => l.slice(1).trim()),
+      ...(handlung ? { handlung: true } : {}),
     });
   }
 

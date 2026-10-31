@@ -327,6 +327,46 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     }
   });
 
+  /** typische Reihen nach dem Start T O M L A I S (verschiedene Fibeln) */
+  const TYPISCH: Record<string, string[]> = {
+    '13': [...START, 'e', 'n', 'r', 'u', 'h', 'd'],
+    '14': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'k'],
+    '15': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei'],
+    '16': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'k', 'b', 'ei'],
+    '18': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w'],
+    '20': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w', 'g', 'ch'],
+    '25': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w', 'g', 'ch', 'k', 'p', 'z', 'ie', 'sch'],
+    '30': [...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w', 'g', 'ch', 'k', 'p', 'z', 'ie', 'sch', 'ä', 'ö', 'ü', 'eu', 'st'],
+  };
+  const lesbar = (letters: string[]) => {
+    const known = new Set(letters);
+    return DICT.geschichten.filter((g) => [g.titel, ...g.saetze].every((x) => checkText(x, known).ok));
+  };
+
+  it('typische Reihen: mindestens 8 Geschichten mit Handlung (13 Buchstaben: 3), damit sich Wochen nicht wiederholen', () => {
+    for (const [n, letters] of Object.entries(TYPISCH)) {
+      expect(lesbar(letters).filter((g) => g.handlung).length, `${n} Buchstaben`).toBeGreaterThanOrEqual(n === '13' ? 3 : 8);
+    }
+  });
+
+  it('typische Reihen ab 14 Buchstaben, Stufe 2–5: nur Geschichten mit Handlung, 10 Blätter ohne Wiederholung', () => {
+    for (const [n, letters] of Object.entries(TYPISCH)) {
+      if (n === '13') continue;
+      for (const stufe of [2, 4, 5]) {
+        const ds = serie(letters, stufe, 8);
+        for (const d of ds) {
+          const g = d.geschichte!;
+          const quelle = DICT.geschichten.find((x) => x.titel === g.titel);
+          expect(quelle?.handlung, `${n}/${stufe}: ${g.titel}`).toBe(true);
+          expect(quelle?.saetze).toEqual(g.saetze);
+          assertOnlyKnown(d, letters);
+        }
+        const titel = ds.map((d) => d.geschichte!.titel);
+        expect(new Set(titel).size, `${n}/${stufe}: ${titel.join(', ')}`).toBe(titel.length);
+      }
+    }
+  });
+
   it('höhere Stufe bei allen Buchstaben: längere Geschichten, Wörter und Sätze', () => {
     const mess = (stufe: number) => {
       const ds = serie(UNIT_IDS, stufe, 10);

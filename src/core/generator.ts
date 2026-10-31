@@ -104,11 +104,11 @@ export function neuAnteil(saetze: string[], unit: string): number {
  * geschichteViele = [min, max] ab VIELE_BUCHSTABEN.
  */
 export const STUFEN: Record<number, { wortMax: number; wortMin?: number; mehrsilbig: number; satzMin: number; satzWoerter: number; geschichteMax: number; geschichteMittel: [number, number]; geschichteViele: [number, number] }> = {
-  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteMittel: [7, 11], geschichteViele: [8, 12] },
-  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteMittel: [7, 11], geschichteViele: [9, 12] },
+  1: { wortMax: 4, mehrsilbig: 0.2, satzMin: 0, satzWoerter: 4, geschichteMax: 6, geschichteMittel: [7, 12], geschichteViele: [8, 12] },
+  2: { wortMax: 5, mehrsilbig: 0.35, satzMin: 3, satzWoerter: 5, geschichteMax: 7, geschichteMittel: [7, 12], geschichteViele: [9, 12] },
   3: { wortMax: 6, mehrsilbig: 0.5, satzMin: 4, satzWoerter: 6, geschichteMax: 7, geschichteMittel: [8, 13], geschichteViele: [10, 13] },
-  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [10, 14] },
-  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [11, 14] },
+  4: { wortMax: 7, mehrsilbig: 0.6, satzMin: 4, satzWoerter: 7, geschichteMax: 8, geschichteMittel: [8, 13], geschichteViele: [10, 14] },
+  5: { wortMax: 99, mehrsilbig: 0.7, satzMin: 5, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [8, 13], geschichteViele: [11, 14] },
   6: { wortMax: 99, wortMin: 4, mehrsilbig: 0.75, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [12, 14] },
   7: { wortMax: 99, wortMin: 5, mehrsilbig: 0.8, satzMin: 6, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [12, 14] },
   8: { wortMax: 99, wortMin: 5, mehrsilbig: 0.85, satzMin: 7, satzWoerter: 99, geschichteMax: 8, geschichteMittel: [9, 13], geschichteViele: [13, 14] },
@@ -359,31 +359,42 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   const [fmin, fmax] = COUNTS[p.minutes].fragen;
   const fertig = (g: { titel: string; saetze: string[]; fragen: string[] }) => ({ g: { titel: g.titel, saetze: [...g.saetze] }, fragen: g.fragen.slice(0, fmax) });
   // Ersatz: die reichste lesbare Geschichte, deren Länge am besten passt (nie eine zufällige);
-  // nicht gerade gelesen und reich genug geht vor der Länge
+  // nicht gerade gelesen, mit Handlung und reich genug geht vor der Länge
   const nein = (b: boolean) => Number(b);
   const reichste = () =>
     [...lesbar].sort(
       (a, b) =>
         nein(p.history.recentStories.has(a.titel)) - nein(p.history.recentStories.has(b.titel)) ||
+        nein(!a.handlung) - nein(!b.handlung) ||
         nein(richness(a) < minRich) - nein(richness(b) < minRich) ||
         abstand(a) - abstand(b) ||
         richness(b) - richness(a),
     )[0];
-  if (viele) {
-    // C3: viele Buchstaben → immer eine fertige Geschichte (die Vorlagen sind dafür zu einfach)
-    const reich = fresh.filter((g) => richness(g) >= maxRich * 0.75 && richness(g) >= minRich);
-    const mitNeu = reich.filter(neuOk);
-    const cur = aeltesteVon(mitNeu.length ? mitNeu : reich) ?? reichste();
-    if (cur) return fertig(cur);
-  }
   if (mittel) {
-    // C3: ab MITTEL_BUCHSTABEN eine fertige Geschichte mit Handlung, wenn eine passt (reichste zuerst);
-    // Vorlagen („X ist am Y“) nur, wenn keine passt
-    const reich = fresh.filter((g) => richness(g) >= Math.max(minRich, maxRich * 0.7));
+    // C3: ab MITTEL_BUCHSTABEN eine fertige Geschichte; solche mit Handlung gehen vor den alten einfachen
+    // („Mama ist im Saal.“). Reich genug, aber nicht nur die reichste – so wechseln sie über Wochen.
+    let pool = fresh.some((g) => g.handlung) ? fresh.filter((g) => g.handlung) : fresh;
+    // wenige Geschichten mit Handlung in genau dieser Länge? Dann auch etwas kürzere/längere (±2 Sätze),
+    // damit bei täglichem Lesen nicht alle paar Tage dieselbe kommt
+    if (pool.filter((g) => g.handlung).length < 8) {
+      const naeher = lesbar.filter((g) => g.handlung && abstand(g) <= 2 && !p.history.recentStories.has(g.titel));
+      if (naeher.length > pool.length) pool = naeher;
+    }
+    const maxPool = Math.max(0, ...pool.map(richness));
+    const reich = pool.filter((g) => richness(g) >= Math.max(minRich, maxPool * (viele ? 0.75 : 0.6)));
+    // die neue Buchstabe soll vorkommen; „in der Hälfte der Sätze“ ließe nur zwei, drei Geschichten übrig
     const neuDa = (g: { saetze: string[] }) => !p.newLetter || g.saetze.some((x) => countUnit(x, p.newLetter!) > 0);
-    const mitNeu = reich.filter(neuOk);
-    const cur = aeltesteVon(mitNeu.length ? mitNeu : reich.filter(neuDa).length ? reich.filter(neuDa) : reich);
+    // gibt es mit ihr nur wenige, wechseln alle passenden (sonst kommt jeden dritten Tag dieselbe)
+    // und auch mit ihr: war sie in der letzten Woche schon dran, kommt lieber eine länger ungelesene ohne sie
+    const mitNeu = reich.filter(neuDa);
+    const neu = aeltesteVon(mitNeu.length >= 4 ? mitNeu : reich);
+    const alt = aeltesteVon(reich);
+    const cur = neu && alt && seit(neu) >= p.history.seq - 7 && seit(alt) < seit(neu) ? alt : neu;
     if (cur) return fertig(cur);
+    // nichts in der passenden Länge: lieber eine Geschichte mit Handlung in anderer Länge als eine Vorlage;
+    // bei vielen Buchstaben immer eine fertige (die Vorlagen sind dafür zu einfach)
+    const ersatz = reichste();
+    if (ersatz && (viele || ersatz.handlung)) return fertig(ersatz);
   }
   const cur = aeltesteVon(fresh.filter((g) => richness(g) >= maxRich * 0.6 && richness(g) >= minRich && neuOk(g)));
   if (cur && rng() < 0.75) return fertig(cur);
