@@ -65,7 +65,7 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .legend-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 /* „Alle auswählen“ / „Alle abwählen“: beide Texte übereinander, sichtbar nur einer – so ist der Knopf
    immer so breit wie der längere und springt beim Umschalten nicht in die nächste Zeile */
-.alle-btn { display: inline-grid; margin-left: auto; }
+.alle-btn { display: inline-grid; place-items: center; align-content: center; margin-left: auto; }
 .alle-btn > span { grid-area: 1 / 1; }
 .alle-btn[data-alle="an"] .alle-ab, .alle-btn[data-alle="ab"] .alle-an { visibility: hidden; }
 
