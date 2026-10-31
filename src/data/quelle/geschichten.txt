@@ -2489,3 +2489,350 @@ Nun mag er Fisch nur noch aus der Dose.
 ? Wo wartet Moro?
 ? Was passiert, als Moro loshopst?
 ? Wie mag Moro Fisch jetzt?
+
+# Kurze Geschichten mit Handlung (C3), Teil 0000b: T O M L A I S + E N R U H D (ohne ein/eine, die/sie, ich/nicht, auf)
+
+# Theo ist los
+Mila hat Hamster Theo.
+Theo rennt immer im Rad.
+Nun ist das Rad leer, und Theo ist los!
+Mila tastet unter dem Sessel.
+Unter dem Sessel ist nur Sand.
+Tom tastet unter der Matte.
+Unter der Matte ist nur Toms alte Hose.
+Da rumort es in Milas Hut.
+Im Hut ruht Theo, und er hat Nudeln im Mund.
+Mila murmelt: „Theo, du Huthamster!“
+Nun ruht Theo immer in Milas Hut.
+? Wer ist Theo?
+? Wo sucht Mila Theo?
+? Wo ist Theo am Ende?
+? Was hat Theo im Mund?
+
+# Otto im See
+Lena und Ole sind am See.
+Ole hat Rosinen in der Dose.
+Da ist Otter Otto im See!
+Otto mustert Oles Dose.
+Otto rudert an Land und an Ole heran.
+Dann nimmt Otto Oles Dose, und er rennt los!
+Lena und Ole rennen hinter Otto her.
+Otto rennt um den See, und dort ist Otter Lotte.
+Otto und Lotte essen alle Rosinen.
+Ole murmelt: „Na toll! Alle Rosinen sind nun im Otter.“
+Lena murmelt: „Und du hast Tomaten!“
+? Wer ist im See?
+? Was nimmt Otto mit?
+? Wer isst mit Otto die Rosinen?
+? Was hat Ole am Ende noch?
+
+# Tom ist matt
+Tom hat Husten, und er ist matt.
+Tom ruht im Sessel.
+Mama holt Tee.
+Tom murmelt: „Tee? Nee!“
+Hund Rudi ruht mit Tom am Sessel.
+Da sind Lena und Nina am Tor.
+Lena hat Lollis, und Nina hat Toms Roller.
+Lena malt Tom mit Rudi, und Nina malt Sonne und Mond.
+Tom summt, und er ist munter.
+Dann nimmt Tom Mamas Tee.
+Tom murmelt: „Tee? Na, toll!“
+? Was hat Tom?
+? Was sagt Tom zuerst zum Tee?
+? Wer kommt zu Tom?
+? Was macht Tom am Ende?
+
+# Der Mond ist im Meer
+Udo ist mit Mama am Meer.
+Es ist duster, und der Mond ist rund.
+Udo murmelt: „Mama, der Mond ist im Meer!“
+Mama murmelt: „Nee, Udo, der Mond ist am Himmel.“
+Udo rennt an das Meer.
+Im Meer ist der Mond, rund und hell.
+Udo tastet im Meer, und er hat nur nasse Arme.
+Dann mustert Udo den Himmel.
+Am Himmel ist der Mond, rund und hell.
+Udo murmelt: „Der Mond ist im Meer und am Himmel. Toll!“
+Mama nimmt Udo in den Arm.
+? Wo ist Udo?
+? Wo sieht Udo den Mond zuerst?
+? Was passiert, als Udo im Meer nach dem Mond tastet?
+? Warum ist der Mond im Meer und am Himmel?
+
+# Hummel Hanni
+Nele ist mit Tante Rosa am Rasen.
+Nele hat Limonade in der Hand.
+Da summt Hummel Hanni um Neles Limonade.
+Nele rennt los, und Hanni summt hinterher!
+Nele rennt um den Rasen und um Rosas Sessel.
+Tante Rosa murmelt: „Halt, Nele! Hanni hat nur Durst.“
+Rosa tut Limonade in Neles Teller.
+Hanni landet am Teller und nimmt Limonade.
+Nun ruht Nele am Sessel, und Hanni summt munter.
+Dann summt Hanni in den Himmel.
+Nun hat Nele immer Limonade im Teller am Rasen.
+? Wer summt um Nele herum?
+? Was macht Nele zuerst?
+? Warum kommt Hanni?
+? Was macht Tante Rosa?
+
+# Das Rennen am See
+Anton und Ole sind mit Mama am See.
+Mama murmelt: „Rennt um den See! Der Erste hat Melone.“
+Anton und Ole rennen los.
+Ole ist der Erste, und Anton ist hinter Ole.
+Da landet Ole im Sand, und er hat Sand an Arm und Hose.
+Anton rennt an Ole heran.
+Anton nimmt Ole an der Hand.
+So rennen Anton und Ole Hand in Hand um den See.
+Mama murmelt: „Toll! Nun essen alle Melone.“
+Und so ruhen Anton und Ole mit Mama am See.
+? Was sollen Anton und Ole machen?
+? Was passiert mit Ole?
+? Was macht Anton dann?
+? Wer bekommt am Ende Melone?
+
+# Esel Hannes
+Tante Hanna hat Esel Hannes.
+Ida soll Hannes an das Tor holen.
+Hannes ruht am Rasen, und Hannes ruht und ruht.
+Ida holt Salat.
+Hannes isst den Salat, und er ruht.
+Ida holt Tomaten.
+Hannes isst alle Tomaten, und er ruht.
+Ida ist ratlos.
+Da summt Ida.
+Nun rennt Hannes hinter Ida her, und so landet Hannes am Tor.
+Tante Hanna murmelt: „Toll, Ida, so rennt Hannes!“
+Nun summt Ida immer, und Hannes rennt mit.
+? Wer ist Hannes?
+? Was holt Ida für Hannes?
+? Was hilft am Ende?
+? Was macht Ida jetzt immer?
+
+# Rudi im Laden
+Mira ist mit Mama und Hund Rudi am Laden.
+Rudi ruht am Tor.
+Mira und Mama sind im Laden.
+Da rennt Rudi in den Laden!
+Rudi rennt um alle Tomaten und Melonen.
+Herr Olsen hat Salami in der Hand.
+Rudi rennt an Herrn Olsen heran, und nun hat Rudi Herrn Olsens Salami!
+Mira murmelt: „Rudi, halt!“
+Mama ist rot.
+Herr Olsen hat Humor.
+Herr Olsen murmelt: „Na, Rudi, nun ist das Rudis Salami!“
+Dann nimmt Mama alle Salami mit, und Rudi rennt munter um Mama.
+? Wo sind Mira und Mama?
+? Was macht Rudi im Laden?
+? Wem nimmt Rudi die Salami weg?
+? Was macht Mama am Ende?
+
+# Kurze Geschichten mit Handlung (C3), Teil 00b: T O M L A I S + E N R U H D Ei Au (ohne B, F: kein „auf“, „für“)
+
+# Maus Mimi
+In Tante Rosas Haus ist Maus Mimi.
+Mimi saust um den Sessel und unter den Herd.
+Tante Rosa ist im Sessel und murmelt: „Oh nein, eine Maus!“
+Lena holt einen Eimer.
+Lena tut Rosinen in den Eimer.
+Mimi saust in den Eimer und isst Rosinen.
+Lena hat den Eimer in der Hand, und Mimi ist im Eimer.
+Lena rennt aus dem Haus und an den Rasen.
+Dort lehnt Lena den Eimer an das Tor, und Mimi saust los.
+Tante Rosa murmelt: „Toll, Lena! Nun ist das Haus ohne Maus.“
+? Wer ist im Haus?
+? Wo ist Tante Rosa?
+? Wie holt Lena die Maus aus dem Haus?
+? Wohin bringt Lena die Maus?
+
+# Das Eis ist aus
+Ole und Lena sind mit Oma am See.
+Ole murmelt: „Oma, ein Eis!“
+Am Eisladen murmelt der Eismann: „Das Eis ist aus.“
+Ole und Lena sind ratlos.
+Oma hat eine Idee.
+Oma hat Melone in der Eisdose.
+Oma teilt Melone aus.
+Ole murmelt: „Melone aus der Eisdose ist Eis!“
+Lena murmelt: „Das ist Omas Eis!“
+Da ist der Eismann am Rand und mustert Omas Melone.
+Und Oma teilt Melone mit dem Eismann.
+? Was mag Ole haben?
+? Was ist mit dem Eis?
+? Was hat Oma dabei?
+? Mit wem teilt Oma am Ende?
+
+# Das Auto im Sand
+Mama, Toni und Ida reisen ans Meer.
+Am Meer rollt das Auto in den Sand.
+Nun ruht das Auto im Sand, und es rollt nur hin und her.
+Toni hat eine Idee.
+Toni holt das Seil aus dem Auto.
+Da ist Herr Olsen mit seinem Laster.
+Toni tut das Seil an das Auto und an den Laster.
+Der Laster rollt los, und das Auto rollt mit aus dem Sand!
+Mama murmelt: „Toll, Toni!“
+Herr Olsen murmelt: „Das Seil ist eine tolle Idee.“
+Am Ende essen alle am Meer ein Eis.
+? Wohin reisen Mama, Toni und Ida?
+? Was passiert mit dem Auto?
+? Was holt Toni?
+? Wer hilft mit dem Laster?
+
+# Das Haus aus Sand
+Lena und Tom sind am Meer.
+Tom hat mit Lena ein Haus aus Sand.
+Das Haus hat einen Turm und einen Tunnel.
+Da rollt das Meer heran.
+Das Meer rollt in den Tunnel, und dann ist das Haus aus Sand nur Sand.
+Lena murmelt: „Oh nein, das Haus!“
+Tom murmelt: „Lena, das Haus muss an den Damm!“
+Tom und Lena rennen mit Eimern an den Damm.
+Dort hat Tom mit Lena ein Haus aus Sand, mit Turm und Tunnel.
+Das Meer rollt heran, und es landet unter dem Damm.
+Nun ist das Haus aus Sand heil.
+? Was haben Tom und Lena am Meer?
+? Was passiert mit dem ersten Haus?
+? Was ist Toms Idee?
+? Was passiert mit dem zweiten Haus?
+
+# Leise, Mama ruht!
+Mama ist matt und ruht im Sessel.
+Toni hat seine Trommel, und Toni trommelt laut.
+Nina murmelt: „Leise, Toni! Mama ruht.“
+Toni trommelt leise, leise, leise.
+Dann holt Toni seine Rassel, und er rasselt laut.
+Nina murmelt: „Toni! Leise!“
+Nun malen Nina und Toni leise.
+Nina malt Mama im Sessel, und Toni malt Mama mit Hut.
+Dann ist Mama munter.
+Mama murmelt: „Oh, ist es leise im Haus!“
+Dann trommeln Toni, Nina und Mama laut, laut, laut!
+? Warum sollen Nina und Toni leise sein?
+? Was macht Toni zuerst?
+? Was malen die Kinder?
+? Was machen alle am Ende?
+
+# Lisa ist allein
+Am Rasen rennen alle um den Turm.
+Lisa hat ein Seil, und Lisa ist allein.
+Da ist Mila am Rand.
+Mila murmelt: „Hallo! Ist das dein Seil?“
+Lisa murmelt: „Das ist mein Seil.“
+Mila hat eine Idee.
+Mila nimmt das eine Ende, und Lisa nimmt das andere Ende.
+Mila und Lisa drehen das Seil rund und rund.
+Dann rennen alle anderen heran.
+Nun rennen Ida, Ole und Toni unter dem Seil hin und her.
+Und Lisa ist nun mit allen am Seil.
+? Warum ist Lisa traurig?
+? Wer kommt zu Lisa?
+? Was machen Mila und Lisa mit dem Seil?
+? Wie geht es Lisa am Ende?
+
+# Kurze Geschichten mit Handlung (C3), Teil 0b: T O M L A I S + E N R U H D Ei Au B F W (ohne G, Ch, K, ie, Ü)
+
+# Der Ball im Baum
+Ben und Fiona werfen den Ball.
+Fiona wirft den Ball, und der Ball landet im Baum!
+Nun ist der Ball oben im Baum.
+Ben wirft seinen Hut in den Baum.
+Nun ist der Hut mit dem Ball im Baum!
+Fiona ruft: „Oh nein!“
+Da ist Bauer Fred am Tor, und Bauer Fred hat eine Leiter.
+Bauer Fred lehnt seine Leiter an den Baum.
+Ben ist auf der Leiter, und Bauer Fred ist unten an der Leiter.
+Ben holt den Ball und den Hut aus dem Baum.
+Fiona ruft: „Toll, Ben! Toll, Bauer Fred!“
+Bauer Fred ruft: „Nun den Ball nur auf den Rasen werfen!“
+? Wo landet der Ball?
+? Was wirft Ben in den Baum?
+? Wer hilft Ben und Fiona?
+? Was sagt Bauer Fred am Ende?
+
+# Wanda und das Bad
+Hund Wanda hat Morast im Fell.
+Mama ruft: „Wanda, ab in das Bad!“
+Wanda rennt um das Haus.
+Wanda rennt in den Wald, und Bodo rennt hinter Wanda her.
+Da landet Wanda im Morast!
+Nun hat Wanda Morast an Fell und Ohren.
+Bodo holt Wanda aus dem Morast.
+Dann rennt Wanda los, um das Haus und in das Bad.
+In der Wanne wedelt Wanda, und Bodo ist nass.
+Mama ruft: „Nun ab in das Bad, Bodo!“
+? Was hat Wanda im Fell?
+? Was macht Wanda, als sie baden soll?
+? Wo landet Wanda im Wald?
+? Wer muss am Ende auch baden?
+
+# Ali im Nest
+Lea und Leo sind im Wald.
+Unter einem Baum ist Amsel Ali.
+Ali flattert, aber Ali ist nur am Boden.
+Oben im Baum ist Alis Nest.
+Mama Amsel ruft und ruft.
+Lea ruft: „Leo, Ali muss in das Nest!“
+Leo rennt an das Haus und holt Mama mit der Leiter.
+Mama lehnt eine Leiter an den Baum.
+Lea nimmt Ali in ihren Hut.
+Mama ist auf der Leiter, und Mama tut Ali in das Nest.
+Nun ist Ali im Nest, und Mama Amsel ruft munter.
+? Wo ist Ali?
+? Warum kann Ali nicht in das Nest?
+? Wen holt Leo?
+? Worin trägt Lea Ali?
+
+# Das Boot aus Rinde
+Ben und Wilma sind am Fluss.
+Ben findet Rinde, und Wilma findet ein Blatt.
+Ben und Wilma bauen ein Boot aus Rinde.
+Wilmas Blatt ist oben am Boot.
+Das Boot treibt auf dem Fluss.
+Da treibt das Boot weit fort!
+Ben und Wilma rennen am Ufer hinterher.
+Am Ufer ist Ente Erna.
+Ente Erna rudert an das Boot heran und dreht das Boot an das Ufer.
+Wilma ruft: „Toll, Erna!“
+Nun baut Ben Erna ein Boot aus Rinde.
+? Woraus bauen Ben und Wilma das Boot?
+? Was passiert mit dem Boot?
+? Wer hilft?
+? Was macht Ben am Ende?
+
+# Toms Bild im Wind
+Tom malt Oma ein Bild.
+Auf dem Bild ist Oma mit Hund Bello.
+Tom rennt mit dem Bild aus dem Haus.
+Da weht der Wind, und das Bild ist fort!
+Das Bild flattert um den Baum und in den Wald.
+Tom rennt hinter dem Bild her.
+Im Wald ist das Bild an einem Ast, weit oben.
+Da ist Oma mit Bello im Wald.
+Oma nimmt das Bild herunter.
+Oma ruft: „Oh, das ist Oma mit Bello!“
+Tom ruft: „Das Bild ist dein Bild, Oma!“
+Und nun hat Oma das Bild an ihrem Fenster.
+? Was malt Tom?
+? Was macht der Wind?
+? Wo ist das Bild?
+? Wo hat Oma das Bild am Ende?
+
+# Rabe Alfred
+Ida und Emil sind im Wald.
+Ida und Emil haben Brot mit Butter in der Dose.
+Ida tut ein Brot auf ein Brett.
+Da ist Rabe Alfred auf dem Ast.
+Alfred flattert herunter und nimmt das Brot!
+Emil ruft: „Halt, Alfred! Das ist Emils Brot!“
+Alfred flattert in den Baum, in sein Nest.
+Im Nest sind drei Raben, und alle drei rufen und rufen.
+Ida ruft: „Oh, Alfred hat Raben im Nest!“
+Emil murmelt: „Na, dann haben Alfreds Raben Brot.“
+Ida und Emil teilen ein Brot, und Alfred ruft im Baum.
+? Was haben Ida und Emil dabei?
+? Wer nimmt das Brot?
+? Wohin bringt Alfred das Brot?
+? Warum ist Emil am Ende nicht mehr böse?
