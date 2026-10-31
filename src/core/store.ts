@@ -21,6 +21,8 @@ export interface Settings {
   randomTheme: boolean;
   blocks: Record<BlockId, boolean>;
   childName: string;
+  /** C2: Frage „nur noch Wörter, Sätze und Geschichten?“ schon gestellt (nur einmal) */
+  alleGefragt: boolean;
 }
 
 const KEY = 'leseraupe.settings.v1';
@@ -39,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   randomTheme: false,
   blocks: { ...DEFAULT_BLOCKS },
   childName: '',
+  alleGefragt: false,
 };
 
 function storage(): Storage | null {
@@ -63,6 +66,7 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   if (!THEME_WAHL.includes(s.theme)) s.theme = 'wiese';
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';
+  s.alleGefragt = s.alleGefragt === true;
   delete (s as Partial<{ aehnlichPair: unknown }>).aehnlichPair;
   s.blocks.aehnlich = false;
   return s;
@@ -161,6 +165,23 @@ export function saveSettings(s: Settings): void {
  * noch nicht → gelernt + neu; neu → gelernt (nicht mehr neu); gelernt → nicht gelernt.
  * Liefert die neuen Einstellungen und ob ein Buchstabe hinzugefügt wurde.
  */
+/** C2: alle Buchstaben auswählen; neu ist der letzte hinzugekommene in Fibel-Reihenfolge. */
+export function alleWaehlen(s: Settings): Settings {
+  const dazu = UNIT_IDS.filter((id) => !s.letters.includes(id));
+  if (!dazu.length) return s;
+  return { ...s, letters: [...UNIT_IDS], newLetter: dazu[dazu.length - 1] };
+}
+
+/** Alle Buchstaben gelernt und die Frage noch nicht gestellt? */
+export function alleFrageFaellig(s: Settings): boolean {
+  return !s.alleGefragt && s.letters.length >= UNIT_IDS.length;
+}
+
+/** C2 „Ja“: nur noch Wörter, Sätze und Geschichte – Silben, kleine und ähnliche Wörter aus. */
+export function nurLesetexte(s: Settings): Settings {
+  return { ...s, blocks: { ...s.blocks, silben: false, kleine: false, aehnlich: false } };
+}
+
 export function toggleLetter(s: Settings, id: string): { settings: Settings; added: boolean; removed: boolean } {
   const has = s.letters.includes(id);
   if (!has) {

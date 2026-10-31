@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { loadSettings, saveSettings, toggleLetter, DEFAULT_SETTINGS } from '../src/core/store';
+import { loadSettings, saveSettings, toggleLetter, DEFAULT_SETTINGS, alleWaehlen, alleFrageFaellig, nurLesetexte } from '../src/core/store';
+import { UNIT_IDS } from '../src/core/letters';
 
 class MemStorage {
   m = new Map<string, string>();
@@ -49,5 +50,30 @@ describe('Einstellungen', () => {
     expect(s.letters).toEqual(['t']);
     expect(s.minutes).toBe(5);
     expect(s.theme).toBe('wiese');
+  });
+});
+
+describe('C2: Alle auswählen', () => {
+  it('wählt alle 43, neu ist der letzte neue in Fibel-Reihenfolge', () => {
+    const s = alleWaehlen(DEFAULT_SETTINGS);
+    expect(s.letters).toEqual(UNIT_IDS);
+    expect(s.newLetter).toBe('tz');
+    const ohneM = { ...s, letters: UNIT_IDS.filter((id) => id !== 'm'), newLetter: null };
+    expect(alleWaehlen(ohneM).newLetter).toBe('m');
+    expect(alleWaehlen(s)).toBe(s);
+  });
+
+  it('Frage nur, wenn alle gewählt und noch nicht gefragt; bleibt nach Neustart gemerkt', () => {
+    expect(alleFrageFaellig(DEFAULT_SETTINGS)).toBe(false);
+    const s = alleWaehlen(DEFAULT_SETTINGS);
+    expect(alleFrageFaellig(s)).toBe(true);
+    saveSettings({ ...s, alleGefragt: true });
+    expect(alleFrageFaellig(loadSettings())).toBe(false);
+  });
+
+  it('„Ja“: Silben, kleine und ähnliche Wörter aus, Wörter, Sätze, Geschichte bleiben', () => {
+    const b = nurLesetexte(DEFAULT_SETTINGS).blocks;
+    expect([b.silben, b.kleine, b.aehnlich]).toEqual([false, false, false]);
+    expect([b.woerter, b.saetze, b.geschichte]).toEqual([true, true, true]);
   });
 });

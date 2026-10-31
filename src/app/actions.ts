@@ -1,6 +1,6 @@
 import { buchstabenProtokollieren } from './lettergrid';
 import { getSerie, getSettings, setSerie, setSerieItem, themeForToday, type Draft } from './state';
-import { generateSheet, historyFrom, MAX_STUFE, stufeFor, withSerie, type GenParams } from '../core/generator';
+import { generateSheet, historyFrom, maxStufe, stufeFor, withSerie, type GenParams } from '../core/generator';
 import { allSheets, nextNumber, saveOnPrint } from '../core/db';
 import { randomSeed } from '../core/random';
 
@@ -47,7 +47,7 @@ export async function createDraft(anzahl = getSettings().blaetter): Promise<void
     const p: GenParams = {
       ...base,
       seed: i ? randomSeed() : base.seed,
-      stufe: Math.min(MAX_STUFE, (base.stufe ?? 1) + i),
+      stufe: Math.min(maxStufe(base.letters), (base.stufe ?? 1) + i),
       history: withSerie({ ...base.history, seq: base.history.seq + i }, items.map((d) => d.data)),
     };
     items.push(toDraft(p));

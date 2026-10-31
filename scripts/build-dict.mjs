@@ -5,6 +5,8 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // Silbentrennung (B3) – dieselbe Funktion wie in der App
 import { silbiere, parseAusnahmen } from '../src/core/silben.ts';
+// Buchstaben-Einheiten (Fibel-Reihenfolge) – dieselbe Zerlegung wie in der App
+import { UNIT_IDS, tokenizeWord, wordsOf } from '../src/core/letters.ts';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 // Windows/git autocrlf: Zeilenenden vereinheitlichen
@@ -60,21 +62,38 @@ export function buildDict() {
   const saetze = [...new Set(lines(Q('saetze.txt')))];
 
   const geschichten = [];
+  // C3: Geschichten in Abschnitten mit „(C3)“ im Kopf haben eine richtige Handlung (Problem und Lösung)
+  let handlung = false;
   for (const block of Q('geschichten.txt').split(/\n\s*\n/)) {
     const ls = block.split('\n').map((l) => l.trim()).filter(Boolean);
-    const t = ls.find((l) => l.startsWith('# ') && !/^# (Mini|Kurze)/.test(l));
+    const kopf = ls.find((l) => /^# (Mini|Kurze|Lange)/.test(l));
+    if (kopf) handlung = kopf.includes('(C3)');
+    const t = ls.find((l) => l.startsWith('# ') && !/^# (Mini|Kurze|Lange)/.test(l));
     if (!t) continue;
     const titel = t.slice(2).trim();
+    if (geschichten.some((g) => g.titel === titel)) throw new Error(`Titel doppelt: ${titel}`);
     const body = ls.filter((l) => !l.startsWith('#'));
     geschichten.push({
       titel,
       saetze: body.filter((l) => !l.startsWith('?')),
       fragen: body.filter((l) => l.startsWith('?')).map((l) => l.slice(1).trim()),
+      ...(handlung ? { handlung: true } : {}),
     });
   }
 
   for (const s of [...saetze, ...geschichten.flatMap((g) => g.saetze)]) {
     if (/\p{L}-\p{L}/u.test(s)) throw new Error(`Silbentrennstrich: ${s}`);
+    const fremd = wordsOf(s).flatMap((w) => tokenizeWord(w).unknown);
+    if (fremd.length) throw new Error(`Zeichen ohne Buchstaben-Einheit (${fremd.join(', ')}): ${s}`);
+  }
+  // C3: jede Geschichte bekommt „ab“ = wie viele Einheiten der Fibel-Reihenfolge sie braucht
+  // (Position der spätesten Einheit). Wird in der App nur zum Sortieren/Testen benutzt –
+  // ob eine Geschichte aufs Blatt darf, prüft die App immer selbst gegen die gelernten Einheiten.
+  for (const g of geschichten) {
+    const units = new Set([g.titel, ...g.saetze].flatMap((x) => wordsOf(x).flatMap((w) => tokenizeWord(w).units)));
+    g.ab = Math.max(...[...units].map((u) => UNIT_IDS.indexOf(u) + 1));
+    if (g.saetze.length >= 10 && g.fragen.length < 4) throw new Error(`Lange Geschichte braucht 4+ Fragen: ${g.titel}`);
+    if (g.fragen.length < 2) throw new Error(`Geschichte braucht 2+ Fragen: ${g.titel}`);
   }
 
   // Silben für „Silben farbig“ (B3): zusammengesetzte Wörter über die Nomen/Adjektive des Wörterbuchs
@@ -102,4 +121,10 @@ if (process.argv.includes('--check')) {
   writeFileSync(out, json);
   const d = buildDict();
   console.log(`Wörter: ${d.woerter.length}, Verben: ${d.verben.length}, Sätze: ${d.saetze.length}, Geschichten: ${d.geschichten.length}`);
+  if (process.argv.includes('--bericht')) {
+    // Welche Geschichten passen ab wie vielen Einheiten (Fibel-Reihenfolge)?
+    for (const g of [...d.geschichten].sort((a, b) => a.ab - b.ab)) {
+      console.log(`${String(g.ab).padStart(2)} ${UNIT_IDS[g.ab - 1].padEnd(3)} ${String(g.saetze.length).padStart(2)} Sätze  ${g.titel}`);
+    }
+  }
 }

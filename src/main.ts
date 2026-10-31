@@ -24,11 +24,13 @@ import { PLAY } from './app/platform';
 import { statusleiste } from './app/native';
 import { initElternLinks } from './app/elterncheck';
 import { sprache } from './app/i18n';
+import { erinnerungBeimStart } from './app/erinnerung';
 
 if (!PLAY) initUpdate();
 
 initInstall();
 initElternLinks();
+erinnerungBeimStart();
 document.documentElement.lang = sprache();
 
 const app = document.getElementById('app')!;

@@ -58,6 +58,8 @@ body:has(.screen.timer)::before { background: #2B3A67; }
 .hint { font-size: 13px; color: var(--muted); }
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+.legend-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.alle-btn:disabled { opacity: 0.45; }
 
 .letters { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .lt {
@@ -127,7 +129,7 @@ body:has(.screen.timer)::before { background: #2B3A67; }
 .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 20px; }
 
 /* Dialoge */
-.modal-bg { position: fixed; inset: 0; background: rgba(20, 30, 24, .45); display: flex; align-items: flex-end; justify-content: center; z-index: 60; padding: 16px; }
+.modal-bg { position: fixed; inset: 0; background: rgba(20, 30, 24, .45); display: flex; align-items: flex-end; justify-content: center; z-index: 60; padding: 16px 16px calc(16px + var(--unten)); }
 .modal { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
 .modal h2 { margin: 0; font-size: 18px; font-weight: 800; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
@@ -352,3 +354,9 @@ details.card > summary::-webkit-details-marker { display: none; }
 .name-card { position: relative; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
+/* „Über die App“: Blocksatz ohne Silbentrennung – etwas kleinere Schrift, damit keine großen Lücken entstehen */
+.ueber .card > div { text-align: justify; text-wrap: pretty; font-size: 16px; line-height: 1.5; }
+/* B5: Wochentage der Erinnerung */
+.seg.tage { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.seg.tage button { min-height: 44px; padding: 0; font-size: 14px; }
+#erinnerung .field + .field { margin-top: 12px; }

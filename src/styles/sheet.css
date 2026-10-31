@@ -48,6 +48,7 @@
   display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
 }
 .sh-l.wide { font-size: 13px; padding: 0 2mm; }
+.sh-l.sh-anzahl { padding: 0 3mm; }
 .sh-l.neu { background: #FDEEDC; border-color: #E8893A; color: var(--acc-text); border-width: 2.4px; }
 .sh-namedate {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto 36mm; gap: 2mm;
