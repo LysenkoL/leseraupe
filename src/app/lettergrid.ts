@@ -19,8 +19,7 @@ export function lettersHtml(s: Settings): string {
   // „Alle auswählen“ füllt die leere letzte Reihe neben „tz“
   const alleBtn = `<button class="pillbtn alle-btn" type="button" data-alle="${alle(s) ? 'ab' : 'an'}"><span class="alle-an">${t('buchst.alle')}</span><span class="alle-ab">${t('buchst.keine')}</span></button>`;
   return `<div class="letters">${letters}${alleBtn}</div>
-      <div class="legend"><span><i style="background:#9FD18F"></i>${t('buchst.gelernt')}</span><span><i style="background:#F2A65A"></i>${t('buchst.neu')}</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>${t('buchst.nochnicht')}</span></div>
-      <div class="hint">${t('buchst.hinweis')}</div>`;
+      <div class="legend"><span><i style="background:#9FD18F"></i>${t('buchst.gelernt')}</span><span><i style="background:#F2A65A"></i>${t('buchst.neu')}</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>${t('buchst.nochnicht')}</span></div>`;
 }
 
 /**
