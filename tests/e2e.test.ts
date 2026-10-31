@@ -749,10 +749,10 @@ describe('Druck', () => {
     const p = await ctx.newPage();
     await p.goto(base);
     await p.addStyleTag({ content: ':root { --oben: 40px; }' });
-    const sichtbar = () => p.evaluate(() => getComputedStyle(document.body, '::before').display);
-    expect(await sichtbar()).not.toBe('none');
+    const sichtbar = () => p.evaluate(() => [getComputedStyle(document.body, '::before').display, getComputedStyle(document.body, '::after').display]);
+    expect(await sichtbar()).toEqual(['block', 'block']);
     await p.emulateMedia({ media: 'print' });
-    expect(await sichtbar()).toBe('none');
+    expect(await sichtbar()).toEqual(['none', 'none']);
     await ctx.close();
   });
 });

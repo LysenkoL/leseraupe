@@ -26,15 +26,19 @@ body {
 button, input, textarea, select { font: inherit; font-feature-settings: inherit; color: inherit; }
 button { cursor: pointer; }
 #app { min-height: 100%; }
-/* Unter der Statusleiste (Android-App randlos): fester Streifen in Bildschirmfarbe,
-   sonst scrollt der Inhalt unter Uhr und Symbole */
-body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: var(--oben); background: var(--bg); z-index: 50; pointer-events: none; }
-body:has(.screen.timer)::before { background: #2B3A67; }
+/* Unter Statusleiste und Navigationsleiste (Android-App randlos): feste Streifen in Bildschirmfarbe,
+   sonst scrollt der Inhalt unter Uhr, Symbole und die Knöpfe unten */
+body::before, body::after { content: ''; position: fixed; left: 0; right: 0; background: var(--bg); z-index: 50; pointer-events: none; }
+body::before { top: 0; height: var(--oben); }
+body::after { bottom: 0; height: var(--unten); }
+body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2B3A67; }
 
 /* Statusleiste oben (Android-App randlos, iPhone-Startbildschirm): Inhalt beginnt darunter.
    --safe-area-inset-* setzt Capacitor in älteren WebViews, sonst gilt env(). */
 :root { --oben: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); --unten: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)); }
-.screen { min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; padding-top: var(--oben); }
+.screen { min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; padding-top: var(--oben); padding-bottom: var(--unten); }
+/* die Knopfleiste unten hält selbst Abstand zur Navigationsleiste */
+.screen:has(> .bottom) { padding-bottom: 0; }
 .topbar { display: flex; align-items: center; gap: 12px; padding: 16px 16px 10px; }
 .topbar h1 { margin: 0; font-size: 21px; font-weight: 800; line-height: 1.15; }
 .topbar .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
