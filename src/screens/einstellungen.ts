@@ -25,7 +25,7 @@ function erinnerungKarte(e: Erinnerung): string {
             .join('')}</div>
         </div>
       </div>
-      <div class="hint" id="er-meldung" aria-live="polite">${t('erinn.hinweis')}</div>
+      <div class="hint" id="er-meldung" aria-live="polite"></div>
     </section>`;
 }
 
@@ -211,7 +211,7 @@ function erinnerungVerbinden(root: HTMLElement): void {
         meldung.textContent = t('erinn.verweigert');
         return;
       }
-      meldung.textContent = e.an && !e.tage.length ? t('erinn.keineTage') : t('erinn.hinweis');
+      meldung.textContent = e.an && !e.tage.length ? t('erinn.keineTage') : '';
       if (meldungNachher) toast(meldungNachher);
     });
   };
