@@ -390,8 +390,21 @@ a.iconbtn { text-decoration: none; }
 @keyframes ziel-leuchten { 0%, 40% { box-shadow: 0 0 0 3px var(--green); } 100% { box-shadow: 0 0 0 3px transparent; } }
 @media (prefers-reduced-motion: reduce) { .card.ziel { animation: none; box-shadow: 0 0 0 3px var(--green); } }
 
-/* Zeile zu einer Unterseite (Einstellungen → Über die App): Titel, darunter grau, was drin ist */
-.card.link-row { flex-direction: row; align-items: center; justify-content: space-between; text-decoration: none; color: inherit; }
-.link-row b { display: block; font-size: 16px; font-weight: 800; }
-.link-row small { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
-.link-row .pfeil { font-size: 26px; color: var(--muted); line-height: 1; }
+
+/* ---------- Einheitlicher Stil ----------
+   Knöpfe: Text immer mittig. Zweizeiliger Knopf: Titel, darunter grau, was drin ist. */
+.btn.zweizeilig { flex-direction: column; gap: 2px; padding: 10px 14px; }
+.btn.zweizeilig small { font-size: 13px; font-weight: 500; color: var(--muted); }
+/* Karten-Überschriften: ein Stil – auch Felder, deren Beschriftung die Überschrift der Karte ist (Name, Sprache) */
+.card > label.field:first-child { font-size: 16px; font-weight: 800; gap: 10px; }
+/* Erklärtexte (mehrzeilig) überall im Blocksatz mit Silbentrennung – nur Oberfläche, nie auf dem Leseblatt */
+.card > .hint, .content > .hint { text-align: justify; hyphens: auto; text-wrap: pretty; }
+/* Links im Text: grün wie die App (sonst Blau des Systems) */
+.card a:not(.btn):not(.pillbtn):not(.chip) { color: var(--green); }
+/* leere „Gespeichert“-Zeile nimmt keinen Platz ein */
+.saved-hint:empty { display: none; }
+/* drei gleich breite Knöpfe (Leicht / Geht so / Schwer): längere Wörter passen auch auf schmalen Handys */
+.seg button { padding: 0 4px; }
+.seg.three button { font-size: 15px; }
+/* schon erledigt (heute gelesen): grün statt grau */
+.btn.ghost.erledigt { color: var(--green); border-color: #9FD18F; background: #F1F8EE; }

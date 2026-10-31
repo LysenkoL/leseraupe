@@ -372,8 +372,11 @@ describe('App-Ablauf', () => {
     await page.waitForFunction(() => document.querySelector('[data-g="schwer"]')?.getAttribute('aria-pressed') === 'true');
     await page.waitForSelector('#st-skip');
     await page.click('#st-skip');
-    await page.waitForSelector('#b-s');
+    // danach in den Verlauf, nicht zurück aufs Blatt (sonst wieder „Gelesen ✓“ – ein Kreis)
+    await page.waitForFunction(() => location.hash === '#/verlauf');
+    await page.goto(base + href);
     await page.waitForFunction(() => document.querySelector('#b-s')?.textContent?.includes('gelesen'));
+    expect(await page.textContent('#b-read')).toBe('Heute gelesen ✓');
   });
 
   it('Am Bildschirm lesen: am Ende „Noch einmal lesen“ oder in der Serie „Nächstes Blatt“, Restzeit läuft mit', async () => {
@@ -567,7 +570,7 @@ describe('App-Ablauf', () => {
     await page.click(`.st-w[data-w="${w2}"]`);
     expect(await page.textContent('#st-ok')).toBe('Fertig · 2 Wörter');
     await page.click('#st-ok');
-    await page.waitForSelector('#b-s');
+    await page.waitForFunction(() => location.hash === '#/verlauf');
     await page.goto(base + '#/einstellungen');
     await page.waitForSelector('#stolper');
     expect(await page.$$eval('.st-row b', (e) => e.map((x) => x.textContent))).toEqual([w1, w2]);
@@ -596,7 +599,7 @@ describe('App-Ablauf', () => {
     await page.waitForSelector('.sheet-item');
     await page.click('.sheet-item');
     await page.waitForSelector('#b-pv .sheet');
-    expect(await page.textContent('#b-read')).toBe('Прочитано ✓');
+    expect(await page.textContent('#b-read')).toMatch(/^(Сьогодні п|П)рочитано ✓$/);
     expect(await page.$eval('#b-pv .sheet', (e) => e.outerHTML)).toBe(blattDe);
     // zurück: wie das Telefon (hier Englisch → Deutsch)
     await page.goto(base + '#/einstellungen');
@@ -831,6 +834,9 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     // zweite Lesung am selben Tag: keine neue Perle, kein zweites Fest
     await p.goto(base + '#/blatt/10');
     await p.click('#b-read');
+    // heute schon gelesen: erst nachfragen
+    await p.waitForSelector('.modal');
+    await p.click('.modal [data-x="yes"]');
     await p.waitForSelector('#st-skip');
     expect(await p.$('.feier')).toBeNull();
     expect(errors).toEqual([]);

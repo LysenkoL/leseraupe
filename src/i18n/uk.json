@@ -314,5 +314,8 @@
   "verlauf.kFolge5": "днів поспіль",
   "verlauf.kMinuten1": "хвилина читання",
   "verlauf.kMinuten2": "хвилини читання",
-  "verlauf.kMinuten5": "хвилин читання"
+  "verlauf.kMinuten5": "хвилин читання",
+  "blatt.heuteGelesen": "Сьогодні прочитано ✓",
+  "blatt.nochmalGelesen": "Цей аркуш сьогодні вже відмічено як прочитаний. Додати ще одне читання?",
+  "blatt.nochmalGelesenJa": "Прочитали ще раз"
 }

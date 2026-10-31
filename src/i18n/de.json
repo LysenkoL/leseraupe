@@ -314,5 +314,8 @@
   "verlauf.kMinuten5": "Minuten gelesen",
   "verlauf.kGelesen2": "Blätter gelesen",
   "verlauf.kFolge2": "Tage in Folge",
-  "verlauf.kMinuten2": "Minuten gelesen"
+  "verlauf.kMinuten2": "Minuten gelesen",
+  "blatt.heuteGelesen": "Heute gelesen ✓",
+  "blatt.nochmalGelesen": "Dieses Blatt ist heute schon als gelesen markiert. Noch eine Lesung dazuzählen?",
+  "blatt.nochmalGelesenJa": "Noch einmal gelesen"
 }
