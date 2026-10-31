@@ -374,6 +374,7 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
         g: avg(ds.map((d) => d.geschichte!.saetze.length)),
         w: avg(ds.flatMap((d) => d.woerter.map((w) => [...w].length))),
         s: avg(ds.flatMap((d) => d.saetze.map((x) => wordsOf(x).length))),
+        sMin: Math.min(...ds.flatMap((d) => d.saetze.map((x) => wordsOf(x).length))),
       };
     };
     const s5 = mess(5);
@@ -381,7 +382,11 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     expect(s10.g).toBeGreaterThan(s5.g);
     expect(s10.g).toBeGreaterThanOrEqual(13);
     expect(s10.w).toBeGreaterThan(s5.w);
-    expect(s10.s).toBeGreaterThan(s5.s);
+    // Sätze: Stufe 10 hat die längere Mindestlänge; im Mittel nicht kürzer (seit Sätze 10 Blätter lang
+    // nicht wiederkommen, nimmt auch Stufe 5 mehr lange Sätze – beide liegen bei etwa 9,5 Wörtern)
+    expect(s10.sMin).toBeGreaterThanOrEqual(8);
+    expect(s10.sMin).toBeGreaterThan(s5.sMin);
+    expect(s10.s).toBeGreaterThan(s5.s - 0.3);
   });
 
   it('nichts Ungelerntes auf dem Blatt – auch bei langen Geschichten und hohen Stufen', () => {
@@ -424,5 +429,44 @@ describe('C3: Geschichten und Sätze wachsen mit dem Alphabet', () => {
     expect(lang.filter((g) => g.ab === 43 && g.saetze.length >= 13).length).toBeGreaterThanOrEqual(20);
     expect(lang.filter((g) => g.ab <= 39).length).toBeGreaterThanOrEqual(30);
     expect(lang.filter((g) => g.ab <= 31).length).toBeGreaterThanOrEqual(10);
+  });
+});
+
+describe('Langzeit: viele Tage hintereinander', () => {
+  /** 30 Blätter nacheinander wie in der App (Verlauf aus allen gespeicherten Blättern) */
+  const tage = (letters: string[], newLetter: string | null, n = 30) => {
+    const saved: { seq: number; data: SheetData }[] = [];
+    for (let i = 0; i < n; i++) {
+      const p: GenParams = {
+        letters, newLetter, minutes: 5, theme: 'wiese', childName: '', blocks: DEFAULT_BLOCKS, seed: 500 + i * 7919,
+        history: historyFrom(saved, saved.length + 1),
+        stufe: stufeFor(saved.map((s) => ({ letters: s.data.letters, gefuehl: 'leicht' as const })), letters),
+      };
+      saved.push({ seq: saved.length + 1, data: generateSheet(p).sheet });
+    }
+    return saved.map((s) => s.data);
+  };
+
+  it('Sätze kommen erst nach einer Woche wieder (früher schon am 3. Tag), Regeln gelten an jedem Tag', () => {
+    for (const [letters, neu] of [
+      [[...START, 'e', 'n', 'r', 'u', 'h', 'd'], 'd'],
+      [[...START, 'e', 'n', 'r', 'u', 'h', 'd', 'b', 'ei', 'au', 'f', 'w', 'g', 'ch', 'k', 'p', 'z', 'ie', 'sch', 'ä', 'ö', 'ü', 'eu', 'st'], 'st'],
+      [UNIT_IDS, null],
+    ] as [string[], string | null][]) {
+      const known = new Set(letters);
+      const blaetter = tage(letters, neu);
+      const zuletzt = new Map<string, number>();
+      blaetter.forEach((d, tag) => {
+        for (const s of d.saetze) {
+          const vorher = zuletzt.get(s);
+          if (vorher !== undefined) expect(tag - vorher, `„${s}“ an Tag ${vorher} und ${tag}`).toBeGreaterThanOrEqual(7);
+          zuletzt.set(s, tag);
+        }
+        for (const x of readingTexts(d)) {
+          expect(checkText(x, known).missing, x).toEqual([]);
+          expect(x).not.toMatch(/[-­‐‑]/);
+        }
+      });
+    }
   });
 });
