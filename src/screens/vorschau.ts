@@ -4,15 +4,24 @@ import { kopfKompakt, renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { mitDruckKnopf, printSheets } from '../sheet/print';
 import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
-import { addRead, log, nextNumber, saveOnPrint } from '../core/db';
+import { log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
 import { checkText, unitById, UNIT_IDS } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
 import { backButton, editDialog, esc, go, toast } from '../app/ui';
 import { trimOnce } from '../app/fitflow';
 import { stolperLink } from './stolper';
+import { lesungSpeichern } from '../app/lesezeit';
 import type { BlockId, SheetData } from '../core/types';
 import { t, themaName } from '../app/i18n';
+
+/** Gewählt, aber mit diesen Buchstaben noch nicht möglich: Sätze / Geschichte – kurz sagen, warum sie fehlen */
+export function fehltHinweis(d: SheetData): string {
+  const saetze = d.blocks.saetze && !d.saetze.length;
+  const geschichte = d.blocks.geschichte && !d.geschichte;
+  const key = saetze && geschichte ? 'vorschau.fehltBeide' : saetze ? 'vorschau.fehltSaetze' : geschichte ? 'vorschau.fehltGeschichte' : '';
+  return key ? `<div class="hint pv-fehlt">${t(key)}</div>` : '';
+}
 
 export function renderVorschau(root: HTMLElement): void {
   const draft = getDraft();
@@ -48,6 +57,7 @@ export function renderVorschau(root: HTMLElement): void {
     <button class="pillbtn sy-toggle" id="pv-silben" aria-pressed="false" title="${t('vorschau.silben')}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button></div>
   <div class="serie-nav" id="pv-nav"></div>
   <div id="pv-removed"></div>
+  <div id="pv-fehlt"></div>
   <div class="preview-wrap" id="pv"></div>
   <div class="hint" style="padding:6px 16px 0">${t('vorschau.hinweis')}</div>
   <div class="bottom">
@@ -115,7 +125,9 @@ export function renderVorschau(root: HTMLElement): void {
     const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
     sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
     sy.classList.toggle('on', !!d.data.silbenFarbig);
-    setDraft(await fit(pv, d, h.nr, true));
+    const fertig = await fit(pv, d, h.nr, true);
+    setDraft(fertig);
+    root.querySelector('#pv-fehlt')!.innerHTML = fehltHinweis(fertig.data);
   };
 
   // Silben farbig direkt hier umschalten – gilt für alle Blätter der Serie und wird gemerkt
@@ -229,7 +241,7 @@ export function renderVorschau(root: HTMLElement): void {
   root.querySelector('#timer')!.addEventListener('click', () => go('#/timer'));
   root.querySelector('#read')!.addEventListener('click', async () => {
     const d = await saveSerieBis(getSerie()!.idx);
-    await addRead(d.savedId!, getSettings().minutes, true);
+    await lesungSpeichern(d.savedId!, getSettings().minutes, true);
     toast(t('blatt.gelesenToast', { nr: d.data.number! }));
     go(stolperLink(d.savedId!, '#/vorschau'));
   });

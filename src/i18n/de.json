@@ -147,7 +147,6 @@
   "lesen.fragen": "Für Eltern – Fragen",
   "lesen.starten": "Lesezeit starten",
   "lesen.anhalten": "Lesezeit anhalten",
-  "lesen.toll": "Toll gelesen! ✓",
   "lesen.ende": "Super! Das ganze Blatt ist geschafft.",
   "lesen.endeName": "Super, {name}! Das ganze Blatt ist geschafft.",
   "verlauf.titel": "Verlauf",
@@ -303,5 +302,11 @@
   "erinn.aus": "Erinnerung ausgeschaltet",
   "erinn.titel": "Lesezeit! 🐛",
   "erinn.text": "Zeit für das Leseblatt von heute.",
-  "erinn.kanal": "Lesezeit-Erinnerung"
+  "erinn.kanal": "Lesezeit-Erinnerung",
+  "lesen.zeitUm": "Zeit ist um ✓",
+  "vorschau.fehltSaetze": "Für Sätze reichen die Buchstaben noch nicht – sie kommen, wenn dein Kind mehr Buchstaben kann.",
+  "vorschau.fehltGeschichte": "Für eine Geschichte reichen die Buchstaben noch nicht – sie kommt, wenn dein Kind mehr Buchstaben kann.",
+  "vorschau.fehltBeide": "Für Sätze und eine Geschichte reichen die Buchstaben noch nicht – sie kommen, wenn dein Kind mehr Buchstaben kann.",
+  "feier.eltern": "{n} Tage gelesen – Urkunde {nr} ist bereit zum Ausdrucken.",
+  "feier.spaeter": "Später"
 }

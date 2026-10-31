@@ -1,5 +1,5 @@
 import { elternCheck } from '../app/elterncheck';
-import { addRead, getSheet, saveOnPrint, statusOf } from '../core/db';
+import { getSheet, saveOnPrint, statusOf } from '../core/db';
 import { renderSheet } from '../sheet/render';
 import { mountPreview } from '../sheet/preview';
 import { mitDruckKnopf, printSheet } from '../sheet/print';
@@ -7,6 +7,7 @@ import { sharePdf, sheetToPdf } from '../sheet/pdf';
 import { backButton, formatDate, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
 import { getSettings } from '../app/state';
 import { stolperLink } from './stolper';
+import { lesungSpeichern } from '../app/lesezeit';
 import { t, themaName } from '../app/i18n';
 
 /** Ein gespeichertes Blatt: genau so wieder drucken, Timer, „gelesen“ von Hand. */
@@ -63,7 +64,7 @@ export function renderBlatt(root: HTMLElement, id: number): void {
   root.querySelector('#b-read')!.addEventListener('click', async () => {
     const r = await getSheet(id);
     if (!r) return;
-    await addRead(id, getSettings().minutes, true);
+    await lesungSpeichern(id, getSettings().minutes, true);
     toast(t('blatt.gelesenToast', { nr: r.number }));
     go(stolperLink(id, `#/blatt/${id}`));
   });

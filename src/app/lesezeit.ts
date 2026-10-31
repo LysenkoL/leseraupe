@@ -2,6 +2,7 @@ import { addRead } from '../core/db';
 import { getSerie, type Draft } from './state';
 import { saveSerieBis } from './actions';
 import { NATIV, vibrieren, wachHalten } from './native';
+import { raupeFeiern } from './raupe';
 
 /**
  * Countdown für die Lesezeit – gemeinsam für den Vollbild-Timer und „Am Bildschirm lesen“:
@@ -144,20 +145,28 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
   };
 }
 
+/** Eine Lesung an ein gespeichertes Blatt hängen; war es die 10. Perle, gibt es ein Fest. */
+export async function lesungSpeichern(id: number, minutes: number, manual = false) {
+  const rec = await addRead(id, minutes, manual);
+  const at = rec?.reads[rec.reads.length - 1]?.at;
+  if (at) await raupeFeiern(at).catch(() => undefined);
+  return rec;
+}
+
 /**
  * Lesung speichern: gespeichertes Blatt (sheetId) oder der aktuelle Entwurf,
  * der dabei eine Nummer bekommt. Liefert id und Nummer des Blatts.
  */
 export async function recordRead(sheetId: number | null, draft: Draft | null, minutes: number): Promise<{ id: number; number: number } | null> {
   if (sheetId) {
-    const r = await addRead(sheetId, minutes);
+    const r = await lesungSpeichern(sheetId, minutes);
     return r ? { id: sheetId, number: r.number } : null;
   }
   const serie = getSerie();
   if (draft && serie) {
     // frühere Blätter der Serie zuerst speichern, damit die Nummern stimmen
     const d = await saveSerieBis(serie.idx);
-    await addRead(d.savedId!, minutes);
+    await lesungSpeichern(d.savedId!, minutes);
     return { id: d.savedId!, number: d.data.number! };
   }
   return null;
