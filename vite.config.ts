@@ -41,6 +41,10 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
+        // neue Version sofort aktiv (sonst wartet sie, bis die App ganz geschlossen ist – auf Android fast nie).
+        // Das Plugin setzt das nur selbst, wenn es den Service Worker registriert; wir tun es in update.ts.
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,json}'],
         navigateFallback: '/leseraupe/index.html',
         navigateFallbackDenylist: [/privacy\.html$/],
