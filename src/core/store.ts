@@ -165,11 +165,10 @@ export function saveSettings(s: Settings): void {
  * noch nicht → gelernt + neu; neu → gelernt (nicht mehr neu); gelernt → nicht gelernt.
  * Liefert die neuen Einstellungen und ob ein Buchstabe hinzugefügt wurde.
  */
-/** C2: alle Buchstaben auswählen; neu ist der letzte hinzugekommene in Fibel-Reihenfolge. */
+/** C2: alle Buchstaben auswählen. Kein „neu“: das Kind kann alle – sonst drehte sich das Blatt um einen Buchstaben (z. B. tz). */
 export function alleWaehlen(s: Settings): Settings {
-  const dazu = UNIT_IDS.filter((id) => !s.letters.includes(id));
-  if (!dazu.length) return s;
-  return { ...s, letters: [...UNIT_IDS], newLetter: dazu[dazu.length - 1] };
+  if (UNIT_IDS.every((id) => s.letters.includes(id))) return s;
+  return { ...s, letters: [...UNIT_IDS], newLetter: null };
 }
 
 /** Alle Buchstaben gelernt und die Frage noch nicht gestellt? */

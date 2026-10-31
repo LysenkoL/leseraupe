@@ -18,15 +18,20 @@ export interface History {
   wordSeq: Map<string, number>;
   /** Laufende Nummer des neuen Blatts */
   seq: number;
-  /** Sätze und Geschichtentitel der letzten zwei Blätter */
+  /** Sätze der letzten SATZ_FENSTER Blätter, Geschichtentitel der letzten zwei */
   recentSentences: Set<string>;
   recentStories: Set<string>;
+  /** Satz → laufende Nummer des Blatts, auf dem er zuletzt stand (reichen frische nicht: die ältesten zuerst) */
+  satzSeq?: Map<string, number>;
   /** C3: Geschichtentitel → laufende Nummer des Blatts, auf dem sie zuletzt stand (am längsten unbenutzte zuerst) */
   storySeq?: Map<string, number>;
   lastQuest: QuestKind | null;
 }
 
-export const emptyHistory = (): History => ({ wordSeq: new Map(), seq: 1, recentSentences: new Set(), recentStories: new Set(), storySeq: new Map(), lastQuest: null });
+export const emptyHistory = (): History => ({ wordSeq: new Map(), seq: 1, recentSentences: new Set(), recentStories: new Set(), storySeq: new Map(), satzSeq: new Map(), lastQuest: null });
+
+/** So viele Blätter lang kommt ein Satz nicht wieder (wenn es genug andere gibt) – sonst stand am 3. Tag dasselbe da */
+export const SATZ_FENSTER = 10;
 
 export interface GenParams {
   letters: string[];
@@ -300,7 +305,9 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
     [...new Set(cands)].filter((s) => !avoid.has(s) && !p.history.recentSentences.has(s)),
     rng,
   );
-  const old = shuffle(cands.filter((s) => p.history.recentSentences.has(s) && !avoid.has(s)), rng);
+  // reicht es nicht: die am längsten nicht gezeigten zuerst
+  const seqOf = (s: string) => p.history.satzSeq?.get(s) ?? 0;
+  const old = shuffle(cands.filter((s) => p.history.recentSentences.has(s) && !avoid.has(s)), rng).sort((a, b) => seqOf(a) - seqOf(b));
   const scored = pool.map((s) => ({ s, nu: p.newLetter ? countUnit(s, p.newLetter) : 0 }));
   const withNew = scored.filter((x) => x.nu > 0).map((x) => x.s);
   const without = scored.filter((x) => x.nu === 0).map((x) => x.s);
@@ -617,10 +624,13 @@ export function readingTexts(s: SheetData): string[] {
  * gelten als „gerade benutzt“, damit sich innerhalb der Serie nichts wiederholt.
  */
 export function withSerie(h: History, andere: SheetData[]): History {
-  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories), storySeq: new Map(h.storySeq) };
+  const out: History = { ...h, wordSeq: new Map(h.wordSeq), recentSentences: new Set(h.recentSentences), recentStories: new Set(h.recentStories), storySeq: new Map(h.storySeq), satzSeq: new Map(h.satzSeq) };
   for (const d of andere) {
     for (const w of sheetWords(d)) out.wordSeq.set(w, h.seq - 1);
-    for (const x of d.saetze) out.recentSentences.add(x);
+    for (const x of d.saetze) {
+      out.recentSentences.add(x);
+      out.satzSeq!.set(x, h.seq - 1);
+    }
     if (d.geschichte) {
       out.recentStories.add(d.geschichte.titel);
       out.storySeq!.set(d.geschichte.titel, h.seq - 1);
@@ -638,11 +648,10 @@ export function historyFrom(sheets: { seq: number; data: SheetData }[], nextSeq:
   for (const s of sorted) {
     for (const w of sheetWords(s.data)) h.wordSeq.set(w, s.seq);
     if (s.data.geschichte) h.storySeq!.set(s.data.geschichte.titel, s.seq);
+    for (const x of s.data.saetze) h.satzSeq!.set(x, s.seq);
   }
-  for (const s of sorted.slice(-2)) {
-    for (const x of s.data.saetze) h.recentSentences.add(x);
-    if (s.data.geschichte) h.recentStories.add(s.data.geschichte.titel);
-  }
+  for (const s of sorted.slice(-SATZ_FENSTER)) for (const x of s.data.saetze) h.recentSentences.add(x);
+  for (const s of sorted.slice(-2)) if (s.data.geschichte) h.recentStories.add(s.data.geschichte.titel);
   const last = sorted[sorted.length - 1];
   h.lastQuest = last?.data.quest?.kind ?? null;
   return h;

@@ -743,6 +743,20 @@ async function lesungen(p: Page): Promise<number[]> {
   );
 }
 
+describe('Druck', () => {
+  it('Streifen unter der Statusleiste kommt nicht mit aufs Papier (lag sonst über „Ich lese!“)', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.goto(base);
+    await p.addStyleTag({ content: ':root { --oben: 40px; }' });
+    const sichtbar = () => p.evaluate(() => getComputedStyle(document.body, '::before').display);
+    expect(await sichtbar()).not.toBe('none');
+    await p.emulateMedia({ media: 'print' });
+    expect(await sichtbar()).toBe('none');
+    await ctx.close();
+  });
+});
+
 describe('B4: volle Leseraupe → Urkunde', () => {
   it('10 gelesene Blätter: Start zeigt Urkunde, Urkunde mit Namen', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -838,7 +852,8 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.waitForSelector('.modal');
     expect(await p.textContent('.modal p')).toContain('kennt schon alle Buchstaben');
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
-    expect(await p.textContent('.onb .lt.neu')).toBe('-tz');
+    // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
+    expect(await p.$('.onb .lt.neu')).toBeNull();
     expect(await p.$eval('.onb [data-alle]', (b) => (b as HTMLButtonElement).disabled)).toBe(true);
     await p.click('.modal [data-x="yes"]');
     await p.click('#onb-next');
@@ -847,7 +862,6 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
     expect([await an('silben'), await an('kleine'), await an('woerter'), await an('saetze'), await an('geschichte')]).toEqual([false, false, true, true, true]);
     // Buchstaben ab- und wieder anwählen: keine zweite Frage
-    await p.click('[data-l="tz"]');
     await p.click('[data-l="tz"]');
     await p.waitForFunction(() => document.querySelector('[data-l="tz"]')?.className.includes('lt '));
     await p.click('[data-l="tz"]');

@@ -43,6 +43,7 @@ export function renderUeber(root: HTMLElement): void {
       <div>${t('ueber.ds1')}</div>
       <div>${t('ueber.ds2')}</div>
       <div>${t('ueber.ds3')}</div>
+      ${PLAY ? `<div>${t('ueber.dsBackup')}</div>` : ''}
       <div>${t('ueber.ds4')}</div>
       <div>${t(PLAY ? 'ueber.ds5play' : 'ueber.ds5')}</div>
       ${DATENSCHUTZ_URL ? `<a class="hint" href="${DATENSCHUTZ_URL}" target="_blank" data-eltern rel="noopener">${t('ueber.dsLink')}</a>` : ''}

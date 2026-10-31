@@ -54,12 +54,12 @@ describe('Einstellungen', () => {
 });
 
 describe('C2: Alle auswählen', () => {
-  it('wählt alle 43, neu ist der letzte neue in Fibel-Reihenfolge', () => {
+  it('wählt alle 43, ohne „neu“ (sonst ginge es auf jedem Blatt um tz)', () => {
     const s = alleWaehlen(DEFAULT_SETTINGS);
     expect(s.letters).toEqual(UNIT_IDS);
-    expect(s.newLetter).toBe('tz');
-    const ohneM = { ...s, letters: UNIT_IDS.filter((id) => id !== 'm'), newLetter: null };
-    expect(alleWaehlen(ohneM).newLetter).toBe('m');
+    expect(s.newLetter).toBeNull();
+    const ohneM = { ...s, letters: UNIT_IDS.filter((id) => id !== 'm'), newLetter: 'tz' };
+    expect(alleWaehlen(ohneM).newLetter).toBeNull();
     expect(alleWaehlen(s)).toBe(s);
   });
 
