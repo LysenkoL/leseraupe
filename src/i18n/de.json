@@ -308,5 +308,6 @@
   "vorschau.fehltGeschichte": "Für eine Geschichte reichen die Buchstaben noch nicht – sie kommt, wenn dein Kind mehr Buchstaben kann.",
   "vorschau.fehltBeide": "Für Sätze und eine Geschichte reichen die Buchstaben noch nicht – sie kommen, wenn dein Kind mehr Buchstaben kann.",
   "feier.eltern": "{n} Tage gelesen – Urkunde {nr} ist bereit zum Ausdrucken.",
-  "feier.spaeter": "Später"
+  "feier.spaeter": "Später",
+  "ueber.dsBackup": "Android kann diese Daten in die eigene Google-Sicherung des Handys aufnehmen (wenn sie eingeschaltet ist), damit sie auf einem neuen Handy wieder da sind. Wir haben darauf keinen Zugriff."
 }
