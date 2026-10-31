@@ -62,10 +62,9 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .hint { font-size: 13px; color: var(--muted); }
 .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
-.legend-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 /* „Alle auswählen“ / „Alle abwählen“: beide Texte übereinander, sichtbar nur einer – so ist der Knopf
    immer so breit wie der längere und springt beim Umschalten nicht in die nächste Zeile */
-.alle-btn { display: inline-grid; margin-left: auto; }
+.alle-btn { display: grid; place-items: center; align-content: center; grid-column: 2 / -1; min-height: 44px; }
 .alle-btn > span { grid-area: 1 / 1; }
 .alle-btn[data-alle="an"] .alle-ab, .alle-btn[data-alle="ab"] .alle-an { visibility: hidden; }
 
@@ -348,7 +347,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 /* sehr schmale Telefone: weniger Spalten im Buchstabenraster, damit die Tasten groß genug bleiben.
    Bis 340px überall 7 Spalten – Einführung und Startseite sehen gleich aus. */
 @media (max-width: 339px) { .letters { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-@media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (max-width: 330px) { .letters { grid-template-columns: repeat(5, minmax(0, 1fr)); } .alle-btn { grid-column: 1 / -1; } }
 .seg.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 /* Einführung: Knöpfe unter dem Inhalt (nicht klebend) – sonst verdecken sie auf kleinen Handys
@@ -356,6 +355,7 @@ details.card > summary::-webkit-details-marker { display: none; }
 .onb .bottom { position: static; }
 .onb .letters { gap: 5px; }
 .onb .lt { min-height: 36px; font-size: 16px; }
+.onb .alle-btn { min-height: 36px; }
 /* „Zurück“ und „Weiter“ nebeneinander – so passt Schritt 3 ohne Scrollen auf ein Handy */
 .onb .btnrow { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .onb .btnrow.onb-zwei { grid-template-columns: 1fr 2fr; }
