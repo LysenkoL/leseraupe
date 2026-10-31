@@ -87,7 +87,7 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
       <div class="hint">${t('einst.installHinweis')}</div>
     </section>`
     }
-    <a class="btn ghost" href="#/ueber">${t('einst.ueber')}</a>
+    <a class="card link-row" href="#/ueber"><span><b>${t('einst.ueber')}</b><small>${t('einst.ueberSub')}</small></span><span class="pfeil" aria-hidden="true">›</span></a>
   </div>
 </div>`;
   // aus dem Verlauf („Sicherung“): gleich zur Sicherung, kurz hervorgehoben

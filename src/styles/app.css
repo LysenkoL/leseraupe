@@ -389,3 +389,9 @@ a.iconbtn { text-decoration: none; }
 .card.ziel { animation: ziel-leuchten 2.4s ease-out; }
 @keyframes ziel-leuchten { 0%, 40% { box-shadow: 0 0 0 3px var(--green); } 100% { box-shadow: 0 0 0 3px transparent; } }
 @media (prefers-reduced-motion: reduce) { .card.ziel { animation: none; box-shadow: 0 0 0 3px var(--green); } }
+
+/* Zeile zu einer Unterseite (Einstellungen → Über die App): Titel, darunter grau, was drin ist */
+.card.link-row { flex-direction: row; align-items: center; justify-content: space-between; text-decoration: none; color: inherit; }
+.link-row b { display: block; font-size: 16px; font-weight: 800; }
+.link-row small { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+.link-row .pfeil { font-size: 26px; color: var(--muted); line-height: 1; }
