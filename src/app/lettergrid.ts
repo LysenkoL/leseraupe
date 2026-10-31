@@ -1,9 +1,11 @@
 import { UNITS, unitById } from '../core/letters';
-import { alleFrageFaellig, alleWaehlen, nurLesetexte, toggleLetter, type Settings } from '../core/store';
+import { alleAbwaehlen, alleFrageFaellig, alleWaehlen, nurLesetexte, toggleLetter, type Settings } from '../core/store';
 import { log } from '../core/db';
 import { getSettings, setSettings } from './state';
 import { confirmDialog, esc } from './ui';
 import { t } from './i18n';
+
+const alle = (s: Settings) => s.letters.length >= UNITS.length;
 
 /** Raster der 43 Buchstaben mit Legende – auf Start und in der Einführung. */
 export function lettersHtml(s: Settings): string {
@@ -16,7 +18,7 @@ export function lettersHtml(s: Settings): string {
   }).join('');
   return `<div class="letters">${letters}</div>
       <div class="legend-row"><div class="legend"><span><i style="background:#9FD18F"></i>${t('buchst.gelernt')}</span><span><i style="background:#F2A65A"></i>${t('buchst.neu')}</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>${t('buchst.nochnicht')}</span></div>
-        <button class="pillbtn alle-btn" type="button" data-alle ${s.letters.length >= UNITS.length ? 'disabled' : ''}>${t('buchst.alle')}</button></div>
+        <button class="pillbtn alle-btn" type="button" data-alle="${alle(s) ? 'ab' : 'an'}">${t(alle(s) ? 'buchst.keine' : 'buchst.alle')}</button></div>
       <div class="hint">${t('buchst.hinweis')}</div>`;
 }
 
@@ -77,5 +79,6 @@ export function bindLetters(root: HTMLElement, redraw: () => void): void {
   root.querySelectorAll<HTMLButtonElement>('[data-l]').forEach((b) =>
     b.addEventListener('click', () => aendern((s) => toggleLetter(s, b.dataset.l!).settings)),
   );
-  root.querySelector<HTMLButtonElement>('[data-alle]')?.addEventListener('click', () => aendern(alleWaehlen));
+  // „Alle auswählen“ ↔ „Alle abwählen“: ein Tipp macht den anderen rückgängig
+  root.querySelector<HTMLButtonElement>('[data-alle]')?.addEventListener('click', () => aendern(alle(getSettings()) ? alleAbwaehlen : alleWaehlen));
 }
