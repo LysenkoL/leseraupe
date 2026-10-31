@@ -109,6 +109,7 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .btn:disabled { opacity: .5; }
 .btnrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .btnrow.two { grid-template-columns: 1fr 1fr; }
+.btnrow.eins { grid-template-columns: 1fr; }
 
 /* Vorschau */
 .preview-wrap { background: #E6EBE8; padding: 14px 12px; flex: 1; overflow: auto; }
@@ -383,3 +384,8 @@ details.card > summary::-webkit-details-marker { display: none; }
 
 /* Erinnerung: Zeile nur, wenn es etwas zu sagen gibt (z. B. kein Tag gewählt) */
 #er-meldung:empty { display: none; }
+
+/* Karte, zu der ein Link springt (z. B. Sicherung aus dem Verlauf): kurz grün umrandet */
+.card.ziel { animation: ziel-leuchten 2.4s ease-out; }
+@keyframes ziel-leuchten { 0%, 40% { box-shadow: 0 0 0 3px var(--green); } 100% { box-shadow: 0 0 0 3px transparent; } }
+@media (prefers-reduced-motion: reduce) { .card.ziel { animation: none; box-shadow: 0 0 0 3px var(--green); } }

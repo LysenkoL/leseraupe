@@ -743,6 +743,23 @@ async function lesungen(p: Page): Promise<number[]> {
   );
 }
 
+describe('Verlauf', () => {
+  it('„Sicherung“ springt in den Einstellungen gleich zur Sicherung', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 780 } });
+    const p = await ctx.newPage();
+    await p.goto(base + 'icons/icon-192.png');
+    await p.evaluate(() => localStorage.setItem('leseraupe.settings.v1', JSON.stringify({ letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'] })));
+    await p.goto(base + '#/verlauf');
+    await p.click('a[href="#/einstellungen?zu=sicherung"]');
+    await p.waitForSelector('#sicherung.ziel');
+    await p.waitForFunction(() => {
+      const r = document.querySelector('#sicherung')!.getBoundingClientRect();
+      return r.top >= 0 && r.bottom <= innerHeight;
+    });
+    await ctx.close();
+  });
+});
+
 describe('Druck', () => {
   it('Streifen unter der Statusleiste kommt nicht mit aufs Papier (lag sonst über „Ich lese!“)', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -879,7 +896,8 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.waitForSelector('.onb [data-alle]');
     await p.click('.onb [data-alle]');
     await p.waitForSelector('.modal');
-    expect(await p.textContent('.modal p')).toContain('kennt schon alle Buchstaben');
+    expect(await p.textContent('.modal h2')).toBe('Alle Buchstaben gewählt');
+    expect(await p.textContent('.modal')).toContain('Kennt dein Kind schon alle Buchstaben');
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
     // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
     expect(await p.$('.onb .lt.neu')).toBeNull();

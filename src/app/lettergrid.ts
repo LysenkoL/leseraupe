@@ -62,7 +62,7 @@ if (typeof window !== 'undefined') window.addEventListener('hashchange', () => v
 async function alleFrage(redraw: () => void): Promise<void> {
   if (!alleFrageFaellig(getSettings())) return;
   setSettings({ ...getSettings(), alleGefragt: true });
-  if (await confirmDialog(t('buchst.alleFrage'), t('ui.ja'), t('buchst.alleNein'))) {
+  if (await confirmDialog(t('buchst.alleFrage'), t('buchst.alleJa'), t('buchst.alleNein'), false, { titel: t('buchst.alleTitel'), untereinander: true })) {
     setSettings(nurLesetexte(getSettings()));
     redraw();
   }

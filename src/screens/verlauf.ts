@@ -85,7 +85,7 @@ export function renderVerlauf(root: HTMLElement): void {
     <h2 class="section-h">${t('verlauf.blaetter')}</h2>
     <div class="list">${items || `<div class="empty">${t('verlauf.leer')}</div>`}</div>
   </div>
-  <div class="bottom"><div class="btnrow two"><a class="btn ghost" href="#/protokoll">${t('protokoll.titel')}</a><a class="btn ghost" href="#/einstellungen">${t('verlauf.sicherung')}</a></div></div>
+  <div class="bottom"><div class="btnrow two"><a class="btn ghost" href="#/protokoll">${t('protokoll.titel')}</a><a class="btn ghost" href="#/einstellungen?zu=sicherung">${t('verlauf.sicherung')}</a></div></div>
 </div>`;
     root.querySelector('#prev')!.addEventListener('click', () => {
       m--;

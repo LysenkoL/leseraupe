@@ -29,7 +29,7 @@ function erinnerungKarte(e: Erinnerung): string {
     </section>`;
 }
 
-export function renderEinstellungen(root: HTMLElement): void {
+export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams): void {
   const s = getSettings();
   const spracheGewaehlt = loadProfile().sprache;
   root.innerHTML = `
@@ -71,7 +71,7 @@ export function renderEinstellungen(root: HTMLElement): void {
       }
       <div class="hint">${t('einst.stolperHinweis')}</div>
     </section>
-    <section class="card">
+    <section class="card" id="sicherung">
       <h2>${t('einst.sicherung')}</h2>
       <div class="hint">${t('einst.sicherungHinweis')}</div>
       <button class="btn ghost" id="exp">${t('einst.sicherungSpeichern')}</button>
@@ -90,6 +90,12 @@ export function renderEinstellungen(root: HTMLElement): void {
     <a class="btn ghost" href="#/ueber">${t('einst.ueber')}</a>
   </div>
 </div>`;
+  // aus dem Verlauf („Sicherung“): gleich zur Sicherung, kurz hervorgehoben
+  if (params?.get('zu') === 'sicherung') {
+    const ziel = root.querySelector<HTMLElement>('#sicherung')!;
+    requestAnimationFrame(() => ziel.scrollIntoView({ block: 'center' }));
+    ziel.classList.add('ziel');
+  }
 
   root.querySelectorAll<HTMLButtonElement>('[data-st-kann]').forEach((b) =>
     b.addEventListener('click', async () => {

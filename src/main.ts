@@ -58,7 +58,7 @@ function route(): void {
     case '/thema':
       return renderThema(app);
     case '/einstellungen':
-      return renderEinstellungen(app);
+      return renderEinstellungen(app, params);
     case '/chat':
       return renderChat(app);
     case '/urkunde':
