@@ -47,7 +47,7 @@ Leseblätter nur mit den Buchstaben, die dein Kind kennt – drucken oder am Han
 ```text
 Leseraupe hilft deinem Kind, Deutsch lesen zu lernen – mit Leseblättern, auf denen nur Buchstaben stehen, die es schon kennt.
 
-Du tippst an, welche Buchstaben dein Kind gelernt hat. Die App erstellt daraus in wenigen Sekunden ein Leseblatt: Silben, Wörter, kleine Wörter, Sätze und eine kurze Geschichte mit Fragen zum Gespräch. Jedes Wort wird geprüft. Ein Buchstabe oder eine Buchstabenverbindung wie Sch, Ei oder ck, die noch nicht dran war, kommt nicht aufs Blatt. Die Buchstaben sind so angeordnet wie in vielen Fibeln – du markierst einfach, was schon dran war, in jeder Reihenfolge.
+Du tippst an, welche Buchstaben dein Kind gelernt hat. Die App erstellt daraus in wenigen Sekunden ein Leseblatt: Silben, Wörter, kleine Wörter, Sätze und eine kurze Geschichte mit Fragen zum Gespräch. Jedes Wort wird geprüft. Ein Buchstabe oder eine Buchstabenverbindung wie Sch, Ei oder ck, die noch nicht dran war, kommt nicht aufs Blatt. Du markierst einfach, was schon dran war – in jeder Reihenfolge.
 
 WARUM ES DIESE APP GIBT
 Ich habe Leseraupe für meine Tochter in der ersten Klasse gebaut. Ich wollte jeden Tag etwas Passendes zum Lesen haben, ohne selbst Übungen ausdenken zu müssen – Texte, die genau zu den Buchstaben passen, die sie gerade kann. Vielleicht hilft sie auch deiner Familie.
@@ -103,7 +103,7 @@ Leseraupe: читаємо німецькою
 ```text
 Leseraupe допомагає дитині навчитися читати німецькою – з аркушами, на яких є лише ті літери, які вона вже знає.
 
-Ви позначаєте літери, які дитина вже вивчила. За кілька секунд застосунок створює з них аркуш для читання: склади, слова, короткі слова, речення й невелику історію з питаннями для розмови. Кожне слово перевіряється. Літера чи буквосполучення на кшталт Sch, Ei або ck, яких ще не вчили, на аркуш не потрапляють. Літери розташовані так, як у багатьох німецьких букварях (Fibel), – ви просто позначаєте вивчені, у будь-якому порядку.
+Ви позначаєте літери, які дитина вже вивчила. За кілька секунд застосунок створює з них аркуш для читання: склади, слова, короткі слова, речення й невелику історію з питаннями для розмови. Кожне слово перевіряється. Літера чи буквосполучення на кшталт Sch, Ei або ck, яких ще не вчили, на аркуш не потрапляють. Ви просто позначаєте вивчені – у будь-якому порядку.
 
 Застосунок зручний для українськомовних батьків: усе керування – українською, а тексти для читання – німецькою. Вам не потрібно самим складати німецькі тексти чи шукати, що почитати з дитиною.
 
