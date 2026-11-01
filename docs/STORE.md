@@ -63,7 +63,7 @@ SO FUNKTIONIERT ES
 • Die App wächst mit: Mit jedem Blatt werden Wörter, Sätze und Geschichten etwas länger. Nach dem Lesen sagst du „leicht“, „geht so“ oder „schwer“ – die App passt sich an.
 • Wenn alle Buchstaben sitzen: „Alle auswählen“, und es geht weiter mit Wörtern, Sätzen und längeren Geschichten.
 • Verschiedene Gestaltungen, zum Beispiel Weltraum, Meer, Piraten oder Dinos – und auf jedem Blatt ein kleines Rätsel.
-• Verlauf mit Kalender und Protokoll. Jedes Blatt lässt sich später genau gleich noch einmal drucken.
+• Verlauf mit Kalender und Tagebuch. Jedes Blatt lässt sich später genau gleich noch einmal drucken.
 • Erinnerung „Lesezeit!“ an den Tagen und zur Uhrzeit, die du wählst.
 • Eine Schrift mit Buchstabenformen wie in der Schule, zum Beispiel ein kleines l mit Bogen.
 
@@ -75,7 +75,7 @@ Du bedienst die App, dein Kind liest – auf Papier oder gemeinsam mit dir am Bi
 
 DEINE DATEN BLEIBEN BEI DIR
 • Kein Konto, keine Werbung, keine Käufe in der App.
-• Leseraupe sammelt keine Daten. Buchstaben, Name des Kindes (freiwillig), Leseblätter und Protokoll bleiben nur auf deinem Gerät.
+• Leseraupe sammelt keine Daten. Buchstaben, Name des Kindes (freiwillig), Leseblätter und Tagebuch bleiben nur auf deinem Gerät.
 • Funktioniert ohne Internet.
 • Sicherung als Datei, die du selbst speicherst.
 

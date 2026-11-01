@@ -26,7 +26,7 @@ export function elternCheck(aktiv = PLAY): Promise<boolean> {
       <div class="modal-err" aria-live="polite"></div>
       <div class="btnrow two">
         <button type="button" class="btn ghost" data-x="no">${esc(t('ui.abbrechen'))}</button>
-        <button type="submit" class="btn green">${esc(t('ui.ja'))}</button>
+        <button type="submit" class="btn green">${esc(t('eltern.weiter'))}</button>
       </div>
     </form>`;
     document.body.appendChild(wrap);
