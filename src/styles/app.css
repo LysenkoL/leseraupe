@@ -300,6 +300,7 @@ a.iconbtn { text-decoration: none; }
 /* Leseraupe und Urkunde (B4) */
 .raupe-svg { width: 100%; height: auto; display: block; }
 .uk-liste { display: flex; flex-wrap: wrap; gap: 8px; }
+.uk-liste .pillbtn { display: inline-flex; align-items: center; text-decoration: none; }
 
 /* schmaler Installieren-Hinweis (Startseite) */
 .install-strip { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 2px 4px 2px 12px; }
@@ -409,3 +410,5 @@ a.iconbtn { text-decoration: none; }
 .btn.ghost.erledigt { color: var(--green); border-color: #9FD18F; background: #F1F8EE; }
 /* Einführung: alles mittig, auch die Hinweise (die allgemeine Regel oben setzt sonst Blocksatz) */
 .onb .hint { text-align: center; }
+/* Fest: alles mittig (die Blocksatz-Regel für Erklärtexte gilt hier nicht) */
+.modal.feier p { text-align: center; }

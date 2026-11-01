@@ -54,8 +54,10 @@ export function renderVerlauf(root: HTMLElement): void {
       .join('');
     const cfg = getSettings();
     const stand = raupenstand(list);
-    const urkunden = stand.fertig.length
-      ? `<div class="uk-liste">${stand.fertig.map((f) => `<a class="pillbtn" href="#/urkunde?nr=${f.nr}">${t('verlauf.urkunde', { nr: f.nr })}</a>`).join('')}</div>`
+    // die neueste Urkunde hat schon den großen Knopf (raupenKarte), solange die neue Raupe noch leer ist
+    const liste = stand.perlen === 0 ? stand.fertig.slice(0, -1) : stand.fertig;
+    const urkunden = liste.length
+      ? `<div class="uk-liste">${liste.map((f) => `<a class="pillbtn" href="#/urkunde?nr=${f.nr}">${t('verlauf.urkunde', { nr: f.nr })}</a>`).join('')}</div>`
       : '';
     root.innerHTML = `
 <div class="screen">
