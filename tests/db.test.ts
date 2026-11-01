@@ -30,7 +30,8 @@ describe('Verlauf und Protokoll', () => {
     const pdf = await db.saveOnPrint(SAMPLE_SHEET, 1, null, false);
     expect(db.statusOf(pdf)).toBe('erstellt');
     const pr = await db.saveOnPrint(SAMPLE_SHEET, 1, pdf.id!, true);
-    expect(db.statusOf(pr)).toBe('gedruckt');
+    // gedruckt zählt nicht als eigener Status – für Eltern zählt nur „gelesen“
+    expect(db.statusOf(pr)).toBe('erstellt');
     await db.addRead(pr.id!, 5);
     const r = await db.addRead(pr.id!, 10, true);
     expect(db.statusOf(r!)).toBe('gelesen');

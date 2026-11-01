@@ -154,7 +154,6 @@
   "verlauf.monate": "Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember",
   "verlauf.tage": "Mo,Di,Mi,Do,Fr,Sa,So",
   "status.erstellt": "erstellt",
-  "status.gedruckt": "zum Drucken",
   "status.gelesen": "gelesen ✓",
   "verlauf.gelesen": "gelesen",
   "verlauf.minGelesen": "{n} Min gelesen",
