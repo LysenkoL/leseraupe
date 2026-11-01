@@ -853,6 +853,39 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await ctx.close();
   });
 
+  it('Quest „Male!“ am Bildschirm: auch der Kopf lässt sich ausmalen, danach „Super!“', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    p.on('pageerror', (e) => errors.push(e.message));
+    await p.goto(base + 'icons/icon-192.png');
+    await seed(p, [[]]);
+    await p.evaluate(
+      () =>
+        new Promise<void>((res) => {
+          const r = indexedDB.open('leseraupe');
+          r.onsuccess = () => {
+            const st = r.result.transaction('sheets', 'readwrite').objectStore('sheets');
+            const g = st.get(1);
+            g.onsuccess = () => {
+              const s = g.result;
+              s.data.quest = { kind: 'male', text: 'Male die Raupe an.' };
+              s.data.blocks.quest = true;
+              st.put(s).onsuccess = () => res();
+            };
+          };
+        }),
+    );
+    await p.goto(base + '#/lesen?id=1');
+    await p.waitForSelector('#rd-body h1');
+    while (!(await p.$('.qs-male'))) await p.click('#rd-next');
+    expect(await p.$$eval('.qs-male ellipse.qs-fill', (e) => e.length)).toBeGreaterThan(0);
+    expect(await p.isVisible('.qs-done')).toBe(false);
+    await p.$$eval('.qs-male .qs-fill', (els) => els.forEach((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true }))));
+    await p.waitForSelector('.qs-done', { state: 'visible' });
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
+
   it('Am Bildschirm lesen: Zeit um speichert noch nicht – erst Schließen speichert die volle Zeit', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const p = await ctx.newPage();

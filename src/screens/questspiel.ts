@@ -87,8 +87,8 @@ export function questSpielHtml(q: Quest, d: SheetData): string {
 <p class="qs-zahl"><b class="qs-n">0</b> / ${richtig}</p>
 <div class="qs-text" data-qs="zaehle">${(d.geschichte?.saetze ?? []).map((s) => `<p>${satz(s)}</p>`).join('')}</div>${done}`;
   }
-  // „Male!“: Kreise der Raupe antippen, jede Berührung = nächste Farbe
-  return `${hint(t('quest.male'))}<div class="qs-male" data-qs="male">${raupeOutlineSvg(THEMES[d.theme])}</div>`;
+  // „Male!“: Kreise der Raupe antippen, jede Berührung = nächste Farbe; alles bunt → „Super!“
+  return `${hint(t('quest.male'))}<div class="qs-male" data-qs="male">${raupeOutlineSvg(THEMES[d.theme])}</div>${done}`;
 }
 
 /** Klicks verdrahten (nach dem Einfügen des HTML). */
@@ -146,10 +146,11 @@ export function questSpielAktiv(root: HTMLElement, stand: QuestStand = neuerQues
     });
     zeigen();
   } else if (art === 'male') {
-    // weiße Flächen (auch die, die ihre Farbe von der Gruppe erben) werden ausmalbar
+    // weiße Flächen (auch die, die ihre Farbe von der Gruppe erben) werden ausmalbar – auch der Kopf (Ellipse)
     const farben = (stand.farben ??= {});
     const flaechen: SVGElement[] = [];
-    box.querySelectorAll<SVGElement>('circle, path, rect').forEach((el) => {
+    const allesBunt = () => flaechen.every((f) => f.getAttribute('fill') !== '#FFFFFF');
+    box.querySelectorAll<SVGElement>('circle, ellipse, path, rect').forEach((el) => {
       const fill = el.getAttribute('fill') ?? el.parentElement?.getAttribute('fill');
       if (fill === '#FFFFFF') {
         el.setAttribute('fill', farben[flaechen.length] ?? '#FFFFFF');
@@ -163,6 +164,8 @@ export function questSpielAktiv(root: HTMLElement, stand: QuestStand = neuerQues
       const i = (FARBEN.indexOf(el.getAttribute('fill') ?? '#FFFFFF') + 1) % FARBEN.length;
       el.setAttribute('fill', FARBEN[i]);
       farben[flaechen.indexOf(el)] = FARBEN[i];
+      if (allesBunt()) fertig();
     });
+    if (flaechen.length && allesBunt()) fertig();
   }
 }
