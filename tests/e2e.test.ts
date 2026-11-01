@@ -820,7 +820,9 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     expect(text).toContain('an 10 Tagen gelesen');
     expect(text).toContain('10.10.2026');
     await p.goto(base + '#/verlauf');
-    await p.waitForSelector('.uk-liste a');
+    // die neueste Urkunde nur als großer Knopf, nicht noch einmal klein darunter
+    await p.waitForSelector('#raupe a[href="#/urkunde?nr=1"]');
+    expect(await p.$('.uk-liste')).toBeNull();
     expect(errors).toEqual([]);
     await ctx.close();
   });
