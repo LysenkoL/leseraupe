@@ -203,9 +203,8 @@ a.iconbtn { text-decoration: none; }
 .si-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .si-main b { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .si-main small { font-size: 12px; color: var(--muted); }
-.si-st { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
-.si-st.st-gelesen { color: var(--green); }
-.si-st.st-gedruckt { color: #A4521A; }
+.si-st { font-size: 13px; font-weight: 700; white-space: nowrap; padding: 4px 10px; border-radius: 12px; background: #EEF1EE; color: var(--muted); }
+.si-st.st-gelesen { background: #E7F3E3; color: var(--green); }
 .log { gap: 0; padding: 4px 14px; }
 .log-row { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid #EEF1EF; font-size: 14px; }
 .log-row:last-child { border-bottom: none; }
@@ -408,3 +407,5 @@ a.iconbtn { text-decoration: none; }
 .seg.three button { font-size: 15px; }
 /* schon erledigt (heute gelesen): grün statt grau */
 .btn.ghost.erledigt { color: var(--green); border-color: #9FD18F; background: #F1F8EE; }
+/* Einführung: alles mittig, auch die Hinweise (die allgemeine Regel oben setzt sonst Blocksatz) */
+.onb .hint { text-align: center; }

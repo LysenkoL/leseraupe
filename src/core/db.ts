@@ -4,7 +4,8 @@ import { FIRST_KIND_ID, sanitizeProfile, type Profile } from './store';
 
 /** Gespeicherte Blätter und Protokoll – nur lokal in IndexedDB. */
 
-export type Status = 'erstellt' | 'gedruckt' | 'gelesen';
+/** Für Eltern zählt nur: gelesen oder noch nicht („gedruckt“ hieße nur „Drucken getippt“) */
+export type Status = 'erstellt' | 'gelesen';
 
 export interface Lesung {
   at: string;
@@ -33,9 +34,7 @@ export interface LogEntry {
 }
 
 export function statusOf(r: SheetRecord): Status {
-  if (r.reads.length) return 'gelesen';
-  if (r.printedAt) return 'gedruckt';
-  return 'erstellt';
+  return r.reads.length ? 'gelesen' : 'erstellt';
 }
 
 const DB_NAME = 'leseraupe';

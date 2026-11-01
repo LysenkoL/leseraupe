@@ -12,7 +12,7 @@ export function renderChat(root: HTMLElement): void {
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
-  <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1><div class="sub">${t('chat.sub')}</div></div></div>
+  <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1></div></div>
   <div class="content">
     <section class="card">
       <h2>${t('chat.schritt1')}</h2>
