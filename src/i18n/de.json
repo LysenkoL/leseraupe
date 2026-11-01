@@ -32,7 +32,7 @@
   "raupe.perlen": "{n} von {max} Perlen",
   "raupe.hinweis": "Jeder Tag mit Lesen ist eine Perle – auch wenn ihr ein Blatt nochmal lest. Bei {max} Perlen gibt es eine Urkunde.",
   "raupe.urkundeAnsehen": "Urkunde {nr} ansehen",
-  "protokoll.titel": "Protokoll",
+  "protokoll.titel": "Tagebuch",
   "protokoll.leer": "Noch keine Einträge.",
   "thema.titel": "Gestaltung wählen",
   "thema.vorschau": "Vorschau: {name}",
@@ -181,7 +181,7 @@
   "einst.stolperFrage": "Alle Stolperwörter löschen?",
   "einst.loeschen": "Löschen",
   "einst.sicherung": "Sicherung",
-  "einst.sicherungHinweis": "Alle Blätter, das Protokoll und die Einstellungen in einer Datei. Die Datei kann man z. B. in Google Drive ablegen.",
+  "einst.sicherungHinweis": "Alle Blätter, das Tagebuch und die Einstellungen in einer Datei. Die Datei kann man z. B. in Google Drive ablegen.",
   "einst.sicherungSpeichern": "Sicherung speichern",
   "einst.sicherungLaden": "Sicherung laden …",
   "einst.sicherungFrage": "Sicherung vom {datum} mit {n} Blättern laden? Die jetzigen Daten werden ersetzt.",
@@ -198,10 +198,10 @@
   "ueber.umzug": "Daten aus der Web-Version übernehmen",
   "ueber.umzug1": "1. Öffne die Website der Leseraupe im Browser, gehe zu den Einstellungen und tippe auf „Sicherung speichern“. Lege die Datei zum Beispiel in Google Drive oder im Ordner Downloads ab.",
   "ueber.umzug2": "2. Öffne hier in der App die Einstellungen, tippe auf „Sicherung laden …“ und wähle diese Datei aus.",
-  "ueber.umzug3": "Danach sind alle Leseblätter, das Protokoll, die Stolperwörter und die Perlen da. Achtung: Laden ersetzt die Daten, die schon in der App sind.",
+  "ueber.umzug3": "Danach sind alle Leseblätter, das Tagebuch, die Stolperwörter und die Perlen da. Achtung: Laden ersetzt die Daten, die schon in der App sind.",
   "ueber.datenschutz": "Datenschutz",
   "ueber.ds1": "Leseraupe sammelt keine Daten. Es gibt kein Konto, keine Werbung und keine Statistik.",
-  "ueber.ds2": "Buchstaben, Name des Kindes, Leseblätter und Protokoll werden nur auf diesem Gerät gespeichert. Sie werden nicht an uns oder an andere geschickt.",
+  "ueber.ds2": "Buchstaben, Name des Kindes, Leseblätter und Tagebuch werden nur auf diesem Gerät gespeichert. Sie werden nicht an uns oder an andere geschickt.",
   "ueber.ds3": "Eine Sicherung ist eine Datei, die du selbst speicherst und selbst weitergibst.",
   "ueber.ds4": "„Mit KI-Chat erstellen“ kopiert nur einen Text. Erst wenn du selbst einen KI-Chat (z. B. Claude oder ChatGPT) öffnest und den Text dort einfügst, gelten die Regeln dieses Anbieters.",
   "ueber.ds5": "Beim Löschen der App oder der Website-Daten werden alle Daten entfernt.",
@@ -315,5 +315,6 @@
   "verlauf.kMinuten2": "Minuten\ngelesen",
   "blatt.heuteGelesen": "Heute gelesen ✓",
   "blatt.nochmalGelesen": "Dieses Blatt ist heute schon als gelesen markiert. Noch eine Lesung dazuzählen?",
-  "blatt.nochmalGelesenJa": "Noch einmal gelesen"
+  "blatt.nochmalGelesenJa": "Noch einmal gelesen",
+  "eltern.weiter": "Weiter"
 }

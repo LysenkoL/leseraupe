@@ -28,8 +28,9 @@ export function renderBlatt(root: HTMLElement, id: number): void {
       return;
     }
     root.querySelector('#b-t')!.textContent = t('blatt.titel', { nr: r.number, thema: themaName(r.data.theme) });
-    const reads = r.reads.length ? ` · ${t('blatt.gelesenAm', { daten: r.reads.map((x) => formatDate(x.at)).join(', ') })}` : '';
-    root.querySelector('#b-s')!.textContent = `${formatDate(r.createdAt)} · ${t(`status.${statusOf(r)}`)}${reads}`;
+    // gelesen: nur „gelesen: Daten“ (nicht noch einmal „gelesen ✓“ davor); sonst der Status
+    const stand = r.reads.length ? t('blatt.gelesenAm', { daten: r.reads.map((x) => formatDate(x.at)).join(', ') }) : t(`status.${statusOf(r)}`);
+    root.querySelector('#b-s')!.textContent = `${formatDate(r.createdAt)} · ${stand}`;
     // heute schon gelesen: der Knopf sagt es (und fragt vor einer zweiten Lesung)
     const heute = r.reads.some((x) => dayKey(new Date(x.at)) === dayKey(new Date()));
     const lesenBtn = root.querySelector<HTMLButtonElement>('#b-read')!;
