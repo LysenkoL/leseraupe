@@ -59,8 +59,7 @@ export function renderStart(root: HTMLElement): void {
     const blocks = BLOCKS.map(
       (id) => {
         // Elternfragen gehören zur Geschichte: ohne Geschichte keine Fragen
-        const storyAttempt = available.geschichte || available.saetze;
-        const aus = id === 'geschichte' ? !storyAttempt : id === 'fragen' ? !storyAttempt || !s.blocks.geschichte : !available[id];
+        const aus = id === 'fragen' ? !available.geschichte || !s.blocks.geschichte : !available[id];
         // Plättchen wie bei der Gestaltung: an = grün mit Häkchen, aus = blass gestrichelt
         return `<label class="blk-chip${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/><span>${t(`block.${id}`)}</span></label>`;
       },

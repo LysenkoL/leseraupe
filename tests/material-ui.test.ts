@@ -40,6 +40,20 @@ it('M und A reichen nicht: kein Blatt, die Plakette nennt den nächsten Buchstab
   await page.close();
 });
 
+it('Geschichte ist nur wählbar, wenn das Blatt wirklich eine bekommt', async () => {
+  const page = await open(['a', 'i', 'l', 's']);
+  const aus = (id: string) => page.locator(`input[data-block="${id}"]`).isDisabled();
+  expect(await aus('saetze')).toBe(false);
+  expect(await aus('geschichte')).toBe(true);
+  expect(await aus('fragen')).toBe(true);
+  await page.waitForSelector('#letter-tipp:not([hidden])');
+  expect(await page.locator('#letter-tipp').textContent()).toContain('Geschichten');
+  await page.click('#create');
+  await page.waitForSelector('.sheet');
+  expect(await page.locator('.sheet [data-block="geschichte"]').count()).toBe(0);
+  await page.close();
+});
+
 it('M, A und L erzeugen ein ganzes A4-Blatt ohne Geschichte und ohne Überlauf', async () => {
   const page = await open(['m', 'a', 'l']);
   expect(await page.locator('#material-hint').textContent()).toContain('Silben');
