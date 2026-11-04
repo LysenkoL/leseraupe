@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { analyzeMaterial, MIN_WOERTER } from '../src/core/material';
-import { emptyHistory, generateSheet } from '../src/core/generator';
+import { emptyHistory, generateSheet, readingTexts } from '../src/core/generator';
 import { DEFAULT_BLOCKS } from '../src/core/types';
 import { checkText, UNIT_IDS } from '../src/core/letters';
 
@@ -67,6 +67,17 @@ describe('mindestens 4 verschiedene Wörter', () => {
     for (const letters of [['m', 'a', 'o'], ['m', 'a', 'l'], ['t', 'o', 'm'], ['a', 'i', 's', 't']]) {
       expect(analyzeMaterial(letters).available.woerter, letters.join('')).toBe(true);
       expect(verschieden(blatt(letters).woerter), letters.join('')).toBeGreaterThanOrEqual(MIN_WOERTER);
+    }
+  });
+
+  it('Blätter ohne Sätze haben ihre Aufgabe, nur gelernte Buchstaben im Lesestoff', () => {
+    for (const letters of [['m', 'a', 'o'], ['m', 'a', 'l'], ['t', 'o', 'm']]) {
+      for (const seed of [1, 2, 3, 4, 5, 6]) {
+        const { sheet } = generateSheet({ letters, newLetter: letters[2], minutes: 5, theme: 'wiese', childName: '', blocks: { ...DEFAULT_BLOCKS }, history: emptyHistory(), seed });
+        expect(sheet.practice, letters.join('')).toBe(true);
+        expect(sheet.quest, letters.join('')).not.toBeNull();
+        for (const text of readingTexts(sheet)) expect(checkText(text, new Set(letters)).ok, text).toBe(true);
+      }
     }
   });
 

@@ -562,7 +562,8 @@ export function generateSheet(p: GenParams): Generated {
     source: 'dict',
   };
   preparePractice(sheet);
-  if (sheet.practice) sheet.quest = null;
+  // Ohne genug Wörter wäre das Blatt fast nur die Aufgabe; ab dem Mindestwortschatz gehört sie dazu
+  if (sheet.practice && !material.available.woerter) sheet.quest = null;
   if (!hasReadingMaterial(sheet)) { sheet.quest = null; sheet.fragen = []; }
   return { sheet, removed: [] };
 }
