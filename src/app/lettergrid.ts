@@ -88,7 +88,12 @@ export function bindLetters(root: HTMLElement, redraw: () => void): void {
     void alleFrage(redraw);
   };
   root.querySelectorAll<HTMLButtonElement>('[data-l]').forEach((b) =>
-    b.addEventListener('click', () => aendern((s) => toggleLetter(s, b.dataset.l!).settings)),
+    b.addEventListener('click', () => {
+      const id = b.dataset.l!;
+      aendern((s) => toggleLetter(s, id).settings);
+      // Das Raster wurde neu gezeichnet: Tastatur und Screenreader bleiben auf derselben Buchstabe
+      root.querySelector<HTMLButtonElement>(`[data-l="${id}"]`)?.focus({ preventScroll: true });
+    }),
   );
   // „Alle auswählen“ ↔ „Alle abwählen“: ein Tipp macht den anderen rückgängig
   root.querySelector<HTMLButtonElement>('[data-alle]')?.addEventListener('click', () => aendern(alle(getSettings()) ? alleAbwaehlen : alleWaehlen));

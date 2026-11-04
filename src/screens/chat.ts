@@ -17,6 +17,8 @@ export function renderChat(root: HTMLElement): void {
   const localOnly = !fields.length && !storyAttempt && s.blocks.silben && material.available.silben;
   const canCreate = !!(localOnly || fields.length || storyAttempt);
   const summary = localOnly ? t('chat.nurLokal') : !canCreate ? t('start.keinMaterial') : '';
+  // Nur wenn eine eingefügte Antwort auch benutzt wird; den Prompt kopieren kann man immer
+  const braucheAntwort = canCreate && !localOnly;
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
@@ -28,6 +30,7 @@ export function renderChat(root: HTMLElement): void {
       <button class="btn green" id="copy">${t('chat.kopieren')}</button>
       <details><summary class="hint">${t('chat.ansehen')}</summary><pre class="prompt">${esc(prompt)}</pre></details>
     </section>
+    ${braucheAntwort ? `
     <section class="card">
       <h2>${t('chat.schritt2')}</h2>
       <div class="btnrow two">
@@ -41,13 +44,14 @@ export function renderChat(root: HTMLElement): void {
       <label class="field" aria-label="${t('chat.antwort')}">
         <textarea id="answer" placeholder="${t('chat.platzhalter')}"></textarea>
       </label>
-      <div class="modal-err" id="err" aria-live="polite"></div>
     </section>
+    ` : ''}
+    <div class="modal-err" id="err" aria-live="polite"></div>
   </div>
   <div class="bottom"><button class="btn primary big" id="make" ${canCreate ? '' : 'disabled'}>${t('chat.erstellen')}</button></div>
 </div>`;
 
-  const ta = root.querySelector<HTMLTextAreaElement>('#answer')!;
+  const ta = root.querySelector<HTMLTextAreaElement>('#answer');
   const err = root.querySelector<HTMLElement>('#err')!;
 
   root.querySelector('#copy')!.addEventListener('click', async () => {
@@ -65,9 +69,9 @@ export function renderChat(root: HTMLElement): void {
       toast(t('chat.kopiert'));
     }
   });
-  root.querySelector('#paste')!.addEventListener('click', async () => {
+  root.querySelector('#paste')?.addEventListener('click', async () => {
     try {
-      ta.value = NATIV ? await einfuegen() : await navigator.clipboard.readText();
+      ta!.value = NATIV ? await einfuegen() : await navigator.clipboard.readText();
     } catch {
       toast(t('chat.langTippen'));
     }
@@ -79,7 +83,7 @@ export function renderChat(root: HTMLElement): void {
       return;
     }
     try {
-      const answer = localOnly ? {woerter:[],kleineWoerter:[],saetze:[],geschichte:{titel:'',saetze:[]},fragen:[]} : parseChat(ta.value);
+      const answer = localOnly ? {woerter:[],kleineWoerter:[],saetze:[],geschichte:{titel:'',saetze:[]},fragen:[]} : parseChat(ta!.value);
       const p = await genParams();
       const { sheet, removed } = sheetFromChat(answer, p);
       setDraft({ data: sheet, seed: p.seed, removed, savedId: null, scale: 1 });

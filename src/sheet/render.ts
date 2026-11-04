@@ -175,5 +175,6 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
 </footer>`;
 
   const style = `--main:${t.main};--light:${t.light};--border:${t.border};--fs:${(opt.scale ?? 1).toFixed(3)}`;
-  return `<div class="sheet theme-${t.id} m${d.minutes}${(d.practice || d.letters.length < 5) && !(d.blocks.saetze && d.saetze.length) && !(d.blocks.geschichte && d.geschichte?.saetze.length) ? ' beginner' : ''}${d.balanced ? ' balanced' : ''}" style="${style}">${head}<main class="sh-blocks">${blocks.join('')}</main>${foot}</div>`;
+  // lang: das Blatt ist immer deutsch, damit ein Screenreader es auch bei ukrainischer Oberfläche richtig liest
+  return `<div lang="de" class="sheet theme-${t.id} m${d.minutes}${(d.practice || d.letters.length < 5) && !(d.blocks.saetze && d.saetze.length) && !(d.blocks.geschichte && d.geschichte?.saetze.length) ? ' beginner' : ''}${d.balanced ? ' balanced' : ''}" style="${style}">${head}<main class="sh-blocks">${blocks.join('')}</main>${foot}</div>`;
 }

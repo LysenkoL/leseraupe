@@ -22,8 +22,8 @@ export function readingPages(d: SheetData): Page[] {
   const pages: Page[] = [];
   const lt = (s: string) => lesetext(s, d.silbenFarbig);
   // jedes Wort / jede Silbe auf eigener Karte – sonst liest man „Alm All ist alt“ als Satz
-  const grid = (items: string[]) => items.map((w) => `<span class="rd-card">${lt(w)}</span>`).join('');
-  const lines = (items: string[]) => items.map((s) => `<p>${lt(s)}</p>`).join('');
+  const grid = (items: string[]) => items.map((w) => `<span class="rd-card" lang="de">${lt(w)}</span>`).join('');
+  const lines = (items: string[]) => items.map((s) => `<p lang="de">${lt(s)}</p>`).join('');
   if (d.blocks.silben && d.silben.length) pages.push({ title: t('block.silben'), html: grid(d.silben), kind: 'grid' });
   if (d.blocks.woerter && d.woerter.length) pages.push({ title: t('block.woerter'), html: grid(d.woerter), kind: 'grid' });
   if (d.blocks.kleine && d.kleine.length) pages.push({ title: t('block.kleine'), html: grid(d.kleine), kind: 'grid' });

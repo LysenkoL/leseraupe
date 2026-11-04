@@ -189,3 +189,53 @@ it('цензура не печатает ругательство в преду�
   expect(await page.locator('.sheet').textContent()).not.toContain('Idiot');
   await page.close();
 });
+
+it('Tastatur: nach Enter bleibt der Fokus auf derselben Buchstabe', async () => {
+  const page = await open(['m','a']);
+  await page.focus('[data-l="n"]');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => document.querySelector('[data-l="n"]')?.className.includes('neu'));
+  expect(await page.evaluate(() => (document.activeElement as HTMLElement).dataset.l)).toBe('n');
+  await page.keyboard.press('Enter');
+  expect(await page.evaluate(() => (document.activeElement as HTMLElement).dataset.l)).toBe('n');
+  await page.close();
+});
+
+it('Das Blatt ist als Deutsch markiert, auch bei ukrainischer Oberfläche', async () => {
+  const page = await browser.newPage({ viewport: { width: 360, height: 800 } });
+  await page.addInitScript((settings) => {
+    localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', kinder: [{ id: 'k1', settings }], onboarded: true, sprache: 'uk' }));
+  }, { ...DEFAULT_SETTINGS, letters: ['m','a','l','o','t','i','s'], newLetter: null });
+  await page.goto(base);
+  await page.waitForSelector('#create');
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('uk');
+  await page.click('#create');
+  await page.waitForSelector('.sheet');
+  expect(await page.locator('.sheet').getAttribute('lang')).toBe('de');
+  await page.close();
+});
+
+it('KI-Seite: Prompt lässt sich immer kopieren, das Antwortfeld gibt es nur, wenn es benutzt wird', async () => {
+  const leer = await open(['a']);
+  await leer.goto(base + '#/chat');
+  await leer.waitForSelector('#copy');
+  expect(await leer.locator('#answer').count()).toBe(0);
+  expect(await leer.locator('#make').isDisabled()).toBe(true);
+  await leer.close();
+
+  const nurSilben = await browser.newPage({ viewport: { width: 360, height: 800 } });
+  await nurSilben.addInitScript((settings) => {
+    localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', kinder: [{ id: 'k1', settings }], onboarded: true, sprache: 'de' }));
+  }, { ...DEFAULT_SETTINGS, letters: ['m','a'], newLetter: null, blocks: { ...DEFAULT_SETTINGS.blocks, woerter: false, saetze: false, geschichte: false, fragen: false } });
+  await nurSilben.goto(base + '#/chat');
+  await nurSilben.waitForSelector('#copy');
+  expect(await nurSilben.locator('#answer').count()).toBe(0);
+  await nurSilben.click('#make');
+  await nurSilben.waitForSelector('.sheet .g-silben');
+  await nurSilben.close();
+
+  const normal = await open(['m','a']);
+  await normal.goto(base + '#/chat');
+  await normal.waitForSelector('#answer');
+  await normal.close();
+});

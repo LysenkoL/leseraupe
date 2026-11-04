@@ -55,6 +55,14 @@ describe('Verlauf und Protokoll', () => {
     expect(db.streak(days, new Date(2026, 9, 30, 12))).toBe(0);
   });
 
+  it('kaputte Sicherung: zwei Blätter mit gleicher ID überschreiben sich nicht heimlich', async () => {
+    const db = await import('../src/core/db');
+    const blatt = (number: number) => ({ id: 5, kindId: 'k1', number, createdAt: new Date().toISOString(), printedAt: null, reads: [], data: { ...SAMPLE_SHEET, number }, scale: 1 });
+    const b = db.parseBackup(JSON.stringify({ app: 'leseraupe', version: 2, exportedAt: new Date().toISOString(), profile: { activeKindId: 'k1', kinder: [{ id: 'k1', settings: {} }], onboarded: true }, sheets: [blatt(1), blatt(2)], log: [] }));
+    expect(b.sheets.map((x) => x.number)).toEqual([1]);
+    expect(b.uebersprungen).toBe(1);
+  });
+
   it('Sicherung: Export und Import', async () => {
     const a = await db.saveOnPrint(SAMPLE_SHEET, 1.3, null, true);
     await db.addRead(a.id!, 5);
