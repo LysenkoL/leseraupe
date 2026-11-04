@@ -13,12 +13,20 @@ describe('Wörterbuch', () => {
     expect(DICT.saetze.length).toBeGreaterThanOrEqual(200);
     expect(DICT.geschichten.length).toBeGreaterThanOrEqual(20);
   });
-  it('jede Geschichte hat Titel, Sätze und mindestens 3 Elternfragen', () => {
+  it('jede Geschichte hat Titel, Sätze und Elternfragen; Mini-Szenen ab 3 Sätzen mit 2 Fragen', () => {
     for (const g of DICT.geschichten) {
       expect(g.titel).not.toBe('');
-      expect(g.saetze.length).toBeGreaterThanOrEqual(6);
-      expect(g.fragen.length, g.titel).toBeGreaterThanOrEqual(3);
+      expect(g.saetze.length, g.titel).toBeGreaterThanOrEqual(3);
+      expect(g.fragen.length, g.titel).toBeGreaterThanOrEqual(g.saetze.length >= 6 ? 3 : 2);
     }
+  });
+  it('Mini-Szenen haben einen Abschluss und kommen auch ohne T aus', () => {
+    const ohneT = (letters: string[]) => DICT.geschichten.filter((g) => [g.titel, ...g.saetze].every((t) => checkText(t, new Set(letters)).ok)).map((g) => g.titel);
+    expect(ohneT(['m', 'a', 'l', 'o', 'h'])).toContain('Hallo, Lola!');
+    expect(ohneT(['m', 'l', 's', 'a', 'o', 'i'])).toEqual(expect.arrayContaining(['Mia im Saal', 'Los, Lola!']));
+    expect(ohneT(['m', 'l', 's', 'a', 'o', 'i', 'e', 'n'])).toContain('Alle essen');
+    expect(ohneT(['b', 'e', 'l', 'o', 's', 'a', 'd'])).toContain('Bello');
+    expect(ohneT(['m', 'a', 'l', 'o', 't'])).toContain('Tom malt');
   });
   it('keine Silbentrennstriche, nur deutsche Buchstaben', () => {
     const texts = [...DICT.woerter.map((e) => e.w), ...DICT.saetze, ...DICT.geschichten.flatMap((g) => [g.titel, ...g.saetze])];

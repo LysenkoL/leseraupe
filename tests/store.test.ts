@@ -63,13 +63,13 @@ describe('C2: Alle auswählen', () => {
     expect(alleWaehlen(s)).toBe(s);
   });
 
-  it('„Alle abwählen“: keine Buchstaben, Frage wieder offen, Silben und kleine Wörter wieder an', () => {
+  it('„Alle abwählen“: keine Buchstaben, Frage wieder offen, Silben wieder an', () => {
     const alle = nurLesetexte({ ...alleWaehlen(DEFAULT_SETTINGS), alleGefragt: true });
     const leer = alleAbwaehlen(alle);
     expect(leer.letters).toEqual([]);
     expect(leer.newLetter).toBeNull();
     expect(leer.alleGefragt).toBe(false);
-    expect([leer.blocks.silben, leer.blocks.kleine]).toEqual([true, true]);
+    expect(leer.blocks.silben).toBe(true);
     expect(alleAbwaehlen(leer)).toBe(leer);
   });
 

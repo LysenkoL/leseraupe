@@ -9,14 +9,25 @@ const alle = (s: Settings) => s.letters.length >= UNITS.length;
 
 /** Raster der 43 Buchstaben mit Legende – auf Start und in der Einführung. */
 export function lettersHtml(s: Settings): string {
-  const letters = UNITS.map((u) => {
-    const on = s.letters.includes(u.id);
-    const cls = u.id === s.newLetter ? 'neu' : on ? 'on' : '';
-    const small = u.label.length > 2 ? ' small' : '';
-    const state = u.id === s.newLetter ? t('buchst.neu') : on ? t('buchst.gelernt') : t('buchst.nochnicht');
-    return `<button class="lt ${cls}${small}" data-l="${u.id}" aria-label="${esc(u.label)}: ${state}">${esc(u.label)}</button>`;
+  // Nur die Anzeige gruppieren: IDs und gespeicherte Auswahl bleiben unverändert.
+  const groups = [
+    { title: '', units: UNITS.filter(u => /^[a-z]$/.test(u.id)).sort((a, b) => a.id.localeCompare(b.id, 'de')) },
+    { title: t('buchst.umlaute'), units: ['ä', 'ö', 'ü', 'ß'].map(id => unitById(id)!) },
+    { title: t('buchst.verbindungen'), units: UNITS.filter(u => u.id.length > 1).sort((a, b) => a.id.localeCompare(b.id, 'de')) },
+  ];
+  const letters = groups.map(group => {
+    const heading = group.title ? `<span class="letter-group-title">${esc(group.title)}</span>` : '';
+    return heading + group.units.map(u => {
+      const on = s.letters.includes(u.id);
+      const cls = u.id === s.newLetter ? 'neu' : on ? 'on' : '';
+      // Buchstaben groß, Verbindungen einheitlich klein; ß bleibt als eigene Lerneinheit klein.
+      const label = u.id.length > 1 || u.id === 'ß' ? u.id : u.id.toUpperCase();
+      const small = label.length > 2 ? ' small' : '';
+      const state = u.id === s.newLetter ? t('buchst.neu') : on ? t('buchst.gelernt') : t('buchst.nochnicht');
+      return `<button class="lt ${cls}${small}" data-l="${u.id}" aria-label="${esc(label)}: ${state}">${esc(label)}</button>`;
+    }).join('');
   }).join('');
-  // „Alle auswählen“ füllt die leere letzte Reihe neben „tz“
+  // Gesamtauswahl auf eigener Zeile nach allen drei Gruppen.
   const alleBtn = `<button class="pillbtn alle-btn" type="button" data-alle="${alle(s) ? 'ab' : 'an'}"><span class="alle-an">${t('buchst.alle')}</span><span class="alle-ab">${t('buchst.keine')}</span></button>`;
   return `<div class="letters">${letters}${alleBtn}</div>
       <div class="legend"><span><i style="background:#9FD18F"></i>${t('buchst.gelernt')}</span><span><i style="background:#F2A65A"></i>${t('buchst.neu')}</span><span><i style="background:#fff;border:1px solid #CCD3CE"></i>${t('buchst.nochnicht')}</span></div>`;

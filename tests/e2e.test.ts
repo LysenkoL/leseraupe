@@ -315,7 +315,7 @@ describe('App-Ablauf', () => {
     expect(again).toBe(firstPrint);
   });
 
-  it('Chat: Antwort einfügen baut ein Blatt und zeigt Entferntes', async () => {
+  it('Chat: Antwort einfügen baut ein Blatt, Unlesbares fällt still weg', async () => {
     await page.goto(base + '#/chat');
     await page.waitForSelector('#answer');
     await page.fill(
@@ -324,7 +324,9 @@ describe('App-Ablauf', () => {
     );
     await page.click('#make');
     await page.waitForSelector('#pv .sheet');
-    expect(await page.textContent('#pv-removed')).toContain('Tisch (Sch)');
+    expect(await page.textContent('#pv .sheet')).toContain('Mama');
+    expect(await page.textContent('#pv .sheet')).not.toContain('Tisch');
+    expect(await page.$('#pv-removed')).toBeNull();
     await page.goto(base + '#/chat');
     await page.fill('#answer', 'Leider weiß ich das nicht.');
     await page.click('#make');
@@ -907,7 +909,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await ctx.close();
   });
 
-  it('„Alle abwählen“ macht „Alle auswählen“ rückgängig, Silben und kleine Wörter wieder an', async () => {
+  it('„Alle abwählen“ macht „Alle auswählen“ rückgängig, Silben wieder an', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const p = await ctx.newPage();
     p.on('pageerror', (e) => errors.push(e.message));
@@ -923,10 +925,10 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.click('#onb-next');
     await p.waitForSelector('#create');
     const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
-    expect([await an('silben'), await an('kleine')]).toEqual([true, true]);
-    // ohne Buchstaben kein Blatt, nur ein Hinweis
-    await p.click('#create');
-    await p.waitForSelector('.toast');
+    expect(await an('silben')).toBe(false);
+    // Ohne Buchstaben: Hinweis vorab, keine leere Vorschau.
+    expect(await p.locator('#create').isDisabled()).toBe(true);
+    expect(await p.textContent('#material-hint')).toContain('noch keine Leseübung');
     expect(await p.evaluate(() => location.hash)).not.toBe('#/vorschau');
     // nochmal alle: die Frage kommt wieder
     await p.click('[data-alle]');
@@ -958,7 +960,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.click('#onb-next');
     await p.waitForSelector('#create');
     const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
-    expect([await an('silben'), await an('kleine'), await an('woerter'), await an('saetze'), await an('geschichte')]).toEqual([false, false, true, true, true]);
+    expect([await an('silben'), await an('woerter'), await an('saetze'), await an('geschichte')]).toEqual([false, true, true, true]);
     // Buchstaben ab- und wieder anwählen: keine zweite Frage
     await p.click('[data-l="tz"]');
     await p.waitForFunction(() => document.querySelector('[data-l="tz"]')?.className.includes('lt '));

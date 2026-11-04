@@ -1,15 +1,15 @@
 import { elternCheck } from '../app/elterncheck';
 import { getDraft, getSerie, getSettings, setDraft, setSerieIndex, setSerieItem, setSettings, type Draft } from '../app/state';
 import { kopfKompakt, renderSheet } from '../sheet/render';
-import { mountPreview } from '../sheet/preview';
+import { prepareWorksheet, WorksheetOverflowError } from '../sheet/prepare';
 import { mitDruckKnopf, printSheets } from '../sheet/print';
 import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { log, nextNumber, saveOnPrint } from '../core/db';
 import { rerollBlock } from '../core/generator';
+import { contentIssue } from '../core/content';
 import { checkText, unitById, UNIT_IDS } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
 import { backButton, editDialog, esc, go, toast } from '../app/ui';
-import { trimOnce } from '../app/fitflow';
 import { stolperLink } from './stolper';
 import { lesungSpeichern } from '../app/lesezeit';
 import type { BlockId, SheetData } from '../core/types';
@@ -19,8 +19,13 @@ import { t, themaName } from '../app/i18n';
 export function fehltHinweis(d: SheetData): string {
   const saetze = d.blocks.saetze && !d.saetze.length;
   const geschichte = d.blocks.geschichte && !d.geschichte;
+  if (d.source === 'chat') {
+    const missing = [saetze ? t('block.saetze') : '', geschichte ? t('block.geschichte') : '', d.blocks.fragen && d.blocks.geschichte && d.geschichte && !d.fragen.length ? t('block.fragen') : ''].filter(Boolean);
+    return (missing.length ? `<div class="hint pv-fehlt">${t('vorschau.chatNichtUebernommen',{blocks:missing.join(', ')})}</div>` : '');
+  }
   const key = saetze && geschichte ? 'vorschau.fehltBeide' : saetze ? 'vorschau.fehltSaetze' : geschichte ? 'vorschau.fehltGeschichte' : '';
-  return key ? `<div class="hint pv-fehlt">${t(key)}</div>` : '';
+  if (!key) return '';
+  return `<div class="hint pv-fehlt">${t(key)}</div>`;
 }
 
 export function renderVorschau(root: HTMLElement): void {
@@ -56,7 +61,6 @@ export function renderVorschau(root: HTMLElement): void {
   <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div>
     <button class="pillbtn sy-toggle" id="pv-silben" aria-pressed="false" title="${t('vorschau.silben')}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button></div>
   <div class="serie-nav" id="pv-nav"></div>
-  <div id="pv-removed"></div>
   <div id="pv-fehlt"></div>
   <div class="preview-wrap" id="pv"></div>
   <div class="hint" style="padding:6px 16px 0">${t('vorschau.hinweis')}</div>
@@ -77,17 +81,12 @@ export function renderVorschau(root: HTMLElement): void {
 
   const pv = root.querySelector<HTMLElement>('#pv')!;
 
-  /** Blatt in `host` einpassen; passt es nicht, wird gekürzt, bis es passt */
+  /** Vorschau und gespeicherte Druckdaten erhalten dieselben gemessenen A4-Übungszeilen. */
   const fit = async (host: HTMLElement, d: Draft, nr: number, interactive: boolean): Promise<Draft> => {
-    let data: SheetData = d.data;
-    let r = await mountPreview(host, renderSheet(data, { displayNumber: nr, interactive }));
-    for (let i = 0; i < 40 && !r.fits; i++) {
-      const t = trimOnce(data);
-      if (!t) break;
-      data = t;
-      r = await mountPreview(host, renderSheet(data, { displayNumber: nr, interactive }));
-    }
-    return { ...d, data, scale: r.scale };
+    const fitted = await prepareWorksheet(host, d.data, {
+      displayNumber: nr, interactive, savedScale: d.savedId && !d.needsFit ? d.scale : undefined,
+    });
+    return { ...d, data: fitted.data, scale: fitted.scale, needsFit:false };
   };
 
   const drawNav = () => {
@@ -112,22 +111,27 @@ export function renderVorschau(root: HTMLElement): void {
   const draw = async () => {
     const d = getDraft();
     if (!d || disposed) return;
+    const printButtons = root.querySelectorAll<HTMLButtonElement>('#print, #pdf');
+    printButtons.forEach(button => { button.disabled = true; });
     drawNav();
     const h = await header(d);
     root.querySelector('#pv-title')!.textContent = h.title;
     // in einer Serie eindeutig: nur dieses Blatt wird als gelesen markiert
     root.querySelector('#read')!.textContent = t('vorschau.gelesenNr', { nr: h.nr });
     root.querySelector('#pv-sub')!.textContent = h.sub;
-    const rm = root.querySelector<HTMLElement>('#pv-removed')!;
-    rm.innerHTML = d.removed.length
-      ? `<div class="removed"><b>${t('vorschau.entfernt')}</b> ${d.removed.map((r) => `${esc(r.text)} (${esc(r.missing.join(', '))})`).join(' · ')}</div>`
-      : '';
     const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
     sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
     sy.classList.toggle('on', !!d.data.silbenFarbig);
-    const fertig = await fit(pv, d, h.nr, true);
-    setDraft(fertig);
-    root.querySelector('#pv-fehlt')!.innerHTML = fehltHinweis(fertig.data);
+    try {
+      const fertig = await fit(pv, d, h.nr, true);
+      if (disposed) return;
+      setDraft(fertig);
+      root.querySelector('#pv-fehlt')!.innerHTML = fehltHinweis(fertig.data);
+      printButtons.forEach(button => { button.disabled = false; });
+    } catch (error) {
+      if (!(error instanceof WorksheetOverflowError)) throw error;
+      pv.innerHTML = `<div class="hint" role="alert">${esc(error.message)}</div>`;
+    }
   };
 
   // Silben farbig direkt hier umschalten – gilt für alle Blätter der Serie und wird gemerkt
@@ -173,7 +177,7 @@ export function renderVorschau(root: HTMLElement): void {
     p.newLetter = d.data.newLetter;
     p.blocks = d.data.blocks;
     p.stufe = d.data.stufe;
-    setDraft({ ...d, data: rerollBlock(d.data, block, p) });
+    setDraft({ ...d, data: rerollBlock(d.data, block, p), needsFit:true });
     await draw();
   };
 
@@ -186,6 +190,8 @@ export function renderVorschau(root: HTMLElement): void {
     const known = new Set(data.letters);
     const v = await editDialog(t('vorschau.aendern'), list[idx], (s) => {
       if (!s) return null;
+      const issue = contentIssue(s);
+      if (issue) return t(issue === 'unsuitable' ? 'vorschau.inhaltsfilter' : 'vorschau.aussprachefilter');
       if (/\p{L}-\p{L}/u.test(s)) return t('vorschau.ohneStriche');
       const c = checkText(s, known);
       return c.ok ? null : t('vorschau.nichtGelernt', { b: c.missing.join(', ') });
@@ -193,7 +199,7 @@ export function renderVorschau(root: HTMLElement): void {
     if (v === null) return;
     if (v === '') list.splice(idx, 1);
     else list[idx] = v;
-    setDraft({ ...d, data });
+    setDraft({ ...d, data, needsFit:true });
     await draw();
   };
 
@@ -210,9 +216,14 @@ export function renderVorschau(root: HTMLElement): void {
 
   root.querySelector<HTMLButtonElement>('#print')!.addEventListener('click', (e) =>
     mitDruckKnopf(e.currentTarget as HTMLButtonElement, async () => {
-      const { html, nums } = await saveAll(true);
-      await printSheets(html, pdfName(nums));
-      await draw();
+      try {
+        const { html, nums } = await saveAll(true);
+        await printSheets(html, pdfName(nums));
+        await draw();
+      } catch (error) {
+        if (!(error instanceof WorksheetOverflowError)) throw error;
+        toast(error.message, 6000);
+      }
     }),
   );
   root.querySelector<HTMLButtonElement>('#pdf')!.addEventListener('click', async (e) => {

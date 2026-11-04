@@ -7,7 +7,7 @@ import { fitScale, loadFonts, MIN_SCALE, MAX_SCALE } from './fit';
 export async function mountPreview(
   host: HTMLElement,
   html: string,
-  opts: { fixedScale?: number } = {},
+  opts: { fixedScale?: number; maxScale?: number } = {},
 ): Promise<{ html: string; scale: number; fits: boolean; sheet: HTMLElement }> {
   host.innerHTML = `<div class="paper-scaler"><div class="paper">${html}</div></div>`;
   const scaler = host.querySelector<HTMLElement>('.paper-scaler')!;
@@ -17,9 +17,9 @@ export async function mountPreview(
   let result: { scale: number; fits: boolean };
   if (opts.fixedScale) {
     sheet.style.setProperty('--fs', opts.fixedScale.toFixed(3));
-    result = { scale: opts.fixedScale, fits: true };
+    result = { scale: opts.fixedScale, fits: sheet.scrollHeight <= sheet.clientHeight + 0.5 && sheet.scrollWidth <= sheet.clientWidth + 0.5 };
   } else {
-    result = fitScale(sheet, MIN_SCALE, MAX_SCALE);
+    result = fitScale(sheet, MIN_SCALE, opts.maxScale ?? MAX_SCALE);
   }
   const resize = () => {
     const avail = host.clientWidth - 24;

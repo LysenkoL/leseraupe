@@ -1,5 +1,6 @@
 import { DICT, ARTIKEL_AKK, ARTIKEL_NOM, ARTIKEL_UNBEST_AKK, type Eintrag, type Art } from './dict';
 import { isAllowed, countUnit } from './letters';
+import { isSuitable } from './content';
 
 /** Lebensmittel, die im Singular einen Artikel brauchen („isst einen Apfel“, nicht „isst Apfel“). */
 const ZAEHLBAR = new Set([
@@ -60,7 +61,7 @@ export class Vocab {
     this.ok = (s: string) => {
       let r = cache.get(s);
       if (r === undefined) {
-        r = isAllowed(s, known);
+        r = isAllowed(s, known) && isSuitable(s);
         cache.set(s, r);
       }
       return r;

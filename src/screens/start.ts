@@ -1,4 +1,6 @@
+import { analyzeMaterial } from '../core/material';
 import { unitById } from '../core/letters';
+import { buchstabenTipp } from '../app/tipp';
 import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { MAX_BLAETTER } from '../core/store';
 import { raupenstand, type Raupenstand } from '../sheet/urkunde';
@@ -31,7 +33,7 @@ function stripVersteckt(): boolean {
 }
 import { t, themaName } from '../app/i18n';
 
-const BLOCKS: BlockId[] = ['silben', 'woerter', 'kleine', 'saetze', 'geschichte', 'quest', 'fragen'];
+const BLOCKS: BlockId[] = ['silben', 'woerter', 'saetze', 'geschichte', 'quest', 'fragen'];
 
 /** App-Icon als Logo oben links (gleiches Bild wie auf dem Startbildschirm des Handys) */
 const LOGO = `<img class="brand-logo" src="icons/icon-192.png" alt="" width="40" height="40" />`;
@@ -40,9 +42,14 @@ export function renderStart(root: HTMLElement): void {
   const routeNr = aktuelleRoute();
   let count = -1;
   let stand: Raupenstand | null = null;
+  let tippLauf = 0;
   const draw = (c = count) => {
     count = c;
     const s = getSettings();
+    const material = analyzeMaterial(s.letters);
+    const available = { ...material.available, geschichte: material.available.geschichte || !!material.template };
+    const possible = ['silben','woerter','saetze','geschichte'].some(id => s.blocks[id as BlockId] && available[id as BlockId]);
+    const names = BLOCKS.filter(id => available[id] && !['quest', 'fragen'].includes(id)).map(id => t(`block.${id}`)).join(', ');
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
     const themeChips = THEME_WAHL.map((id) => {
       const th = THEMES[themeAus(id)];
@@ -52,7 +59,8 @@ export function renderStart(root: HTMLElement): void {
     const blocks = BLOCKS.map(
       (id) => {
         // Elternfragen gehören zur Geschichte: ohne Geschichte keine Fragen
-        const aus = id === 'fragen' && !s.blocks.geschichte;
+        const storyAttempt = available.geschichte || available.saetze;
+        const aus = id === 'geschichte' ? !storyAttempt : id === 'fragen' ? !storyAttempt || !s.blocks.geschichte : !available[id];
         // Plättchen wie bei der Gestaltung: an = grün mit Häkchen, aus = blass gestrichelt
         return `<label class="blk-chip${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/><span>${t(`block.${id}`)}</span></label>`;
       },
@@ -83,6 +91,8 @@ export function renderStart(root: HTMLElement): void {
     <section class="card">
       <div class="row"><h2>${t('start.buchstaben')}</h2><span class="hint">${t('start.buchstabenZahl', { n: s.letters.length, neu: esc(neu ?? '–') })}</span></div>
       ${lettersHtml(s)}
+      <p class="hint" id="material-hint" role="status">${names ? t('start.material', { names }) : t('start.keinMaterial')}</p>
+      <div class="tipp" id="letter-tipp" role="status" hidden></div>
     </section>
     <section class="card">
       <div class="row"><h2>${t('start.blaetter')}</h2><span class="hint">${t('start.blaetterHinweis')}</span></div>
@@ -103,11 +113,13 @@ export function renderStart(root: HTMLElement): void {
     </section>
   </div>
   <div class="bottom">
-    <button class="btn primary big" id="create">${s.blaetter > 1 ? t('start.erstellenN', { n: s.blaetter }) : t('start.erstellen1')}</button>
+    <button class="btn primary big" id="create" ${possible ? '' : 'disabled'}>${s.blaetter > 1 ? t('start.erstellenN', { n: s.blaetter }) : t('start.erstellen1')}</button>
     <a class="btn ghost" href="#/chat">${t('start.chat')}</a>
   </div>
 </div>`;
 
+    const lauf = ++tippLauf;
+    buchstabenTipp(root.querySelector<HTMLElement>('#letter-tipp')!, s.letters, s.blocks, () => lauf !== tippLauf || !root.isConnected);
     bindLetters(root, () => draw(count));
     root.querySelectorAll<HTMLButtonElement>('[data-bl]').forEach((b) =>
       b.addEventListener('click', () => {
@@ -131,7 +143,7 @@ export function renderStart(root: HTMLElement): void {
       cb.addEventListener('change', () => {
         const s2 = getSettings();
         setSettings({ ...s2, blocks: { ...s2.blocks, [cb.dataset.block!]: cb.checked } });
-        if (cb.dataset.block === 'geschichte') draw(count);
+        draw(count);
       }),
     );
     root.querySelector<HTMLFormElement>('#name-form')?.addEventListener('submit', (e) => {
@@ -172,8 +184,10 @@ export function renderStart(root: HTMLElement): void {
         toast(t('start.keinBlock'));
         return;
       }
-      await createDraft();
-      go('#/vorschau');
+      try {
+        await createDraft();
+        go('#/vorschau');
+      } catch { toast(t('start.keinMaterial')); }
     });
   };
   draw();

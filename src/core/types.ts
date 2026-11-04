@@ -51,12 +51,16 @@ export interface SheetData {
   silbenFarbig?: boolean;
   /** Herkunft: Wörterbuch oder Chat */
   source: 'dict' | 'chat';
+  /** Übungsblatt ohne Sätze/Geschichte: kurze Lesereihen über A4 verteilen. */
+  practice?: boolean;
+  /** Neue A4-Aufteilung: echte Übungszeilen statt gestreckter Leerflächen. Alte Blätter bleiben unverändert. */
+  balanced?: boolean;
 }
 
 export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {
   silben: true,
   woerter: true,
-  kleine: true,
+  kleine: false,
   aehnlich: false,
   saetze: true,
   geschichte: true,
@@ -66,5 +70,5 @@ export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {
 
 /** Mindestens ein Block mit Inhalt eingeschaltet? (sonst wäre das Blatt leer) */
 export function hatBlock(blocks: Record<BlockId, boolean>): boolean {
-  return (['silben', 'woerter', 'kleine', 'aehnlich', 'saetze', 'geschichte', 'quest'] as BlockId[]).some((b) => blocks[b]);
+  return (['silben', 'woerter', 'aehnlich', 'saetze', 'geschichte', 'quest'] as BlockId[]).some((b) => blocks[b]);
 }

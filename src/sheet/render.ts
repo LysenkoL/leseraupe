@@ -46,6 +46,10 @@ function grid(items: string[], cls: string, edit: string | null, farbig?: boolea
 /** Breite der Buchstabenspalte im Kopf (190 mm − Deko 26 mm − Raupe 46 mm − Lücken), mit Reserve */
 const KOPF_BREITE_MM = 112;
 
+/** Längster Satz (Zeichen), der bei größter Schrift noch in eine Spalte passt */
+const SATZ_3_SPALTEN = 14;
+const SATZ_2_SPALTEN = 24;
+
 /** Geschätzte Breite eines Buchstabenkreises in mm – lieber etwas zu breit (gemessen in Chromium). */
 function kreisBreite(circle: string, neu: boolean): number {
   const w = circle.length > 2 ? 2.2 * circle.length + 4.8 : /[MWmw]/.test(circle) ? 10.8 : 8.7;
@@ -122,8 +126,12 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
     blocks.push(section('aehnlich', title, `<div class="ae-row">${panel(a, d.aehnlich.words[0], 'p1')}${panel(b, d.aehnlich.words[1], 'p2')}</div>`));
   }
 
+  // Kurze Sätze ohne Geschichte daneben: in 2–3 Spalten, damit der Platz den Wörtern und Silben bleibt
+  const mitGeschichte = !!(d.blocks.geschichte && d.geschichte?.saetze.length);
+  const satzLaenge = Math.max(0, ...d.saetze.map((s) => [...s].length));
+  const satzSpalten = mitGeschichte || d.saetze.length < 2 ? '' : satzLaenge <= SATZ_3_SPALTEN ? ' cols-3' : satzLaenge <= SATZ_2_SPALTEN ? ' cols-2' : '';
   const saetze =
-    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines">${d.saetze.map((s, i) => `<p${editAttr(interactive ? 'saetze' : null, i)}>${lesetext(s, d.silbenFarbig)}</p>`).join('')}</div>`) : null;
+    d.blocks.saetze && d.saetze.length ? () => section('saetze', 'Sätze', `<div class="sh-lines${satzSpalten}">${d.saetze.map((s, i) => `<p${editAttr(interactive ? 'saetze' : null, i)}>${lesetext(s, d.silbenFarbig)}</p>`).join('')}</div>`) : null;
   const gesch =
     d.blocks.geschichte && d.geschichte && d.geschichte.saetze.length
       ? () => {
@@ -167,5 +175,5 @@ export function renderSheet(d: SheetData, opt: RenderOptions): string {
 </footer>`;
 
   const style = `--main:${t.main};--light:${t.light};--border:${t.border};--fs:${(opt.scale ?? 1).toFixed(3)}`;
-  return `<div class="sheet theme-${t.id} m${d.minutes}" style="${style}">${head}<main class="sh-blocks">${blocks.join('')}</main>${foot}</div>`;
+  return `<div class="sheet theme-${t.id} m${d.minutes}${(d.practice || d.letters.length < 5) && !(d.blocks.saetze && d.saetze.length) && !(d.blocks.geschichte && d.geschichte?.saetze.length) ? ' beginner' : ''}${d.balanced ? ' balanced' : ''}" style="${style}">${head}<main class="sh-blocks">${blocks.join('')}</main>${foot}</div>`;
 }

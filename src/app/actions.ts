@@ -1,8 +1,9 @@
 import { buchstabenProtokollieren } from './lettergrid';
 import { getSerie, getSettings, setSerie, setSerieItem, themeForToday, type Draft } from './state';
-import { generateSheet, historyFrom, maxStufe, stufeFor, withSerie, type GenParams } from '../core/generator';
+import { generateSheet, hasReadingMaterial, historyFrom, maxStufe, stufeFor, withSerie, type GenParams } from '../core/generator';
 import { allSheets, nextNumber, saveOnPrint } from '../core/db';
 import { randomSeed } from '../core/random';
+import { prepareWorksheet } from '../sheet/prepare';
 
 /** Parameter für den Generator aus Einstellungen + Verlauf. */
 export async function genParams(seed = randomSeed()): Promise<GenParams> {
@@ -31,6 +32,7 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
 
 const toDraft = (p: GenParams): Draft => {
   const g = generateSheet(p);
+  if (!hasReadingMaterial(g.sheet)) throw new Error('NO_READING_MATERIAL');
   return { data: g.sheet, seed: p.seed, removed: g.removed, savedId: null, scale: 1 };
 };
 
@@ -78,11 +80,22 @@ export async function remixCurrent(): Promise<void> {
  */
 export async function saveSerieBis(bis: number, printed: boolean | 'none' = 'none'): Promise<Draft> {
   const serie = getSerie()!;
-  for (let i = 0; i <= bis; i++) {
-    const d = serie.items[i];
-    if (d.savedId && i < bis) continue;
-    const rec = await saveOnPrint(d.data, d.scale, d.savedId, i === bis ? printed : 'none');
-    setSerieItem(i, { ...d, data: rec.data, savedId: rec.id ?? null });
+  const hidden = document.createElement('div');
+  hidden.style.cssText = 'position:fixed;left:-10000px;top:0;width:900px';
+  document.body.appendChild(hidden);
+  try {
+    for (let i = 0; i <= bis; i++) {
+      let d = serie.items[i];
+      if (d.savedId && i < bis && !d.needsFit) continue;
+      if (!d.savedId || d.needsFit) {
+        const fitted = await prepareWorksheet(hidden, d.data, { displayNumber: await nextNumber() });
+        d = { ...d, data: fitted.data, scale: fitted.scale, needsFit:false };
+      }
+      const rec = await saveOnPrint(d.data, d.scale, d.savedId, i === bis ? printed : 'none');
+      setSerieItem(i, { ...d, data: rec.data, savedId: rec.id ?? null });
+    }
+  } finally {
+    hidden.remove();
   }
   return getSerie()!.items[bis];
 }

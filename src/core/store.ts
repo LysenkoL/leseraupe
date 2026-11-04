@@ -173,12 +173,12 @@ export function alleWaehlen(s: Settings): Settings {
 
 /**
  * Gegenstück zu „Alle auswählen“ (z. B. versehentlich getippt): keine Buchstaben mehr. Die Frage
- * „nur noch Lesetexte?“ kommt beim nächsten Mal wieder, und hatte sie Silben und kleine Wörter
+ * „nur noch Lesetexte?“ kommt beim nächsten Mal wieder, und hatte sie die Silben
  * ausgeschaltet, sind diese wieder an.
  */
 export function alleAbwaehlen(s: Settings): Settings {
   if (!s.letters.length) return s;
-  const blocks = s.alleGefragt ? { ...s.blocks, silben: true, kleine: true } : s.blocks;
+  const blocks = s.alleGefragt ? { ...s.blocks, silben: true } : s.blocks;
   return { ...s, letters: [], newLetter: null, alleGefragt: false, blocks };
 }
 
@@ -187,9 +187,9 @@ export function alleFrageFaellig(s: Settings): boolean {
   return !s.alleGefragt && s.letters.length >= UNIT_IDS.length;
 }
 
-/** C2 „Ja“: nur noch Wörter, Sätze und Geschichte – Silben, kleine und ähnliche Wörter aus. */
+/** C2 „Ja“: nur noch Wörter, Sätze und Geschichte – Silben und ähnliche Wörter aus. */
 export function nurLesetexte(s: Settings): Settings {
-  return { ...s, blocks: { ...s.blocks, silben: false, kleine: false, aehnlich: false } };
+  return { ...s, blocks: { ...s.blocks, silben: false, aehnlich: false } };
 }
 
 export function toggleLetter(s: Settings, id: string): { settings: Settings; added: boolean; removed: boolean } {

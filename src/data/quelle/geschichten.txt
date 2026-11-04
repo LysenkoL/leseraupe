@@ -2836,3 +2836,157 @@ Ida und Emil teilen ein Brot, und Alfred ruft im Baum.
 ? Wer nimmt das Brot?
 ? Wohin bringt Alfred das Brot?
 ? Warum ist Emil am Ende nicht mehr böse?
+
+
+# Mini-Szenen für wenige Buchstaben: 3–5 kurze Sätze, ein kleines Ereignis und ein Schluss. Sie kommen nur, wenn keine längere Geschichte passt.
+
+# Hallo, Lola!
+Hallo, Mama!
+Hallo, Oma!
+Oh, Lama Lola!
+Hallo, Lola!
+? Wen begrüßt das Kind zuerst?
+? Welches Tier kommt dazu?
+
+# Mia im Saal
+Im Saal las Oma.
+Im Saal las Mia.
+Oma, Limo?
+Also los, Mia!
+? Wo lesen Oma und Mia?
+? Was möchte Oma Mia anbieten?
+
+# Los, Lola!
+Lama Lola!
+Los, Lola, los!
+Oma, Mia, los!
+Also los, Lola!
+? Welches Tier heißt Lola?
+? Was rufen alle Lola zu?
+
+# Alle essen
+Lena las.
+Oma las.
+Alle essen Salami.
+Lena, Melone?
+Alle essen Melone!
+? Was machen Lena und Oma zuerst?
+? Was essen alle am Ende?
+
+# Bello
+Bello, los!
+Ab, Bello, ab!
+Das Bad, Bello!
+Also los, Bello!
+? Wer ist Bello wohl?
+? Wohin soll Bello?
+
+# Kati isst Torte
+Kati isst Torte.
+Kati ist satt.
+Kati rastet.
+? Was isst Kati?
+? Was macht Kati, als sie satt ist?
+
+# Ada im Bad
+Ada ist im Bad.
+Mama badet Ada.
+Nun ist Ada nass.
+Und Mama?
+Mama ist nass, nass, nass!
+? Wo ist Ada?
+? Wer ist am Ende auch nass?
+
+# Nina im Regen
+Nina rennt.
+Es regnet.
+Nina ist nass.
+Nina rennt ins Bad.
+? Warum ist Nina nass?
+? Wohin rennt Nina am Ende?
+
+# Ida isst Eis
+Ist das Eis kalt?
+Ida isst das Eis.
+Ida ist satt.
+? Was isst Ida?
+? Wie fühlt sich Ida danach?
+
+# Lina liest
+Lina liest.
+Mama liest mit.
+Lina liest alles.
+Alle lesen.
+? Wer liest mit Lina?
+? Was machen am Ende alle?
+
+# Lena malt
+Lena malt.
+Mama malt mit.
+Lena malt Lamas.
+Mama malt Enten.
+Nun malen alle.
+? Wer malt mit Lena?
+? Was malt Mama?
+
+# Das rote Rad
+Da ist das rote Rad.
+Das Rad rollt.
+Das Rad rollt ins Tal.
+? Welche Farbe hat das Rad?
+? Wohin rollt das Rad?
+
+# Tom malt
+Tom malt Mama.
+Mama malt Tom.
+Oma malt Lotta.
+Lotta malt Oma.
+Toll, Tom!
+Toll, Oma!
+? Wen malt Tom?
+? Wen malt Oma?
+? Wer malt Oma?
+
+# Tim malt Oma
+Tim malt Oma.
+Oma malt Tim.
+Mia malt Tom.
+Tom malt Mia.
+Toll, Tim!
+Toll, Mia!
+? Wen malt Tim?
+? Wen malt Mia?
+? Wer malt Tim?
+
+# Emil malt
+Emil malt Oma.
+Lotte malt mit.
+Oma malt Emil.
+Oma malt Lotte.
+Toll, Oma!
+Toll, alle!
+? Wen malt Emil?
+? Wer malt mit?
+? Wen malt Oma?
+
+# Alle lesen
+Mila und Ole lesen.
+Mama und Oma lesen.
+Alle lesen.
+Mila und Ole malen Esel.
+Mama und Oma malen Lamas.
+Nun malen alle.
+? Wer liest mit Mila?
+? Was malen Mila und Ole?
+? Was machen am Ende alle?
+
+# Alle rennen
+Rosa und Ali rennen.
+Alle rennen im Saal.
+Oma las.
+Also los, Oma!
+Nun rennen alle.
+Nun sind alle da.
+? Wer rennt zuerst?
+? Wo rennen alle?
+? Was macht Oma am Anfang?

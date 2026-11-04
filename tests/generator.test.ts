@@ -1,3 +1,5 @@
+import { Vocab } from '../src/core/vocab';
+import { analyzeMaterial } from '../src/core/material';
 import { describe, expect, it } from 'vitest';
 import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, MAX_STUFE_ALPHABET, BLAETTER_PRO_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
 import { DICT } from '../src/core/dict';
@@ -66,7 +68,7 @@ describe('Generator: Umfang', () => {
       const { sheet } = generateSheet(params(START, { minutes }));
       expect(sheet.silben).toHaveLength(c.silben);
       expect(sheet.woerter).toHaveLength(c.woerter);
-      expect(sheet.kleine).toHaveLength(c.kleine);
+      expect(sheet.kleine).toEqual([]);
       expect(sheet.saetze).toHaveLength(c.saetze);
       expect(sheet.geschichte!.saetze.length).toBe(c.geschichte);
       expect(sheet.fragen.length).toBeGreaterThanOrEqual(c.fragen[0]);
@@ -76,9 +78,9 @@ describe('Generator: Umfang', () => {
     });
   }
 
-  it('wenige Buchstaben: Blöcke kürzer statt erfunden', () => {
+  it('wenige Buchstaben: bekannte Wörter wiederholen statt erfinden', () => {
     const { sheet } = generateSheet(params(['m', 'a']));
-    expect(sheet.woerter.length).toBeLessThan(20);
+    expect(new Set(sheet.woerter).size).toBeLessThan(20);
     assertOnlyKnown(sheet, ['m', 'a']);
   });
 
@@ -89,10 +91,14 @@ describe('Generator: Umfang', () => {
     }
   });
 
-  it('Wörter: zuerst kurze', () => {
+  it('Wörter: normale aufsteigend, kurze (am, im) verteilt statt alle vorn', () => {
     const { sheet } = generateSheet(params(START));
-    const lens = sheet.woerter.map((w) => [...w].length);
-    expect([...lens].sort((a, b) => a - b)).toEqual(lens);
+    const kurz = new Set(new Vocab(new Set(START)).kleine);
+    const normal = sheet.woerter.filter((w) => !kurz.has(w)).map((w) => [...w].length);
+    expect([...normal].sort((a, b) => a - b)).toEqual(normal);
+    const stellen = sheet.woerter.flatMap((w, i) => (kurz.has(w) ? [i] : []));
+    expect(stellen.length).toBeGreaterThanOrEqual(3);
+    expect(stellen[stellen.length - 1]).toBeGreaterThanOrEqual(sheet.woerter.length / 2);
   });
 
   it('keine doppelten Wörter innerhalb eines Blatts', () => {
@@ -477,4 +483,48 @@ describe('Langzeit: viele Tage hintereinander', () => {
       });
     }
   });
+});
+
+
+describe('Anfang mit wenigen Buchstaben', () => {
+  it('erzeugt mit A weder Geschichte noch Belohnungs-Quest', () => {
+    const d = generateSheet(params(['a'])).sheet;
+    expect(d.quest).toBeNull();
+    expect(d.geschichte).toBeNull();
+    expect(d.saetze).toEqual([]);
+  });
+  it('füllt mit M und A ein Übungsblatt ohne Sätze und Geschichte', () => {
+    const d = generateSheet(params(['m', 'a'])).sheet;
+    expect(d.practice).toBe(true);
+    expect(d.silben).toEqual(expect.arrayContaining(['ma', 'am']));
+    expect(d.woerter).toEqual(expect.arrayContaining(['Mama', 'am']));
+    expect(d.geschichte).toBeNull();
+    expect(d.saetze).toEqual([]);
+    for (const text of readingTexts(d)) expect(checkText(text, new Set(['m','a'])).ok).toBe(true);
+  });
+});
+
+it('Anfangsblatt behält verfügbare Wörter bei verschiedenen Zufallszahlen', () => {
+  for (let seed = 1; seed <= 12; seed++) {
+    const sheet = generateSheet(params(['m','a'], {newLetter:null, seed})).sheet;
+    expect(sheet.woerter).toContain('Mama');
+  }
+});
+
+it('L S A E I создают предложения; четыре буквы не запрещают готовое предложение', () => {
+  expect(generateSheet(params(['l','s','a','e','i'])).sheet.saetze).toContain('Lisa las alles.');
+  expect(generateSheet(params(['l','s','a','i'])).sheet.saetze).toContain('Lisa las.');
+});
+
+it('erstellt für A C D E I K M O S T ohne fertige Vorlage eine lesbare Geschichte', () => {
+  const letters = ['a','c','d','e','i','k','m','o','s','t'];
+  expect(analyzeMaterial(letters).stories).toHaveLength(0);
+  expect(analyzeMaterial(letters).template).not.toBeNull();
+  for (const seed of [1, 2, 17]) {
+    const { sheet } = generateSheet(params(letters, { seed }));
+    expect(sheet.geschichte?.saetze.length ?? 0).toBeGreaterThanOrEqual(3);
+    for (const line of [sheet.geschichte!.titel, ...sheet.geschichte!.saetze]) {
+      expect(checkText(line, new Set(letters)).ok, line).toBe(true);
+    }
+  }
 });
