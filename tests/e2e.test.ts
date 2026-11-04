@@ -949,7 +949,7 @@ describe('B4: volle Lese-Raupe → Urkunde', () => {
     await p.click('.onb [data-alle]');
     await p.waitForSelector('.modal');
     expect(await p.textContent('.modal h2')).toBe('Alle Buchstaben gewählt');
-    expect(await p.textContent('.modal')).toContain('Kennt dein Kind schon alle Buchstaben');
+    expect(await p.textContent('.modal')).toContain('Silben vom Blatt nehmen?');
     expect(await p.$$eval('.onb .lt.on, .onb .lt.neu', (e) => e.length)).toBe(43);
     // kein „neu“: das Kind kann alle – sonst ginge es auf jedem Blatt um tz
     expect(await p.$('.onb .lt.neu')).toBeNull();
@@ -960,7 +960,7 @@ describe('B4: volle Lese-Raupe → Urkunde', () => {
     await p.click('#onb-next');
     await p.waitForSelector('#create');
     const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
-    expect([await an('silben'), await an('woerter'), await an('saetze'), await an('geschichte')]).toEqual([false, true, true, true]);
+    expect([await an('silben'), await an('woerter'), await an('saetze'), await an('geschichte'), await an('quest'), await an('fragen')]).toEqual([false, true, true, true, true, true]);
     // Buchstaben ab- und wieder anwählen: keine zweite Frage
     await p.click('[data-l="tz"]');
     await p.waitForFunction(() => document.querySelector('[data-l="tz"]')?.className.includes('lt '));
