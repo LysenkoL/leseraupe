@@ -31,8 +31,17 @@ it('A und zwei Konsonanten erlauben kein leeres Blatt', async () => {
     await page.close();
   }
 });
-it('M und A erzeugen ein ganzes A4-Blatt ohne Geschichte und ohne Überlauf', async () => {
+it('M und A reichen nicht: kein Blatt, die Plakette nennt den nächsten Buchstaben', async () => {
   const page = await open(['m', 'a']);
+  expect(await page.locator('#create').isDisabled()).toBe(true);
+  expect(await page.locator('#material-hint').textContent()).toContain('keine Leseübung');
+  await page.waitForSelector('#letter-tipp:not([hidden])');
+  expect(await page.locator('#letter-tipp').textContent()).toContain('Noch 1 Buchstabe');
+  await page.close();
+});
+
+it('M, A und L erzeugen ein ganzes A4-Blatt ohne Geschichte und ohne Überlauf', async () => {
+  const page = await open(['m', 'a', 'l']);
   expect(await page.locator('#material-hint').textContent()).toContain('Silben');
   expect(await page.locator('input[data-block="kleine"]').count()).toBe(0);
   // gewählte Blöcke, die fehlen, stehen in der Plakette
@@ -64,7 +73,7 @@ it('старый пустой лист с одним Quest не открывае
   await page.close();
 });
 it('Antwort mit Markdown-Escapes wird über die Oberfläche zum Blatt', async () => {
-  const page = await open(['m','a']);
+  const page = await open(['m','a','l']);
   await page.goto(base + '#/chat');
   await page.locator('#answer').fill(String.raw`{"woerter": \["Mama"\], "kleinewoerter": \["am"\]}`);
   await page.click('#make');
@@ -226,7 +235,7 @@ it('KI-Seite: Prompt lässt sich immer kopieren, das Antwortfeld gibt es nur, we
   const nurSilben = await browser.newPage({ viewport: { width: 360, height: 800 } });
   await nurSilben.addInitScript((settings) => {
     localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', kinder: [{ id: 'k1', settings }], onboarded: true, sprache: 'de' }));
-  }, { ...DEFAULT_SETTINGS, letters: ['m','a'], newLetter: null, blocks: { ...DEFAULT_SETTINGS.blocks, woerter: false, saetze: false, geschichte: false, fragen: false } });
+  }, { ...DEFAULT_SETTINGS, letters: ['m','a','l'], newLetter: null, blocks: { ...DEFAULT_SETTINGS.blocks, woerter: false, saetze: false, geschichte: false, fragen: false } });
   await nurSilben.goto(base + '#/chat');
   await nurSilben.waitForSelector('#copy');
   expect(await nurSilben.locator('#answer').count()).toBe(0);
@@ -234,7 +243,7 @@ it('KI-Seite: Prompt lässt sich immer kopieren, das Antwortfeld gibt es nur, we
   await nurSilben.waitForSelector('.sheet .g-silben');
   await nurSilben.close();
 
-  const normal = await open(['m','a']);
+  const normal = await open(['m','a','l']);
   await normal.goto(base + '#/chat');
   await normal.waitForSelector('#answer');
   await normal.close();
