@@ -283,11 +283,14 @@ export function parseBackup(text: string): Backup & { uebersprungen: number } {
   const kinder = new Set(profile.kinder.map((x) => x.id));
   const roh = (b.sheets as unknown[]).map((r) => (v2 ? r : { ...(r as object), kindId: k }));
   const gesehen = new Set<string>();
+  const ids = new Set<number>();
   const sheets = roh.filter((r): r is SheetRecord => {
     if (!gueltigesBlatt(r) || !kinder.has(r.kindId)) return false;
     const key = `${r.kindId}:${r.number}`;
-    if (gesehen.has(key)) return false;
+    // gleiche Nummer oder gleiche ID (kaputte Datei): beim Einspielen würde ein Blatt das andere überschreiben
+    if (gesehen.has(key) || (r.id !== undefined && ids.has(r.id))) return false;
     gesehen.add(key);
+    if (r.id !== undefined) ids.add(r.id);
     return true;
   });
   if (roh.length && !sheets.length) throw new Error('Die Sicherung ist beschädigt.');
