@@ -5,7 +5,7 @@ import { prepareWorksheet, WorksheetOverflowError } from '../sheet/prepare';
 import { mitDruckKnopf, printSheets } from '../sheet/print';
 import { pdfName, sharePdf, sheetsToPdf } from '../sheet/pdf';
 import { log, nextNumber, saveOnPrint } from '../core/db';
-import { rerollBlock, type Removed } from '../core/generator';
+import { rerollBlock } from '../core/generator';
 import { contentIssue } from '../core/content';
 import { checkText, unitById, UNIT_IDS } from '../core/letters';
 import { genParams, remixCurrent, saveSerieBis } from '../app/actions';
@@ -15,19 +15,10 @@ import { lesungSpeichern } from '../app/lesezeit';
 import type { BlockId, SheetData } from '../core/types';
 import { t, themaName } from '../app/i18n';
 
-/** Abgelehnte Schimpfwörter auch nicht als Beispiel über dem Kinderblatt anzeigen. */
-function removedLabel(item: Removed): string {
-  const reason = contentIssue(item.text) ?? item.reason;
-  const keys = {content:'vorschau.inhaltEntfernt',storyLength:'vorschau.geschichteZuLang',storyIncomplete:'vorschau.geschichteUnvollstaendig',unsuitable:'vorschau.inhaltsfilter',pronunciation:'vorschau.aussprachefilter'} as const;
-  const name = reason === 'unsuitable' || reason === 'pronunciation' ? t('vorschau.textGefiltert') : item.text;
-  return `${esc(name)} (${esc(reason ? t(keys[reason]) : item.missing.join(', '))})`;
-}
-
 /** Gewählt, aber mit diesen Buchstaben noch nicht möglich: Sätze / Geschichte – kurz sagen, warum sie fehlen */
 export function fehltHinweis(d: SheetData): string {
   const saetze = d.blocks.saetze && !d.saetze.length;
   const geschichte = d.blocks.geschichte && !d.geschichte;
-  if (!saetze && !geschichte && d.practice) return `<div class="hint pv-fehlt">${t('vorschau.chatUebung')}</div>`;
   if (d.source === 'chat') {
     const missing = [saetze ? t('block.saetze') : '', geschichte ? t('block.geschichte') : '', d.blocks.fragen && d.blocks.geschichte && d.geschichte && !d.fragen.length ? t('block.fragen') : ''].filter(Boolean);
     return (missing.length ? `<div class="hint pv-fehlt">${t('vorschau.chatNichtUebernommen',{blocks:missing.join(', ')})}</div>` : '');
@@ -70,7 +61,6 @@ export function renderVorschau(root: HTMLElement): void {
   <div class="topbar">${backButton('#/')}<div class="grow"><h1 id="pv-title">${t('vorschau.blatt')}</h1><div class="sub" id="pv-sub"></div></div>
     <button class="pillbtn sy-toggle" id="pv-silben" aria-pressed="false" title="${t('vorschau.silben')}" aria-label="${t('vorschau.silben')}"><span class="sy1">Ma</span><span class="sy2">ma</span></button></div>
   <div class="serie-nav" id="pv-nav"></div>
-  <div id="pv-removed"></div>
   <div id="pv-fehlt"></div>
   <div class="preview-wrap" id="pv"></div>
   <div class="hint" style="padding:6px 16px 0">${t('vorschau.hinweis')}</div>
@@ -129,10 +119,6 @@ export function renderVorschau(root: HTMLElement): void {
     // in einer Serie eindeutig: nur dieses Blatt wird als gelesen markiert
     root.querySelector('#read')!.textContent = t('vorschau.gelesenNr', { nr: h.nr });
     root.querySelector('#pv-sub')!.textContent = h.sub;
-    const rm = root.querySelector<HTMLElement>('#pv-removed')!;
-    rm.innerHTML = d.removed.length
-      ? `<div class="removed"><b>${t('vorschau.entfernt')}</b> ${d.removed.map(removedLabel).join(' · ')}</div>`
-      : '';
     const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
     sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
     sy.classList.toggle('on', !!d.data.silbenFarbig);

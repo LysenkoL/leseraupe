@@ -13,16 +13,16 @@ export function renderChat(root: HTMLElement): void {
   const prompt = buildPrompt(s.letters, s.newLetter, 5, s.blocks);
   const material = analyzeMaterial(s.letters);
   const storyAttempt = s.blocks.geschichte && (material.available.geschichte || material.available.saetze);
-  const fields = (['woerter','kleine','saetze'] as BlockId[]).filter(id=>s.blocks[id] && material.available[id]);
+  const fields = (['woerter','saetze'] as BlockId[]).filter(id=>s.blocks[id] && material.available[id]);
   const localOnly = !fields.length && !storyAttempt && s.blocks.silben && material.available.silben;
   const canCreate = !!(localOnly || fields.length || storyAttempt);
-  const summary = localOnly ? t('chat.nurLokal') : !canCreate ? t('start.keinMaterial') : t('chat.auswahl', {names:fields.map(id=>t(`block.${id}`)).join(', ') || t('block.geschichte')}) + (storyAttempt ? ' ' + t('chat.geschichteOptional') : '') + ' ' + t('chat.a4');
+  const summary = localOnly ? t('chat.nurLokal') : !canCreate ? t('start.keinMaterial') : '';
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1></div></div>
   <div class="content">
-    <p class="hint" id="chat-material" role="status">${esc(summary)}</p>
+    ${summary ? `<p class="hint" id="chat-material" role="status">${esc(summary)}</p>` : ''}
     <section class="card">
       <h2>${t('chat.schritt1')}</h2>
       <button class="btn green" id="copy">${t('chat.kopieren')}</button>

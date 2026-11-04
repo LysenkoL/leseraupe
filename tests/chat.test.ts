@@ -1,7 +1,7 @@
 import { analyzeMaterial } from '../src/core/material';
 import { describe, expect, it } from 'vitest';
 import { buildPrompt, extractJson, parseChat, sheetFromChat, PARSE_ERROR } from '../src/core/chat';
-import { emptyHistory, readingTexts } from '../src/core/generator';
+import { COUNTS, emptyHistory, readingTexts } from '../src/core/generator';
 import { DEFAULT_BLOCKS } from '../src/core/types';
 import { checkText, UNIT_IDS } from '../src/core/letters';
 
@@ -67,12 +67,13 @@ describe('JSON aus der Antwort', () => {
 describe('Blatt aus Chat-Antwort', () => {
   it('fremde Buchstaben werden aussortiert und angezeigt', () => {
     const { sheet, removed } = sheetFromChat(parseChat(JSON.stringify(GOOD)), P);
-    expect(sheet.woerter).toEqual(['Oma', 'Mama', 'Lama', 'lila', 'Salat']);
-    expect(sheet.saetze).toHaveLength(3);
-    expect(sheet.saetze.slice(0, 2)).toEqual(['Mama malt.', 'Tom ist toll.']);
-    expect(sheet.localBlocks).toEqual(expect.arrayContaining(['woerter', 'saetze']));
+    expect(sheet.woerter).toEqual(expect.arrayContaining(['Oma', 'Mama', 'Lama', 'lila', 'Salat', 'am', 'im']));
+    // Was wegfällt, kommt still aus dem Wörterbuch dazu: der Block bleibt voll
+    expect(sheet.woerter).toHaveLength(COUNTS[P.minutes].woerter);
+    expect(sheet.kleine).toEqual([]);
+    expect(sheet.saetze).toHaveLength(COUNTS[P.minutes].saetze);
+    expect(sheet.saetze).toEqual(expect.arrayContaining(['Mama malt.', 'Tom ist toll.']));
     expect(sheet.geschichte?.saetze).toEqual(analyzeMaterial(START).stories[0].saetze);
-    expect(sheet.localBlocks).toContain('geschichte');
     expect(removed.map((r) => r.text)).toEqual(expect.arrayContaining(['Tisch', 'Eis', 'und', 'Oma isst Eis.', 'Tim sieht Oma.']));
     expect(removed.find((r) => r.text === 'Tisch')!.missing).toEqual(['Sch']);
     // Keine Fragen über eine Geschichte, aus der ein Satz entfernt werden musste
@@ -115,7 +116,7 @@ it('12 выбранных букв допускают предложения б�
   const letters = ['l','s','d','a','i','o','ü','h','r','t','k','c'];
   const answer = parseChat(JSON.stringify({woerter:['Rad'],saetze:['Lisa hat das Rad.','Das Rad ist rot.'],geschichte:{titel:'Das Rad',saetze:['Lisa hat das Rad.','Das Rad ist rot.']}}));
   const {sheet} = sheetFromChat(answer,{...P,letters,newLetter:'h'});
-  expect(sheet.saetze).toHaveLength(2);
+  expect(sheet.saetze).toEqual(expect.arrayContaining(['Lisa hat das Rad.', 'Das Rad ist rot.']));
   expect(sheet.geschichte?.saetze).toHaveLength(2);
 });
 
@@ -140,7 +141,6 @@ describe('Качество начального листа из ИИ', () => {
   it('не вырезает середину истории, оставляя вопросы о вырезанном', () => {
     const {sheet} = sheetFromChat(parseChat(JSON.stringify(GOOD)),P);
     expect(sheet.geschichte?.saetze).toEqual(analyzeMaterial(START).stories[0].saetze);
-    expect(sheet.localBlocks).toContain('geschichte');
     expect(sheet.fragen).toEqual(analyzeMaterial(START).stories[0].fragen.slice(0,4));
   });
 });
@@ -153,7 +153,6 @@ describe('Один фильтр до и после ИИ', () => {
     const {sheet,removed} = sheetFromChat(answer,{...P,letters,newLetter:'e'});
     expect(sheet.saetze).toContain('Lisa las alles.');
     expect(sheet.practice).not.toBe(true);
-    expect(sheet.localBlocks).toContain('saetze');
     expect(removed.some(r=>r.text==='Eis' && r.missing.includes('Ei'))).toBe(true);
     for (const text of readingTexts(sheet)) expect(checkText(text,new Set(letters)).ok).toBe(true);
   });
@@ -163,7 +162,6 @@ it('не добавляет предложения вопреки явному �
   const blocks = {...DEFAULT_BLOCKS,saetze:false,geschichte:false,fragen:false};
   const {sheet} = sheetFromChat(parseChat('{"woerter":["Lisa","lila"]}'),{...P,letters:['l','s','a','e','i'],blocks});
   expect(sheet.saetze).toEqual([]);
-  expect(sheet.localBlocks ?? []).not.toContain('saetze');
   expect(buildPrompt(['l','s','a','e','i'],null,5,blocks)).not.toContain('saetze darf nicht leer sein');
 });
 
@@ -198,7 +196,6 @@ it('цельная история из восьми предложений не 
   const story = {titel:'Das Bild',saetze:['Lisa hat ein Bild.','Das Bild ist bunt.','Lisa malt ein Haus.','Ali malt eine Blume.','Lisa malt die Sonne.','Ali malt den Baum.','Das Bild ist nun bunt.','Lisa und Ali lachen.']};
   const {sheet} = sheetFromChat({...parseChat('{"woerter":["Bild"]}'),geschichte:story},{...P,letters:UNIT_IDS,newLetter:null});
   expect(sheet.geschichte).toEqual(story);
-  expect(sheet.localBlocks).not.toContain('geschichte');
 });
 
 it('JSON-ремонт не меняет содержимое строк и немецкие кавычки', () => {

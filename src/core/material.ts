@@ -10,7 +10,6 @@ import type { BlockId } from './types';
 
 export interface Material {
   words: string[];
-  kleine: string[];
   vocabulary: string[];
   wordSet: ReadonlySet<string>;
   silben: string[];
@@ -22,9 +21,8 @@ export interface Material {
 /** Inhaltliche Obergrenze; die Druckaufbereitung erhält Geschichten immer als Ganzes. */
 export const MAX_STORY_SENTENCES = 14;
 const cache = new Map<string, Material>();
-const SMALL = new Set('am im in an auf aus mit und oder ein eine der die das den dem einen einem einer ich du wir ihr es er sie so ja nein da hier dort als alles'.split(' '));
 const FAMILY = new Set(['mama','papa','oma','opa']);
-const FINITE = new Set('las ist sind hat haben mag malt liest spielt läuft rennt rollt sucht findet lacht isst trinkt ruft hilft hält holt teilt gibt nimmt sitzt steht liegt'.split(' '));
+const FINITE = new Set('las ist sind hat haben mag malt liest spielt läuft rennt rollt sucht findet lacht isst trinkt ruft hilft hält holt teilt gibt nimmt sitzt steht liegt lesen malen essen rennen'.split(' '));
 const unique = (list: string[]) => [...new Map(list.map(word => [word.toLowerCase(),word])).values()];
 
 /** Positive evidence from actual readable material, independent of randomness, new letter, history and difficulty. */
@@ -80,13 +78,22 @@ export function analyzeMaterial(letters: string[]): Material {
   for (const sentence of ['Das ist da.', 'Das ist rot.', 'Das ist lila.', 'Das ist ein Esel.', 'Das ist ein Lama.', 'Es ist nass.', 'Es ist warm.', 'Es ist kalt.']) {
     if (accepts(sentence)) candidates.push(sentence);
   }
-  const sentences = [...new Set([...candidates,...DICT.saetze.filter(s=>wordsOf(s).length>=2 && wordsOf(s).some(w=>FINITE.has(w.toLowerCase())) && accepts(s))])];
-  const words = vocabulary.filter(w=>!SMALL.has(w.toLowerCase()));
-  const kleine = vocabulary.filter(w=>SMALL.has(w.toLowerCase()));
+  // Fertige Sätze des Wörterbuchs sind geprüft: sie brauchen nur die Buchstaben, nicht den kleinen Startwortschatz.
+  const ready = DICT.saetze.filter(s=>wordsOf(s).length>=2 && fits(s) && (wordsOf(s).some(w=>FINITE.has(w.toLowerCase())) || wordsOf(s).every(w=>wordSet.has(w.toLowerCase()))));
+  const sentences = [...new Set([...candidates,...ready])];
+  // Kurze Wörter (am, im, und) stehen seit der Zusammenlegung mit in den Wörtern.
+  const words = vocabulary;
   const silben = makeSilben(ids,null,1000,mulberry32(1));
-  const readable = !!(silben.length || words.length || kleine.length || sentences.length || stories.length);
-  const material: Material = {words,kleine,vocabulary,wordSet,silben,sentences,stories,template,available:{silben:!!silben.length,woerter:!!words.length,kleine:!!kleine.length,saetze:!!sentences.length,geschichte:!!stories.length,fragen:!!firstStory?.fragen.length,quest:readable,aehnlich:false}};
+  const readable = !!(silben.length || words.length || sentences.length || stories.length);
+  const material: Material = {words,vocabulary,wordSet,silben,sentences,stories,template,available:{silben:!!silben.length,woerter:!!words.length,kleine:false,saetze:!!sentences.length,geschichte:!!stories.length,fragen:!!firstStory?.fragen.length,quest:readable,aehnlich:false}};
   if (cache.size >= 256) cache.delete(cache.keys().next().value!);
   cache.set(key,material);
   return material;
+}
+
+/** Für den Hinweis auf der Startseite: Ist dieser Block mit diesen Buchstaben möglich? */
+export type HinweisBlock = 'silben' | 'woerter' | 'saetze' | 'geschichte';
+export function moeglich(letters: string[], block: HinweisBlock): boolean {
+  const m = analyzeMaterial(letters);
+  return block === 'geschichte' ? m.available.geschichte || !!m.template : m.available[block];
 }

@@ -1,3 +1,4 @@
+import { Vocab } from '../src/core/vocab';
 import { analyzeMaterial } from '../src/core/material';
 import { describe, expect, it } from 'vitest';
 import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, MAX_STUFE_ALPHABET, BLAETTER_PRO_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
@@ -67,7 +68,7 @@ describe('Generator: Umfang', () => {
       const { sheet } = generateSheet(params(START, { minutes }));
       expect(sheet.silben).toHaveLength(c.silben);
       expect(sheet.woerter).toHaveLength(c.woerter);
-      expect(sheet.kleine).toHaveLength(c.kleine);
+      expect(sheet.kleine).toEqual([]);
       expect(sheet.saetze).toHaveLength(c.saetze);
       expect(sheet.geschichte!.saetze.length).toBe(c.geschichte);
       expect(sheet.fragen.length).toBeGreaterThanOrEqual(c.fragen[0]);
@@ -90,10 +91,14 @@ describe('Generator: Umfang', () => {
     }
   });
 
-  it('Wörter: zuerst kurze', () => {
+  it('Wörter: normale aufsteigend, kurze (am, im) verteilt statt alle vorn', () => {
     const { sheet } = generateSheet(params(START));
-    const lens = sheet.woerter.map((w) => [...w].length);
-    expect([...lens].sort((a, b) => a - b)).toEqual(lens);
+    const kurz = new Set(new Vocab(new Set(START)).kleine);
+    const normal = sheet.woerter.filter((w) => !kurz.has(w)).map((w) => [...w].length);
+    expect([...normal].sort((a, b) => a - b)).toEqual(normal);
+    const stellen = sheet.woerter.flatMap((w, i) => (kurz.has(w) ? [i] : []));
+    expect(stellen.length).toBeGreaterThanOrEqual(3);
+    expect(stellen[stellen.length - 1]).toBeGreaterThanOrEqual(sheet.woerter.length / 2);
   });
 
   it('keine doppelten Wörter innerhalb eines Blatts', () => {
@@ -490,7 +495,9 @@ describe('Anfang mit wenigen Buchstaben', () => {
   });
   it('füllt mit M und A ein Übungsblatt ohne Sätze und Geschichte', () => {
     const d = generateSheet(params(['m', 'a'])).sheet;
-    expect(d.silben.length + d.woerter.length + d.kleine.length).toBeGreaterThanOrEqual(48);
+    expect(d.practice).toBe(true);
+    expect(d.silben).toEqual(expect.arrayContaining(['ma', 'am']));
+    expect(d.woerter).toEqual(expect.arrayContaining(['Mama', 'am']));
     expect(d.geschichte).toBeNull();
     expect(d.saetze).toEqual([]);
     for (const text of readingTexts(d)) expect(checkText(text, new Set(['m','a'])).ok).toBe(true);

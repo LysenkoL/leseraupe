@@ -246,10 +246,35 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>, n =
   return words.sort((a, b) => [...a].length - [...b].length);
 }
 
-function makeKleine(v: Vocab, p: GenParams, rng: Rng): string[] {
-  const n = COUNTS[p.minutes].kleine;
+function makeKleine(v: Vocab, p: GenParams, rng: Rng, n = COUNTS[p.minutes].kleine, allowStale = true): string[] {
   const prefer = (w: string) => (p.newLetter ? countUnit(w, p.newLetter) > 0 : false);
-  return pickFresh(v.kleine, n, p.history, rng, prefer, NEU_ANTEIL).sort((a, b) => [...a].length - [...b].length);
+  return pickFresh(v.kleine, n, p.history, rng, prefer, NEU_ANTEIL, allowStale).sort((a, b) => [...a].length - [...b].length);
+}
+
+/** Etwa jedes vierte Wort im Wortblock ist ein kurzes Wort (am, im, und). */
+const KURZ_ANTEIL = 0.25;
+
+/** Kurze Wörter gleichmäßig zwischen die übrigen setzen – sonst stünden sie durch die Sortierung alle vorn. */
+export function mischeKurzeWoerter(woerter: string[], kurz: string[]): string[] {
+  if (!kurz.length) return woerter;
+  const out = [...woerter];
+  const abstand = (woerter.length + kurz.length) / kurz.length;
+  kurz.forEach((w, i) => out.splice(Math.min(out.length, Math.round(abstand * (i + 0.5))), 0, w));
+  return out;
+}
+
+/** Der Wortblock: normale Wörter und kurze Wörter zusammen, Stolperwörter eingeschlossen. */
+function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = new Set<string>()): string[] {
+  // nur frische kurze Wörter; was fehlt, übernehmen die normalen Wörter (sonst kämen „im“ und „am“ jeden Tag)
+  const kurz = makeKleine(v, p, rng, Math.round(n * KURZ_ANTEIL), false).filter((w) => !exclude.has(w));
+  const lang = makeWoerter(v, p, rng, new Set([...exclude, ...kurz]), n - kurz.length);
+  // zu wenige normale Wörter: die kurzen dürfen den Block weiter auffüllen
+  const mehrKurz = lang.length + kurz.length < n
+    ? pickFresh(v.kleine.filter((w) => !kurz.includes(w) && !exclude.has(w)), n - lang.length - kurz.length, p.history, rng, () => false, 0)
+    : [];
+  const alleKurz = [...kurz, ...mehrKurz];
+  const mit = addStolper(lang, alleKurz, v, p, rng);
+  return mischeKurzeWoerter(mit.woerter, mit.kleine);
 }
 
 /**
@@ -482,17 +507,16 @@ export function generateSheet(p: GenParams): Generated {
   // (nur beim heutigen Blattumfang; der alte 10-Minuten-Umfang war für lange Geschichten gebaut)
   const lang = !!story && p.blocks.geschichte && p.minutes === 5 && story.g.saetze.length >= LANG_GESCHICHTE;
   const silben = lang ? alleSilben.slice(0, LANG_SILBEN) : alleSilben;
-  const { woerter, kleine } = (() => {
-    const k = makeKleine(v, p, rng);
-    return addStolper(makeWoerter(v, p, rng, new Set(k), lang ? LANG_WOERTER : c.woerter), k, v, p, rng);
-  })();
+  const woerter = makeWortblock(v, p, rng, lang ? LANG_WOERTER : c.woerter);
 
   const avoid = new Set(story?.g.saetze ?? []);
   const fertige = DICT.saetze.filter((s) => v.has(s));
   const viele = p.letters.length >= VIELE_BUCHSTABEN;
   // C3: bei vielen Buchstaben nur fertige Sätze – die Vorlagen ergeben zu einfache Sätze („Das ist Moritz.“)
   const vorlagen = templateSentences(v, pools(v), rng);
-  const cands = [...new Set([...(viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen]), ...material.sentences])];
+  const grundstock = viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen];
+  // Einfache Notsätze („Ali las.“) nur, wenn sonst nicht genug Sätze da wären – sonst klingt das Blatt eintönig
+  const cands = [...new Set(grundstock.length >= c.saetze ? grundstock : [...grundstock, ...material.sentences])];
   const len = (x: string) => wordsOf(x).length;
   // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
   let satzCands = cands;
@@ -528,7 +552,7 @@ export function generateSheet(p: GenParams): Generated {
     ...(p.silbenFarbig ? { silbenFarbig: true } : {}),
     silben,
     woerter,
-    kleine,
+    kleine: [],
     // Block „Ähnliche Buchstaben“ entfällt (A6); nur alte Blätter haben ihn noch
     aehnlich: null,
     saetze,
@@ -537,7 +561,7 @@ export function generateSheet(p: GenParams): Generated {
     fragen: story?.fragen ?? [],
     source: 'dict',
   };
-  preparePractice(sheet,rng);
+  preparePractice(sheet);
   if (sheet.practice) sheet.quest = null;
   if (!hasReadingMaterial(sheet)) { sheet.quest = null; sheet.fragen = []; }
   return { sheet, removed: [] };
@@ -554,11 +578,12 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
       s.silben = g.sheet.silben;
       break;
     case 'woerter':
-      s.woerter = makeWoerter(v, p, rng, new Set([...sheet.kleine, ...sheet.woerter]));
+      s.woerter = makeWortblock(v, p, rng, COUNTS[p.minutes].woerter, new Set([...sheet.kleine, ...sheet.woerter]));
       if (s.woerter.length < COUNTS[p.minutes].woerter / 2) s.woerter = g.sheet.woerter;
       break;
     case 'kleine':
-      s.kleine = g.sheet.kleine;
+      // nur noch auf alten Blättern, die den Block getrennt haben
+      s.kleine = makeKleine(v, p, rng);
       break;
     case 'saetze':
       s.saetze = g.sheet.saetze;
@@ -573,7 +598,7 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
       s.quest = makeQuest({ ...p, history: { ...p.history, lastQuest: sheet.quest?.kind ?? null } }, s, v, rng);
       break;
   }
-  preparePractice(s,rng);
+  preparePractice(s);
   return s;
 }
 

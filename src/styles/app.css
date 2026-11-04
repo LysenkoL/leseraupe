@@ -119,8 +119,6 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
   position: absolute; top: 0; left: 0; transform-origin: 0 0;
   width: 210mm; height: 297mm; padding: 10mm; background: #fff; box-shadow: 0 2px 14px rgba(0,0,0,.18);
 }
-.removed { font-size: 13px; color: #9C2B45; padding: 8px 16px 0; }
-.removed b { font-weight: 800; }
 
 /* Formulare */
 .field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; }
@@ -400,8 +398,14 @@ a.iconbtn { text-decoration: none; }
 .card > label.field:first-child { font-size: 16px; font-weight: 800; gap: 10px; }
 /* Erklärtexte (mehrzeilig) überall im Blocksatz mit Silbentrennung – nur Oberfläche, nie auf dem Leseblatt */
 .card > .hint, .content > .hint { text-align: justify; hyphens: auto; text-wrap: pretty; }
-.card > #material-hint:has(+ .hint) { margin-bottom: 4px; }
-.card > #material-hint + .hint { margin-top: 0; }
+/* kurze Aufzählung: nicht im Blocksatz, sonst entstehen breite Lücken */
+.card > #material-hint { text-align: left; hyphens: manual; margin-top: 10px; }
+/* Hinweis auf den nächsten Buchstaben: eigene Plakette, damit er auffällt */
+.tipp { margin-top: 8px; padding: 10px 12px; border-radius: 12px; background: #FDEEDC; border: 1.5px solid #F2A65A; color: #6B3D12; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.tipp[hidden] { display: none; }
+.tipp p { margin: 0; }
+.tipp p + p { margin-top: 4px; }
+.tipp b { font-weight: 800; }
 /* Links im Text: grün wie die App (sonst Blau des Systems) */
 .card a:not(.btn):not(.pillbtn):not(.chip) { color: var(--green); }
 /* leere „Gespeichert“-Zeile nimmt keinen Platz ein */

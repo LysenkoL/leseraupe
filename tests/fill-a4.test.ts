@@ -4,6 +4,7 @@ import { createServer, type ViteDevServer } from 'vite';
 import { DEFAULT_SETTINGS } from '../src/core/store';
 import { SAMPLE_SHEET } from '../src/core/sample';
 import type { SheetData } from '../src/core/types';
+import { checkText } from '../src/core/letters';
 
 let server: ViteDevServer, browser: Browser, base: string;
 beforeAll(async () => {
@@ -60,7 +61,8 @@ it('L S A E I: echte zusätzliche Silbenzeilen füllen A4 und bleiben bei Neuzei
     const first = await state(page);
     expect(first.gap).toBeLessThan(65);
     expect(first.font).toBeLessThanOrEqual(30);
-    expect(first.syllables.length).toBeGreaterThan(input.silben.length);
+    // zuerst neue Wörter, dann Silben
+    expect(first.words.length).toBeGreaterThan(input.woerter.length);
     expect(first.fits).toBe(true);
     expect(first.draft.data.saetze).toEqual(input.saetze);
     expect(first.draft.data.blocks).toEqual(input.blocks);
@@ -85,7 +87,9 @@ it('M A: Wiederholungen füllen echte Zeilen statt leer gestreckter Blöcke', as
   Object.assign(data, { letters: ['m', 'a'], silben: ['Ma', 'Am'], woerter: ['Mama'], kleine: ['am'], saetze: [], practice: true });
   const page = await open(data);
   const result = await state(page);
-  expect(result.syllables.length).toBeGreaterThanOrEqual(48);
+  expect(result.syllables.length + result.words.length).toBeGreaterThanOrEqual(48);
+  // Wiederholungen nie direkt nebeneinander (bei zwei Silben: im Wechsel)
+  for (let i = 1; i < result.syllables.length; i++) expect(result.syllables[i]).not.toBe(result.syllables[i - 1]);
   expect(result.gap).toBeLessThan(65);
   expect(result.font).toBeLessThanOrEqual(30);
   expect(result.fits).toBe(true);
@@ -168,4 +172,31 @@ it('eine zu lange Geschichte wird weder abgeschnitten noch als druckbares A4 ang
   const retained = await page.evaluate(() => JSON.parse(localStorage.getItem('leseraupe.draft.k1')!).items[0].data.geschichte);
   expect(retained).toEqual(data.geschichte);
   await page.close();
+});
+
+it('freier Platz: alles Ergänzte besteht nur aus gelernten Buchstaben, kurze Sätze stehen in Spalten', async () => {
+  const data = sparse();
+  Object.assign(data, { letters: ['m', 'l', 's', 'a', 'o', 'i'], woerter: ['Mama', 'Oma', 'Lama'], silben: ['ma', 'la'], kleine: [], saetze: ['Lisa las.', 'Oma las.', 'Ali las.', 'Mia las.'], quest: null });
+  const page = await open(data);
+  const result = await state(page);
+  expect(result.words.length).toBeGreaterThan(3);
+  for (const text of [...result.words, ...result.syllables]) expect(checkText(text, new Set(data.letters)).ok, text).toBe(true);
+  expect(new Set(result.words.slice(0, 12)).size).toBe(Math.min(12, result.words.length));
+  expect(await page.locator('.sheet .blk-saetze .sh-lines.cols-3').count()).toBe(1);
+  expect(result.gap).toBeLessThan(65);
+  expect(result.fits).toBe(true);
+  await page.close();
+});
+
+it('lange Sätze bleiben einspaltig, neben einer Geschichte gibt es keine Spalten', async () => {
+  const data = sparse();
+  data.saetze = ['Lisa las alles und Ali las alles und alle lesen.', 'Lisa las.'];
+  const page = await open(data);
+  expect(await page.locator('.sheet .blk-saetze .sh-lines').getAttribute('class')).toBe('sh-lines');
+  await page.close();
+  const mit = sparse();
+  mit.geschichte = { titel: 'Lisa las', saetze: ['Lisa las.', 'Ali las.', 'Lisa las alles.'] };
+  const seite = await open(mit);
+  expect(await seite.locator('.sheet .blk-saetze .sh-lines').getAttribute('class')).toBe('sh-lines');
+  await seite.close();
 });

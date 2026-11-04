@@ -1,5 +1,6 @@
 import { analyzeMaterial } from '../core/material';
-import { UNIT_IDS, unitById } from '../core/letters';
+import { unitById } from '../core/letters';
+import { buchstabenTipp } from '../app/tipp';
 import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { MAX_BLAETTER } from '../core/store';
 import { raupenstand, type Raupenstand } from '../sheet/urkunde';
@@ -32,7 +33,7 @@ function stripVersteckt(): boolean {
 }
 import { t, themaName } from '../app/i18n';
 
-const BLOCKS: BlockId[] = ['silben', 'woerter', 'kleine', 'saetze', 'geschichte', 'quest', 'fragen'];
+const BLOCKS: BlockId[] = ['silben', 'woerter', 'saetze', 'geschichte', 'quest', 'fragen'];
 
 /** App-Icon als Logo oben links (gleiches Bild wie auf dem Startbildschirm des Handys) */
 const LOGO = `<img class="brand-logo" src="icons/icon-192.png" alt="" width="40" height="40" />`;
@@ -41,25 +42,14 @@ export function renderStart(root: HTMLElement): void {
   const routeNr = aktuelleRoute();
   let count = -1;
   let stand: Raupenstand | null = null;
+  let tippLauf = 0;
   const draw = (c = count) => {
     count = c;
     const s = getSettings();
     const material = analyzeMaterial(s.letters);
     const available = { ...material.available, geschichte: material.available.geschichte || !!material.template };
-    const possible = ['silben','woerter','kleine','saetze','geschichte'].some(id => s.blocks[id as BlockId] && available[id as BlockId]);
+    const possible = ['silben','woerter','saetze','geschichte'].some(id => s.blocks[id as BlockId] && available[id as BlockId]);
     const names = BLOCKS.filter(id => available[id] && !['quest', 'fragen'].includes(id)).map(id => t(`block.${id}`)).join(', ');
-    const target = !available.woerter && !available.kleine ? 'woerter'
-      : s.blocks.geschichte && !available.geschichte ? 'geschichte' : null;
-    const extra = target ? UNIT_IDS.find(id => {
-      if (s.letters.includes(id)) return false;
-      const next = analyzeMaterial([...s.letters, id]);
-      return target === 'woerter' ? next.available.woerter || next.available.kleine
-        : next.available.geschichte || !!next.template;
-    }) : undefined;
-    const extraLabel = extra ? unitById(extra)?.label.replace('-', '') ?? extra : '';
-    const tip = target && extra
-      ? t(extra.length === 1 ? 'start.tippBuchstabe' : 'start.tippVerbindung', { unit: extraLabel, exercise: t(`start.tipp.${target}`) })
-      : target ? t('start.tippWeitere') : '';
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
     const themeChips = THEME_WAHL.map((id) => {
       const th = THEMES[themeAus(id)];
@@ -102,7 +92,7 @@ export function renderStart(root: HTMLElement): void {
       <div class="row"><h2>${t('start.buchstaben')}</h2><span class="hint">${t('start.buchstabenZahl', { n: s.letters.length, neu: esc(neu ?? '–') })}</span></div>
       ${lettersHtml(s)}
       <p class="hint" id="material-hint" role="status">${names ? t('start.material', { names }) : t('start.keinMaterial')}</p>
-      ${tip ? `<p class="hint">${esc(tip)}</p>` : ''}
+      <div class="tipp" id="letter-tipp" role="status" hidden></div>
     </section>
     <section class="card">
       <div class="row"><h2>${t('start.blaetter')}</h2><span class="hint">${t('start.blaetterHinweis')}</span></div>
@@ -120,7 +110,6 @@ export function renderStart(root: HTMLElement): void {
     <section class="card">
       <h2>${t('start.bloecke')}</h2>
       <div class="blk-chips">${blocks}</div>
-      
     </section>
   </div>
   <div class="bottom">
@@ -129,6 +118,8 @@ export function renderStart(root: HTMLElement): void {
   </div>
 </div>`;
 
+    const lauf = ++tippLauf;
+    buchstabenTipp(root.querySelector<HTMLElement>('#letter-tipp')!, s.letters, s.blocks, () => lauf !== tippLauf || !root.isConnected);
     bindLetters(root, () => draw(count));
     root.querySelectorAll<HTMLButtonElement>('[data-bl]').forEach((b) =>
       b.addEventListener('click', () => {
