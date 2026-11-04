@@ -20,6 +20,8 @@ export interface Material {
 }
 /** Inhaltliche Obergrenze; die Druckaufbereitung erhält Geschichten immer als Ganzes. */
 export const MAX_STORY_SENTENCES = 14;
+/** So viele verschiedene Wörter braucht ein Blatt mindestens. */
+export const MIN_WOERTER = 4;
 const cache = new Map<string, Material>();
 const FAMILY = new Set(['mama','papa','oma','opa']);
 const FINITE = new Set('las ist sind hat haben mag malt liest spielt läuft rennt rollt sucht findet lacht isst trinkt ruft hilft hält holt teilt gibt nimmt sitzt steht liegt lesen malen essen rennen'.split(' '));
@@ -84,8 +86,11 @@ export function analyzeMaterial(letters: string[]): Material {
   // Kurze Wörter (am, im, und) stehen seit der Zusammenlegung mit in den Wörtern.
   const words = vocabulary;
   const silben = makeSilben(ids,null,1000,mulberry32(1));
-  const readable = !!(silben.length || words.length || sentences.length || stories.length);
-  const material: Material = {words,vocabulary,wordSet,silben,sentences,stories,template,available:{silben:!!silben.length,woerter:!!words.length,kleine:false,saetze:!!sentences.length,geschichte:!!stories.length,fragen:!!firstStory?.fragen.length,quest:readable,aehnlich:false}};
+  // Gezählt wird, was wirklich auf dem Blatt stehen kann; darunter wäre das Blatt nur eine Wiederholung derselben Wörter.
+  const blattWoerter = unique([...vocab.words.filter(entry=>entry.typ!=='kleines Wort' && entry.len>=2).map(entry=>entry.w), ...vocab.kleine]);
+  const genug = blattWoerter.length >= MIN_WOERTER;
+  const readable = genug && !!(silben.length || sentences.length || stories.length);
+  const material: Material = {words,vocabulary,wordSet,silben,sentences:genug ? sentences : [],stories:genug ? stories : [],template:genug ? template : null,available:{silben:genug && !!silben.length,woerter:genug,kleine:false,saetze:genug && !!sentences.length,geschichte:genug && !!stories.length,fragen:genug && !!firstStory?.fragen.length,quest:readable,aehnlich:false}};
   if (cache.size >= 256) cache.delete(cache.keys().next().value!);
   cache.set(key,material);
   return material;

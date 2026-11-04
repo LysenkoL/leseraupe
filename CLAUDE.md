@@ -8,7 +8,7 @@ PWA für Eltern von Kindern, die lesen lernen (Vorschule, Grundschule): erzeugt 
 - Schrift-Vorbild: Grundschrift, Schreibtabelle der Fibel (keine Dateien im Repo; Merkmale siehe `docs/TZ.md`, Abschnitt 5.3).
 
 ## Harte Regeln
-1. Auf einem Leseblatt erscheint **kein** Buchstabe und **keine** Buchstabenverbindung, die nicht als gelernt markiert ist (Ausnahme: Name des Kindes, Elternfragen). Immer per Code prüfen, nie dem Wörterbuch oder dem Chat vertrauen.
+1. Auf einem Leseblatt erscheint **kein** Buchstabe und **keine** Buchstabenverbindung, die nicht als gelernt markiert ist (Ausnahme: Name des Kindes, Elternfragen, Quest-Aufgabentext – den lesen die Eltern, das Kind führt nur aus). Immer per Code prüfen, nie dem Wörterbuch oder dem Chat vertrauen.
 2. **Keine Silbentrennstriche** in Wörtern und Sätzen.
 3. Schrift: lokale Inter-Dateien aus `public/fonts/`, Lesetext immer mit `font-feature-settings: 'cv05' 1, 'cv11' 1`. Nie Inter von Google Fonts.
 4. Leseblatt = genau 1 Seite A4, nichts abgeschnitten.

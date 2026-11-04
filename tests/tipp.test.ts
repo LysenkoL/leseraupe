@@ -30,7 +30,7 @@ describe('Hinweis auf den nächsten Buchstaben', () => {
 
   it('abgewählte Blöcke werden nicht versprochen; alles möglich = kein Hinweis', async () => {
     const ohne = { ...DEFAULT_BLOCKS, saetze: false, geschichte: false };
-    expect(await einBuchstabe(['m', 'a'], ohne)).toEqual([]);
+    expect(await einBuchstabe(['m', 'a', 'l'], ohne)).toEqual([]);
     expect(await einBuchstabe(['m', 'l', 's', 'a', 'o', 'i', 't', 'e', 'n'])).toEqual([]);
   });
 

@@ -1,12 +1,14 @@
-import { expect, it } from 'vitest';
-import { analyzeMaterial } from '../src/core/material';
+import { describe, expect, it } from 'vitest';
+import { analyzeMaterial, MIN_WOERTER } from '../src/core/material';
+import { emptyHistory, generateSheet } from '../src/core/generator';
+import { DEFAULT_BLOCKS } from '../src/core/types';
 import { checkText, UNIT_IDS } from '../src/core/letters';
 
-it('состав, а не число букв: две согласные пусты, M A дают слоги, L S A I дают предложения', () => {
+it('состав, а не число букв: две согласные пусты, M A L дают слоги, L S A I дают предложения', () => {
   expect(analyzeMaterial(['m','t']).available.saetze).toBe(false);
   expect(analyzeMaterial(['m','t']).available.silben).toBe(false);
-  expect(analyzeMaterial(['m','a']).available.silben).toBe(true);
-  expect(analyzeMaterial(['m','a']).available.saetze).toBe(false);
+  expect(analyzeMaterial(['m','a','l']).available.silben).toBe(true);
+  expect(analyzeMaterial(['m','a','l']).available.saetze).toBe(false);
   expect(analyzeMaterial(['l','s','a','i']).sentences).toContain('Lisa las.');
   expect(analyzeMaterial(['l','s','a','e','i']).sentences).toContain('Lisa las alles.');
 });
@@ -45,4 +47,36 @@ it.each([
   if (withoutCombination.length < letters.length) {
     expect(analyzeMaterial(withoutCombination).stories.map(story => story.titel)).not.toContain(titel);
   }
+});
+
+describe('mindestens 4 verschiedene Wörter', () => {
+  const blatt = (letters: string[]) => generateSheet({ letters, newLetter: null, minutes: 5, theme: 'wiese', childName: '', blocks: { ...DEFAULT_BLOCKS }, history: emptyHistory(), seed: 1 }).sheet;
+  const verschieden = (woerter: string[]) => new Set(woerter.map((w) => w.toLowerCase())).size;
+  const POOL = ['a', 'e', 'i', 'o', 'u', 'm', 'l', 't', 's', 'n'];
+  const SETS = POOL.flatMap((a, i) => POOL.slice(i + 1).flatMap((b, j) => [[a, b], ...POOL.slice(i + j + 2).map((c) => [a, b, c])]));
+
+  it('darunter ist kein Blatt möglich, auch nicht nur mit Silben', () => {
+    for (const letters of [['m', 'a'], ['t', 'o'], ['l', 'a', 's']]) {
+      const { available, template } = analyzeMaterial(letters);
+      expect(Object.values(available).some(Boolean), letters.join('')).toBe(false);
+      expect(template).toBeNull();
+    }
+  });
+
+  it('ab 4 Wörtern ist es möglich, auch mit nur 3 Buchstaben', () => {
+    for (const letters of [['m', 'a', 'o'], ['m', 'a', 'l'], ['t', 'o', 'm'], ['a', 'i', 's', 't']]) {
+      expect(analyzeMaterial(letters).available.woerter, letters.join('')).toBe(true);
+      expect(verschieden(blatt(letters).woerter), letters.join('')).toBeGreaterThanOrEqual(MIN_WOERTER);
+    }
+  });
+
+  it('die Zusage stimmt mit dem Blatt überein', () => {
+    for (const letters of SETS) {
+      const { available } = analyzeMaterial(letters);
+      const sheet = blatt(letters);
+      const wort = letters.join('');
+      expect(available.woerter, wort).toBe(verschieden(sheet.woerter) >= MIN_WOERTER);
+      if (available.woerter) expect(available.saetze, wort).toBe(sheet.saetze.length > 0);
+    }
+  });
 });
