@@ -53,6 +53,7 @@ it('M, A und L erzeugen ein ganzes A4-Blatt ohne Geschichte und ohne Überlauf',
   await page.waitForSelector('.sheet.beginner .sh-grid');
   await page.waitForTimeout(500);
   expect(await page.locator('.sheet [data-block="geschichte"]').count()).toBe(0);
+  expect(await page.locator('.sheet [data-block="quest"]').count()).toBe(1);
   const fits = await page.locator('.sheet').evaluate(el => el.scrollHeight <= el.clientHeight + 1 && [...el.querySelectorAll('.sh-grid')].every(grid => grid.scrollHeight <= grid.clientHeight + 1 && grid.getBoundingClientRect().bottom <= grid.parentElement!.getBoundingClientRect().bottom - 2));
   expect(fits).toBe(true);
   expect(await page.locator('.sheet .sh-grid span').count()).toBeGreaterThanOrEqual(48);
