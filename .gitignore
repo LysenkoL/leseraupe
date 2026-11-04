@@ -7,3 +7,6 @@ test-results
 *.keystore
 key.properties
 keystore.properties
+
+# Anhänge anderer Assistenten
+.codex-remote-attachments/

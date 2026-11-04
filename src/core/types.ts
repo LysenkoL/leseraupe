@@ -51,6 +51,12 @@ export interface SheetData {
   silbenFarbig?: boolean;
   /** Herkunft: Wörterbuch oder Chat */
   source: 'dict' | 'chat';
+  /** Übungsblatt ohne Sätze/Geschichte: kurze Lesereihen über A4 verteilen. */
+  practice?: boolean;
+  /** Neue A4-Aufteilung: echte Übungszeilen statt gestreckter Leerflächen. Alte Blätter bleiben unverändert. */
+  balanced?: boolean;
+  /** Angeforderte Blöcke, die statt einer fehlenden/ungültigen KI-Antwort aus geprüftem lokalem Material stammen. */
+  localBlocks?: BlockId[];
 }
 
 export const DEFAULT_BLOCKS: Record<BlockId, boolean> = {

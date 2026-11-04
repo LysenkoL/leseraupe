@@ -1,3 +1,4 @@
+import { analyzeMaterial } from '../src/core/material';
 import { describe, expect, it } from 'vitest';
 import { generateSheet, emptyHistory, historyFrom, readingTexts, rerollBlock, COUNTS, MAX_STUFE, MAX_STUFE_ALPHABET, BLAETTER_PRO_STUFE, silbenZahl, stufeFor, withSerie, type GenParams } from '../src/core/generator';
 import { DICT } from '../src/core/dict';
@@ -76,9 +77,9 @@ describe('Generator: Umfang', () => {
     });
   }
 
-  it('wenige Buchstaben: Blöcke kürzer statt erfunden', () => {
+  it('wenige Buchstaben: bekannte Wörter wiederholen statt erfinden', () => {
     const { sheet } = generateSheet(params(['m', 'a']));
-    expect(sheet.woerter.length).toBeLessThan(20);
+    expect(new Set(sheet.woerter).size).toBeLessThan(20);
     assertOnlyKnown(sheet, ['m', 'a']);
   });
 
@@ -477,4 +478,46 @@ describe('Langzeit: viele Tage hintereinander', () => {
       });
     }
   });
+});
+
+
+describe('Anfang mit wenigen Buchstaben', () => {
+  it('erzeugt mit A weder Geschichte noch Belohnungs-Quest', () => {
+    const d = generateSheet(params(['a'])).sheet;
+    expect(d.quest).toBeNull();
+    expect(d.geschichte).toBeNull();
+    expect(d.saetze).toEqual([]);
+  });
+  it('füllt mit M und A ein Übungsblatt ohne Sätze und Geschichte', () => {
+    const d = generateSheet(params(['m', 'a'])).sheet;
+    expect(d.silben.length + d.woerter.length + d.kleine.length).toBeGreaterThanOrEqual(48);
+    expect(d.geschichte).toBeNull();
+    expect(d.saetze).toEqual([]);
+    for (const text of readingTexts(d)) expect(checkText(text, new Set(['m','a'])).ok).toBe(true);
+  });
+});
+
+it('Anfangsblatt behält verfügbare Wörter bei verschiedenen Zufallszahlen', () => {
+  for (let seed = 1; seed <= 12; seed++) {
+    const sheet = generateSheet(params(['m','a'], {newLetter:null, seed})).sheet;
+    expect(sheet.woerter).toContain('Mama');
+  }
+});
+
+it('L S A E I создают предложения; четыре буквы не запрещают готовое предложение', () => {
+  expect(generateSheet(params(['l','s','a','e','i'])).sheet.saetze).toContain('Lisa las alles.');
+  expect(generateSheet(params(['l','s','a','i'])).sheet.saetze).toContain('Lisa las.');
+});
+
+it('erstellt für A C D E I K M O S T ohne fertige Vorlage eine lesbare Geschichte', () => {
+  const letters = ['a','c','d','e','i','k','m','o','s','t'];
+  expect(analyzeMaterial(letters).stories).toHaveLength(0);
+  expect(analyzeMaterial(letters).template).not.toBeNull();
+  for (const seed of [1, 2, 17]) {
+    const { sheet } = generateSheet(params(letters, { seed }));
+    expect(sheet.geschichte?.saetze.length ?? 0).toBeGreaterThanOrEqual(3);
+    for (const line of [sheet.geschichte!.titel, ...sheet.geschichte!.saetze]) {
+      expect(checkText(line, new Set(letters)).ok, line).toBe(true);
+    }
+  }
 });

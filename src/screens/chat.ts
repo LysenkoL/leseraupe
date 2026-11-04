@@ -2,18 +2,27 @@ import { hatBlock } from '../core/types';
 import { getSettings, setDraft } from '../app/state';
 import { backButton, esc, go, toast } from '../app/ui';
 import { buildPrompt, parseChat, sheetFromChat, PARSE_ERROR } from '../core/chat';
+import { analyzeMaterial } from '../core/material';
+import type { BlockId } from '../core/types';
 import { genParams } from '../app/actions';
 import { t } from '../app/i18n';
 import { NATIV, SYSTEM_MELDET_KOPIERT, einfuegen, kopieren } from '../app/native';
 
 export function renderChat(root: HTMLElement): void {
   const s = getSettings();
-  const prompt = buildPrompt(s.letters, s.newLetter, 5);
+  const prompt = buildPrompt(s.letters, s.newLetter, 5, s.blocks);
+  const material = analyzeMaterial(s.letters);
+  const storyAttempt = s.blocks.geschichte && (material.available.geschichte || material.available.saetze);
+  const fields = (['woerter','kleine','saetze'] as BlockId[]).filter(id=>s.blocks[id] && material.available[id]);
+  const localOnly = !fields.length && !storyAttempt && s.blocks.silben && material.available.silben;
+  const canCreate = !!(localOnly || fields.length || storyAttempt);
+  const summary = localOnly ? t('chat.nurLokal') : !canCreate ? t('start.keinMaterial') : t('chat.auswahl', {names:fields.map(id=>t(`block.${id}`)).join(', ') || t('block.geschichte')}) + (storyAttempt ? ' ' + t('chat.geschichteOptional') : '') + ' ' + t('chat.a4');
   const q = encodeURIComponent(prompt);
   root.innerHTML = `
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1></div></div>
   <div class="content">
+    <p class="hint" id="chat-material" role="status">${esc(summary)}</p>
     <section class="card">
       <h2>${t('chat.schritt1')}</h2>
       <button class="btn green" id="copy">${t('chat.kopieren')}</button>
@@ -35,7 +44,7 @@ export function renderChat(root: HTMLElement): void {
       <div class="modal-err" id="err" aria-live="polite"></div>
     </section>
   </div>
-  <div class="bottom"><button class="btn primary big" id="make">${t('chat.erstellen')}</button></div>
+  <div class="bottom"><button class="btn primary big" id="make" ${canCreate ? '' : 'disabled'}>${t('chat.erstellen')}</button></div>
 </div>`;
 
   const ta = root.querySelector<HTMLTextAreaElement>('#answer')!;
@@ -70,13 +79,14 @@ export function renderChat(root: HTMLElement): void {
       return;
     }
     try {
-      const answer = parseChat(ta.value);
+      const answer = localOnly ? {woerter:[],kleineWoerter:[],saetze:[],geschichte:{titel:'',saetze:[]},fragen:[]} : parseChat(ta.value);
       const p = await genParams();
       const { sheet, removed } = sheetFromChat(answer, p);
       setDraft({ data: sheet, seed: p.seed, removed, savedId: null, scale: 1 });
       go('#/vorschau');
     } catch (e) {
       // Meldung in der Sprache der Oberfläche
+      if (e instanceof Error && e.message === 'CHAT_EMPTY') { err.textContent = t('chat.keinMaterial'); return; }
       err.textContent = !(e instanceof Error) || e.message === PARSE_ERROR ? t('chat.parseFehler') : e.message;
     }
   });

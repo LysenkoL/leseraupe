@@ -1,4 +1,5 @@
-import { unitById } from '../core/letters';
+import { analyzeMaterial } from '../core/material';
+import { UNIT_IDS, unitById } from '../core/letters';
 import { bindLetters, lettersHtml } from '../app/lettergrid';
 import { MAX_BLAETTER } from '../core/store';
 import { raupenstand, type Raupenstand } from '../sheet/urkunde';
@@ -43,6 +44,22 @@ export function renderStart(root: HTMLElement): void {
   const draw = (c = count) => {
     count = c;
     const s = getSettings();
+    const material = analyzeMaterial(s.letters);
+    const available = { ...material.available, geschichte: material.available.geschichte || !!material.template };
+    const possible = ['silben','woerter','kleine','saetze','geschichte'].some(id => s.blocks[id as BlockId] && available[id as BlockId]);
+    const names = BLOCKS.filter(id => available[id] && !['quest', 'fragen'].includes(id)).map(id => t(`block.${id}`)).join(', ');
+    const target = !available.woerter && !available.kleine ? 'woerter'
+      : s.blocks.geschichte && !available.geschichte ? 'geschichte' : null;
+    const extra = target ? UNIT_IDS.find(id => {
+      if (s.letters.includes(id)) return false;
+      const next = analyzeMaterial([...s.letters, id]);
+      return target === 'woerter' ? next.available.woerter || next.available.kleine
+        : next.available.geschichte || !!next.template;
+    }) : undefined;
+    const extraLabel = extra ? unitById(extra)?.label.replace('-', '') ?? extra : '';
+    const tip = target && extra
+      ? t(extra.length === 1 ? 'start.tippBuchstabe' : 'start.tippVerbindung', { unit: extraLabel, exercise: t(`start.tipp.${target}`) })
+      : target ? t('start.tippWeitere') : '';
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
     const themeChips = THEME_WAHL.map((id) => {
       const th = THEMES[themeAus(id)];
@@ -52,7 +69,8 @@ export function renderStart(root: HTMLElement): void {
     const blocks = BLOCKS.map(
       (id) => {
         // Elternfragen gehören zur Geschichte: ohne Geschichte keine Fragen
-        const aus = id === 'fragen' && !s.blocks.geschichte;
+        const storyAttempt = available.geschichte || available.saetze;
+        const aus = id === 'geschichte' ? !storyAttempt : id === 'fragen' ? !storyAttempt || !s.blocks.geschichte : !available[id];
         // Plättchen wie bei der Gestaltung: an = grün mit Häkchen, aus = blass gestrichelt
         return `<label class="blk-chip${aus ? ' disabled' : ''}"><input type="checkbox" data-block="${id}" ${s.blocks[id] && !aus ? 'checked' : ''} ${aus ? 'disabled' : ''}/><span>${t(`block.${id}`)}</span></label>`;
       },
@@ -83,6 +101,8 @@ export function renderStart(root: HTMLElement): void {
     <section class="card">
       <div class="row"><h2>${t('start.buchstaben')}</h2><span class="hint">${t('start.buchstabenZahl', { n: s.letters.length, neu: esc(neu ?? '–') })}</span></div>
       ${lettersHtml(s)}
+      <p class="hint" id="material-hint" role="status">${names ? t('start.material', { names }) : t('start.keinMaterial')}</p>
+      ${tip ? `<p class="hint">${esc(tip)}</p>` : ''}
     </section>
     <section class="card">
       <div class="row"><h2>${t('start.blaetter')}</h2><span class="hint">${t('start.blaetterHinweis')}</span></div>
@@ -100,10 +120,11 @@ export function renderStart(root: HTMLElement): void {
     <section class="card">
       <h2>${t('start.bloecke')}</h2>
       <div class="blk-chips">${blocks}</div>
+      
     </section>
   </div>
   <div class="bottom">
-    <button class="btn primary big" id="create">${s.blaetter > 1 ? t('start.erstellenN', { n: s.blaetter }) : t('start.erstellen1')}</button>
+    <button class="btn primary big" id="create" ${possible ? '' : 'disabled'}>${s.blaetter > 1 ? t('start.erstellenN', { n: s.blaetter }) : t('start.erstellen1')}</button>
     <a class="btn ghost" href="#/chat">${t('start.chat')}</a>
   </div>
 </div>`;
@@ -131,7 +152,7 @@ export function renderStart(root: HTMLElement): void {
       cb.addEventListener('change', () => {
         const s2 = getSettings();
         setSettings({ ...s2, blocks: { ...s2.blocks, [cb.dataset.block!]: cb.checked } });
-        if (cb.dataset.block === 'geschichte') draw(count);
+        draw(count);
       }),
     );
     root.querySelector<HTMLFormElement>('#name-form')?.addEventListener('submit', (e) => {
@@ -172,8 +193,10 @@ export function renderStart(root: HTMLElement): void {
         toast(t('start.keinBlock'));
         return;
       }
-      await createDraft();
-      go('#/vorschau');
+      try {
+        await createDraft();
+        go('#/vorschau');
+      } catch { toast(t('start.keinMaterial')); }
     });
   };
   draw();

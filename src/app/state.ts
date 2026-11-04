@@ -12,6 +12,8 @@ export interface Draft {
   /** id in IndexedDB, sobald gedruckt/gespeichert */
   savedId: number | null;
   scale: number;
+  /** Explizit bearbeiteter Inhalt muss auch bei savedId erneut auf A4 eingepasst werden. */
+  needsFit?: boolean;
 }
 
 const kind = activeKind(loadProfile());

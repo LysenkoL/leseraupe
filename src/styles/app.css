@@ -64,11 +64,12 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
 /* „Alle auswählen“ / „Alle abwählen“: beide Texte übereinander, sichtbar nur einer – so ist der Knopf
    immer so breit wie der längere und springt beim Umschalten nicht in die nächste Zeile */
-.alle-btn { display: grid; place-items: center; align-content: center; grid-column: 2 / -1; min-height: 44px; }
+.alle-btn { display: grid; place-items: center; align-content: center; grid-column: 1 / -1; min-height: 44px; }
 .alle-btn > span { grid-area: 1 / 1; }
 .alle-btn[data-alle="an"] .alle-ab, .alle-btn[data-alle="ab"] .alle-an { visibility: hidden; }
 
 .letters { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.letter-group-title { grid-column: 1 / -1; margin-top: 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
 .lt {
   min-height: 44px; border-radius: 12px; border: 1.5px solid #DADFDB; background: #fff;
   font-weight: 800; font-size: 17px; color: #8A938D; padding: 0;
@@ -399,6 +400,8 @@ a.iconbtn { text-decoration: none; }
 .card > label.field:first-child { font-size: 16px; font-weight: 800; gap: 10px; }
 /* Erklärtexte (mehrzeilig) überall im Blocksatz mit Silbentrennung – nur Oberfläche, nie auf dem Leseblatt */
 .card > .hint, .content > .hint { text-align: justify; hyphens: auto; text-wrap: pretty; }
+.card > #material-hint:has(+ .hint) { margin-bottom: 4px; }
+.card > #material-hint + .hint { margin-top: 0; }
 /* Links im Text: grün wie die App (sonst Blau des Systems) */
 .card a:not(.btn):not(.pillbtn):not(.chip) { color: var(--green); }
 /* leere „Gespeichert“-Zeile nimmt keinen Platz ein */

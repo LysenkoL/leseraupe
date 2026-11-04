@@ -923,10 +923,10 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.click('#onb-next');
     await p.waitForSelector('#create');
     const an = (id: string) => p.$eval(`[data-block="${id}"]`, (c) => (c as HTMLInputElement).checked);
-    expect([await an('silben'), await an('kleine')]).toEqual([true, true]);
-    // ohne Buchstaben kein Blatt, nur ein Hinweis
-    await p.click('#create');
-    await p.waitForSelector('.toast');
+    expect([await an('silben'), await an('kleine')]).toEqual([false, false]);
+    // Ohne Buchstaben: Hinweis vorab, keine leere Vorschau.
+    expect(await p.locator('#create').isDisabled()).toBe(true);
+    expect(await p.textContent('#material-hint')).toContain('Noch kein Lesetext');
     expect(await p.evaluate(() => location.hash)).not.toBe('#/vorschau');
     // nochmal alle: die Frage kommt wieder
     await p.click('[data-alle]');

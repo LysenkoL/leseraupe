@@ -1,8 +1,13 @@
+import { analyzeMaterial } from './material';
+import { preparePractice } from './practice';
+import { isSuitable, type ContentIssue } from './content';
+import { makeSilben } from './silbenuebung';
+export { makeSilben } from './silbenuebung';
 import type { BlockId, Minutes, Quest, QuestKind, SheetData, Geschichte } from './types';
 import type { ThemeId } from '../sheet/themes';
 import { Vocab } from './vocab';
 import { DICT } from './dict';
-import { SINGLE_CONSONANTS, VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } from './letters';
+import { VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } from './letters';
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
 import { pickStolper, STOLPER_PRO_BLATT, type Stolper } from './stolper';
@@ -172,61 +177,9 @@ export function silbenZahl(w: string): number {
 
 /** Wörter, die der Wortliste fehlen (für „Entfernt: …“) */
 export interface Removed {
+  reason?: 'content' | 'storyLength' | 'storyIncomplete' | ContentIssue;
   text: string;
   missing: string[];
-}
-
-const SILBEN_CV_EXCLUDE = new Set(['c', 'x', 'y', 'q']);
-const SILBEN_VC = new Set(['m', 'l', 's', 't', 'n', 'r', 'f']);
-const PLAIN_VOWELS = new Set(['a', 'e', 'i', 'o', 'u']);
-
-/**
- * Silben aus 2 Buchstaben(-einheiten): Konsonant + Vokal und Vokal + Konsonant.
- * Mit neuer Buchstabe wird die Silbenübung um sie herum gebaut:
- * Reihen „ma me mi mo“ (neuer Vokal) bzw. „na ne ni no“ (neuer Konsonant)
- * und Spiegelpaare „el le“, „em me“ – in fester Reihenfolge, nicht gemischt.
- */
-export function makeSilben(letters: string[], newLetter: string | null, n: number, rng: Rng): string[] {
-  // Silben aus zwei Buchstaben; Umlaute/Zwielaute nur, wenn sie der neue Buchstabe sind
-  const vowels = letters.filter((l) => VOWEL_UNITS.has(l) && (PLAIN_VOWELS.has(l) || ['ä', 'ö', 'ü'].includes(l) || l === newLetter));
-  const cons = letters.filter((l) => (SINGLE_CONSONANTS.has(l) && !SILBEN_CV_EXCLUDE.has(l)) || (l === newLetter && !VOWEL_UNITS.has(l)));
-  const cv = (c: string, v: string) => c + v;
-  const vc = (v: string, c: string) => (SILBEN_VC.has(c) && PLAIN_VOWELS.has(v) ? v + c : null);
-  const all = new Set<string>();
-  for (const c of cons) for (const v of vowels) all.add(cv(c, v));
-  for (const v of vowels) for (const c of cons) {
-    const x = vc(v, c);
-    if (x) all.add(x);
-  }
-  if (!newLetter || (!vowels.includes(newLetter) && !cons.includes(newLetter))) {
-    return shuffle([...all], rng).slice(0, n);
-  }
-  const out: string[] = [];
-  const push = (x: string | null) => {
-    if (x && all.has(x) && !out.includes(x) && out.length < n) out.push(x);
-  };
-  const isVowel = vowels.includes(newLetter);
-  const others = shuffle(isVowel ? cons : vowels.filter((v) => v !== newLetter), rng);
-  // 1) Reihen: jede Reihe enthält die neue Buchstabe
-  const rowVowels = vowels.filter((v) => PLAIN_VOWELS.has(v) || v === newLetter);
-  if (isVowel) {
-    for (const c of others.slice(0, Math.max(2, Math.floor(n / (rowVowels.length * 2))))) for (const v of rowVowels) push(cv(c, v));
-  } else {
-    for (const v of rowVowels) push(cv(newLetter, v));
-  }
-  // 2) Spiegelpaare mit der neuen Buchstabe: „el le“, „em me“ bzw. „an na“
-  for (const o of others) {
-    if (isVowel) {
-      push(vc(newLetter, o));
-      push(cv(o, newLetter));
-    } else {
-      push(vc(o, newLetter));
-      push(cv(newLetter, o));
-    }
-  }
-  // 3) Rest mit alten Buchstaben
-  for (const x of shuffle([...all], rng)) push(x);
-  return out;
 }
 
 /** Wortauswahl: nie Wörter der letzten zwei Blätter; wenn zu wenig, die am längsten unbenutzten. */
@@ -251,7 +204,7 @@ function makeWoerter(v: Vocab, p: GenParams, rng: Rng, exclude: Set<string>, n =
   const small = new Set(v.kleine);
   const cands = v.words
     .filter((e) => e.typ !== 'kleines Wort' && !small.has(e.w) && !exclude.has(e.w) && e.len >= 2)
-    .filter((e) => e.typ !== 'Name' || rng() < 0.45);
+    .filter((e) => analyzeMaterial(p.letters).words.length < 10 || e.typ !== 'Name' || rng() < 0.45);
   const theme = new Set(v.words.filter((e) => e.themen.includes(p.theme)).map((e) => e.w));
   const newU = p.newLetter;
   const hasNew = (w: string) => (newU ? countUnit(w, newU) > 0 : false);
@@ -352,7 +305,7 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   const viele = p.letters.length >= VIELE_BUCHSTABEN;
   const mittel = p.letters.length >= MITTEL_BUCHSTABEN;
   const [lo, hi] = geschichteLaenge(p.stufe, p.letters.length, p.minutes);
-  const lesbar = DICT.geschichten.filter((g) => v.has(g.titel) && g.saetze.every((s) => v.has(s)));
+  const lesbar = DICT.geschichten.filter((g) => v.has(g.titel) && g.saetze.every((s) => v.has(s)) && g.fragen.every(question=>isSuitable(question,false)));
   // wie weit die Länge vom erlaubten Bereich weg ist (0 = passt)
   const abstand = (g: { saetze: string[] }) => Math.max(0, lo - g.saetze.length, g.saetze.length - hi);
   const curated = lesbar.filter((g) => abstand(g) === 0);
@@ -368,9 +321,16 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
     !p.newLetter || (viele ? g.saetze.some((x) => countUnit(x, p.newLetter!) > 0) : neuAnteil(g.saetze, p.newLetter) >= NEU_ANTEIL - 0.1);
   // C3: unter gleich guten die am längsten nicht gelesene
   const seit = (g: { titel: string }) => p.history.storySeq?.get(g.titel) ?? -Infinity;
-  const aeltesteVon = <T extends { titel: string }>(list: T[]): T | undefined => {
+  const aeltesteVon = <T extends { titel: string; saetze: string[] }>(list: T[]): T | undefined => {
     const m = Math.min(...list.map(seit));
-    return pick(list.filter((g) => seit(g) === m), rng);
+    const oldest = list.filter((g) => seit(g) === m);
+    // Bei gleicher Wiederholungspause soll die hohe Stufe weiterhin längere Texte wählen,
+    // auch wenn der Inhaltsfilter den verfügbaren Vorrat verändert hat.
+    if (viele && (p.stufe ?? 1) >= 8) {
+      const longest = Math.max(0,...oldest.map(g=>g.saetze.length));
+      return pick(oldest.filter(g=>g.saetze.length===longest),rng);
+    }
+    return pick(oldest, rng);
   };
   const [fmin, fmax] = COUNTS[p.minutes].fragen;
   const fertig = (g: { titel: string; saetze: string[]; fragen: string[] }) => ({ g: { titel: g.titel, saetze: [...g.saetze] }, fragen: g.fragen.slice(0, fmax) });
@@ -420,7 +380,7 @@ function makeGeschichte(v: Vocab, p: GenParams, rng: Rng): { g: Geschichte; frag
   let best: ReturnType<typeof templateStory> = null;
   for (let i = 0; i < 10; i++) {
     const st = templateStory(v, pl, rng, n, neuPrefer);
-    if (st && !p.history.recentStories.has(st.titel) && (!best || score(st) > score(best))) best = st;
+    if (st && st.fragen.every(question => isSuitable(question, false)) && !p.history.recentStories.has(st.titel) && (!best || score(st) > score(best))) best = st;
   }
   if (!best && cur) return fertig(cur);
   if (!best) {
@@ -438,7 +398,7 @@ function letterLabel(id: string): string {
 
 export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'woerter' | 'saetze'>, v: Vocab, rng: Rng): Quest {
   const options: Quest[] = [];
-  if (p.newLetter) {
+  if (p.newLetter && [...(p.blocks.woerter ? sheet.woerter : []), ...(p.blocks.saetze ? sheet.saetze : []), ...(p.blocks.geschichte ? sheet.geschichte?.saetze ?? [] : [])].some(text=>countUnit(text,p.newLetter!)>0)) {
     const gross = letterLabel(p.newLetter);
     const klein = gross.toLowerCase();
     // für Leseanfänger sind E und e zwei Zeichen – beide nennen
@@ -511,9 +471,13 @@ export function generateSheet(p: GenParams): Generated {
   const known = new Set(p.letters);
   const v = new Vocab(known);
   const c = COUNTS[p.minutes];
+  const material = analyzeMaterial(p.letters);
 
   const alleSilben = makeSilben(sortUnits(p.letters), p.newLetter, c.silben, rng);
-  const story = p.blocks.geschichte || p.blocks.fragen ? makeGeschichte(v, p, rng) : null;
+  const fallbackStory = material.stories[0] ?? material.template;
+  const story = p.blocks.geschichte || p.blocks.fragen
+    ? makeGeschichte(v, p, rng) ?? (fallbackStory ? { g: fallbackStory, fragen: fallbackStory.fragen } : null)
+    : null;
   // C3: lange Geschichte → etwas weniger Silben, Wörter und Sätze, damit sie ganz auf die Seite passt
   // (nur beim heutigen Blattumfang; der alte 10-Minuten-Umfang war für lange Geschichten gebaut)
   const lang = !!story && p.blocks.geschichte && p.minutes === 5 && story.g.saetze.length >= LANG_GESCHICHTE;
@@ -528,7 +492,7 @@ export function generateSheet(p: GenParams): Generated {
   const viele = p.letters.length >= VIELE_BUCHSTABEN;
   // C3: bei vielen Buchstaben nur fertige Sätze – die Vorlagen ergeben zu einfache Sätze („Das ist Moritz.“)
   const vorlagen = templateSentences(v, pools(v), rng);
-  const cands = viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen];
+  const cands = [...new Set([...(viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen]), ...material.sentences])];
   const len = (x: string) => wordsOf(x).length;
   // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
   let satzCands = cands;
@@ -546,6 +510,8 @@ export function generateSheet(p: GenParams): Generated {
     else if (kurz.length >= c.saetze * 2) satzCands = kurz;
   }
   const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid, cands);
+  // Verfügbarkeit ist eine Zusage: wenn Ausweichregeln alles sperren, den geprüften Satzvorrat nutzen.
+  if (p.blocks.saetze && !saetze.length && material.sentences.length) saetze.push(...material.sentences.slice(0,c.saetze));
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
@@ -571,13 +537,16 @@ export function generateSheet(p: GenParams): Generated {
     fragen: story?.fragen ?? [],
     source: 'dict',
   };
+  preparePractice(sheet,rng);
+  if (sheet.practice) sheet.quest = null;
+  if (!hasReadingMaterial(sheet)) { sheet.quest = null; sheet.fragen = []; }
   return { sheet, removed: [] };
 }
 
 /** Einen einzelnen Block neu würfeln (↻). Geschichte zieht Fragen und Quest mit. */
 export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): SheetData {
-  const g = generateSheet({ ...p, seed: p.seed });
-  const s = { ...sheet };
+  const g = generateSheet({ ...p, seed: p.seed ^ 0x9e3779b9 });
+  const s = structuredClone(sheet);
   const rng = mulberry32(p.seed ^ 0x9e3779b9);
   const v = new Vocab(new Set(p.letters));
   switch (block) {
@@ -604,6 +573,7 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
       s.quest = makeQuest({ ...p, history: { ...p.history, lastQuest: sheet.quest?.kind ?? null } }, s, v, rng);
       break;
   }
+  preparePractice(s,rng);
   return s;
 }
 
@@ -664,4 +634,14 @@ export function historyFrom(sheets: { seq: number; data: SheetData }[], nextSeq:
   const last = sorted[sorted.length - 1];
   h.lastQuest = last?.data.quest?.kind ?? null;
   return h;
+}
+
+/** Nur Lesetext zählt – Elternfragen und ein Mal-Quest ergeben noch kein Leseblatt. */
+export function hasReadingMaterial(s: SheetData): boolean {
+  return !!((s.blocks.silben && s.silben.some(x => x.trim())) ||
+    (s.blocks.woerter && s.woerter.some(x => x.trim())) ||
+    (s.blocks.kleine && s.kleine.some(x => x.trim())) ||
+    (s.blocks.saetze && s.saetze.some(x => x.trim())) ||
+    (s.blocks.geschichte && s.geschichte?.saetze.some(x => x.trim())) ||
+    (s.blocks.aehnlich && s.aehnlich?.words.flat().some(x => x.trim())));
 }

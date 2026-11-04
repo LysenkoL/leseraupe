@@ -1,3 +1,4 @@
+import { hasReadingMaterial } from '../core/generator';
 import { getDraft, getSerie, getSettings, setSerieIndex, setSettings } from '../app/state';
 import { getSheet } from '../core/db';
 import { confirmDialog, esc, go, toast, aktuelleRoute, nochAktuell } from '../app/ui';
@@ -92,9 +93,9 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const hatNaechstes = !!serie && serie.idx < serie.items.length - 1;
   let farbig = !!data.silbenFarbig;
   let pages = readingPages(data);
-  if (!pages.length) {
+  if (!hasReadingMaterial(data) || !pages.length) {
     // Blatt ohne Blöcke: nichts zu lesen
-    toast(t('start.keinBlock'));
+    toast(t('start.keinMaterial'));
     go(back);
     return;
   }
