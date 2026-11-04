@@ -3,7 +3,7 @@ import { geradeVoll, PERLEN_JE_RAUPE, raupenstand, renderUrkunde } from '../src/
 
 const blatt = (...tage: number[]) => ({ reads: tage.map((t) => ({ at: `2026-10-${String(t).padStart(2, '0')}T17:00:00.000Z` })) });
 
-describe('B4: Leseraupe aus dem Verlauf', () => {
+describe('B4: Lese-Raupe aus dem Verlauf', () => {
   it('jeder Lesetag eine Perle; nochmal lesen zählt, zwei Lesungen am selben Tag nur einmal', () => {
     expect(raupenstand([])).toEqual({ perlen: 0, fertig: [] });
     // Tage 3, 1, 5, 6, 2 – Tag 3 kommt doppelt vor (zwei Blätter am selben Tag)

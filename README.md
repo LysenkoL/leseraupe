@@ -1,4 +1,4 @@
-# Leseraupe
+# Lese-Raupe
 
 PWA für Eltern von Kindern, die lesen lernen (Vorschule, Grundschule): erzeugt tägliche A4-Leseblätter nur aus gelernten Buchstaben
 (Reihenfolge wie in vielen Fibeln), druckt sie, misst die Lesezeit und führt Verlauf und Protokoll.

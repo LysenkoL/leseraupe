@@ -1,4 +1,4 @@
-# PLAY — публикация Leseraupe в Google Play
+# PLAY — публикация Lese-Raupe в Google Play
 
 Статус и план. Обновлять после каждого шага (дата + что сделано).
 

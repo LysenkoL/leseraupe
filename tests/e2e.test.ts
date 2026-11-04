@@ -119,7 +119,7 @@ describe('App-Ablauf', () => {
     const u = new URL(href);
     expect(u.protocol).toBe('mailto:');
     expect(u.pathname).toBe('apps.by.lena@gmail.com');
-    expect(u.searchParams.get('subject')).toBe('Leseraupe Feedback');
+    expect(u.searchParams.get('subject')).toBe('Lese-Raupe Feedback');
     expect(u.searchParams.get('body')).toMatch(/Version: \d+\.\d+\.\d+ \(/);
   });
 
@@ -788,7 +788,7 @@ describe('Druck', () => {
   });
 });
 
-describe('B4: volle Leseraupe → Urkunde', () => {
+describe('B4: volle Lese-Raupe → Urkunde', () => {
   it('10 gelesene Blätter: Start zeigt Urkunde, Urkunde mit Namen', async () => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const p = await ctx.newPage();
@@ -839,7 +839,7 @@ describe('B4: volle Leseraupe → Urkunde', () => {
     await p.click('#b-read');
     await p.waitForSelector('.feier');
     expect(await p.textContent('.feier h2')).toBe('Super, Mia!');
-    expect(await p.textContent('.feier')).toContain('Deine Leseraupe ist fertig!');
+    expect(await p.textContent('.feier')).toContain('Deine Lese‑Raupe ist fertig!');
     await p.click('.feier [data-x="urkunde"]');
     await p.waitForSelector('#uk-pv .urkunde');
     expect(await p.$('.feier')).toBeNull();

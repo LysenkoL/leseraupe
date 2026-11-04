@@ -10,7 +10,7 @@ export const DATENSCHUTZ_URL = 'https://lysenkol.github.io/leseraupe/privacy.htm
 export const VERSION_TEXT = `${__VERSION__} (${__BUILD__} UTC)`;
 
 export function feedbackMailto(): string {
-  const subject = 'Leseraupe Feedback';
+  const subject = 'Lese-Raupe Feedback';
   const body = `\n\n\n---\nVersion: ${VERSION_TEXT}`;
   return `mailto:${KONTAKT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
@@ -22,7 +22,7 @@ export function renderUeber(root: HTMLElement): void {
   <div class="topbar">${backButton('#/einstellungen')}<div class="grow"><h1>${t('ueber.titel')}</h1></div></div>
   <div class="content">
     <section class="card">
-      <h2>Leseraupe</h2>
+      <h2>Lese‑Raupe</h2>
       <div>${t('ueber.text')}</div>
       <div class="hint">${t('ueber.version', { v: VERSION_TEXT })}</div>
       ${PLAY ? '' : `<button class="btn ghost" id="upd">${t('update.suchen')}</button>`}

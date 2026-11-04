@@ -275,7 +275,7 @@ export function gueltigesBlatt(r: unknown): r is SheetRecord {
 export function parseBackup(text: string): Backup & { uebersprungen: number } {
   const b = JSON.parse(text);
   if (!b || b.app !== 'leseraupe' || !Array.isArray(b.sheets) || !Array.isArray(b.log)) {
-    throw new Error('Das ist keine Leseraupe-Sicherung.');
+    throw new Error('Das ist keine Sicherung der Lese-Raupe.');
   }
   const v2 = b.version === 2;
   const k = FIRST_KIND_ID;

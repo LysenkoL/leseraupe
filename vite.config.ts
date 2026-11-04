@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         // eigene id: nicht mit anderen Apps auf lysenkol.github.io verwechseln
         id: '/leseraupe/',
-        name: 'Leseraupe',
-        short_name: 'Leseraupe',
+        name: 'Lese-Raupe',
+        short_name: 'Lese-Raupe',
         description: 'Tägliche Leseblätter für Leseanfänger – nur mit Buchstaben, die das Kind schon kennt.',
         lang: 'de',
         start_url: '/leseraupe/',
