@@ -1,6 +1,6 @@
 # ANDROID — сборка приложения на Windows
 
-Как собрать Leseraupe для телефона (debug-APK) и для Google Play (подписанный `.aab`).
+Как собрать Lese-Raupe для телефона (debug-APK) и для Google Play (подписанный `.aab`).
 Статус публикации — в `docs/PLAY.md`.
 
 ## 0. Один раз: что должно быть установлено

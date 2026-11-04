@@ -1,4 +1,4 @@
-# STORE — страница Leseraupe в Google Play (черновик)
+# STORE — страница Lese-Raupe в Google Play (черновик)
 
 Статус: **черновик 30.10.2026**, дорабатывается с Lena. Основной язык страницы — немецкий (de-DE), перевод — украинский (uk).
 Длины — в символах, как считает Play Console (таблица «Длины» ниже).
@@ -8,8 +8,8 @@
 | Что | Решение |
 |---|---|
 | Главная мысль | приложение помогает ребёнку научиться читать **по-немецки**; листы всегда на немецком, интерфейс DE или UK |
-| Название DE | «Leseraupe – Lesen lernen» (выбор Lena 30.10.2026) |
-| Название UK | «Leseraupe: читаємо німецькою» |
+| Название DE | «Lese-Raupe – Lesen lernen» (выбор Lena 30.10.2026) |
+| Название UK | «Lese-Raupe: читаємо німецькою» |
 | Короткое DE / UK | выбор Lena 30.10.2026, см. ниже; без «täglich» — листов можно сделать сколько угодно |
 | Кому | текст обращён к родителям («dein Kind»), честно упоминаем, что ребёнок может читать с телефона (аудитория в Play — как в `docs/PLAY.md`) |
 | UK-страница | для украиноязычных родителей, чьи дети учатся читать по-немецки; приложение «учит», а не «дополняет школу» |
@@ -33,7 +33,7 @@
 ### Name (≤ 30)
 
 ```text
-Leseraupe – Lesen lernen
+Lese-Raupe – Lesen lernen
 ```
 
 ### Kurzbeschreibung (≤ 80)
@@ -45,19 +45,19 @@ Leseblätter nur mit den Buchstaben, die dein Kind kennt – drucken oder am Han
 ### Vollständige Beschreibung (≤ 4000)
 
 ```text
-Leseraupe hilft deinem Kind, Deutsch lesen zu lernen – mit Leseblättern, auf denen nur Buchstaben stehen, die es schon kennt.
+Lese-Raupe hilft deinem Kind, Deutsch lesen zu lernen – mit Leseblättern, auf denen nur Buchstaben stehen, die es schon kennt.
 
 Du tippst an, welche Buchstaben dein Kind gelernt hat. Die App erstellt daraus in wenigen Sekunden ein Leseblatt: Silben, Wörter, kleine Wörter, Sätze und eine kurze Geschichte mit Fragen zum Gespräch. Jedes Wort wird geprüft. Ein Buchstabe oder eine Buchstabenverbindung wie Sch, Ei oder ck, die noch nicht dran war, kommt nicht aufs Blatt. Du markierst einfach, was schon dran war – in jeder Reihenfolge.
 
 WARUM ES DIESE APP GIBT
-Ich habe Leseraupe für meine Tochter in der ersten Klasse gebaut. Ich wollte jeden Tag etwas Passendes zum Lesen haben, ohne selbst Übungen ausdenken zu müssen – Texte, die genau zu den Buchstaben passen, die sie gerade kann. Vielleicht hilft sie auch deiner Familie.
+Ich habe Lese-Raupe für meine Tochter in der ersten Klasse gebaut. Ich wollte jeden Tag etwas Passendes zum Lesen haben, ohne selbst Übungen ausdenken zu müssen – Texte, die genau zu den Buchstaben passen, die sie gerade kann. Vielleicht hilft sie auch deiner Familie.
 
 SO FUNKTIONIERT ES
 • Leseblätter, so viele du willst – eins oder gleich mehrere auf einmal, jedes ein kleines bisschen schwerer.
 • Drucken auf genau eine Seite A4, als PDF teilen oder direkt am Handy oder Tablet lesen.
 • Am Bildschirm lesen: große Schrift, Blatt für Blatt, mit kleinen Rätseln zum Antippen.
 • Timer: Du wählst die Lesezeit, der Bildschirm bleibt an.
-• Die Leseraupe wächst: Jeder Tag mit Lesen ist eine Perle. Nach 10 Perlen gibt es eine Urkunde zum Ausdrucken.
+• Die Lese-Raupe wächst: Jeder Tag mit Lesen ist eine Perle. Nach 10 Perlen gibt es eine Urkunde zum Ausdrucken.
 • Stolperwörter: Nach dem Lesen tippst du an, wo dein Kind gestockt hat. Diese Wörter kommen auf den nächsten Blättern öfter vor.
 • Silben farbig: Silben abwechselnd blau und rot – ohne Trennstriche.
 • Die App wächst mit: Mit jedem Blatt werden Wörter, Sätze und Geschichten etwas länger. Nach dem Lesen sagst du „leicht“, „geht so“ oder „schwer“ – die App passt sich an.
@@ -75,7 +75,7 @@ Du bedienst die App, dein Kind liest – auf Papier oder gemeinsam mit dir am Bi
 
 DEINE DATEN BLEIBEN BEI DIR
 • Kein Konto, keine Werbung, keine Käufe in der App.
-• Leseraupe sammelt keine Daten. Buchstaben, Name des Kindes (freiwillig), Leseblätter und Tagebuch bleiben nur auf deinem Gerät.
+• Lese-Raupe sammelt keine Daten. Buchstaben, Name des Kindes (freiwillig), Leseblätter und Tagebuch bleiben nur auf deinem Gerät.
 • Funktioniert ohne Internet.
 • Sicherung als Datei, die du selbst speicherst.
 
@@ -89,7 +89,7 @@ Fragen, Fehler oder Wünsche? Schreib an apps.by.lena@gmail.com – ich freue mi
 ### Назва (≤ 30)
 
 ```text
-Leseraupe: читаємо німецькою
+Lese-Raupe: читаємо німецькою
 ```
 
 ### Короткий опис (≤ 80)
@@ -101,14 +101,14 @@ Leseraupe: читаємо німецькою
 ### Повний опис (≤ 4000)
 
 ```text
-Leseraupe допомагає дитині навчитися читати німецькою – з аркушами, на яких є лише ті літери, які вона вже знає.
+Lese-Raupe допомагає дитині навчитися читати німецькою – з аркушами, на яких є лише ті літери, які вона вже знає.
 
 Ви позначаєте літери, які дитина вже вивчила. За кілька секунд застосунок створює з них аркуш для читання: склади, слова, короткі слова, речення й невелику історію з питаннями для розмови. Кожне слово перевіряється. Літера чи буквосполучення на кшталт Sch, Ei або ck, яких ще не вчили, на аркуш не потрапляють. Ви просто позначаєте вивчені – у будь-якому порядку.
 
 Застосунок зручний для українськомовних батьків: усе керування – українською, а тексти для читання – німецькою. Вам не потрібно самим складати німецькі тексти чи шукати, що почитати з дитиною.
 
 ЧОМУ З'ЯВИВСЯ ЦЕЙ ЗАСТОСУНОК
-Я створила Leseraupe для своєї доньки в першому класі. Хотілося щодня мати щось придатне для читання й не вигадувати вправи самій – тексти саме з тих літер, які вона вже знає. Можливо, він стане в пригоді і вашій родині.
+Я створила Lese-Raupe для своєї доньки в першому класі. Хотілося щодня мати щось придатне для читання й не вигадувати вправи самій – тексти саме з тих літер, які вона вже знає. Можливо, він стане в пригоді і вашій родині.
 
 ЯК ЦЕ ПРАЦЮЄ
 • Скільки завгодно аркушів – один або кілька одразу, кожен трохи складніший.
@@ -133,7 +133,7 @@ Leseraupe допомагає дитині навчитися читати нім
 
 ВАШІ ДАНІ ЗАЛИШАЮТЬСЯ У ВАС
 • Без облікового запису, без реклами, без покупок у застосунку.
-• Leseraupe не збирає жодних даних. Літери, ім'я дитини (за бажанням), аркуші та журнал зберігаються лише на вашому пристрої.
+• Lese-Raupe не збирає жодних даних. Літери, ім'я дитини (за бажанням), аркуші та журнал зберігаються лише на вашому пристрої.
 • Працює без інтернету.
 • Резервна копія – файл, який ви зберігаєте самі.
 
@@ -182,7 +182,7 @@ Leseraupe допомагає дитині навчитися читати нім
 ## Was ist neu (≤ 500) — версия 1.0.0
 
 ```text
-Erste Version: Leseblätter nur aus bekannten Buchstaben – drucken, als PDF teilen oder am Handy lesen. Mit Timer, Leseraupe und Urkunde.
+Erste Version: Leseblätter nur aus bekannten Buchstaben – drucken, als PDF teilen oder am Handy lesen. Mit Timer, Lese-Raupe und Urkunde.
 ```
 
 ```text
@@ -198,7 +198,7 @@ Erste Version: Leseblätter nur aus bekannten Buchstaben – drucken, als PDF te
 ```text
 Hallo!
 
-Ich habe eine kleine App gebaut: Leseraupe. Sie erstellt Leseblätter für Kinder, die Deutsch lesen lernen – nur mit den Buchstaben, die das Kind schon kennt. Zum Drucken oder zum Lesen am Handy. Kostenlos, ohne Werbung, ohne Konto, sie sammelt keine Daten.
+Ich habe eine kleine App gebaut: Lese-Raupe. Sie erstellt Leseblätter für Kinder, die Deutsch lesen lernen – nur mit den Buchstaben, die das Kind schon kennt. Zum Drucken oder zum Lesen am Handy. Kostenlos, ohne Werbung, ohne Konto, sie sammelt keine Daten.
 
 Bevor sie in Google Play erscheint, braucht sie 14 Tage lang Testerinnen und Tester mit Android. Hilfst du mit?
 
@@ -217,7 +217,7 @@ Lena
 ```text
 Привіт!
 
-Я зробила невеликий застосунок – Leseraupe. Він створює аркуші для дітей, які вчаться читати німецькою, – лише з літер, які дитина вже знає. Можна надрукувати або читати з телефона. Керування українською, тексти – німецькою. Безкоштовно, без реклами, без облікового запису, жодних даних не збирає.
+Я зробила невеликий застосунок – Lese-Raupe. Він створює аркуші для дітей, які вчаться читати німецькою, – лише з літер, які дитина вже знає. Можна надрукувати або читати з телефона. Керування українською, тексти – німецькою. Безкоштовно, без реклами, без облікового запису, жодних даних не збирає.
 
 Перш ніж він з'явиться в Google Play, його мають 14 днів тестувати люди з Android. Допоможеш?
 

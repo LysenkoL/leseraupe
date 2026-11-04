@@ -5,7 +5,7 @@ import { getSettings } from './state';
 import { esc, go } from './ui';
 import { t } from './i18n';
 
-/** Karte „Meine Leseraupe“ (B4): Perlen der aktuellen Raupe, neueste Urkunde */
+/** Karte „Meine Lese-Raupe“ (B4): Perlen der aktuellen Raupe, neueste Urkunde */
 export function raupenKarte(stand: Raupenstand, kompakt = false): string {
   const neu = stand.fertig[stand.fertig.length - 1];
   // kompakt (Startseite): immer sichtbar, auch mit 0 Perlen – die Raupe ist die Heldin der App
@@ -30,7 +30,7 @@ export async function raupeFeiern(at: string): Promise<void> {
   wrap.innerHTML = `<div class="modal feier" role="dialog" aria-modal="true" aria-labelledby="feier-titel">
       ${eigeneIds(perlenRaupeSvg(PERLEN_JE_RAUPE, 'raupe-svg'))}
       <h2 id="feier-titel">${name ? `Super, ${esc(name)}!` : 'Super!'}</h2>
-      <p class="feier-satz">Deine Leseraupe ist fertig!</p>
+      <p class="feier-satz">Deine Lese‑Raupe ist fertig!</p>
       <p class="hint">${t('feier.eltern', { n: PERLEN_JE_RAUPE, nr })}</p>
       <div class="btnrow two"><button class="btn ghost" data-x="spaeter">${t('feier.spaeter')}</button><button class="btn green" data-x="urkunde">${t('raupe.urkundeAnsehen', { nr })}</button></div>
     </div>`;

@@ -147,7 +147,7 @@ export function jpegsToPdf(pages: PdfPage[], title = 'Leseblatt'): Uint8Array {
     push('\nendstream\nendobj\n');
     obj(n + 2, `<< /Length ${content.length} >>\nstream\n${content}\nendstream`);
   });
-  obj(info, `<< /Title (${safeTitle}) /Producer (Leseraupe) >>`);
+  obj(info, `<< /Title (${safeTitle}) /Producer (Lese-Raupe) >>`);
   const xref = pos;
   push(`xref\n0 ${info + 1}\n0000000000 65535 f \n${offsets.slice(1).map((o) => `${String(o).padStart(10, '0')} 00000 n \n`).join('')}`);
   push(`trailer\n<< /Size ${info + 1} /Root 1 0 R /Info ${info} 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
