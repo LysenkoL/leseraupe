@@ -331,5 +331,8 @@
   "start.was.woerter": "слова",
   "start.was.saetze": "речення",
   "start.was.geschichte": "історії",
-  "start.und": "та"
+  "start.und": "та",
+  "timer.kanal": "Кінець часу читання",
+  "timer.signalTitel": "Час читання минув!",
+  "timer.signalText": "Чудово прочитано! Повернутися до Lese-Raupe."
 }

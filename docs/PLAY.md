@@ -21,7 +21,7 @@
 | Datenschutz | статическая страница https://lysenkol.github.io/leseraupe/privacy.html (`public/privacy.html`, DE/UK/EN), ссылка в Play и в «Über die App»; в тексте только контактная почта, без имени и адреса |
 | Веб-версия | остаётся на GitHub Pages для личного использования |
 | Данные | только на устройстве, ничего не собираем → «Datensicherheit: keine Daten erhoben» |
-| Разрешения Android | INTERNET, VIBRATE, POST_NOTIFICATIONS (B5, спрашивается только при включении напоминания), RECEIVE_BOOT_COMPLETED + WAKE_LOCK (напоминание после перезагрузки). **SCHEDULE_EXACT_ALARM убрано** (решено 30.10.2026): напоминание неточное → в Play не нужна декларация «Exact alarms» |
+| Разрешения Android | INTERNET, VIBRATE, POST_NOTIFICATIONS (B5: спрашивается при включении напоминания; с 1.0.2 — один раз при первом старте таймера, для сигнала при заблокированном экране), RECEIVE_BOOT_COMPLETED + WAKE_LOCK (напоминание после перезагрузки). **SCHEDULE_EXACT_ALARM убрано** (решено 30.10.2026): напоминание неточное → в Play не нужна декларация «Exact alarms» |
 
 ## Статус
 

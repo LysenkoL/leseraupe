@@ -25,6 +25,7 @@ import { statusleiste } from './app/native';
 import { initElternLinks } from './app/elterncheck';
 import { sprache } from './app/i18n';
 import { erinnerungBeimStart } from './app/erinnerung';
+import { zurueck } from './app/zurueck';
 
 if (!PLAY) initUpdate();
 
@@ -109,6 +110,8 @@ window.addEventListener('hashchange', () => {
   ruhigAb = wechsel + 400;
 });
 window.addEventListener('hashchange', route);
+// Android-Zurück: MainActivity.java ruft das auf (true = erledigt, false = App in den Hintergrund)
+(window as unknown as { __zurueck: () => boolean }).__zurueck = () => zurueck();
 
 /**
  * Feste Kopfzeile: gescrollt → feiner Schatten; ihre Höhe steht in --kopf,

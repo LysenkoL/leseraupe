@@ -134,7 +134,7 @@ export function renderTimer(root: HTMLElement, params: URLSearchParams): void {
         toast(t('lesung.fehler'));
       }
     },
-  });
+  }, { signal: true });
 
   // Zeit wählen geht nur vor dem Start; neue Wahl zeichnet den Timer neu
   const wahl = root.querySelector<HTMLElement>('#t-wahl')!;

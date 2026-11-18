@@ -1,5 +1,5 @@
 import { STOLPER_FREI } from '../core/stolper';
-import { getSettings, setSettings } from '../app/state';
+import { getSettings, setSerie, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
 import { teileDatei } from '../sheet/pdf';
 import { exportBackup, importBackup, log, parseBackup, useKind } from '../core/db';
@@ -176,6 +176,8 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
       const ok = await confirmDialog(t('einst.sicherungFrage', { datum: new Date(b.exportedAt).toLocaleDateString('de-DE'), n: b.sheets.length }), t('einst.laden'));
       if (!ok) return;
       await importBackup(b);
+      // offener Entwurf gehört zu den alten Daten: sonst bekäme er beim Drucken eine Nummer, die schon belegt ist
+      setSerie([]);
       saveProfile(b.profile);
       useKind(b.profile.activeKindId);
       setSettings(activeKind(b.profile).settings);

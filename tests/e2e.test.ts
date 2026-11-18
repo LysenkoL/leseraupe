@@ -484,6 +484,68 @@ describe('App-Ablauf', () => {
     }
   });
 
+  it('Android-Zurück: wie der Pfeil oben, Fenster schließen, auf der Startseite die App verlassen', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 700 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }));
+      }
+    });
+    const zurueck = () => p.evaluate(() => (window as unknown as { __zurueck: () => boolean }).__zurueck());
+    await p.goto(base + '#/protokoll');
+    await p.waitForSelector('.topbar .iconbtn');
+    expect(await zurueck()).toBe(true);
+    await p.waitForFunction(() => location.hash === '#/verlauf');
+    expect(await zurueck()).toBe(true);
+    await p.waitForSelector('#create');
+    expect(await zurueck()).toBe(false);
+    // offenes Fenster: Zurück schließt nur das Fenster
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#sicherung');
+    await p.evaluate(() => {
+      const w = document.createElement('div');
+      w.className = 'modal-bg';
+      w.innerHTML = '<div class="modal"><button data-x="no">Nein</button></div>';
+      w.querySelector('button')!.addEventListener('click', () => w.remove());
+      document.body.appendChild(w);
+    });
+    expect(await zurueck()).toBe(true);
+    expect(await p.$('.modal-bg')).toBeNull();
+    expect(await p.evaluate(() => location.hash)).toBe('#/einstellungen');
+    // Einführung aus „Über die App“: im ersten Schritt zurück nach „Über die App“
+    await p.goto(base + '#/willkommen?zurueck=%23%2Fueber');
+    await p.waitForSelector('#onb-next');
+    expect(await zurueck()).toBe(true);
+    await p.waitForFunction(() => location.hash === '#/ueber');
+    await ctx.close();
+  });
+
+  it('Sicherung laden verwirft den offenen Entwurf (sonst bekäme er eine schon belegte Nummer)', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }));
+      }
+    });
+    await p.goto(base);
+    await p.click('#create');
+    await p.waitForSelector('#pv .sheet');
+    expect(await p.evaluate(() => localStorage.getItem('leseraupe.draft.k1'))).not.toBeNull();
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#imp', { state: 'attached' });
+    const sicherung = { app: 'leseraupe', version: 2, exportedAt: new Date().toISOString(), profile: { activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }, sheets: [], log: [] };
+    await p.setInputFiles('#imp', { name: 'sicherung.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(sicherung)) });
+    await p.click('.modal [data-x="yes"]');
+    await p.waitForFunction(() => localStorage.getItem('leseraupe.draft.k1') === null);
+    await p.goto(base + '#/vorschau');
+    await p.waitForSelector('#create');
+    await ctx.close();
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {
