@@ -1,6 +1,7 @@
 import { DICT, ARTIKEL_AKK, ARTIKEL_NOM, ARTIKEL_UNBEST_AKK, type Eintrag, type Art } from './dict';
 import { isAllowed, countUnit } from './letters';
 import { isSuitable } from './content';
+import { N_DEKLINATION, NICHT_FUER_PERSONEN, objektOk, essenAdjOk, personAdjOk, tierAdjOk } from './sinn';
 
 /** Lebensmittel, die im Singular einen Artikel brauchen („isst einen Apfel“, nicht „isst Apfel“). */
 const ZAEHLBAR = new Set([
@@ -84,10 +85,32 @@ export class Vocab {
     return `${capital ? cap(a) : a} ${n.e.w}`;
   }
 
-  /** Akkusativ mit bestimmtem Artikel */
+  /** Akkusativ mit bestimmtem Artikel; n-Deklination: „den Hasen“ (nur, wenn die Form lesbar ist) */
   akk(n: NounRef): string | null {
     const a = ARTIKEL_AKK[n.art];
-    return this.ok(a) ? `${a} ${n.e.w}` : null;
+    if (!this.ok(a)) return null;
+    const form = n.art === 'r' ? (N_DEKLINATION[n.e.w] ?? n.e.w) : n.e.w;
+    return this.ok(form) ? `${a} ${form}` : null;
+  }
+
+  /** Objekt-Verben, die zu diesem Nomen passen („hat den Hamster“, nicht „hat den Ofen“) */
+  objektVerben(n: NounRef, tier: boolean): string[] {
+    return this.dingVerbs().filter((vb) => objektOk(vb, n.e.w, tier));
+  }
+
+  /** Adjektive für Kinder als Subjekt */
+  personAdjs(): string[] {
+    return this.adjs('p').filter(personAdjOk);
+  }
+
+  /** Adjektive, die zu diesem Tier passen */
+  tierAdjs(tier: string): string[] {
+    return this.adjs('p').filter((a) => tierAdjOk(a, tier));
+  }
+
+  /** Verben ohne Objekt, die zu einem Kind passen („Lea turnt“, nicht „Luna muht“) */
+  personIntr(): string[] {
+    return this.verbs('intr').filter((v) => !NICHT_FUER_PERSONEN.has(v));
   }
 
   /** Essen als Objekt von „isst“: unzählbar/Plural ohne Artikel, sonst mit Artikel */
@@ -96,6 +119,11 @@ export class Vocab {
     const u = ARTIKEL_UNBEST_AKK[n.art];
     if (u && this.ok(u)) return `${u} ${n.e.w}`;
     return this.akk(n);
+  }
+
+  /** Essen ohne Artikel („mag Eis“, „mag Nudeln“) – null bei Zählbarem im Singular („mag eine Nudel“ klingt falsch) */
+  ohneArtikel(n: NounRef): string | null {
+    return n.art === 'pl' || !ZAEHLBAR.has(n.e.w) ? n.e.w : null;
   }
 
   /** „im Tal“, „am See“ */
@@ -132,8 +160,9 @@ export class Vocab {
       .map(([v]) => v);
   }
 
-  foodAdjs(): string[] {
-    return FOOD_ADJ.filter((a) => this.ok(a));
+  /** Adjektive für Essen; mit Lebensmittel nur die passenden („Der Kuchen ist süß“) */
+  foodAdjs(essen?: string): string[] {
+    return FOOD_ADJ.filter((a) => this.ok(a) && (!essen || essenAdjOk(a, essen)));
   }
 
   dingAdjs(): string[] {

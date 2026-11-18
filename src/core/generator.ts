@@ -282,6 +282,9 @@ function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = ne
  * Reichen die frischen Sätze der Stufe nicht, kommen frische aus `reserve` (die längsten zuerst) –
  * erst dann Wiederholungen. Sonst stand bei wenigen Buchstaben und hoher Stufe alle paar Tage dasselbe da.
  */
+/** Wörter, die in vielen Sätzen stehen dürfen (Artikel, „ist“, „malt“ …) – zählen nicht für die Abwechslung */
+const SATZ_FUELLWOERTER = new Set('der die das den dem ein eine einen ist sind hat malt isst mag und mit auf aus nicht ganz auch noch'.split(' '));
+
 function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avoid: Set<string>, reserve: string[] = []): string[] {
   const pool = shuffle(
     [...new Set(cands)].filter((s) => !avoid.has(s) && !p.history.recentSentences.has(s)),
@@ -295,10 +298,15 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
   const without = scored.filter((x) => x.nu === 0).map((x) => x.s);
   const out: string[] = [];
   const starts = new Map<string, number>();
+  // dasselbe Inhaltswort (Ort, Ding, Name) höchstens zweimal – sonst „… ist im Hotel“ in jedem zweiten Satz
+  const inhalt = new Map<string, number>();
+  const inhaltsWoerter = (s: string) => [...new Set(wordsOf(s).slice(1).filter((w) => [...w].length >= 3 && !SATZ_FUELLWOERTER.has(w.toLowerCase())).map((w) => w.toLowerCase()))];
   const tryAdd = (s: string) => {
     const st = wordsOf(s)[0] ?? '';
-    if ((starts.get(st) ?? 0) >= 2 || out.includes(s)) return;
+    const iw = inhaltsWoerter(s);
+    if ((starts.get(st) ?? 0) >= 2 || out.includes(s) || iw.some((w) => (inhalt.get(w) ?? 0) >= 2)) return;
     starts.set(st, (starts.get(st) ?? 0) + 1);
+    for (const w of iw) inhalt.set(w, (inhalt.get(w) ?? 0) + 1);
     out.push(s);
   };
   // so viele Sätze mit der neuen Buchstabe wie möglich, die übrigen nur zum Auffüllen
@@ -431,11 +439,7 @@ export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'w
     options.push({ kind: 'finde', text: `Kreise alle Wörter mit ${zeichen} ein.`, target: p.newLetter });
   }
   if (sheet.geschichte) {
-    const text = sheet.geschichte.saetze.join(' ');
-    const counts = new Map<string, number>();
-    for (const w of wordsOf(text)) if (/^\p{Lu}/u.test(w) && w.length > 1) counts.set(w, (counts.get(w) ?? 0) + 1);
-    const cands = [...counts].filter(([, c]) => c >= 2).map(([w]) => w);
-    const w = pick(cands, rng);
+    const w = pick(zaehlWoerter(sheet.geschichte.saetze), rng);
     if (w) options.push({ kind: 'zaehle', text: `Wie oft steht ${w} in der Geschichte?`, target: w });
   }
   options.push({ kind: 'male', text: 'Male die Raupe an.' });
@@ -447,6 +451,34 @@ export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'w
   }
   const notLast = options.filter((o) => o.kind !== p.history.lastQuest);
   return pick(notLast.length ? notLast : options, rng)!;
+}
+
+/** Großgeschriebene Wörter, die keine Nomen oder Namen sind (Satzanfang, Ausrufe) – nie „Wie oft steht Er …?“ */
+const KEIN_ZAEHLWORT = new Set(
+  'der die das den dem des ein eine einen einem er sie es wir ihr ich du am im an auf aus bei mit nach von vor zu zum zur unter über hinter neben da dann doch nun und aber oder so nein ja hallo toll super heute morgen gestern alle alles erst erste zuerst leise laut plötzlich jetzt hier dort mein meine dein sein ihre unser wer was wo wie warum wann na oh au juhu hurra wuff quak miau tuuut bimmeln'.split(' '),
+);
+
+/**
+ * „Zähle!“: nur Nomen und Namen, die mindestens zweimal genau so in der Geschichte stehen.
+ * Nicht: Satzanfänge wie „Er“, „Am“, „Nun“; nicht ein Name, der auch als „Toms“ vorkommt (verwirrt beim Zählen).
+ */
+export function zaehlWoerter(saetze: string[]): string[] {
+  const woerter = wordsOf(saetze.join(' '));
+  const counts = new Map<string, number>();
+  for (const w of woerter) counts.set(w, (counts.get(w) ?? 0) + 1);
+  const typ = new Map(DICT.woerter.map((e) => [e.w, e.typ]));
+  const mitteImSatz = new Set(saetze.flatMap((s) => wordsOf(s).slice(1)));
+  return [...counts]
+    .filter(([w, c]) => {
+      if (c < 2 || [...w].length < 2 || !/^\p{Lu}/u.test(w) || KEIN_ZAEHLWORT.has(w.toLowerCase())) return false;
+      // Genitiv/Ähnliches daneben („Tom“ und „Toms“): weglassen
+      if (woerter.some((x) => x !== w && (x === `${w}s` || `${x}s` === w))) return false;
+      const t = typ.get(w);
+      if (t) return t === 'Nomen' || t === 'Name';
+      // nicht im Wörterbuch (Namen aus Geschichten): nur, wenn es auch mitten im Satz groß steht
+      return mitteImSatz.has(w) && !typ.has(w.toLowerCase());
+    })
+    .map(([w]) => w);
 }
 
 /** Geheimwort: Wörter, deren erste Buchstaben ein Wort ergeben. */

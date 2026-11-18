@@ -1,5 +1,6 @@
 import type { Vocab, NounRef } from './vocab';
 import { pick, shuffle, type Rng } from './random';
+import { NICHT_ESSEN } from './sinn';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -20,12 +21,14 @@ export function pools(v: Vocab, exclude: Set<string> = new Set()): Pools {
   return {
     persons: v.names.filter((n) => !exclude.has(n)),
     animals: v.tagged('tier', true).filter((n) => v.nom(n) !== null),
-    foods: nouns('essen').filter((n) => v.food(n) !== null),
+    // nur, was ein Kind wirklich isst („isst Futter“, „isst Senf“ nicht)
+    foods: nouns('essen').filter((n) => v.food(n) !== null && !NICHT_ESSEN.has(n.e.w)),
     drinks: nouns('trinken'),
     places: nouns('im').concat(nouns('am')).filter((n) => v.ort(n) !== null),
-    things: v.tagged('ding', true).filter((n) => v.akk(n) !== null),
-    intr: v.verbs('intr'),
-    adjP: v.adjs('p'),
+    // Gegenstände, zu denen es mindestens ein passendes Verb gibt (keine Körperteile, nichts Abstraktes)
+    things: v.tagged('ding', true).filter((n) => v.akk(n) !== null && v.objektVerben(n, false).length > 0),
+    intr: v.personIntr(),
+    adjP: v.personAdjs(),
   };
 }
 
@@ -48,8 +51,8 @@ const TEMPLATES: Gen[] = [
     return a && d && v.has('trinkt') ? `${a} trinkt ${d.e.w}.` : null;
   },
   (v, p, r) => {
-    const a = P(p, r), f = pick(p.foods.concat(p.drinks), r);
-    return a && f && v.has('mag') ? `${a} mag ${v.food(f)}.` : null;
+    const a = P(p, r), f = pick(p.foods.concat(p.drinks).filter((n) => v.ohneArtikel(n)), r);
+    return a && f && v.has('mag') ? `${a} mag ${v.ohneArtikel(f)}.` : null;
   },
   (v, p, r) => {
     const a = P(p, r), adj = pick(p.adjP, r);
@@ -70,8 +73,9 @@ const TEMPLATES: Gen[] = [
     return a && b && vb ? `${a} ${vb} ${b}.` : null;
   },
   (v, p, r) => {
-    const a = P(p, r), vb = pick(v.dingVerbs(), r), o = pick(p.animals.concat(p.things), r);
-    const akk = o && v.akk(o);
+    const o = pick(p.animals.concat(p.things), r);
+    if (!o) return null;
+    const a = P(p, r), vb = pick(v.objektVerben(o, p.animals.includes(o)), r), akk = v.akk(o);
     return a && vb && akk ? `${a} ${vb} ${akk}.` : null;
   },
   (v, p, r) => {
@@ -81,11 +85,11 @@ const TEMPLATES: Gen[] = [
     return vb ? `${v.nom(t, true)} ${vb}.` : null;
   },
   (v, p, r) => {
-    const t = pick(p.animals, r), adj = pick(p.adjP, r);
+    const t = pick(p.animals, r), adj = t && pick(v.tierAdjs(t.e.w), r);
     return t && adj && v.has('ist') ? `${v.nom(t, true)} ist ${adj}.` : null;
   },
   (v, p, r) => {
-    const f = pick(p.foods.filter((n) => n.art !== 'pl'), r), adj = pick(v.foodAdjs(), r);
+    const f = pick(p.foods.filter((n) => n.art !== 'pl'), r), adj = f && pick(v.foodAdjs(f.e.w), r);
     const nom = f && v.nom(f, true);
     return nom && adj && v.has('ist') ? `${nom} ist ${adj}.` : null;
   },
@@ -172,7 +176,7 @@ export function templateStory(v: Vocab, p: Pools, rng: Rng, count: number, prefe
   add(intr[0] ? `${A} ${intr[0]}.` : null, 6, `Was macht ${A}?`);
   add(adj[0] && v.has('ist') ? `${B} ist ${adj[0]}.` : null, 5, `Wie ist ${B}?`);
   add(animal && ort && v.has('ist') ? `${v.nom(animal, true)} ist ${ort}.` : null, 4, `Welches Tier ist ${ort}?`);
-  add(animal && v.has('malt') ? `${A} malt ${v.akk(animal)}.` : null, 4, `Was malt ${A}?`);
+  add(animal && v.has('malt') && v.akk(animal) ? `${A} malt ${v.akk(animal)}.` : null, 4, `Was malt ${A}?`);
   add(v.has('malt') ? `${C} malt ${A}.` : null, 7, `Wen malt ${C}?`);
   add(C0 && v.has('malt') ? `${C} malt ${B}.` : null, 7);
   add(v.has('mag') ? `${A} mag ${B}.` : null, 3, `Wen mag ${A}?`);
