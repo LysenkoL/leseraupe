@@ -53,7 +53,9 @@ export function renderVorschau(root: HTMLElement): void {
         ? t('blatt.alleBuchstaben')
         : t('blatt.buchstaben', { n: d.data.letters.length });
     const neu = d.data.newLetter ? ` · ${t('blatt.neu', { b: unitById(d.data.newLetter)?.label.replace('-', '') ?? '' })}` : '';
-    return { nr, title: t('blatt.titel', { nr, thema: themaName(d.data.theme) }), sub: `${letters}${neu}${d.data.stufe ? ` · ${t('blatt.stufe', { n: d.data.stufe })}` : ''}` };
+    // Zeilenumbruch nur zwischen den Teilen („Stufe 1“ bleibt zusammen, siehe .sub span in app.css)
+    const sub = `${letters}${neu}${d.data.stufe ? ` · ${t('blatt.stufe', { n: d.data.stufe })}` : ''}`.split(' · ').map((x) => `<span>${esc(x)}</span>`).join(' · ');
+    return { nr, title: t('blatt.titel', { nr, thema: themaName(d.data.theme) }), sub };
   };
 
   root.innerHTML = `
@@ -118,7 +120,7 @@ export function renderVorschau(root: HTMLElement): void {
     root.querySelector('#pv-title')!.textContent = h.title;
     // in einer Serie eindeutig: nur dieses Blatt wird als gelesen markiert
     root.querySelector('#read')!.textContent = t('vorschau.gelesenNr', { nr: h.nr });
-    root.querySelector('#pv-sub')!.textContent = h.sub;
+    root.querySelector('#pv-sub')!.innerHTML = h.sub;
     const sy = root.querySelector<HTMLButtonElement>('#pv-silben')!;
     sy.setAttribute('aria-pressed', String(!!d.data.silbenFarbig));
     sy.classList.toggle('on', !!d.data.silbenFarbig);

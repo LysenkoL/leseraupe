@@ -109,4 +109,24 @@ window.addEventListener('hashchange', () => {
   ruhigAb = wechsel + 400;
 });
 window.addEventListener('hashchange', route);
+
+/**
+ * Feste Kopfzeile: gescrollt → feiner Schatten; ihre Höhe steht in --kopf,
+ * damit andere klebende Teile (Vorschau der Gestaltung) darunter beginnen.
+ */
+const gescrollt = () => document.documentElement.classList.toggle('gescrollt', window.scrollY > 4);
+window.addEventListener('scroll', gescrollt, { passive: true });
+let kopf: Element | null = null;
+const kopfHoehe = new ResizeObserver(([e]) => {
+  document.documentElement.style.setProperty('--kopf', `${Math.round((e.target as HTMLElement).offsetHeight)}px`);
+});
+new MutationObserver(() => {
+  const neu = app.querySelector('.topbar');
+  if (neu === kopf) return;
+  if (kopf) kopfHoehe.unobserve(kopf);
+  kopf = neu;
+  if (kopf) kopfHoehe.observe(kopf);
+}).observe(app, { childList: true, subtree: true });
+
 route();
+gescrollt();

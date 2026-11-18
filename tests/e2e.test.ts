@@ -449,6 +449,41 @@ describe('App-Ablauf', () => {
     await ctx.close();
   });
 
+  it('Kopfzeile: auf schmalen Handys überlappt nichts, beim Scrollen bleibt sie mit „Zurück“ oben', async () => {
+    for (const [width, sprache] of [[320, 'de'], [360, 'de'], [360, 'uk']] as const) {
+      const ctx = await browser.newContext({ viewport: { width, height: 640 } });
+      const p = await ctx.newPage();
+      await p.addInitScript((sp) => {
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: sp, kinder: [{ id: 'k1', settings: {} }] }));
+      }, sprache);
+      await p.goto(base);
+      await p.waitForSelector('#create');
+      // dreistellige Blattzahl als längster Fall
+      await p.$eval('.kopf-verlauf', (a) => (a.textContent = `${a.textContent!.split(' · ')[0]} · 135`));
+      const kopf = await p.evaluate(() => {
+        const teile = [...document.querySelectorAll('.topbar > *')].map((e) => e.getBoundingClientRect());
+        const name = document.querySelector<HTMLElement>('.brand > span')!;
+        return {
+          luecken: teile.slice(1).map((r, i) => r.left - teile[i].right),
+          rechts: teile[teile.length - 1].right,
+          nameGanz: name.scrollWidth <= name.clientWidth,
+        };
+      });
+      expect(Math.min(...kopf.luecken), `${width} ${sprache}`).toBeGreaterThanOrEqual(6);
+      expect(kopf.rechts).toBeLessThanOrEqual(width - 16);
+      expect(kopf.nameGanz, `${width} ${sprache}: Name abgeschnitten`).toBe(true);
+      // langer Bildschirm: nach dem Scrollen steht „Zurück“ noch oben
+      await p.goto(base + '#/einstellungen');
+      await p.waitForSelector('#sicherung');
+      await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await p.waitForFunction(() => window.scrollY > 200 && document.documentElement.classList.contains('gescrollt'));
+      const zurueck = await p.$eval('.topbar .iconbtn', (e) => e.getBoundingClientRect().top);
+      expect(zurueck).toBeGreaterThanOrEqual(0);
+      expect(zurueck).toBeLessThan(40);
+      await ctx.close();
+    }
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {
