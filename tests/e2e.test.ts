@@ -546,6 +546,41 @@ describe('App-Ablauf', () => {
     await ctx.close();
   });
 
+  it('Eigene Wörter: eintragen, „fehlt noch“ sehen; aufs Blatt kommt nur, was lesbar ist', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 760 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: { letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'], newLetter: 's' } }] }));
+      }
+    });
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#eg-form');
+    for (const w of ['lotta', 'Bello']) {
+      await p.fill('#eg-wort', w);
+      await p.click('#eg-form button[type=submit]');
+      await p.waitForFunction((x) => [...document.querySelectorAll('.eg-row b')].some((b) => b.textContent === x), w.charAt(0).toUpperCase() + w.slice(1));
+    }
+    await p.fill('#eg-wort', 'Anna Lena');
+    await p.click('#eg-form button[type=submit]');
+    expect(await p.textContent('#eg-err')).toContain('Nur ein Wort');
+    const zeilen = await p.$$eval('.eg-row', (r) => r.map((x) => x.textContent!.replace(/\s+/g, ' ').trim()));
+    expect(zeilen[0]).toContain('kommt aufs Blatt');
+    expect(zeilen[1]).toContain('fehlt noch: B, E');
+    // bleibt nach Neustart
+    await p.reload();
+    await p.waitForSelector('.eg-row');
+    expect(await p.$$eval('.eg-row b', (b) => b.map((x) => x.textContent))).toEqual(['Lotta', 'Bello']);
+    await p.goto(base);
+    await p.click('#create');
+    await p.waitForSelector('#pv .sheet');
+    const text = await p.$eval('#pv .sheet', (e) => e.textContent!);
+    expect(text).toContain('Lotta');
+    expect(text).not.toContain('Bello');
+    await ctx.close();
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {

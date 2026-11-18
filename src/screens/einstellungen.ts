@@ -1,4 +1,5 @@
 import { STOLPER_FREI } from '../core/stolper';
+import { eigeneFehlen, eigenesWortPruefen, MAX_EIGENE, type EigenesWort } from '../core/eigene';
 import { getSettings, setSerie, setSettings } from '../app/state';
 import { backButton, confirmDialog, esc, toast } from '../app/ui';
 import { teileDatei } from '../sheet/pdf';
@@ -71,6 +72,7 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
       }
       <div class="hint">${t('einst.stolperHinweis')}</div>
     </section>
+    ${eigeneKarte(s.eigene, new Set(s.letters))}
     <section class="card" id="sicherung">
       <h2>${t('einst.sicherung')}</h2>
       <div class="hint">${t('einst.sicherungHinweis')}</div>
@@ -133,6 +135,7 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
   });
 
   if (NATIV) erinnerungVerbinden(root);
+  eigeneVerbinden(root, () => renderEinstellungen(root));
 
   // Name wird beim Tippen gespeichert (kurz verzögert) und beim Verlassen des Feldes
   const nameInput = root.querySelector<HTMLInputElement>('#name')!;
@@ -188,6 +191,64 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
       toast(t('einst.dateiFehler'));
     }
   });
+}
+
+/** Eigene Wörter: Liste mit „kommt aufs Blatt ✓“ oder „fehlt noch: B, E“ */
+function eigeneKarte(liste: EigenesWort[], known: ReadonlySet<string>): string {
+  const zeilen = liste
+    .map((x, i) => {
+      const fehlt = eigeneFehlen(x.w, known);
+      const stand = fehlt.length ? t('eigene.fehlt', { b: esc(fehlt.join(', ')) }) : t('eigene.lesbar');
+      return `<div class="st-row eg-row${fehlt.length ? '' : ' lesbar'}"><div class="st-wort"><b lang="de">${esc(x.w)}</b><small>${t(x.typ === 'name' ? 'eigene.name' : 'eigene.wort')} · ${stand}</small></div><button class="pillbtn" data-eg-del="${i}" aria-label="${t('einst.entfernen')}">✕</button></div>`;
+    })
+    .join('');
+  return `<section class="card" id="eigene">
+      <div class="row"><h2>${t('eigene.titel')}</h2><span class="hint">${liste.length}/${MAX_EIGENE}</span></div>
+      <div class="hint">${t('eigene.hinweis')}</div>
+      <form class="eg-form" id="eg-form">
+        <input id="eg-wort" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false" lang="de" placeholder="${t('eigene.platzhalter')}" aria-label="${t('eigene.titel')}" />
+        <div class="seg" role="group"><button type="button" class="on" data-eg-typ="name" aria-pressed="true">${t('eigene.name')}</button><button type="button" data-eg-typ="wort" aria-pressed="false">${t('eigene.wort')}</button></div>
+        <button class="btn green" type="submit">${t('eigene.dazu')}</button>
+      </form>
+      <div class="eg-err" id="eg-err" aria-live="polite"></div>
+      ${zeilen ? `<div class="st-list">${zeilen}</div>` : `<div class="hint">${t('eigene.leer')}</div>`}
+    </section>`;
+}
+
+function eigeneVerbinden(root: HTMLElement, neuZeichnen: () => void): void {
+  const form = root.querySelector<HTMLFormElement>('#eg-form');
+  if (!form) return;
+  let typ: EigenesWort['typ'] = 'name';
+  const typKnoepfe = [...root.querySelectorAll<HTMLButtonElement>('[data-eg-typ]')];
+  typKnoepfe.forEach((b) =>
+    b.addEventListener('click', () => {
+      typ = b.dataset.egTyp as EigenesWort['typ'];
+      typKnoepfe.forEach((x) => {
+        x.classList.toggle('on', x === b);
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+    }),
+  );
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = root.querySelector<HTMLInputElement>('#eg-wort')!;
+    const cur = getSettings();
+    const r = eigenesWortPruefen(input.value, typ, cur.eigene);
+    if ('fehler' in r) {
+      root.querySelector('#eg-err')!.textContent = t(`eigene.f.${r.fehler}` as Key);
+      return;
+    }
+    setSettings({ ...cur, eigene: [...cur.eigene, r] });
+    neuZeichnen();
+    requestAnimationFrame(() => root.querySelector<HTMLElement>('#eigene')?.scrollIntoView({ block: 'nearest' }));
+  });
+  root.querySelectorAll<HTMLButtonElement>('[data-eg-del]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const cur = getSettings();
+      setSettings({ ...cur, eigene: cur.eigene.filter((_, i) => i !== Number(b.dataset.egDel)) });
+      neuZeichnen();
+    }),
+  );
 }
 
 function erinnerungVerbinden(root: HTMLElement): void {

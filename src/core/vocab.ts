@@ -55,8 +55,10 @@ export class Vocab {
   readonly nouns: NounRef[];
   readonly words: Eintrag[];
   readonly kleine: string[];
+  /** eigene Namen der Familie, die schon lesbar sind (kommen bevorzugt in Vorlagensätze) */
+  readonly eigeneNamen: string[];
 
-  constructor(known: ReadonlySet<string>, opts: { exclude?: string[] } = {}) {
+  constructor(known: ReadonlySet<string>, opts: { exclude?: string[]; eigeneNamen?: string[] } = {}) {
     this.known = known;
     const cache = new Map<string, boolean>();
     this.ok = (s: string) => {
@@ -72,6 +74,8 @@ export class Vocab {
     this.names = this.words.filter((e) => e.typ === 'Name').map((e) => e.w);
     this.nouns = this.words.filter((e) => e.typ === 'Nomen' && e.art).map((e) => ({ e, art: e.art! }));
     this.kleine = this.words.filter((e) => e.typ === 'kleines Wort').map((e) => e.w);
+    this.eigeneNamen = [...new Set(opts.eigeneNamen ?? [])].filter((n) => isAllowed(n, known) && isSuitable(n, false));
+    for (const n of this.eigeneNamen) if (!this.names.includes(n)) this.names.push(n);
   }
 
   has(word: string): boolean {

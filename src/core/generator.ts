@@ -11,6 +11,7 @@ import { VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } fr
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
 import { pickStolper, STOLPER_PRO_BLATT, type Stolper } from './stolper';
+import { eigeneFuersBlatt, eigeneLesbar, type EigenesWort } from './eigene';
 
 export const COUNTS: Record<Minutes, { silben: number; woerter: number; kleine: number; saetze: number; geschichte: number; fragen: [number, number]; aehnlich: number }> = {
   5: { silben: 18, woerter: 20, kleine: 8, saetze: 7, geschichte: 7, fragen: [3, 4], aehnlich: 4 },
@@ -53,6 +54,8 @@ export interface GenParams {
   stolper?: Stolper[];
   /** Silben farbig (B3) */
   silbenFarbig?: boolean;
+  /** eigene Wörter der Familie; nur lesbare kommen aufs Blatt */
+  eigene?: EigenesWort[];
 }
 
 /**
@@ -274,7 +277,28 @@ function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = ne
     : [];
   const alleKurz = [...kurz, ...mehrKurz];
   const mit = addStolper(lang, alleKurz, v, p, rng);
-  return mischeKurzeWoerter(mit.woerter, mit.kleine);
+  return mischeKurzeWoerter(mitEigenen(mit.woerter, p, rng), mit.kleine);
+}
+
+/** Eigene Wörter der Familie (lesbar, nicht vom letzten Blatt) ersetzen hinten Wörter – der Umfang bleibt gleich */
+function mitEigenen(woerter: string[], p: GenParams, rng: Rng): string[] {
+  const lesbar = eigeneLesbar(p.eigene, new Set(p.letters));
+  if (!lesbar.length) return woerter;
+  const da = new Set(woerter.map((w) => w.toLowerCase()));
+  const neu = eigeneFuersBlatt(lesbar, p.history, rng).filter((w) => !da.has(w.toLowerCase()));
+  if (!neu.length) return woerter;
+  const w = [...woerter];
+  // nicht die Stolperwörter und möglichst keine Wörter mit der neuen Buchstabe überschreiben (R1)
+  const stolper = new Set((p.stolper ?? []).map((x) => x.w.toLowerCase()));
+  const frei = (x: string) => !stolper.has(x.toLowerCase());
+  const ohneNeu = (x: string) => !p.newLetter || countUnit(x, p.newLetter) === 0;
+  const plaetze = [...w.keys()].reverse();
+  const ziele = [...plaetze.filter((i) => frei(w[i]) && ohneNeu(w[i])), ...plaetze.filter((i) => frei(w[i]) && !ohneNeu(w[i]))];
+  neu.forEach((e, k) => {
+    if (k < ziele.length) w[ziele[k]] = e;
+    else w.push(e);
+  });
+  return w.sort((a, b) => [...a].length - [...b].length);
 }
 
 /**
@@ -531,7 +555,7 @@ export interface Generated {
 export function generateSheet(p: GenParams): Generated {
   const rng = mulberry32(p.seed);
   const known = new Set(p.letters);
-  const v = new Vocab(known);
+  const v = new Vocab(known, { eigeneNamen: (p.eigene ?? []).filter((x) => x.typ === 'name').map((x) => x.w) });
   const c = COUNTS[p.minutes];
   const material = analyzeMaterial(p.letters);
 
@@ -589,6 +613,18 @@ export function generateSheet(p: GenParams): Generated {
   // Verfügbarkeit ist eine Zusage: wenn Ausweichregeln alles sperren, den geprüften Satzvorrat nutzen.
   if (p.blocks.saetze && !saetze.length && material.sentences.length) saetze.push(...material.sentences.slice(0,c.saetze));
 
+  // ein eigener Name der Familie in einem Satz (wenn lesbar und nicht schon da)
+  if (p.blocks.saetze && saetze.length && v.eigeneNamen.length && !saetze.some((x) => v.eigeneNamen.some((n) => wordsOf(x).includes(n)))) {
+    const eigenePools = { ...pools(v), persons: v.eigeneNamen, eigene: v.eigeneNamen };
+    const frisch = templateSentences(v, eigenePools, rng, 30).filter((x) => !saetze.includes(x) && !avoid.has(x) && !p.history.recentSentences.has(x) && v.eigeneNamen.some((n) => wordsOf(x).includes(n)));
+    const neuFirst = p.newLetter ? [...frisch.filter((x) => countUnit(x, p.newLetter!) > 0), ...frisch.filter((x) => countUnit(x, p.newLetter!) === 0)] : frisch;
+    if (neuFirst[0]) {
+      // ersetzt einen Satz ohne die neue Buchstabe (R1 bleibt), sonst den letzten
+      const ohne = saetze.map((_, i) => i).filter((i) => !p.newLetter || countUnit(saetze[i], p.newLetter) === 0);
+      saetze[ohne.length ? ohne[Math.floor(rng() * ohne.length)] : saetze.length - 1] = neuFirst[0];
+    }
+  }
+
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
 
@@ -625,7 +661,7 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
   const g = generateSheet({ ...p, seed: p.seed ^ 0x9e3779b9 });
   const s = structuredClone(sheet);
   const rng = mulberry32(p.seed ^ 0x9e3779b9);
-  const v = new Vocab(new Set(p.letters));
+  const v = new Vocab(new Set(p.letters), { eigeneNamen: (p.eigene ?? []).filter((x) => x.typ === 'name').map((x) => x.w) });
   switch (block) {
     case 'silben':
       s.silben = g.sheet.silben;

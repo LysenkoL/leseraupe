@@ -27,6 +27,7 @@ export async function genParams(seed = randomSeed()): Promise<GenParams> {
     ),
     stolper: s.stolper,
     silbenFarbig: s.silbenFarbig,
+    eigene: s.eigene,
   };
 }
 

@@ -14,6 +14,8 @@ export interface Pools {
   things: NounRef[];
   intr: string[];
   adjP: string[];
+  /** eigene Namen (lesbar): werden oft gewählt */
+  eigene: string[];
 }
 
 export function pools(v: Vocab, exclude: Set<string> = new Set()): Pools {
@@ -29,12 +31,18 @@ export function pools(v: Vocab, exclude: Set<string> = new Set()): Pools {
     things: v.tagged('ding', true).filter((n) => v.akk(n) !== null && v.objektVerben(n, false).length > 0),
     intr: v.personIntr(),
     adjP: v.personAdjs(),
+    eigene: v.eigeneNamen.filter((n) => !exclude.has(n)),
   };
 }
 
 type Gen = (v: Vocab, p: Pools, rng: Rng) => string | null;
 
-const P = (p: Pools, rng: Rng, not?: string) => pick(p.persons.filter((x) => x !== not), rng);
+/** Person für eine Vorlage; eigene Namen der Familie kommen oft dran */
+const P = (p: Pools, rng: Rng, not?: string) => {
+  const eigene = p.eigene.filter((x) => x !== not);
+  if (eigene.length && rng() < 0.35) return pick(eigene, rng);
+  return pick(p.persons.filter((x) => x !== not), rng);
+};
 
 /** Einzelne Satzvorlagen */
 const TEMPLATES: Gen[] = [
