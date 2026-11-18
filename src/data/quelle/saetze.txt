@@ -569,3 +569,204 @@ Anna und Ole lesen.
 Bello, los!
 Ab, Bello, ab!
 Das Bad, Bello!
+
+# Kurze natürliche Sätze für 7–14 Buchstaben (1.0.2) – damit am Anfang nicht fast nur Vorlagensätze kommen
+Tom malt mit Mama.
+Mia isst mit Oma Salat.
+Lola malt Oma lila.
+Otto malt mit Mia.
+Tim malt mit Lisa im Saal.
+Lilli isst mit Tom Salami.
+Mila malt Lamas im Tal.
+Tom malt Momo als Lama.
+Im Tal ist Lilli mit Tom.
+Im Saal malt Mia.
+Sam ist mit Oma im Saal.
+Ali isst Salat, Tim isst Salami.
+Mats malt mit Mama im Saal.
+Lisa ist so satt.
+Ist Lola mit Otto im Tal?
+Mama malt mit Lisa Lamas.
+Oma ist mit Mia im Moos.
+Im Saal malt Momo mit Lilli.
+Mia malt Tom, Tom malt Mia.
+Sam malt mit Tim Lamas.
+Lisa malt Mama, Oma malt Lisa.
+Im Moos ist Momo mit Lilli.
+Also los, Tom!
+Mama ist mit Tom im Tal.
+Oma malt Tim mit Lolli.
+Lissi isst Lollis im Saal.
+Ist Mama mit Oma im Saal?
+Emma ist mit Oma am See.
+Leo malt alle Esel am See.
+Es ist so toll im Tal.
+Malte isst mit Emil Salat.
+Ole ist mit Lisa am See.
+Ella malt Esel, Leo malt Lamas.
+Am See ist es so toll.
+Mama malt Emma mit Esel.
+Emil ist mit Ole im Tal.
+Ist Lea mit Emma am See?
+Oma malt alle Lamas lila.
+Lea isst Salat am See.
+Nina isst Melonen am See.
+Tante Nele malt Tannen.
+Leon nimmt Tomaten mit.
+Nils malt Enten am See.
+Tina isst Tomaten mit Salami.
+Tante Anna isst Melone.
+Am See ist Nele mit Tom.
+Tim nimmt Lollis mit.
+Alle essen Tomaten am See.
+Mama malt Nina mit Tante Anna.
+Anna malt Esel, Leon malt Enten.
+Nina ist nass, Toni ist nass.
+Anton nimmt Salami mit.
+Oma nimmt Anna mit.
+Tante Lina malt Tannen am See.
+Am See essen alle Melonen.
+Anna malt Nina, Nina malt Nele.
+Tante Anne nimmt Lena mit.
+Anton isst Linsen.
+Nimm Melone mit, Toni!
+Leon isst Melone mit Lisa am See.
+Nora malt rote Rosen.
+Am Meer ist Sara mit Oma.
+Mira isst rote Tomaten.
+Tom rennt ans Meer.
+Im Meer ist es nass.
+Rita isst Rosinen mit Melone.
+Tara malt Lamas rot.
+Tim rennt, Tom rennt, alle rennen.
+Arne malt Ritter.
+Oma Rosa ist am Meer.
+Omar rennt mit Rita ans Tor.
+Mira malt mit Rosa Tannen.
+Tara malt am Meer.
+Oma isst Rosinen, Rita isst Melone.
+Sara rennt mit Nora ans Meer.
+Mama, Rita ist am Tor!
+Alle rennen ans Meer.
+Tante Rosa malt rote Tomaten.
+Uli turnt mit Lisa.
+Luna summt mit Mama.
+Susi isst Nusstorte.
+Ute nimmt Nusstorte mit.
+Tom rennt um alle Tannen.
+Unser Esel ist alt.
+Unser Tor ist rot.
+Nun ist Ulla am Meer.
+Uli malt Muster.
+Luis rennt um Mama.
+Unsere Oma malt Rosen.
+Ute summt am See.
+Luna isst Nusstorte mit Uli.
+Susi turnt im Saal.
+Nun ist Luis satt.
+Im Turm ist Luna mit Uli.
+Hans hat Mut.
+Tom hat rote Haare.
+Am Himmel ist es hell.
+Leon hat Husten.
+Uli hat rote Hosen an.
+Mehr Sahne, Oma!
+Tom hat Sahne am Ohr.
+Im Hotel am Meer ist es toll.
+Nora isst Tomaten roh.
+Hallo, Hanna! Hallo, Hans!
+Hanna rennt mit Hans ans Meer.
+Hallo, ihr alle!
+Oh, Hanna hat Sahne am Hut!
+Hans hat mehr Salat als Tom.
+Nora hat Nusstorte mit Sahne.
+Ohne Hut ist Hans nass.
+Das Rad ist rot.
+Udo und Ida rennen um den Turm.
+Dana isst Nudeln mit Tomaten.
+Dann ist der Mond da.
+Udos Rad ist im Sand.
+Der Turm ist alt und rund.
+Dort ist das Nest.
+Das Lamm ist nass.
+Ida und Dana sind am See.
+Unser Rad ist rot und alt.
+Der Esel ist alt und nett.
+Udo isst Nudeln, Ida isst Salat.
+Dino rennt um den See.
+Im Sand ist Ida mit Udo.
+Wer malt das Lama?
+Wir rennen um den See.
+Wo ist das Rad?
+Wir malen alle Lamas rot.
+Was isst Wanda?
+Im Wasser ist es warm.
+Wanda will Melone.
+Wer will Nudeln?
+Willi rudert mit Mama.
+Heidi hat ein Eis.
+Mein Hund ist leise.
+Udo isst ein Ei.
+Nein, Rudi, nein!
+Eine Meise ist im Nest.
+Ist das Seil rot?
+Mama reist ans Meer.
+Am Ende ist der Teller leer.
+Sein Eis ist rosa.
+Leise, leise, Oma ruht.
+Mein Eis ist rot.
+Eine Maus ist im Haus.
+Im Auto ist es laut.
+Der Hund rennt aus dem Haus.
+Raus aus dem Haus!
+Laura ist laut, Udo ist leise.
+Mama ist mit Laura im Auto.
+Ben hat einen roten Ball.
+Bello rennt um den Baum.
+Bodo baut ein Boot.
+Der Bus ist rot und laut.
+Im Bett ist es warm.
+Finn ist auf dem Sofa.
+Auf dem Hof ist ein Hahn.
+Fred rennt auf den Hof.
+Der Affe frisst eine Banane.
+Karl hat kalte Ohren.
+Ein Kater ist auf dem Sofa.
+Kim kauft Kuchen.
+Der Kakao ist warm.
+Klara malt einen Kreis.
+Der Koffer ist rot und alt.
+Komm, Karl, komm!
+Kati kann laut lesen.
+Im Kino ist es dunkel.
+Der Kran hebt eine Kiste.
+Der Kater ist auf dem Baum.
+Karla trinkt Kakao.
+Kommt ihr mit?
+Gina geht in den Garten.
+Guten Morgen, Oma!
+Der Garten ist bunt.
+Greta malt einen Igel.
+Ein Igel geht in den Garten.
+Morgen gehen wir in den Wald.
+Gabi geht in den Wald.
+Der Regen ist warm.
+Am Tag ist es warm, am Abend ist es kalt.
+Ganz leise geht Greta aus dem Haus.
+Papa hat ein Paket.
+Paula malt eine Puppe.
+Opa kauft Tomaten und Paprika.
+Pia hat Pause.
+Papa, komm mal!
+Der Pirat hat einen Papagei.
+Im Park ist es kalt.
+Paul pustet eine Kerze aus.
+Zehn Enten sind am See.
+Ein Zebra ist im Zoo.
+Komm, es ist Zeit!
+Zu Hause ist es warm.
+Der Zug ist laut.
+Am Abend kommt Opa zu Besuch.
+Wir warten zehn Minuten.
+Opa holt Gurken aus dem Garten.
+Ein Hund bellt im Garten.

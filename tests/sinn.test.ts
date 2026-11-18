@@ -140,8 +140,10 @@ describe('Abwechslung im Satzblock', () => {
       const stufe = stufeFor(saved.map((x) => ({ letters: x.data.letters })), letters);
       const g = generateSheet({ letters, newLetter: 'h', minutes: 5, theme: 'wiese', childName: '', blocks: { ...DEFAULT_BLOCKS }, history: historyFrom(saved, i), seed: 4242 + i * 7919, stufe });
       const zaehl = new Map<string, number>();
-      for (const s of g.sheet.saetze) for (const w of new Set(wordsOf(s).slice(1).filter((x) => x.length >= 3 && !['ist', 'malt', 'isst', 'den', 'die', 'das', 'der', 'hat', 'und', 'mag'].includes(x.toLowerCase())))) zaehl.set(w, (zaehl.get(w) ?? 0) + 1);
+      for (const s of g.sheet.saetze) for (const w of new Set(wordsOf(s).slice(1).filter((x) => x.length >= 3 && !['ist', 'malt', 'isst', 'den', 'die', 'das', 'der', 'hat', 'und', 'mag', 'mit', 'auf', 'aus', 'ein', 'eine', 'einen', 'sind', 'nicht', 'ganz', 'auch', 'noch'].includes(x.toLowerCase())))) zaehl.set(w, (zaehl.get(w) ?? 0) + 1);
       expect(Math.max(0, ...zaehl.values()), g.sheet.saetze.join(' | ')).toBeLessThanOrEqual(2);
+      // R1: die neue Buchstabe bleibt im Satzblock vorn – auch auf hohen Stufen
+      expect(g.sheet.saetze.filter((x) => /h/i.test(x)).length, `Blatt ${i}: ${g.sheet.saetze.join(' | ')}`).toBeGreaterThanOrEqual(4);
       saved.push({ seq: i, data: g.sheet });
     }
   });

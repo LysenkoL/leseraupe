@@ -282,6 +282,8 @@ function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = ne
  * Reichen die frischen Sätze der Stufe nicht, kommen frische aus `reserve` (die längsten zuerst) –
  * erst dann Wiederholungen. Sonst stand bei wenigen Buchstaben und hoher Stufe alle paar Tage dasselbe da.
  */
+const FERTIGE_SAETZE = new Set(DICT.saetze);
+
 /** Wörter, die in vielen Sätzen stehen dürfen (Artikel, „ist“, „malt“ …) – zählen nicht für die Abwechslung */
 const SATZ_FUELLWOERTER = new Set('der die das den dem ein eine einen ist sind hat malt isst mag und mit auf aus nicht ganz auch noch'.split(' '));
 
@@ -293,6 +295,9 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
   // reicht es nicht: die am längsten nicht gezeigten zuerst
   const seqOf = (s: string) => p.history.satzSeq?.get(s) ?? 0;
   const old = shuffle(cands.filter((s) => p.history.recentSentences.has(s) && !avoid.has(s)), rng).sort((a, b) => seqOf(a) - seqOf(b));
+  // von Hand geschriebene Sätze vor den Vorlagensätzen (die Reihenfolge innerhalb bleibt zufällig)
+  const fertig = (s: string) => FERTIGE_SAETZE.has(s);
+  pool.sort((a, b) => Number(fertig(b)) - Number(fertig(a)));
   const scored = pool.map((s) => ({ s, nu: p.newLetter ? countUnit(s, p.newLetter) : 0 }));
   const withNew = scored.filter((x) => x.nu > 0).map((x) => x.s);
   const without = scored.filter((x) => x.nu === 0).map((x) => x.s);
@@ -564,6 +569,21 @@ export function generateSheet(p: GenParams): Generated {
     const kurz = cands.filter((x) => len(x) <= st.satzWoerter);
     if (passend.length >= c.saetze * 2) satzCands = passend;
     else if (kurz.length >= c.saetze * 2) satzCands = kurz;
+  }
+  // R1 geht vor der Satzlänge: gibt es in der Länge der Stufe zu wenige frische Sätze mit der neuen Buchstabe,
+  // dürfen auch kürzere mit ihr dazu (sonst fehlte z. B. das neue H ab Stufe 5 ganz).
+  // C3: bei vielen Buchstaben gilt die Länge (die neuen sind dann oft selten, z. B. tz)
+  if (p.newLetter && !viele) {
+    const mitNeu = (x: string) => countUnit(x, p.newLetter!) > 0 && !p.history.recentSentences.has(x) && !avoid.has(x);
+    const imBereich = new Set(satzCands);
+    const fehlen = Math.ceil(c.saetze * NEU_ANTEIL) - satzCands.filter(mitNeu).length;
+    if (fehlen > 0) {
+      // nur so viele, wie bis zum Anteil fehlen (plus Reserve für die Abwechslungsregeln): fertige zuerst, dann die längsten
+      const dazu = shuffle(cands.filter((x) => mitNeu(x) && !imBereich.has(x)), rng)
+        .sort((a, b) => Number(FERTIGE_SAETZE.has(b)) - Number(FERTIGE_SAETZE.has(a)) || len(b) - len(a))
+        .slice(0, fehlen + 2);
+      satzCands = [...satzCands, ...dazu];
+    }
   }
   const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid, cands);
   // Verfügbarkeit ist eine Zusage: wenn Ausweichregeln alles sperren, den geprüften Satzvorrat nutzen.

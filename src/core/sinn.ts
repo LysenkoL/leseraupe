@@ -53,6 +53,8 @@ export const TRAGBAR = new Set(
    Badeanzug Badehose Luftmatratze Schwamm Gießkanne Pokal Turnbeutel Lesebuch Schneeball Mehl Salz Einrad Rodel
    Schlittschuh Kürbis Gold Knochen Schild Lesebuch Fliegenpilz Sonnenblume Pusteblume Gänseblümchen Löwenzahn Mohnblume Feder`.split(/\s+/),
 );
+/** Fahrzeuge: „Leon mag den Bagger“ */
+export const FAHRZEUGE = new Set('Auto Bagger Traktor Zug Bus Feuerwehrauto Krankenwagen Rakete Flugzeug Schiff Boot Laster Kran Hubschrauber Ufo Lok Kutsche Moped Motorrad Taxi Raumschiff Mondrakete'.split(' '));
 /** Außerdem findet und sucht man: Nest, Spur, Höhle, Weg … (haben oder holen kann man sie nicht). */
 export const FINDBAR = new Set('Nest Spur Höhle Weg Insel Burg Hütte Quelle Pfütze Sandburg'.split(' '));
 
@@ -87,7 +89,8 @@ export function objektOk(verb: string, wort: string, istTier: boolean): boolean 
   if (istTier) return verb === 'hat' || verb === 'holt' ? HAUSTIERE.has(wort) : true;
   switch (verb) {
     case 'mag':
-      return true;
+      // Spielsachen, Fahrzeuge, Lied/Fest … – nicht „mag den Ofen“, „mag das Regal“
+      return TRAGBAR.has(wort) || FAHRZEUGE.has(wort) || NUR_MAG.has(wort);
     case 'malt':
     case 'sieht':
       return !NUR_MAG.has(wort);
