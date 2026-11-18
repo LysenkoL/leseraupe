@@ -53,8 +53,8 @@ export function renderStart(root: HTMLElement): void {
     const neu = s.newLetter ? unitById(s.newLetter)?.label.replace('-', '') : '–';
     const themeChips = THEME_WAHL.map((id) => {
       const th = THEMES[themeAus(id)];
-      const on = !s.randomTheme && s.theme === id ? ' on' : '';
-      return `<button class="chip${on}" data-theme="${id}" style="background:${th.light};color:${th.main}">${themaName(id)}</button>`;
+      const an = !s.randomTheme && s.theme === id;
+      return `<button class="chip thema-chip${an ? ' on' : ''}" aria-pressed="${an}" data-theme="${id}" style="--c-bg:${th.light};--c-main:${th.main}">${themaName(id)}</button>`;
     }).join('');
     const blocks = BLOCKS.map(
       (id) => {
@@ -104,7 +104,7 @@ export function renderStart(root: HTMLElement): void {
     </section>
     <section class="card">
       <div class="row"><h2>${t('start.thema')}</h2><a class="pillbtn vorschau" href="#/thema">${t('start.themaVorschau')}</a></div>
-      <div class="chips">${themeChips}<button class="chip${s.randomTheme ? ' on' : ''}" data-theme="zufall" style="color:#3D4A56">${t('start.zufall')}</button></div>
+      <div class="chips">${themeChips}<button class="chip thema-chip${s.randomTheme ? ' on' : ''}" aria-pressed="${s.randomTheme}" data-theme="zufall" style="--c-bg:#EEF1EF;--c-main:#3D4A56">${t('start.zufall')}</button></div>
     </section>
     <section class="card">
       <h2>${t('start.bloecke')}</h2>
