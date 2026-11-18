@@ -39,6 +39,15 @@ describe('Hinweis auf den nächsten Buchstaben', () => {
     for (const z of zeilen) if (z.unit) expect(z.unit.length).toBe(1);
   });
 
+  it('viele Buchstaben, aber ohne M und T: nennt beide statt nur M (mit M allein gäbe es nur Mini-Szenen)', async () => {
+    const zeilen = await einBuchstabe(['a', 'e', 'f', 'i', 'j', 'k', 'l', 'n', 'o', 'p', 'r', 's', 'v', 'y']);
+    const g = zeilen.find((z) => z.bloecke.includes('geschichte'))!;
+    expect([g.unit, g.zweite].sort()).toEqual(['m', 't']);
+    expect(tippHtml(zeilen)).toContain('Noch 2 Buchstaben');
+    // nie „Noch 1 Buchstabe … Geschichten“, wenn ein Buchstabe keine richtige Geschichte bringt
+    expect(zeilen.some((z) => z.unit && !z.zweite && z.bloecke.includes('geschichte'))).toBe(false);
+  });
+
   it('bricht ab, wenn schon weitergetippt wurde', async () => {
     expect(await tippBerechnen(['m', 'a'], DEFAULT_BLOCKS, () => true)).toBeNull();
   });

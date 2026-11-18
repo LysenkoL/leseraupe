@@ -8,8 +8,20 @@ const REIHE: HinweisBlock[] = ['silben', 'woerter', 'saetze', 'geschichte'];
 export interface TippZeile {
   /** Dieser Buchstabe öffnet die Blöcke; null = ein einzelner Buchstabe reicht dafür nicht */
   unit: string | null;
+  /** zusammen mit diesem zweiten Buchstaben („Mit M und T …“), wenn einer allein nicht reicht */
+  zweite?: string;
   bloecke: HinweisBlock[];
 }
+
+/**
+ * Ab so vielen gelernten Einheiten zählen Mini-Szenen („Im Saal las Oma. Oma, Limo?“) im Hinweis nicht
+ * als Geschichte: versprochen wird nur, was eine richtige Geschichte (ab 6 Sätzen) bringt.
+ */
+export const ECHTE_GESCHICHTE_AB = 8;
+const echteGeschichte = (letters: string[]): boolean => {
+  const m = analyzeMaterial(letters);
+  return m.stories.some((g) => g.saetze.length >= 6) || !!m.template;
+};
 
 /**
  * Welche gewählten Blöcke fehlen, und welcher eine Buchstabe öffnet die meisten davon?
@@ -23,6 +35,9 @@ export async function tippBerechnen(
 ): Promise<TippZeile[] | null> {
   let fehlt = REIHE.filter((b) => gewaehlt[b] && !moeglich(letters, b));
   if (!fehlt.length) return [];
+  // Öffnet „mit“ diesen Block? Geschichten: bei vielen Buchstaben nur richtige, keine Mini-Szenen
+  const oeffnetBlock = (mit: string[], b: HinweisBlock) =>
+    b === 'geschichte' && letters.length >= ECHTE_GESCHICHTE_AB ? echteGeschichte(mit) : moeglich(mit, b);
   const kandidaten = UNIT_IDS.filter((id) => !letters.includes(id)).sort((a, b) => a.length - b.length);
   const oeffnet = new Map<string, HinweisBlock[]>();
   for (let i = 0; i < kandidaten.length; i++) {
@@ -32,7 +47,7 @@ export async function tippBerechnen(
     }
     const id = kandidaten[i];
     const mit = [...letters, id];
-    oeffnet.set(id, fehlt.filter((b) => moeglich(mit, b)));
+    oeffnet.set(id, fehlt.filter((b) => oeffnetBlock(mit, b)));
   }
   const zeilen: TippZeile[] = [];
   while (fehlt.length && zeilen.length < 2) {
@@ -53,6 +68,34 @@ export async function tippBerechnen(
     zeilen.push({ unit: bester, bloecke });
     fehlt = fehlt.filter((b) => !bloecke.includes(b));
   }
+  // Reicht kein einzelner Buchstabe für Geschichten (z. B. ohne M und T), dann ein Paar nennen:
+  // aus den Buchstaben, die am meisten Lesestoff bringen
+  if (fehlt.includes('geschichte') && letters.length >= ECHTE_GESCHICHTE_AB) {
+    const stoff = (id: string) => {
+      const m = analyzeMaterial([...letters, id]);
+      return m.sentences.length + m.stories.length * 3;
+    };
+    const beste = kandidaten.filter((id) => id.length === 1).sort((a, b) => stoff(b) - stoff(a)).slice(0, 6);
+    let paar: [string, string] | null = null;
+    let menge = 0;
+    for (let i = 0; i < beste.length; i++) {
+      await new Promise((r) => setTimeout(r));
+      if (abgebrochen()) return null;
+      for (let j = i + 1; j < beste.length; j++) {
+        const mit = [...letters, beste[i], beste[j]];
+        if (!echteGeschichte(mit)) continue;
+        const n = analyzeMaterial(mit).stories.filter((g) => g.saetze.length >= 6).length;
+        if (n > menge) {
+          menge = n;
+          paar = [beste[i], beste[j]];
+        }
+      }
+    }
+    if (paar) {
+      zeilen.push({ unit: paar[0], zweite: paar[1], bloecke: ['geschichte'] });
+      fehlt = fehlt.filter((b) => b !== 'geschichte');
+    }
+  }
   if (fehlt.length) zeilen.push({ unit: null, bloecke: fehlt });
   return zeilen;
 }
@@ -67,8 +110,9 @@ export function tippHtml(zeilen: TippZeile[]): string {
   return zeilen
     .map((z) => {
       if (!z.unit) return `<p>${t('start.tippMehr', { was: aufzaehlung(z.bloecke) })}</p>`;
-      const unit = unitById(z.unit)?.label.replace('-', '') ?? z.unit;
-      return `<p>${t('start.tippEins', { unit, was: aufzaehlung(z.bloecke) })}</p>`;
+      const name = (id: string) => unitById(id)?.label.replace('-', '') ?? id;
+      if (z.zweite) return `<p>${t('start.tippZwei', { a: name(z.unit), b: name(z.zweite), was: aufzaehlung(z.bloecke) })}</p>`;
+      return `<p>${t('start.tippEins', { unit: name(z.unit), was: aufzaehlung(z.bloecke) })}</p>`;
     })
     .join('');
 }

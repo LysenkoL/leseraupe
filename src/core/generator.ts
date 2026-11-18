@@ -577,7 +577,10 @@ export function generateSheet(p: GenParams): Generated {
   const vorlagen = templateSentences(v, pools(v), rng);
   const grundstock = viele && fertige.length >= c.saetze * 4 ? fertige : [...fertige, ...vorlagen];
   // Einfache Notsätze („Ali las.“) nur, wenn sonst nicht genug Sätze da wären – sonst klingt das Blatt eintönig
-  const cands = [...new Set(grundstock.length >= c.saetze ? grundstock : [...grundstock, ...material.sentences])];
+  // nicht derselbe Satz wie in der Geschichte, auch nicht mit anderem Satzzeichen („Alle essen Melone.“ / „…!“)
+  const ohneZeichen = (x: string) => wordsOf(x).join(' ').toLowerCase();
+  const inGeschichte = new Set((story?.g.saetze ?? []).map(ohneZeichen));
+  const cands = [...new Set(grundstock.length >= c.saetze ? grundstock : [...grundstock, ...material.sentences])].filter((x) => !inGeschichte.has(ohneZeichen(x)));
   const len = (x: string) => wordsOf(x).length;
   // Stufe: Satzlänge (in Wörtern) im Bereich der Stufe; zu wenige? dann gelockert
   let satzCands = cands;
@@ -658,7 +661,9 @@ export function generateSheet(p: GenParams): Generated {
 
 /** Einen einzelnen Block neu würfeln (↻). Geschichte zieht Fragen und Quest mit. */
 export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): SheetData {
-  const g = generateSheet({ ...p, seed: p.seed ^ 0x9e3779b9 });
+  // das, was gerade auf dem Blatt steht, gilt als „gerade benutzt“: ↻ bringt etwas anderes, wenn es das gibt
+  const h = withSerie(p.history, [sheet]);
+  const g = generateSheet({ ...p, history: h, seed: p.seed ^ 0x9e3779b9 });
   const s = structuredClone(sheet);
   const rng = mulberry32(p.seed ^ 0x9e3779b9);
   const v = new Vocab(new Set(p.letters), { eigeneNamen: (p.eigene ?? []).filter((x) => x.typ === 'name').map((x) => x.w) });

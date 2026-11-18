@@ -171,3 +171,25 @@ describe('Fertige Texte: keiner ist „tot“', () => {
     expect(falsch).toEqual([]);
   });
 });
+
+describe('↻ und Satzblock neben der Geschichte', () => {
+  const MIT_M = sortUnits(['a', 'e', 'f', 'i', 'j', 'k', 'l', 'n', 'o', 'p', 'r', 's', 'v', 'y', 'm']);
+  const p = (letters: string[], seed: number) => ({ letters, newLetter: null, minutes: 5 as const, theme: 'wiese' as const, childName: '', blocks: { ...DEFAULT_BLOCKS }, history: historyFrom([], 1), seed, stufe: 1 });
+
+  it('↻ bei der Geschichte bringt eine andere, wenn es eine gibt', async () => {
+    const { rerollBlock } = await import('../src/core/generator');
+    const s = generateSheet(p(MIT_M, 3)).sheet;
+    expect(s.geschichte).not.toBeNull();
+    const neu = rerollBlock(s, 'geschichte', p(MIT_M, 3));
+    expect(neu.geschichte?.titel).not.toBe(s.geschichte?.titel);
+  });
+
+  it('im Satzblock nie derselbe Satz wie in der Geschichte, auch nicht mit „!“ statt „.“', () => {
+    const ohne = (x: string) => wordsOf(x).join(' ').toLowerCase();
+    for (let seed = 1; seed <= 30; seed++) {
+      const s = generateSheet(p(MIT_M, seed)).sheet;
+      const g = new Set((s.geschichte?.saetze ?? []).map(ohne));
+      expect(s.saetze.filter((x) => g.has(ohne(x))), `seed ${seed}`).toEqual([]);
+    }
+  });
+});

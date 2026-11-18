@@ -28,6 +28,21 @@ export function fehltHinweis(d: SheetData): string {
   return `<div class="hint pv-fehlt">${t(key)}</div>`;
 }
 
+/** Was ein Block auf dem Blatt zeigt – zum Vergleich vor und nach ↻ */
+function blockInhalt(d: SheetData, block: BlockId): unknown {
+  switch (block) {
+    case 'geschichte':
+    case 'fragen':
+      return d.geschichte;
+    case 'quest':
+      return d.quest;
+    case 'aehnlich':
+      return d.aehnlich;
+    default:
+      return d[block];
+  }
+}
+
 export function renderVorschau(root: HTMLElement): void {
   const draft = getDraft();
   if (!draft) {
@@ -179,7 +194,13 @@ export function renderVorschau(root: HTMLElement): void {
     p.newLetter = d.data.newLetter;
     p.blocks = d.data.blocks;
     p.stufe = d.data.stufe;
-    setDraft({ ...d, data: rerollBlock(d.data, block, p), needsFit:true });
+    const neu = rerollBlock(d.data, block, p);
+    // nichts anderes möglich (z. B. die einzige Geschichte mit diesen Buchstaben): sagen statt still nichts tun
+    if (JSON.stringify(blockInhalt(neu, block)) === JSON.stringify(blockInhalt(d.data, block))) {
+      toast(t(block === 'geschichte' || block === 'fragen' ? 'vorschau.nurDieseGeschichte' : 'vorschau.nichtsAnderes'), 4500);
+      return;
+    }
+    setDraft({ ...d, data: neu, needsFit:true });
     await draw();
   };
 

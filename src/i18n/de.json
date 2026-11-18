@@ -322,6 +322,7 @@
   "vorschau.inhaltsfilter": "Inhaltsfilter: nicht für dieses Kinder-Leseblatt geeignet.",
   "vorschau.aussprachefilter": "Aussprache-Ausnahme: für diese Erstleseübungen nicht freigegeben.",
   "start.tippEins": "<b>Noch 1 Buchstabe:</b> Mit <b>{unit}</b> kommen {was} dazu.",
+  "start.tippZwei": "<b>Noch 2 Buchstaben:</b> Mit <b>{a}</b> und <b>{b}</b> kommen {was} dazu.",
   "start.tippMehr": "Für {was} braucht dein Kind noch mehr Buchstaben.",
   "start.was.silben": "Silben",
   "start.was.woerter": "Wörter",
@@ -345,5 +346,7 @@
   "eigene.f.lang": "Bitte 2 bis 20 Buchstaben.",
   "eigene.f.inhalt": "Dieses Wort passt nicht auf ein Leseblatt.",
   "eigene.f.doppelt": "Das Wort ist schon in der Liste.",
-  "eigene.f.voll": "Höchstens 30 Wörter."
+  "eigene.f.voll": "Höchstens 30 Wörter.",
+  "vorschau.nurDieseGeschichte": "Mit diesen Buchstaben gibt es nur diese Geschichte. Mit jedem neuen Buchstaben kommen mehr dazu.",
+  "vorschau.nichtsAnderes": "Mit diesen Buchstaben gibt es hier nichts anderes. Mit jedem neuen Buchstaben kommt mehr dazu."
 }
