@@ -148,3 +148,26 @@ describe('Abwechslung im Satzblock', () => {
     }
   });
 });
+
+describe('Fertige Texte: keiner ist „tot“', () => {
+  it('jede Geschichte und jeder Satz kann bei allen Buchstaben aufs Blatt (kein Wort vom Aussprache- oder Inhaltsfilter)', async () => {
+    const { isSuitable } = await import('../src/core/content');
+    const { checkText } = await import('../src/core/letters');
+    const alle = new Set(UNIT_IDS);
+    const tot = [
+      ...DICT.geschichten.flatMap((g) => [g.titel, ...g.saetze].filter((s) => !isSuitable(s) || !checkText(s, alle).ok).map((s) => `${g.titel}: ${s}`)),
+      ...DICT.saetze.filter((s) => !isSuitable(s) || !checkText(s, alle).ok),
+    ];
+    expect(tot).toEqual([]);
+  });
+
+  it('n-Deklination auch in fertigen Texten: nie „den Bauer“, „einen Kuschelbär“', () => {
+    const stamm = Object.keys(N_DEKLINATION).join('|');
+    const re = new RegExp(`\\b(den|dem|einen|einem|meinen|meinem|seinen|seinem|ihren|ihrem|unseren|unserem|alten|kleinen|großen)\\s+(\\p{Lu}\\p{Ll}*)?(${stamm})\\b`, 'u');
+    const falsch = [...DICT.saetze, ...DICT.geschichten.flatMap((g) => [...g.saetze, ...g.fragen])].filter((s) => {
+      const m = s.match(re);
+      return m && !/(Drachen)$/.test(m[0]);
+    });
+    expect(falsch).toEqual([]);
+  });
+});
