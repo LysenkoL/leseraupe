@@ -11,6 +11,7 @@ import { VOWEL_UNITS, sortUnits, unitById, wordsOf, countUnit, tokenizeWord } fr
 import { pools, templateSentences, templateStory } from './saetze';
 import { mulberry32, pick, shuffle, type Rng } from './random';
 import { pickStolper, STOLPER_PRO_BLATT, type Stolper } from './stolper';
+import { eigeneFuersBlatt, eigeneLesbar, type EigenesWort } from './eigene';
 
 export const COUNTS: Record<Minutes, { silben: number; woerter: number; kleine: number; saetze: number; geschichte: number; fragen: [number, number]; aehnlich: number }> = {
   5: { silben: 18, woerter: 20, kleine: 8, saetze: 7, geschichte: 7, fragen: [3, 4], aehnlich: 4 },
@@ -53,6 +54,8 @@ export interface GenParams {
   stolper?: Stolper[];
   /** Silben farbig (B3) */
   silbenFarbig?: boolean;
+  /** eigene Wörter der Familie; nur lesbare kommen aufs Blatt */
+  eigene?: EigenesWort[];
 }
 
 /**
@@ -274,7 +277,28 @@ function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = ne
     : [];
   const alleKurz = [...kurz, ...mehrKurz];
   const mit = addStolper(lang, alleKurz, v, p, rng);
-  return mischeKurzeWoerter(mit.woerter, mit.kleine);
+  return mischeKurzeWoerter(mitEigenen(mit.woerter, p, rng), mit.kleine);
+}
+
+/** Eigene Wörter der Familie (lesbar, nicht vom letzten Blatt) ersetzen hinten Wörter – der Umfang bleibt gleich */
+function mitEigenen(woerter: string[], p: GenParams, rng: Rng): string[] {
+  const lesbar = eigeneLesbar(p.eigene, new Set(p.letters));
+  if (!lesbar.length) return woerter;
+  const da = new Set(woerter.map((w) => w.toLowerCase()));
+  const neu = eigeneFuersBlatt(lesbar, p.history, rng).filter((w) => !da.has(w.toLowerCase()));
+  if (!neu.length) return woerter;
+  const w = [...woerter];
+  // nicht die Stolperwörter und möglichst keine Wörter mit der neuen Buchstabe überschreiben (R1)
+  const stolper = new Set((p.stolper ?? []).map((x) => x.w.toLowerCase()));
+  const frei = (x: string) => !stolper.has(x.toLowerCase());
+  const ohneNeu = (x: string) => !p.newLetter || countUnit(x, p.newLetter) === 0;
+  const plaetze = [...w.keys()].reverse();
+  const ziele = [...plaetze.filter((i) => frei(w[i]) && ohneNeu(w[i])), ...plaetze.filter((i) => frei(w[i]) && !ohneNeu(w[i]))];
+  neu.forEach((e, k) => {
+    if (k < ziele.length) w[ziele[k]] = e;
+    else w.push(e);
+  });
+  return w.sort((a, b) => [...a].length - [...b].length);
 }
 
 /**
@@ -282,6 +306,11 @@ function makeWortblock(v: Vocab, p: GenParams, rng: Rng, n: number, exclude = ne
  * Reichen die frischen Sätze der Stufe nicht, kommen frische aus `reserve` (die längsten zuerst) –
  * erst dann Wiederholungen. Sonst stand bei wenigen Buchstaben und hoher Stufe alle paar Tage dasselbe da.
  */
+const FERTIGE_SAETZE = new Set(DICT.saetze);
+
+/** Wörter, die in vielen Sätzen stehen dürfen (Artikel, „ist“, „malt“ …) – zählen nicht für die Abwechslung */
+const SATZ_FUELLWOERTER = new Set('der die das den dem ein eine einen ist sind hat malt isst mag und mit auf aus nicht ganz auch noch'.split(' '));
+
 function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avoid: Set<string>, reserve: string[] = []): string[] {
   const pool = shuffle(
     [...new Set(cands)].filter((s) => !avoid.has(s) && !p.history.recentSentences.has(s)),
@@ -290,15 +319,23 @@ function chooseSentences(cands: string[], n: number, p: GenParams, rng: Rng, avo
   // reicht es nicht: die am längsten nicht gezeigten zuerst
   const seqOf = (s: string) => p.history.satzSeq?.get(s) ?? 0;
   const old = shuffle(cands.filter((s) => p.history.recentSentences.has(s) && !avoid.has(s)), rng).sort((a, b) => seqOf(a) - seqOf(b));
+  // von Hand geschriebene Sätze vor den Vorlagensätzen (die Reihenfolge innerhalb bleibt zufällig)
+  const fertig = (s: string) => FERTIGE_SAETZE.has(s);
+  pool.sort((a, b) => Number(fertig(b)) - Number(fertig(a)));
   const scored = pool.map((s) => ({ s, nu: p.newLetter ? countUnit(s, p.newLetter) : 0 }));
   const withNew = scored.filter((x) => x.nu > 0).map((x) => x.s);
   const without = scored.filter((x) => x.nu === 0).map((x) => x.s);
   const out: string[] = [];
   const starts = new Map<string, number>();
+  // dasselbe Inhaltswort (Ort, Ding, Name) höchstens zweimal – sonst „… ist im Hotel“ in jedem zweiten Satz
+  const inhalt = new Map<string, number>();
+  const inhaltsWoerter = (s: string) => [...new Set(wordsOf(s).slice(1).filter((w) => [...w].length >= 3 && !SATZ_FUELLWOERTER.has(w.toLowerCase())).map((w) => w.toLowerCase()))];
   const tryAdd = (s: string) => {
     const st = wordsOf(s)[0] ?? '';
-    if ((starts.get(st) ?? 0) >= 2 || out.includes(s)) return;
+    const iw = inhaltsWoerter(s);
+    if ((starts.get(st) ?? 0) >= 2 || out.includes(s) || iw.some((w) => (inhalt.get(w) ?? 0) >= 2)) return;
     starts.set(st, (starts.get(st) ?? 0) + 1);
+    for (const w of iw) inhalt.set(w, (inhalt.get(w) ?? 0) + 1);
     out.push(s);
   };
   // so viele Sätze mit der neuen Buchstabe wie möglich, die übrigen nur zum Auffüllen
@@ -431,11 +468,7 @@ export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'w
     options.push({ kind: 'finde', text: `Kreise alle Wörter mit ${zeichen} ein.`, target: p.newLetter });
   }
   if (sheet.geschichte) {
-    const text = sheet.geschichte.saetze.join(' ');
-    const counts = new Map<string, number>();
-    for (const w of wordsOf(text)) if (/^\p{Lu}/u.test(w) && w.length > 1) counts.set(w, (counts.get(w) ?? 0) + 1);
-    const cands = [...counts].filter(([, c]) => c >= 2).map(([w]) => w);
-    const w = pick(cands, rng);
+    const w = pick(zaehlWoerter(sheet.geschichte.saetze), rng);
     if (w) options.push({ kind: 'zaehle', text: `Wie oft steht ${w} in der Geschichte?`, target: w });
   }
   options.push({ kind: 'male', text: 'Male die Raupe an.' });
@@ -447,6 +480,34 @@ export function makeQuest(p: GenParams, sheet: Pick<SheetData, 'geschichte' | 'w
   }
   const notLast = options.filter((o) => o.kind !== p.history.lastQuest);
   return pick(notLast.length ? notLast : options, rng)!;
+}
+
+/** Großgeschriebene Wörter, die keine Nomen oder Namen sind (Satzanfang, Ausrufe) – nie „Wie oft steht Er …?“ */
+const KEIN_ZAEHLWORT = new Set(
+  'der die das den dem des ein eine einen einem er sie es wir ihr ich du am im an auf aus bei mit nach von vor zu zum zur unter über hinter neben da dann doch nun und aber oder so nein ja hallo toll super heute morgen gestern alle alles erst erste zuerst leise laut plötzlich jetzt hier dort mein meine dein sein ihre unser wer was wo wie warum wann na oh au juhu hurra wuff quak miau tuuut bimmeln'.split(' '),
+);
+
+/**
+ * „Zähle!“: nur Nomen und Namen, die mindestens zweimal genau so in der Geschichte stehen.
+ * Nicht: Satzanfänge wie „Er“, „Am“, „Nun“; nicht ein Name, der auch als „Toms“ vorkommt (verwirrt beim Zählen).
+ */
+export function zaehlWoerter(saetze: string[]): string[] {
+  const woerter = wordsOf(saetze.join(' '));
+  const counts = new Map<string, number>();
+  for (const w of woerter) counts.set(w, (counts.get(w) ?? 0) + 1);
+  const typ = new Map(DICT.woerter.map((e) => [e.w, e.typ]));
+  const mitteImSatz = new Set(saetze.flatMap((s) => wordsOf(s).slice(1)));
+  return [...counts]
+    .filter(([w, c]) => {
+      if (c < 2 || [...w].length < 2 || !/^\p{Lu}/u.test(w) || KEIN_ZAEHLWORT.has(w.toLowerCase())) return false;
+      // Genitiv/Ähnliches daneben („Tom“ und „Toms“): weglassen
+      if (woerter.some((x) => x !== w && (x === `${w}s` || `${x}s` === w))) return false;
+      const t = typ.get(w);
+      if (t) return t === 'Nomen' || t === 'Name';
+      // nicht im Wörterbuch (Namen aus Geschichten): nur, wenn es auch mitten im Satz groß steht
+      return mitteImSatz.has(w) && !typ.has(w.toLowerCase());
+    })
+    .map(([w]) => w);
 }
 
 /** Geheimwort: Wörter, deren erste Buchstaben ein Wort ergeben. */
@@ -494,7 +555,7 @@ export interface Generated {
 export function generateSheet(p: GenParams): Generated {
   const rng = mulberry32(p.seed);
   const known = new Set(p.letters);
-  const v = new Vocab(known);
+  const v = new Vocab(known, { eigeneNamen: (p.eigene ?? []).filter((x) => x.typ === 'name').map((x) => x.w) });
   const c = COUNTS[p.minutes];
   const material = analyzeMaterial(p.letters);
 
@@ -533,9 +594,36 @@ export function generateSheet(p: GenParams): Generated {
     if (passend.length >= c.saetze * 2) satzCands = passend;
     else if (kurz.length >= c.saetze * 2) satzCands = kurz;
   }
+  // R1 geht vor der Satzlänge: gibt es in der Länge der Stufe zu wenige frische Sätze mit der neuen Buchstabe,
+  // dürfen auch kürzere mit ihr dazu (sonst fehlte z. B. das neue H ab Stufe 5 ganz).
+  // C3: bei vielen Buchstaben gilt die Länge (die neuen sind dann oft selten, z. B. tz)
+  if (p.newLetter && !viele) {
+    const mitNeu = (x: string) => countUnit(x, p.newLetter!) > 0 && !p.history.recentSentences.has(x) && !avoid.has(x);
+    const imBereich = new Set(satzCands);
+    const fehlen = Math.ceil(c.saetze * NEU_ANTEIL) - satzCands.filter(mitNeu).length;
+    if (fehlen > 0) {
+      // nur so viele, wie bis zum Anteil fehlen (plus Reserve für die Abwechslungsregeln): fertige zuerst, dann die längsten
+      const dazu = shuffle(cands.filter((x) => mitNeu(x) && !imBereich.has(x)), rng)
+        .sort((a, b) => Number(FERTIGE_SAETZE.has(b)) - Number(FERTIGE_SAETZE.has(a)) || len(b) - len(a))
+        .slice(0, fehlen + 2);
+      satzCands = [...satzCands, ...dazu];
+    }
+  }
   const saetze = chooseSentences(satzCands, lang ? LANG_SAETZE : c.saetze, p, rng, avoid, cands);
   // Verfügbarkeit ist eine Zusage: wenn Ausweichregeln alles sperren, den geprüften Satzvorrat nutzen.
   if (p.blocks.saetze && !saetze.length && material.sentences.length) saetze.push(...material.sentences.slice(0,c.saetze));
+
+  // ein eigener Name der Familie in einem Satz (wenn lesbar und nicht schon da)
+  if (p.blocks.saetze && saetze.length && v.eigeneNamen.length && !saetze.some((x) => v.eigeneNamen.some((n) => wordsOf(x).includes(n)))) {
+    const eigenePools = { ...pools(v), persons: v.eigeneNamen, eigene: v.eigeneNamen };
+    const frisch = templateSentences(v, eigenePools, rng, 30).filter((x) => !saetze.includes(x) && !avoid.has(x) && !p.history.recentSentences.has(x) && v.eigeneNamen.some((n) => wordsOf(x).includes(n)));
+    const neuFirst = p.newLetter ? [...frisch.filter((x) => countUnit(x, p.newLetter!) > 0), ...frisch.filter((x) => countUnit(x, p.newLetter!) === 0)] : frisch;
+    if (neuFirst[0]) {
+      // ersetzt einen Satz ohne die neue Buchstabe (R1 bleibt), sonst den letzten
+      const ohne = saetze.map((_, i) => i).filter((i) => !p.newLetter || countUnit(saetze[i], p.newLetter) === 0);
+      saetze[ohne.length ? ohne[Math.floor(rng() * ohne.length)] : saetze.length - 1] = neuFirst[0];
+    }
+  }
 
   const base = { geschichte: story?.g ?? null, woerter, saetze };
   const quest = makeQuest(p, base, v, rng);
@@ -573,7 +661,7 @@ export function rerollBlock(sheet: SheetData, block: BlockId, p: GenParams): She
   const g = generateSheet({ ...p, seed: p.seed ^ 0x9e3779b9 });
   const s = structuredClone(sheet);
   const rng = mulberry32(p.seed ^ 0x9e3779b9);
-  const v = new Vocab(new Set(p.letters));
+  const v = new Vocab(new Set(p.letters), { eigeneNamen: (p.eigene ?? []).filter((x) => x.typ === 'name').map((x) => x.w) });
   switch (block) {
     case 'silben':
       s.silben = g.sheet.silben;

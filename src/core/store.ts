@@ -1,6 +1,7 @@
 import { DEFAULT_BLOCKS, type BlockId } from './types';
 import { sortUnits, UNIT_IDS } from './letters';
 import { sanitizeStolper, type Stolper } from './stolper';
+import { sanitizeEigene, type EigenesWort } from './eigene';
 import { THEME_WAHL, type ThemeWahl } from '../sheet/themes';
 
 /** Einstellungen – nur lokal im localStorage. */
@@ -23,6 +24,8 @@ export interface Settings {
   childName: string;
   /** C2: Frage „nur noch Wörter, Sätze und Geschichten?“ schon gestellt (nur einmal) */
   alleGefragt: boolean;
+  /** Eigene Wörter der Familie (Namen, Haustier …) – kommen aufs Blatt, sobald sie lesbar sind */
+  eigene: EigenesWort[];
 }
 
 const KEY = 'leseraupe.settings.v1';
@@ -42,6 +45,7 @@ export const DEFAULT_SETTINGS: Settings = {
   blocks: { ...DEFAULT_BLOCKS },
   childName: '',
   alleGefragt: false,
+  eigene: [],
 };
 
 function storage(): Storage | null {
@@ -67,6 +71,7 @@ export function sanitize(raw: Partial<Settings> | null | undefined): Settings {
   s.blocks = { ...DEFAULT_BLOCKS, ...(raw?.blocks ?? {}) };
   if (typeof s.childName !== 'string') s.childName = '';
   s.alleGefragt = s.alleGefragt === true;
+  s.eigene = sanitizeEigene(s.eigene);
   delete (s as Partial<{ aehnlichPair: unknown }>).aehnlichPair;
   s.blocks.aehnlich = false;
   return s;

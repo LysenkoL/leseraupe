@@ -67,9 +67,9 @@ export function renderStart(root: HTMLElement): void {
 
     root.innerHTML = `
 <div class="screen">
-  <div class="topbar">
+  <div class="topbar start">
     <div class="brand grow">${LOGO}<span>Lese‑Raupe</span></div>
-    <a class="pillbtn" href="#/verlauf" style="display:flex;align-items:center;text-decoration:none">${t('start.verlauf')}${count >= 0 ? ` · ${count}` : ''}</a>
+    <a class="pillbtn kopf-verlauf" href="#/verlauf">${t('start.verlauf')}${count >= 0 ? ` · ${count}` : ''}</a>
     <a class="iconbtn" href="#/einstellungen" aria-label="${t('start.einstellungen')}">${GEAR_ICON}</a>
   </div>
   <div class="content">
