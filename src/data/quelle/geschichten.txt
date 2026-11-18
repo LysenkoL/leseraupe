@@ -204,7 +204,7 @@ Emma rührt den Teig.
 Der Kuchen ist im Ofen.
 Es riecht so gut!
 Opa kommt nach Hause.
-Opa fragt: Was riecht so gut?
+Opa fragt: „Was riecht so gut?“
 Emma lacht.
 Alle essen Kuchen.
 Der Kuchen ist lecker!
@@ -344,7 +344,7 @@ Klara geht in den Wald.
 Da sitzt eine Fee auf einem Pilz.
 Die Fee ist klein.
 Sie hat eine Krone.
-Die Fee sagt: Hallo, Klara!
+Die Fee sagt: „Hallo, Klara!“
 Klara staunt.
 Die Fee zaubert eine Blume.
 Die Blume ist lila.
@@ -538,7 +538,7 @@ Toll, Nina!
 # Rita rennt
 Rita rennt.
 Rosa rennt mit.
-Rita rennt am Rasen.
+Rita rennt ans Tor.
 Rita ist am Tor.
 Tor! Toll, Rita!
 Rosa ist matt.
@@ -595,7 +595,7 @@ Doch auf einmal ist die Schnur los.
 Der Drachen fliegt allein weiter.
 Er landet in einem hohen Baum.
 Ben ist traurig.
-Lena holt den Bauer Hannes, und er hat eine Leiter.
+Lena holt den Bauern Hannes, und er hat eine Leiter.
 Bauer Hannes holt den Drachen aus dem Baum.
 „Danke!“, ruft Ben und lacht.
 ? Wer hat einen Drachen?
@@ -626,7 +626,6 @@ Im Garten liegt Schnee.
 Tim und Lisa bauen einen Schneemann.
 Erst rollen sie eine runde Kugel.
 Dann rollen sie noch eine Kugel und noch eine.
-Er bekommt auch Arme aus Bambus.
 Als Nase hat er eine Karotte.
 „Er hat noch keinen Hut“, sagt Lisa.
 Tim holt einen alten Hut aus dem Haus.
@@ -697,7 +696,7 @@ Und Emils Burg aus Sand holt sich das Meer.
 # Lange Geschichten (C3), Teil 2: Buchstaben der Fibel bis K (ohne Sp/St am Anfang, Pf, Qu, X, V, Y, C, ß, ng, ck, tz)
 
 # Wo ist Brummi?
-Paul hat einen alten Kuschelbär, sein Name ist Brummi.
+Paul hat einen alten Kuschelbären, sein Name ist Brummi.
 Brummi ist immer bei Paul, auch im Bett.
 Am Sonntag fährt die Familie in den Park.
 Paul tobt mit Papa auf der Wiese.
@@ -809,7 +808,7 @@ Doch Ida lacht: „Der ist lieb, er will nur Suppe.“
 
 # Ein neuer Freund
 Ole wohnt mit seiner Familie in einem neuen Haus.
-Er kennt hier noch niemand.
+Er kennt hier noch niemanden.
 In der Pause bleibt er allein am Rand.
 Da kommt ein Mädchen mit einem Ball.
 „Ich bin Jule. Kommst du mit auf die Wiese?“
@@ -905,11 +904,11 @@ Da ruft Mama: „Ida, Abendessen!“
 # Pepe hat Schnupfen
 Heute ist Zirkus in der Stadt.
 Felix und Oma haben Karten für die erste Reihe.
-Doch dann kommt der Direktor in die Manege.
+Doch dann kommt der Direktor nach vorn.
 „Unser lustiger Pepe hat Schnupfen. Er kann heute nicht auftreten.“
 Die Kinder rufen: „Oh nein!“
 Da hat Oma eine Idee, und sie flüstert Felix etwas ins Ohr.
-Felix steht auf und geht in die Manege.
+Felix steht auf und geht nach vorn.
 Er macht Quatsch: Er fällt absichtlich hin.
 Er zieht eine lustige Grimasse und tanzt wie ein Huhn.
 Alle Kinder lachen und klatschen.
@@ -1115,10 +1114,10 @@ Sie schlafen im Heu auf dem Dachboden.
 ? Wo schlafen die Kinder?
 
 # Pit will ans Meer
-Der Seehund Pit wohnt am Südpol, wo alles voller Eis und Schnee ist.
+Der Seehund Pit wohnt am Nordpol, wo alles voller Eis und Schnee ist.
 Pit friert immer, sogar im Sommer.
 Eines Tages trifft er eine Möwe.
-„Weit im Norden gibt es Strände mit warmem Sand“, erzählt sie.
+„Weit im Süden gibt es Strände mit warmem Sand“, erzählt sie.
 Pit nimmt seinen Schal und schwimmt los.
 Er schwimmt viele Tage durch das Meer.
 Endlich kommt er an einen Strand mit Palmen.
@@ -1449,7 +1448,7 @@ Als er wieder auftaucht, jubelt Ella laut.
 # Der erste Schultag
 Heute ist Lottas erster Schultag.
 Sie trägt einen neuen Ranzen und eine große bunte Schultüte.
-Im Klassenzimmer kennt sie niemand, und ihr Bauch kribbelt.
+Im Klassenzimmer kennt sie niemanden, und ihr Bauch kribbelt.
 Neben ihr sitzt ein Junge, der leise weint.
 „Was hast du?“, fragt Lotta.
 „Meine Mama ist schon weg“, schnieft der Junge. „Ich heiße Emil.“
@@ -1559,14 +1558,14 @@ Seitdem liest Jana ihrer Oma jeden Sonntag eine Geschichte vor.
 ? Wer hilft bei schweren Wörtern?
 ? Wann liest Jana Oma jetzt vor?
 
-# Der Vulkan im Garten
-Tim und seine Schwester Mia wollen einen Vulkan bauen.
+# Der Schaumberg im Garten
+Tim und seine Schwester Mia wollen einen Berg bauen, aus dem Schaum kommt.
 Im Garten formen sie aus nasser Erde einen kleinen Berg.
 Oben drauf stecken sie eine leere Flasche.
 Papa gibt ihnen Backpulver, Essig und etwas rote Farbe.
 Zuerst schüttet Mia das Backpulver in die Flasche.
 Dann gießt Tim schnell den Essig hinterher.
-Es zischt und blubbert, und dann quillt roter Schaum aus dem Vulkan!
+Es zischt und blubbert, und dann quillt roter Schaum aus dem Berg!
 „Er bricht aus!“, schreit Mia begeistert.
 Der Schaum läuft den Berg hinunter, genau wie echte Lava.
 Leider läuft er auch auf Tims neue Schuhe.
@@ -1586,7 +1585,7 @@ Er leuchtet nur noch ganz schwach.
 Ida überlegt, wie sie ihm helfen kann.
 Da fällt ihr der Luftballon von ihrem Geburtstag ein.
 Vorsichtig bindet sie den Stern an die Schnur.
-Der Ballon steigt langsam in den Himmel, höher und höher.
+Der Luftballon steigt langsam in den Himmel, höher und höher.
 Ganz oben fängt der Stern wieder hell an zu leuchten.
 Ida winkt, bis er nur noch ein kleiner Punkt ist.
 Seitdem blinkt jede Nacht ein Stern ganz besonders hell über ihrem Haus.
@@ -1665,7 +1664,7 @@ Das Mädchen nimmt den Hasen ohne Ohr und drückt ihn ganz fest.
 Danach kommen immer mehr Leute.
 Am Abend ist der Tisch fast leer, und in Finns Dose klimpern viele Münzen.
 „Das reicht für den Zoo!“, ruft er.
-Am Sonntag fährt die ganze Familie zu den Giraffen und Pinguinen.
+Am Sonntag fährt die ganze Familie zu den Affen und Pinguinen.
 ? Wofür spart Finn Geld?
 ? Was verkauft Finn?
 ? Was nimmt das kleine Mädchen?
@@ -2115,7 +2114,6 @@ Am Ende isst der Esel seine Melone.
 Hund Bruno rollt im Sand.
 Nun ist Bruno nur Sand.
 Mama murmelt: „Bruno muss in das Bad!“
-Bruno hasst das Bad.
 Bruno rennt hinter das Bett.
 Lisa hat einen roten Ball.
 Bruno rennt dem Ball hinterher, bis in das Bad.
@@ -2131,8 +2129,7 @@ Mama murmelt: „Oh nein, Bruno!“
 # Ein Ei im Hut
 Lisa holt mit Oma Eier bei den Hennen.
 Lisa hat ihren Hut am Arm.
-Eine Henne ist sehr dreist.
-Eine Henne rennt in Lisas Hut und bleibt da.
+Eine dreiste Henne rennt in Lisas Hut und bleibt da.
 Lisa murmelt: „Hallo, Henne!“
 Dann ist da ein Ei im Hut!
 Oma murmelt: „Ein Ei im Hut! Hurra!“
@@ -2315,7 +2312,7 @@ Der Bauer wird wach und lacht: „Was ist denn los?“
 Am Abend macht der Bauer dem Hahn einen warmen Tee mit Honig.
 ? Was macht der Hahn am Morgen?
 ? Warum ruft der Hahn nicht?
-? Wer weckt den Bauer?
+? Wer weckt den Bauern?
 ? Was bekommt der Hahn am Abend?
 
 # Der Rabe und der Wurm

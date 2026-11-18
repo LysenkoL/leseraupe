@@ -3,6 +3,7 @@ import { getSerie, type Draft } from './state';
 import { saveSerieBis } from './actions';
 import { NATIV, vibrieren, wachHalten } from './native';
 import { raupeFeiern } from './raupe';
+import { signalAbsagen, signalPlanen } from './timersignal';
 
 /**
  * Countdown für die Lesezeit – gemeinsam für den Vollbild-Timer und „Am Bildschirm lesen“:
@@ -19,7 +20,8 @@ export interface Countdown {
   dispose(): void;
 }
 
-export function createCountdown(totalSec: number, on: { tick: (remaining: number) => void; done: () => void }): Countdown {
+/** `signal`: auch bei gesperrtem Handy am Ende benachrichtigen (Timer fürs Lesen auf Papier, nur Android-App) */
+export function createCountdown(totalSec: number, on: { tick: (remaining: number) => void; done: () => void }, { signal = false } = {}): Countdown {
   let remaining = totalSec;
   let endAt = 0;
   let running = false;
@@ -73,6 +75,7 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
   };
 
   const finish = () => {
+    if (signal) signalAbsagen();
     running = false;
     done = true;
     clearInterval(timer);
@@ -117,6 +120,7 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
       audio?.resume();
       endAt = performance.now() + remaining * 1000;
       running = true;
+      if (signal) signalPlanen(remaining);
       timer = window.setInterval(loop, 250);
       lockScreen();
     },
@@ -125,10 +129,12 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
       running = false;
       clearInterval(timer);
       remaining = (endAt - performance.now()) / 1000;
+      if (signal) signalAbsagen();
       unlockScreen();
       on.tick(remaining);
     },
     reset() {
+      if (signal && running) signalAbsagen();
       clearInterval(timer);
       running = false;
       done = false;
@@ -137,6 +143,7 @@ export function createCountdown(totalSec: number, on: { tick: (remaining: number
       on.tick(remaining);
     },
     dispose() {
+      if (signal && running) signalAbsagen();
       clearInterval(timer);
       unlockScreen();
       document.removeEventListener('visibilitychange', onVis);

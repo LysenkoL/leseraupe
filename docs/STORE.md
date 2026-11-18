@@ -59,6 +59,7 @@ SO FUNKTIONIERT ES
 • Timer: Du wählst die Lesezeit, der Bildschirm bleibt an.
 • Die Lese-Raupe wächst: Jeder Tag mit Lesen ist eine Perle. Nach 10 Perlen gibt es eine Urkunde zum Ausdrucken.
 • Stolperwörter: Nach dem Lesen tippst du an, wo dein Kind gestockt hat. Diese Wörter kommen auf den nächsten Blättern öfter vor.
+• Eigene Wörter: Namen aus der Familie oder vom Haustier – sie kommen aufs Blatt, sobald dein Kind alle Buchstaben kennt.
 • Silben farbig: Silben abwechselnd blau und rot – ohne Trennstriche.
 • Die App wächst mit: Mit jedem Blatt werden Wörter, Sätze und Geschichten etwas länger. Nach dem Lesen sagst du „leicht“, „geht so“ oder „schwer“ – die App passt sich an.
 • Wenn alle Buchstaben sitzen: „Alle auswählen“, und es geht weiter mit Wörtern, Sätzen und längeren Geschichten.
@@ -117,6 +118,7 @@ Lese-Raupe допомагає дитині навчитися читати ні�
 • Таймер: ви обираєте час читання, екран не гасне.
 • Гусениця росте: кожен день із читанням – намистинка. За 10 намистин – грамота, яку можна надрукувати.
 • Слова із запинкою: після читання позначте, де дитина запнулася. Ці слова частіше з'являтимуться на наступних аркушах.
+• Власні слова: імена з родини чи кличка тваринки – з'являться на аркуші, щойно дитина знатиме всі їхні літери.
 • Кольорові склади: склади по черзі синім і червоним – без дефісів.
 • Застосунок росте разом із дитиною: з кожним аркушем слова, речення та історії трохи довші. Після читання ви обираєте «легко», «так собі» чи «важко» – і застосунок підлаштовується.
 • Коли всі літери вже знайомі: «Вибрати всі» – і далі слова, речення та довші історії.
@@ -178,6 +180,16 @@ Lese-Raupe допомагає дитині навчитися читати ні�
 - Справа — наклонённый уменьшенный лист A4 (настоящий скриншот листа) с крупными словами вроде «Mama · Oma · Limo».
 - Текст максимум 3–5 слов, крупно, шрифт Inter: DE «Lesen lernen – Blatt für Blatt», UK «Читаємо німецькою». Можно без текста — Play часто накладает кнопки на края; важное держать по центру.
 - Без значков «Nr. 1», рейтингов, призывов «Jetzt laden».
+
+## Was ist neu (≤ 500) — версия 1.0.2
+
+```text
+Neu: Eigene Wörter – Namen aus der Familie oder vom Haustier kommen aufs Blatt, sobald dein Kind alle Buchstaben kennt. Viele neue Sätze für die ersten Wochen, Sätze ohne Grammatikfehler. Zurück-Taste führt zum vorigen Bildschirm, der Timer meldet sich auch bei gesperrtem Handy, Kopfzeile bleibt oben.
+```
+
+```text
+Нове: власні слова – імена з родини чи кличка тваринки з'являються на аркуші, щойно дитина знає всі їхні літери. Багато нових речень для перших тижнів, речення без граматичних помилок. Кнопка «Назад» веде на попередній екран, таймер сигналить і на заблокованому телефоні, шапка лишається вгорі.
+```
 
 ## Was ist neu (≤ 500) — версия 1.0.0
 

@@ -39,13 +39,32 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .screen { min-height: 100dvh; display: flex; flex-direction: column; max-width: 560px; margin: 0 auto; padding-top: var(--oben); padding-bottom: var(--unten); }
 /* die Knopfleiste unten hält selbst Abstand zur Navigationsleiste */
 .screen:has(> .bottom) { padding-bottom: 0; }
-.topbar { display: flex; align-items: center; gap: 12px; padding: 16px 16px 10px; }
+/* Kopfzeile bleibt beim Scrollen oben stehen (Zurück immer erreichbar); unter der Statusleiste */
+.topbar { display: flex; align-items: center; gap: 12px; padding: 16px 16px 10px; position: sticky; top: var(--oben); z-index: 40; background: var(--bg); transition: box-shadow .15s; }
+/* gescrollt: feiner Schatten, damit die Kopfzeile sich vom Inhalt darunter abhebt */
+.gescrollt .topbar { box-shadow: 0 8px 10px -10px rgba(31, 36, 33, 0.35); }
 .topbar h1 { margin: 0; font-size: 21px; font-weight: 800; line-height: 1.15; }
 .topbar .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.topbar .sub span { white-space: nowrap; }
 .topbar .grow { flex: 1; min-width: 0; }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 23px; font-weight: 800; color: var(--green); }
+/* Startseite: Logo + Name links, Verlauf und Einstellungen rechts – schrumpft mit der Breite, nichts überlappt */
+.brand { display: flex; align-items: center; gap: 10px; font-size: clamp(16px, 5.2vw, 23px); font-weight: 800; color: var(--green); }
+.brand > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brand-logo { width: 40px; height: 40px; flex: none; display: block; }
-@media (max-width: 380px) { .brand { font-size: 20px; gap: 8px; } .brand-logo { width: 36px; height: 36px; } }
+.pillbtn.kopf-verlauf { flex: none; display: flex; align-items: center; text-decoration: none; }
+@media (max-width: 400px) {
+  .topbar.start { gap: 8px; }
+  .brand { gap: 8px; }
+  .brand-logo { width: 36px; height: 36px; }
+  .pillbtn.kopf-verlauf { padding: 0 12px; font-size: 13px; }
+}
+@media (max-width: 340px) {
+  .topbar.start { gap: 6px; }
+  .brand { gap: 6px; font-size: 15px; }
+  .brand-logo { width: 32px; height: 32px; }
+  .pillbtn.kopf-verlauf { padding: 0 8px; font-size: 12px; }
+  .topbar.start .iconbtn { width: 40px; }
+}
 .iconbtn {
   width: 44px; height: 44px; flex: none; border-radius: 14px; border: none;
   background: var(--card); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--ink);
@@ -143,7 +162,7 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 /* längere Erklärungen im Fenster: Blocksatz, mit Silbentrennung (nur Oberfläche, nie auf dem Leseblatt) – sonst große Lücken */
 .modal h2 + p, .modal p + p { text-align: justify; hyphens: auto; text-wrap: pretty; }
 .modal-input { border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 12px; font-size: 20px; font-weight: 600; min-height: 50px; }
-.modal-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
+.modal-err, .eg-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
 /* B4: volle Raupe feiern – mittig, Raupe groß, kurz aufspringen */
 .feier-bg { align-items: center; }
 .feier { text-align: center; align-items: center; animation: feier-auf .45s cubic-bezier(.2, 1.4, .4, 1) both; }
@@ -166,7 +185,7 @@ a.iconbtn { text-decoration: none; }
 
 /* Timer */
 .screen.timer { background: #2B3A67; color: #fff; max-width: none; }
-.screen.timer .topbar { color: #C9D3F5; font-weight: 700; font-size: 15px; }
+.screen.timer .topbar { color: #C9D3F5; font-weight: 700; font-size: 15px; background: #2B3A67; box-shadow: none; }
 .tcenter { text-align: center; }
 .iconbtn.dark { background: rgba(255,255,255,.14); color: #fff; font-size: 20px; }
 .t-main { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 16px; text-align: center; }
@@ -293,6 +312,10 @@ a.iconbtn { text-decoration: none; }
 .pillbtn.kann { border-color: var(--green-2, #7FC06D); color: var(--green); font-weight: 700; }
 .st-row { transition: background .3s; border-radius: 12px; }
 .st-row.sieg { background: var(--green-light); }
+/* Eigene Wörter */
+.eg-form { display: flex; flex-direction: column; gap: 8px; }
+.eg-form input { font-size: 18px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; min-height: 44px; }
+.eg-row.lesbar small { color: var(--green); }
 
 .sy-demo { font-weight: 800; margin-left: auto; font-size: 18px; }
 
@@ -370,7 +393,7 @@ a.iconbtn { text-decoration: none; }
 .btnrow.four > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 .btn.sm { min-height: 44px; font-size: 14px; border-radius: 12px; }
 /* Gestaltung: Vorschau bleibt oben stehen, während man durch die Karten scrollt */
-.hp-big { position: sticky; top: var(--oben); z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
+.hp-big { position: sticky; top: calc(var(--oben) + var(--kopf, 70px)); z-index: 5; box-shadow: 0 6px 14px rgba(31, 36, 33, 0.08); }
 .name-card { position: relative; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }

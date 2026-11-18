@@ -449,6 +449,138 @@ describe('App-Ablauf', () => {
     await ctx.close();
   });
 
+  it('Kopfzeile: auf schmalen Handys überlappt nichts, beim Scrollen bleibt sie mit „Zurück“ oben', async () => {
+    for (const [width, sprache] of [[320, 'de'], [360, 'de'], [360, 'uk']] as const) {
+      const ctx = await browser.newContext({ viewport: { width, height: 640 } });
+      const p = await ctx.newPage();
+      await p.addInitScript((sp) => {
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: sp, kinder: [{ id: 'k1', settings: {} }] }));
+      }, sprache);
+      await p.goto(base);
+      await p.waitForSelector('#create');
+      // dreistellige Blattzahl als längster Fall
+      await p.$eval('.kopf-verlauf', (a) => (a.textContent = `${a.textContent!.split(' · ')[0]} · 135`));
+      const kopf = await p.evaluate(() => {
+        const teile = [...document.querySelectorAll('.topbar > *')].map((e) => e.getBoundingClientRect());
+        const name = document.querySelector<HTMLElement>('.brand > span')!;
+        return {
+          luecken: teile.slice(1).map((r, i) => r.left - teile[i].right),
+          rechts: teile[teile.length - 1].right,
+          nameGanz: name.scrollWidth <= name.clientWidth,
+        };
+      });
+      expect(Math.min(...kopf.luecken), `${width} ${sprache}`).toBeGreaterThanOrEqual(6);
+      expect(kopf.rechts).toBeLessThanOrEqual(width - 16);
+      expect(kopf.nameGanz, `${width} ${sprache}: Name abgeschnitten`).toBe(true);
+      // langer Bildschirm: nach dem Scrollen steht „Zurück“ noch oben
+      await p.goto(base + '#/einstellungen');
+      await p.waitForSelector('#sicherung');
+      await p.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await p.waitForFunction(() => window.scrollY > 200 && document.documentElement.classList.contains('gescrollt'));
+      const zurueck = await p.$eval('.topbar .iconbtn', (e) => e.getBoundingClientRect().top);
+      expect(zurueck).toBeGreaterThanOrEqual(0);
+      expect(zurueck).toBeLessThan(40);
+      await ctx.close();
+    }
+  });
+
+  it('Android-Zurück: wie der Pfeil oben, Fenster schließen, auf der Startseite die App verlassen', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 700 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }));
+      }
+    });
+    const zurueck = () => p.evaluate(() => (window as unknown as { __zurueck: () => boolean }).__zurueck());
+    await p.goto(base + '#/protokoll');
+    await p.waitForSelector('.topbar .iconbtn');
+    expect(await zurueck()).toBe(true);
+    await p.waitForFunction(() => location.hash === '#/verlauf');
+    expect(await zurueck()).toBe(true);
+    await p.waitForSelector('#create');
+    expect(await zurueck()).toBe(false);
+    // offenes Fenster: Zurück schließt nur das Fenster
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#sicherung');
+    await p.evaluate(() => {
+      const w = document.createElement('div');
+      w.className = 'modal-bg';
+      w.innerHTML = '<div class="modal"><button data-x="no">Nein</button></div>';
+      w.querySelector('button')!.addEventListener('click', () => w.remove());
+      document.body.appendChild(w);
+    });
+    expect(await zurueck()).toBe(true);
+    expect(await p.$('.modal-bg')).toBeNull();
+    expect(await p.evaluate(() => location.hash)).toBe('#/einstellungen');
+    // Einführung aus „Über die App“: im ersten Schritt zurück nach „Über die App“
+    await p.goto(base + '#/willkommen?zurueck=%23%2Fueber');
+    await p.waitForSelector('#onb-next');
+    expect(await zurueck()).toBe(true);
+    await p.waitForFunction(() => location.hash === '#/ueber');
+    await ctx.close();
+  });
+
+  it('Sicherung laden verwirft den offenen Entwurf (sonst bekäme er eine schon belegte Nummer)', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }));
+      }
+    });
+    await p.goto(base);
+    await p.click('#create');
+    await p.waitForSelector('#pv .sheet');
+    expect(await p.evaluate(() => localStorage.getItem('leseraupe.draft.k1'))).not.toBeNull();
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#imp', { state: 'attached' });
+    const sicherung = { app: 'leseraupe', version: 2, exportedAt: new Date().toISOString(), profile: { activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: {} }] }, sheets: [], log: [] };
+    await p.setInputFiles('#imp', { name: 'sicherung.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(sicherung)) });
+    await p.click('.modal [data-x="yes"]');
+    await p.waitForFunction(() => localStorage.getItem('leseraupe.draft.k1') === null);
+    await p.goto(base + '#/vorschau');
+    await p.waitForSelector('#create');
+    await ctx.close();
+  });
+
+  it('Eigene Wörter: eintragen, „fehlt noch“ sehen; aufs Blatt kommt nur, was lesbar ist', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 760 } });
+    const p = await ctx.newPage();
+    await p.addInitScript(() => {
+      if (!sessionStorage.getItem('x')) {
+        sessionStorage.setItem('x', '1');
+        localStorage.setItem('leseraupe.kinder.v2', JSON.stringify({ activeKindId: 'k1', onboarded: true, sprache: 'de', kinder: [{ id: 'k1', settings: { letters: ['t', 'o', 'm', 'l', 'a', 'i', 's'], newLetter: 's' } }] }));
+      }
+    });
+    await p.goto(base + '#/einstellungen');
+    await p.waitForSelector('#eg-form');
+    for (const w of ['lotta', 'Bello']) {
+      await p.fill('#eg-wort', w);
+      await p.click('#eg-form button[type=submit]');
+      await p.waitForFunction((x) => [...document.querySelectorAll('.eg-row b')].some((b) => b.textContent === x), w.charAt(0).toUpperCase() + w.slice(1));
+    }
+    await p.fill('#eg-wort', 'Anna Lena');
+    await p.click('#eg-form button[type=submit]');
+    expect(await p.textContent('#eg-err')).toContain('Nur ein Wort');
+    const zeilen = await p.$$eval('.eg-row', (r) => r.map((x) => x.textContent!.replace(/\s+/g, ' ').trim()));
+    expect(zeilen[0]).toContain('kommt aufs Blatt');
+    expect(zeilen[1]).toContain('fehlt noch: B, E');
+    // bleibt nach Neustart
+    await p.reload();
+    await p.waitForSelector('.eg-row');
+    expect(await p.$$eval('.eg-row b', (b) => b.map((x) => x.textContent))).toEqual(['Lotta', 'Bello']);
+    await p.goto(base);
+    await p.click('#create');
+    await p.waitForSelector('#pv .sheet');
+    const text = await p.$eval('#pv .sheet', (e) => e.textContent!);
+    expect(text).toContain('Lotta');
+    expect(text).not.toContain('Bello');
+    await ctx.close();
+  });
+
   it('Quest am Bildschirm: „Finde!“ – Wörter mit der Buchstabe antippen', async () => {
     // als Text, damit der Test-Runner das import() nicht umschreibt
     const html: string = await page.evaluate(`(async () => {
