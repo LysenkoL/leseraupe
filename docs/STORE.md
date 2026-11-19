@@ -184,11 +184,11 @@ Lese-Raupe допомагає дитині навчитися читати ні�
 ## Was ist neu (≤ 500) — версия 1.0.2
 
 ```text
-Neu: Eigene Wörter – Namen aus der Familie oder vom Haustier kommen aufs Blatt, sobald dein Kind alle Buchstaben kennt. Viele neue Sätze für die ersten Wochen, Sätze ohne Grammatikfehler. Zurück-Taste führt zum vorigen Bildschirm, der Timer meldet sich auch bei gesperrtem Handy, Kopfzeile bleibt oben.
+Neu: Eigene Wörter – Namen aus der Familie oder vom Haustier kommen aufs Blatt, sobald dein Kind alle Buchstaben kennt. Viele neue Sätze für die ersten Wochen, Sätze ohne Grammatikfehler. Zurück-Taste führt zum vorigen Bildschirm, der Timer meldet sich auch bei gesperrtem Handy, Kopfzeile bleibt oben. Lange Geschichten stehen über die ganze Breite – ohne Umbruch mitten im Satz.
 ```
 
 ```text
-Нове: власні слова – імена з родини чи кличка тваринки з'являються на аркуші, щойно дитина знає всі їхні літери. Багато нових речень для перших тижнів, речення без граматичних помилок. Кнопка «Назад» веде на попередній екран, таймер сигналить і на заблокованому телефоні, шапка лишається вгорі.
+Нове: власні слова – імена з родини чи кличка тваринки з'являються на аркуші, щойно дитина знає всі їхні літери. Багато нових речень для перших тижнів, речення без граматичних помилок. Кнопка «Назад» веде на попередній екран, таймер сигналить і на заблокованому телефоні, шапка лишається вгорі. Довгі історії займають усю ширину – без переносу посеред речення.
 ```
 
 ## Was ist neu (≤ 500) — версия 1.0.0
