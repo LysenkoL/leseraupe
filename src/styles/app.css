@@ -109,9 +109,14 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 }
 .chip.on { outline: 3px solid currentColor; outline-offset: -3px; }
 /* Themen auf der Startseite: nicht gewählt = weiß mit farbiger Schrift, gewählt = farbig gefüllt mit Häkchen */
-.thema-chip { background: #fff; color: var(--c-main); border-color: #DADFDB; }
+.thema-chip { position: relative; background: #fff; color: var(--c-main); border-color: #DADFDB; }
 .thema-chip.on { background: var(--c-bg); border-color: transparent; }
-.thema-chip.on::before { content: '✓ '; margin-right: 2px; }
+/* Häkchen als Plakette in der Ecke: der Chip wird nicht breiter, nichts springt in die nächste Zeile */
+.thema-chip.on::after {
+  content: '✓'; position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--c-main); color: #fff; font-size: 12px; font-weight: 800; border: 2px solid #fff;
+  display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+}
 
 .toggle { display: flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 600; font-size: 15px; }
 .toggle input { appearance: none; width: 46px; height: 28px; border-radius: 14px; background: #CCD3CE; position: relative; flex: none; margin: 0; transition: background .15s; }
