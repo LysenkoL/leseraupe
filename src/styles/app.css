@@ -364,8 +364,10 @@ a.iconbtn { text-decoration: none; }
 .qs-ziel { text-align: center; font-size: clamp(34px, 9vw, 56px); font-weight: 600; margin: 4px 0; }
 .qs-zahl { text-align: center; font-size: 22px; font-weight: 700; color: var(--muted); margin: 0 0 10px; }
 .qs-zahl b { color: var(--green); }
-.qs-text p { font-size: clamp(22px, 6.4vw, 34px); font-weight: 600; line-height: 1.55; margin: 0 0 6px; }
-.qs-t { font: inherit; color: inherit; background: none; border: 0; padding: 0 3px; margin: 0 -1px; border-radius: 8px; cursor: pointer; }
+/* gleiche Schrift wie die Seite „Geschichte“; etwas mehr Zeilenabstand zum Antippen */
+.qs-text p { font-size: clamp(28px, 7.4vw, 52px); font-weight: 600; line-height: 1.4; margin: 0 0 .5em; }
+/* Wort als Knopf: kein zusätzlicher Abstand (sonst Lücke vor Punkt und Komma) */
+.qs-t { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0 -2px; border-radius: 8px; cursor: pointer; }
 .qs-t.ok { background: var(--green-light); color: var(--green); box-shadow: inset 0 0 0 2px var(--green); }
 .qs-done { text-align: center; font-size: 30px; font-weight: 800; color: var(--green); margin: 16px 0 0; }
 .qs-male svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; }
