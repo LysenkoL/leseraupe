@@ -88,6 +88,8 @@
 }
 .blk.alt { border-color: var(--acc-border); }
 .blk-h { display: flex; align-items: center; gap: 2.4mm; }
+/* Vorschau: Platz für ↻, damit lange Überschriften nicht darunter verschwinden (im Druck gibt es ↻ nicht) */
+.blk-h:has(.blk-re) { padding-right: 9mm; }
 .blk-n {
   width: calc(var(--fs) * 6.6mm); height: calc(var(--fs) * 6.6mm); flex: none;
   border-radius: 50%; background: var(--main); color: #fff;

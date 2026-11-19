@@ -24,6 +24,7 @@ export function renderChat(root: HTMLElement): void {
 <div class="screen">
   <div class="topbar">${backButton('#/')}<div class="grow"><h1>${t('chat.titel')}</h1></div></div>
   <div class="content">
+    <p class="hint">${t('chat.intro')}</p>
     ${summary ? `<p class="hint" id="chat-material" role="status">${esc(summary)}</p>` : ''}
     <section class="card">
       <h2>${t('chat.schritt1')}</h2>

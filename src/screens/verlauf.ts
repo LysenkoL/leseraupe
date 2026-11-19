@@ -30,6 +30,11 @@ function zahlWort(n: number, key: 'verlauf.kGelesen' | 'verlauf.kFolge' | 'verla
   return t(`${key}${form}` as Key);
 }
 
+/** Gelesene Minuten eines Blatts; kürzer als eine halbe Minute wird als „unter 1 Min“ gezeigt */
+function minGelesen(n: number): string {
+  return n > 0 ? t('verlauf.minGelesen', { n }) : t('verlauf.minGelesen0');
+}
+
 export function renderVerlauf(root: HTMLElement): void {
   const routeNr = aktuelleRoute();
   const now = new Date();
@@ -48,7 +53,7 @@ export function renderVerlauf(root: HTMLElement): void {
         return `<a class="sheet-item" href="#/blatt/${r.id}">
           <span class="si-n" style="background:${th.light};color:${th.main}">${r.number}</span>
           <span class="si-main"><b>${esc(r.data.geschichte?.titel || `${t('vorschau.blatt')} ${r.number}`)}</b>
-          <small>${formatDate(r.createdAt)}${r.data.stufe ? ` · ${t('blatt.stufe', { n: r.data.stufe })}` : ''}${r.data.newLetter ? ` · ${t('verlauf.neu', { b: esc(unitById(r.data.newLetter)?.label.replace('-', '') ?? r.data.newLetter) })}` : ''} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${t('verlauf.minGelesen', { n: r.reads.reduce((a, x) => a + x.minutes, 0) })}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
+          <small>${formatDate(r.createdAt)}${r.data.stufe ? ` · ${t('blatt.stufe', { n: r.data.stufe })}` : ''}${r.data.newLetter ? ` · ${t('verlauf.neu', { b: esc(unitById(r.data.newLetter)?.label.replace('-', '') ?? r.data.newLetter) })}` : ''} · ${themaName(r.data.theme)}${r.reads.length ? ` · ${minGelesen(r.reads.reduce((a, x) => a + x.minutes, 0))}` : ''}${r.reads.length > 1 ? ` · ${r.reads.length}×` : ''}</small></span>
           <span class="si-st st-${s}">${t(`status.${s}`)}</span></a>`;
       })
       .join('');
