@@ -110,7 +110,9 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .chip.on { outline: 3px solid currentColor; outline-offset: -3px; }
 /* Themen auf der Startseite: nicht gewählt = weiß mit farbiger Schrift, gewählt = farbig gefüllt mit Häkchen */
 .thema-chip { position: relative; background: #fff; color: var(--c-main); border-color: #DADFDB; }
-.thema-chip.on { background: var(--c-bg); border-color: transparent; }
+/* gewählt: wie .blk-chip – farbiger Rand statt dicker Outline, dazu die Plakette */
+.thema-chip.on { background: var(--c-bg); border-color: var(--c-main); }
+.thema-chip.on:not(:focus-visible) { outline: none; }
 /* Häkchen als Plakette in der Ecke (gemeinsamer Stil weiter unten bei .blk-chip): der Chip wird nicht breiter */
 .thema-chip.on::after { --badge: var(--c-main); }
 
