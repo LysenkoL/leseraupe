@@ -111,12 +111,8 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 /* Themen auf der Startseite: nicht gewählt = weiß mit farbiger Schrift, gewählt = farbig gefüllt mit Häkchen */
 .thema-chip { position: relative; background: #fff; color: var(--c-main); border-color: #DADFDB; }
 .thema-chip.on { background: var(--c-bg); border-color: transparent; }
-/* Häkchen als Plakette in der Ecke: der Chip wird nicht breiter, nichts springt in die nächste Zeile */
-.thema-chip.on::after {
-  content: '✓'; position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--c-main); color: #fff; font-size: 12px; font-weight: 800; border: 2px solid #fff;
-  display: flex; align-items: center; justify-content: center; box-sizing: border-box;
-}
+/* Häkchen als Plakette in der Ecke (gemeinsamer Stil weiter unten bei .blk-chip): der Chip wird nicht breiter */
+.thema-chip.on::after { --badge: var(--c-main); }
 
 .toggle { display: flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 600; font-size: 15px; }
 .toggle input { appearance: none; width: 46px; height: 28px; border-radius: 14px; background: #CCD3CE; position: relative; flex: none; margin: 0; transition: background .15s; }
@@ -184,11 +180,17 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .pv-fehlt { padding: 6px 16px 0; }
 a.iconbtn { text-decoration: none; }
 .blk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed #CCD3CE; background: #fff; color: #6B746E; font-weight: 700; font-size: 14px; cursor: pointer; }
+.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px solid #DADFDB; background: #fff; color: #6B746E; font-weight: 700; font-size: 14px; cursor: pointer; }
 /* das Kästchen liegt unsichtbar über dem ganzen Plättchen: Tippen irgendwo schaltet um */
 .blk-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.blk-chip:has(input:checked) { border: 2px solid var(--green); background: #E7F3E3; color: var(--green); }
-.blk-chip:has(input:checked) span::before { content: '✓ '; }
+.blk-chip:has(input:checked) { border-color: var(--green); background: #E7F3E3; color: var(--green); }
+/* gewählt: Häkchen als Plakette in der Ecke – wie bei den Themen; der Chip wird nicht breiter */
+.blk-chip:has(input:checked)::after { --badge: var(--green); }
+.blk-chip:has(input:checked)::after, .thema-chip.on::after {
+  content: '✓'; position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--badge); color: #fff; font-size: 12px; font-weight: 800; border: 2px solid #fff;
+  display: flex; align-items: center; justify-content: center; box-sizing: border-box; pointer-events: none;
+}
 .blk-chip:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
 .blk-chip.disabled { opacity: 0.45; }
 
