@@ -403,7 +403,7 @@ describe('App-Ablauf', () => {
     await p.click('#screen');
     await p.waitForSelector('#rd-next');
     while ((await p.textContent('#rd-next')) !== 'Fertig ✓') await p.click('#rd-next');
-    expect(await p.textContent('.rd-rest')).toMatch(/Noch \d+ Min Lesezeit/);
+    expect(await p.textContent('.rd-rest')).toMatch(/Noch \d+ Min Zeit\?/);
     expect(await p.textContent('#rd-more')).toContain('Noch einmal lesen');
     // dasselbe Blatt von vorn
     await p.click('#rd-more');

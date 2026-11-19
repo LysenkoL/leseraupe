@@ -91,11 +91,11 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .letter-group-title { grid-column: 1 / -1; margin-top: 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
 .lt {
   min-height: 44px; border-radius: 12px; border: 1.5px solid #DADFDB; background: #fff;
-  font-weight: 800; font-size: 17px; color: #8A938D; padding: 0;
+  font-weight: 800; font-size: 17px; color: #6B746E; padding: 0;
 }
 .lt.on { background: var(--green-light); border-color: #9FD18F; color: var(--green); }
 .lt.neu { background: var(--orange-light); border-color: #E8893A; color: #A4521A; }
-.lt.small { font-size: 14px; }
+.lt.small { letter-spacing: -0.06em; }
 
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .seg button {
@@ -108,6 +108,10 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
   font-weight: 700; font-size: 14px; background: var(--grey);
 }
 .chip.on { outline: 3px solid currentColor; outline-offset: -3px; }
+/* Themen auf der Startseite: nicht gewählt = weiß mit farbiger Schrift, gewählt = farbig gefüllt mit Häkchen */
+.thema-chip { background: #fff; color: var(--c-main); border-color: #DADFDB; }
+.thema-chip.on { background: var(--c-bg); border-color: transparent; }
+.thema-chip.on::before { content: '✓ '; margin-right: 2px; }
 
 .toggle { display: flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 600; font-size: 15px; }
 .toggle input { appearance: none; width: 46px; height: 28px; border-radius: 14px; background: #CCD3CE; position: relative; flex: none; margin: 0; transition: background .15s; }
@@ -159,8 +163,8 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .modal { background: #fff; border-radius: 20px; padding: 18px; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
 .modal h2 { margin: 0; font-size: 18px; font-weight: 800; }
 .modal p { margin: 0; font-size: 16px; line-height: 1.4; }
-/* längere Erklärungen im Fenster: Blocksatz, mit Silbentrennung (nur Oberfläche, nie auf dem Leseblatt) – sonst große Lücken */
-.modal h2 + p, .modal p + p { text-align: justify; hyphens: auto; text-wrap: pretty; }
+/* längere Erklärungen im Fenster: linksbündig (Blocksatz gab auf schmalen Handys große Lücken) */
+.modal h2 + p, .modal p + p { text-align: left; text-wrap: pretty; }
 .modal-input { border: 1.5px solid #CCD3CE; border-radius: 12px; padding: 12px; font-size: 20px; font-weight: 600; min-height: 50px; }
 .modal-err, .eg-err { color: #9C2B45; font-size: 14px; min-height: 1em; }
 /* B4: volle Raupe feiern – mittig, Raupe groß, kurz aufspringen */
@@ -175,7 +179,7 @@ body:has(.screen.timer)::before, body:has(.screen.timer)::after { background: #2
 .pv-fehlt { padding: 6px 16px 0; }
 a.iconbtn { text-decoration: none; }
 .blk-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed #CCD3CE; background: #fff; color: #8A938D; font-weight: 700; font-size: 14px; cursor: pointer; }
+.blk-chip { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed #CCD3CE; background: #fff; color: #6B746E; font-weight: 700; font-size: 14px; cursor: pointer; }
 /* das Kästchen liegt unsichtbar über dem ganzen Plättchen: Tippen irgendwo schaltet um */
 .blk-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .blk-chip:has(input:checked) { border: 2px solid var(--green); background: #E7F3E3; color: var(--green); }
@@ -334,7 +338,7 @@ a.iconbtn { text-decoration: none; }
 .saved-hint { min-height: 1.2em; color: var(--green); }
 
 /* Am Bildschirm lesen: Wörter/Silben als Karten, Sätze je eine Zeile */
-.rd-grid .rd-card { background: #F1F5F1; border-radius: 14px; padding: 4px 18px; }
+.rd-grid .rd-card { background: #F1F5F1; border-radius: 14px; padding: 4px 18px; min-width: 3.4em; text-align: center; }
 .rd-lines p { white-space: nowrap; }
 .rd-rest { text-align: center; color: var(--muted); font-weight: 600; margin: 12px 0 6px; }
 .rd-mehr { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
@@ -360,8 +364,10 @@ a.iconbtn { text-decoration: none; }
 .qs-ziel { text-align: center; font-size: clamp(34px, 9vw, 56px); font-weight: 600; margin: 4px 0; }
 .qs-zahl { text-align: center; font-size: 22px; font-weight: 700; color: var(--muted); margin: 0 0 10px; }
 .qs-zahl b { color: var(--green); }
-.qs-text p { font-size: clamp(22px, 6.4vw, 34px); font-weight: 600; line-height: 1.55; margin: 0 0 6px; }
-.qs-t { font: inherit; color: inherit; background: none; border: 0; padding: 0 3px; margin: 0 -1px; border-radius: 8px; cursor: pointer; }
+/* gleiche Schrift wie die Seite „Geschichte“; etwas mehr Zeilenabstand zum Antippen */
+.qs-text p { font-size: clamp(28px, 7.4vw, 52px); font-weight: 600; line-height: 1.4; margin: 0 0 .5em; }
+/* Wort als Knopf: kein zusätzlicher Abstand (sonst Lücke vor Punkt und Komma) */
+.qs-t { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0 -2px; border-radius: 8px; cursor: pointer; }
 .qs-t.ok { background: var(--green-light); color: var(--green); box-shadow: inset 0 0 0 2px var(--green); }
 .qs-done { text-align: center; font-size: 30px; font-weight: 800; color: var(--green); margin: 16px 0 0; }
 .qs-male svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; }
@@ -397,8 +403,8 @@ a.iconbtn { text-decoration: none; }
 .name-card { position: relative; }
 .name-card .card-x { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: none; background: none; color: var(--muted); font-size: 16px; }
 .pillbtn.vorschau { flex: none; white-space: nowrap; font-size: 13px; padding: 6px 12px; min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
-/* „Über die App“: Blocksatz ohne Silbentrennung – etwas kleinere Schrift, damit keine großen Lücken entstehen */
-.ueber .card > div { text-align: justify; hyphens: auto; text-wrap: pretty; font-size: 16px; line-height: 1.5; }
+/* „Über die App“: linksbündig */
+.ueber .card > div { text-align: left; text-wrap: pretty; font-size: 16px; line-height: 1.5; }
 /* B5: Wochentage der Erinnerung */
 .seg.tage { grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .seg.tage button { min-height: 44px; padding: 0; font-size: 14px; }
@@ -419,8 +425,8 @@ a.iconbtn { text-decoration: none; }
 .btn.zweizeilig small { font-size: 13px; font-weight: 500; color: var(--muted); }
 /* Karten-Überschriften: ein Stil – auch Felder, deren Beschriftung die Überschrift der Karte ist (Name, Sprache) */
 .card > label.field:first-child { font-size: 16px; font-weight: 800; gap: 10px; }
-/* Erklärtexte (mehrzeilig) überall im Blocksatz mit Silbentrennung – nur Oberfläche, nie auf dem Leseblatt */
-.card > .hint, .content > .hint { text-align: justify; hyphens: auto; text-wrap: pretty; }
+/* Erklärtexte (mehrzeilig): linksbündig, ohne Blocksatz – sonst große Lücken auf schmalen Handys */
+.card > .hint, .content > .hint { text-align: left; text-wrap: pretty; }
 /* kurze Aufzählung: nicht im Blocksatz, sonst entstehen breite Lücken */
 .card > #material-hint { text-align: left; hyphens: manual; margin-top: 10px; }
 /* Hinweis auf den nächsten Buchstaben: eigene Plakette, damit er auffällt */
@@ -442,3 +448,6 @@ a.iconbtn { text-decoration: none; }
 .onb .hint { text-align: center; }
 /* Fest: alles mittig (die Blocksatz-Regel für Erklärtexte gilt hier nicht) */
 .modal.feier p { text-align: center; }
+
+/* Tastatur-Fokus: überall grün (nicht orange wie „neu“) */
+:where(button, a, input, select, textarea, label):focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }

@@ -62,7 +62,7 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
           ? `<div class="st-list">${s.stolper
               .map(
                 (x, i) =>
-                  `<div class="st-row${x.ok >= STOLPER_FREI ? ' bereit' : ''}"><div class="st-wort"><b>${esc(x.w)}</b><small>${t('einst.fluessig', { n: x.ok })}${
+                  `<div class="st-row${x.ok >= STOLPER_FREI ? ' bereit' : ''}"><div class="st-wort"><b>${esc(x.w)}</b><small>${x.ok ? t('einst.fluessig', { n: x.ok }) : t('einst.fluessig0')}${
                     x.ok >= STOLPER_FREI ? ` · ${t('einst.bereit')}` : ''
                   }</small></div><button class="pillbtn kann" data-st-kann="${i}">${t('einst.kannEs')}</button><button class="pillbtn" data-st-del="${i}" aria-label="${t('einst.entfernen')}">✕</button></div>`,
               )
@@ -77,7 +77,7 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
       <h2>${t('einst.sicherung')}</h2>
       <div class="hint">${t('einst.sicherungHinweis')}</div>
       <button class="btn ghost" id="exp">${t('einst.sicherungSpeichern')}</button>
-      <label class="btn ghost" for="imp" style="cursor:pointer">${t('einst.sicherungLaden')}</label>
+      <button class="btn ghost" type="button" id="imp-btn">${t('einst.sicherungLaden')}</button>
       <input type="file" id="imp" accept="application/json,.json" hidden />
     </section>
     ${
@@ -85,8 +85,12 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
         ? ''
         : `<section class="card">
       <h2>${t('start.appAufsHandy')}</h2>
-      ${canInstall() ? `<button class="btn green" id="inst">${t('start.installieren')}</button>` : ''}
-      <div class="hint">${t('einst.installHinweis')}</div>
+      ${
+        canInstall()
+          ? `<button class="btn green" id="inst">${t('start.installieren')}</button>
+      <div class="hint">${t('einst.installHinweis')}</div>`
+          : `<div class="hint">${t('einst.installOhneKnopf')}</div>`
+      }
     </section>`
     }
     <a class="btn ghost zweizeilig" href="#/ueber"><span>${t('einst.ueber')}</span><small>${t('einst.ueberSub')}</small></a>
@@ -171,6 +175,8 @@ export function renderEinstellungen(root: HTMLElement, params?: URLSearchParams)
     else if (r === 'gespeichert') toast(t('einst.sicherungDownload'), 4000);
   });
 
+  // echter Knopf (mit Tastatur erreichbar) öffnet die Dateiauswahl
+  root.querySelector('#imp-btn')!.addEventListener('click', () => root.querySelector<HTMLInputElement>('#imp')!.click());
   root.querySelector<HTMLInputElement>('#imp')!.addEventListener('change', async (e) => {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (!f) return;

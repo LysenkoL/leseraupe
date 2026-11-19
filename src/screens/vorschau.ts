@@ -69,7 +69,7 @@ export function renderVorschau(root: HTMLElement): void {
   <div class="bottom">
     <!-- zwei Hauptwege: auf Papier oder am Bildschirm; der Rest kleiner darunter -->
     <div class="btnrow two">
-      <button class="btn green" id="print">${t('aktion.drucken')}</button>
+      <button class="btn primary" id="print">${t('aktion.drucken')}</button>
       <a class="btn primary" id="screen" href="#/lesen">${t('vorschau.bildschirm')}</a>
     </div>
     <div class="btnrow four">

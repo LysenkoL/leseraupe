@@ -218,7 +218,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
     if (!gestartet()) return leave(back);
     cd.pause();
     const sec = gesamt - cd.remaining;
-    const min = Math.max(1, Math.round(sec / 60));
+    const min = Math.round(sec / 60); // unter 30 s: 0 → „unter 1 Min“ im Verlauf
     try {
       const r = await recordRead(sheetId, draft, min);
       if (r) {
@@ -236,7 +236,7 @@ export async function renderLesen(root: HTMLElement, params: URLSearchParams): P
   const naechstesBlatt = async () => {
     if (!serie) return;
     cd.pause();
-    const min = Math.max(1, Math.round((gesamt - cd.remaining) / 60));
+    const min = Math.round((gesamt - cd.remaining) / 60);
     const restSek = Math.ceil(cd.remaining);
     try {
       const r = await recordRead(sheetId, draft, min);
